@@ -1,6 +1,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import { ENV } from "./env.js";
 
 export const supabase = createClient(
-  "https://vzqduywffrzhcrjtercs.supabase.co",
-  "sb_publishable_SWACMtwkxQ58dhDSwFSofA_ZfEe6HIt"
+  ENV.SUPABASE_URL,
+  ENV.SUPABASE_ANON_KEY
 );

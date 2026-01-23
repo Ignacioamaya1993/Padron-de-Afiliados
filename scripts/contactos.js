@@ -6,12 +6,12 @@ import { supabase } from "./supabase.js";
 ===================== */
 let pageSize = 50;
 let editandoId = null;
+let offset = 0;
 
 let contactosCache = [];
 let searchText = "";
 let orderField = "apellido";
 let orderDirection = "asc";
-let offset = 0;
 
 /* =====================
    HELPERS
@@ -44,13 +44,14 @@ authObserver(user => {
   }
 });
 
-document.getElementById("logoutBtn")
+document
+  .getElementById("logoutBtn")
   ?.addEventListener("click", logout);
 
 /* =====================
-   CARGA CONTACTOS (SQL)
+   CARGA DE CONTACTOS
 ===================== */
-export async function cargarContactos(reset = true) {
+async function cargarContactos(reset = true) {
   const tbody = document.getElementById("contactosBody");
 
   if (reset) {
@@ -60,13 +61,12 @@ export async function cargarContactos(reset = true) {
   }
 
   try {
-    let query = supabase
+    const { data, error } = await supabase
       .from("contactos")
       .select("*")
       .order(orderField, { ascending: orderDirection === "asc" })
       .range(offset, offset + pageSize - 1);
 
-    const { data, error } = await query;
     if (error) throw error;
 
     if (!data.length && reset) {
@@ -150,13 +150,15 @@ function agregarEventosFila() {
 /* =====================
    BUSCADOR / FILTROS
 ===================== */
-document.getElementById("searchInput")
+document
+  .getElementById("searchInput")
   ?.addEventListener("input", e => {
     searchText = e.target.value;
     renderTabla();
   });
 
-document.getElementById("orderSelect")
+document
+  .getElementById("orderSelect")
   ?.addEventListener("change", e => {
     const [field, dir] = e.target.value.split("_");
     orderField = field;
@@ -164,19 +166,21 @@ document.getElementById("orderSelect")
     cargarContactos(true);
   });
 
-document.getElementById("pageSizeSelect")
+document
+  .getElementById("pageSizeSelect")
   ?.addEventListener("change", e => {
     pageSize = Number(e.target.value);
     cargarContactos(true);
   });
 
-document.getElementById("btnCargarMas")
+document
+  .getElementById("btnCargarMas")
   ?.addEventListener("click", () => cargarContactos(false));
 
 /* =====================
-   GUARDAR / EDITAR
+   ALTA / EDICIÓN
 ===================== */
-export async function guardarContacto(data) {
+async function guardarContacto(data) {
   const payload = {
     nombre: data.nombre,
     apellido: data.apellido,
@@ -210,7 +214,7 @@ export async function guardarContacto(data) {
 
   } catch (err) {
     console.error(err);
-    Swal.fire("Error", "No se pudo guardar", "error");
+    Swal.fire("Error", "No se pudo guardar el contacto", "error");
   }
 }
 
@@ -218,13 +222,13 @@ export async function guardarContacto(data) {
    CARGAR PARA EDICIÓN
 ===================== */
 async function cargarContactoParaEdicion(id) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("contactos")
     .select("*")
     .eq("id", id)
     .single();
 
-  if (!data) return;
+  if (error || !data) return;
 
   const f = document.getElementById("contactoForm");
 
@@ -234,10 +238,7 @@ async function cargarContactoParaEdicion(id) {
   f.telefono.value = data.telefono || "";
   f.afiliado.value = data.afiliado || "";
   f.grupoFamiliarId.value = data.grupo_familiar_id || "";
-  f.fechaNacimiento.value =
-    data.fecha_nacimiento
-      ? data.fecha_nacimiento
-      : "";
+  f.fechaNacimiento.value = data.fecha_nacimiento || "";
 }
 
 /* =====================
@@ -249,7 +250,8 @@ async function eliminarContacto(id) {
     text: "Esta acción es permanente",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Sí, eliminar"
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar"
   });
 
   if (!r.isConfirmed) return;
@@ -270,7 +272,8 @@ function limpiarFormulario() {
   document.getElementById("contactoForm")?.reset();
 }
 
-document.getElementById("contactoForm")
+document
+  .getElementById("contactoForm")
   ?.addEventListener("submit", async e => {
     e.preventDefault();
     const f = e.target;

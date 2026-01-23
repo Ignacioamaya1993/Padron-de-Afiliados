@@ -9,7 +9,7 @@ const errorEl = document.getElementById("error");
 // Si ya está logueado, redirigir
 authObserver(user => {
   if (user) {
-    window.location.href = "/pages/contactos.html";
+    window.location.href = "/pages/padron.html";
   }
 });
 
@@ -18,7 +18,10 @@ loginBtn.addEventListener("click", async () => {
   errorEl.textContent = "";
 
   try {
-    await login(emailInput.value, passwordInput.value);
+    await login(
+      emailInput.value.trim(),
+      passwordInput.value
+    );
   } catch (e) {
     errorEl.textContent = e.message;
   }
