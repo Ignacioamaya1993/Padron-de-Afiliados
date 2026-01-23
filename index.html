@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Contactos LyF</title>
+</head>
+<body>
+
+  <p>Verificando sesión...</p>
+
+  <script type="module">
+    import { authObserver } from "./scripts/auth.js";
+
+    authObserver(user => {
+      if (user) {
+        window.location.href = "/pages/contactos.html";
+      } else {
+        window.location.href = "/pages/login.html";
+      }
+    });
+  </script>
+
+</body>
+</html>
