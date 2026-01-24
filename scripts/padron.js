@@ -13,6 +13,8 @@ let searchText = "";
 let orderField = "apellido";
 let orderDirection = "asc";
 
+let padronCargado = false;
+
 /* =====================
    HELPERS
 ===================== */
@@ -37,12 +39,18 @@ function calcularEdad(fecha) {
 authObserver(user => {
   if (!user) {
     window.location.href = "/pages/login.html";
-  } else {
-    document.getElementById("status").textContent =
-      `Bienvenido ${user.email}`;
+    return;
+  }
+
+  document.getElementById("status").textContent =
+    `Bienvenido ${user.email}`;
+
+  if (!padronCargado) {
+    padronCargado = true;
     cargarPadron(true);
   }
 });
+
 
 document
   .getElementById("logoutBtn")
