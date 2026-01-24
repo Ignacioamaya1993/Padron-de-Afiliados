@@ -85,10 +85,7 @@ button {
   transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
 }
 
-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
-}
+
 
 button:active {
   transform: translateY(0);
@@ -124,7 +121,6 @@ button:active {
     position: absolute;
     top: 15%;
     left: 130px;
-    transform: translateY(-20%);
     background: none;
     border: none;
     cursor: pointer;
