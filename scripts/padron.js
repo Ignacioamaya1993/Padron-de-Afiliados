@@ -1,37 +1,7 @@
 import { authObserver, logout } from "./auth.js";
 import { supabase } from "./supabase.js";
 
-/* =====================
-   CONFIGURACIÓN
-===================== */
-let pageSize = 50;
-let editandoId = null;
-let offset = 0;
-
-let padronCache = [];
-let searchText = "";
-let orderField = "apellido";
-let orderDirection = "asc";
-
-let padronCargado = false;
-
-/* =====================
-   HELPERS
-===================== */
-function formatearFecha(fecha) {
-  if (!fecha) return "-";
-  return new Date(fecha).toLocaleDateString("es-AR");
-}
-
-function calcularEdad(fecha) {
-  if (!fecha) return "-";
-  const hoy = new Date();
-  const nac = new Date(fecha);
-  let edad = hoy.getFullYear() - nac.getFullYear();
-  const m = hoy.getMonth() - nac.getMonth();
-  if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
-  return edad;
-}
+let buscando = false;
 
 /* =====================
    AUTH
@@ -44,271 +14,125 @@ authObserver(user => {
 
   document.getElementById("status").textContent =
     `Bienvenido ${user.email}`;
-
-  if (!padronCargado) {
-    padronCargado = true;
-    cargarPadron(true);
-  }
 });
-
 
 document
   .getElementById("logoutBtn")
   ?.addEventListener("click", logout);
 
 /* =====================
-   CARGA DE PADRON
+   BUSCADOR
 ===================== */
-async function cargarPadron(reset = true) {
-  const tbody = document.getElementById("PadronBody");
+const searchInput = document.getElementById("searchInput");
+const resultadosDiv = document.createElement("div");
+resultadosDiv.className = "resultados-busqueda";
+searchInput.after(resultadosDiv);
 
-  if (reset) {
-    tbody.innerHTML = "";
-    padronCache = [];
-    offset = 0;
-  }
+searchInput.addEventListener("input", async e => {
+  const texto = e.target.value.trim();
+
+  resultadosDiv.innerHTML = "";
+
+  if (texto.length < 3) return;
+  if (buscando) return;
+
+  buscando = true;
 
   try {
     const { data, error } = await supabase
       .from("padron")
-      .select("*")
-      .order(orderField, { ascending: orderDirection === "asc" })
-      .range(offset, offset + pageSize - 1);
+      .select("id, nombre_completo, afiliado, grupo_familiar_id")
+      .or(`
+        nombre_completo.ilike.%${texto}%,
+        afiliado.ilike.%${texto}%,
+        grupo_familiar_id.ilike.%${texto}%
+      `)
+      .limit(20);
 
     if (error) throw error;
 
-    if (!data.length && reset) {
-      tbody.innerHTML =
-        `<tr><td colspan="7">No hay afiliados</td></tr>`;
+    if (!data.length) {
+      resultadosDiv.innerHTML =
+        `<p style="opacity:.7">Sin resultados</p>`;
       return;
     }
 
-    padronCache.push(...data);
-    offset += pageSize;
+    data.forEach(a => {
+      const item = document.createElement("div");
+      item.className = "resultado-item";
 
-    renderTabla();
+      item.innerHTML = `
+        <strong>${a.nombre_completo}</strong><br>
+        Afiliado: ${a.afiliado || "-"} |
+        Grupo: ${a.grupo_familiar_id || "-"}
+      `;
+
+      item.onclick = () => {
+        window.location.href = `/pages/afiliado.html?id=${a.id}`;
+      };
+
+      resultadosDiv.appendChild(item);
+    });
 
   } catch (err) {
     console.error(err);
-    Swal.fire("Error", "No se pudieron cargar los afiliados", "error");
+    Swal.fire("Error", "No se pudo buscar el afiliado", "error");
+  } finally {
+    buscando = false;
   }
-}
+});
 
 /* =====================
-   RENDER TABLA
-===================== */
-function renderTabla() {
-  const tbody = document.getElementById("PadronBody");
-  tbody.innerHTML = "";
-
-  const t = searchText.toLowerCase();
-
-  const filtrados = padronCache.filter(c =>
-    c.nombre_completo?.toLowerCase().includes(t) ||
-    c.telefono?.includes(t) ||
-    c.afiliado?.includes(t) ||
-    c.grupo_familiar_id?.toLowerCase().includes(t)
-  );
-
-  if (!filtrados.length) {
-    tbody.innerHTML =
-      `<tr><td colspan="7">Sin resultados</td></tr>`;
-    return;
-  }
-
-  filtrados.forEach(c => {
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${c.nombre_completo}</td>
-      <td>${formatearFecha(c.fecha_nacimiento)}</td>
-      <td>${calcularEdad(c.fecha_nacimiento)}</td>
-      <td>${c.grupo_familiar_id || "-"}</td>
-      <td>${c.telefono || "-"}</td>
-      <td>${c.afiliado || "-"}</td>
-      <td>
-        <button data-edit="${c.id}">✏️</button>
-        <button data-delete="${c.id}">🗑️</button>
-      </td>
-    `;
-
-    tbody.appendChild(tr);
-  });
-
-  agregarEventosFila();
-}
-
-/* =====================
-   EVENTOS FILA
-===================== */
-function agregarEventosFila() {
-  document.querySelectorAll("[data-edit]").forEach(btn => {
-    btn.onclick = () =>
-      cargarPadronParaEdicion(btn.dataset.edit);
-  });
-
-  document.querySelectorAll("[data-delete]").forEach(btn => {
-    btn.onclick = () =>
-      eliminarPadron(btn.dataset.delete);
-  });
-}
-
-/* =====================
-   BUSCADOR / FILTROS
+   NUEVO AFILIADO
 ===================== */
 document
-  .getElementById("searchInput")
-  ?.addEventListener("input", e => {
-    searchText = e.target.value;
-    renderTabla();
-  });
+  .getElementById("PadronForm")
+  ?.addEventListener("submit", async e => {
+    e.preventDefault();
 
-document
-  .getElementById("orderSelect")
-  ?.addEventListener("change", e => {
-    const [field, dir] = e.target.value.split("_");
-    orderField = field;
-    orderDirection = dir;
-    cargarPadron(true);
-  });
+    const f = e.target;
+    const { data: { user } } = await supabase.auth.getUser();
 
-document
-  .getElementById("pageSizeSelect")
-  ?.addEventListener("change", e => {
-    pageSize = Number(e.target.value);
-    cargarPadron(true);
-  });
+    if (!user) {
+      Swal.fire("Error", "Sesión inválida", "error");
+      return;
+    }
 
-document
-  .getElementById("btnCargarMas")
-  ?.addEventListener("click", () => cargarPadron(false));
-
-/* =====================
-   ALTA / EDICIÓN
-===================== */
-async function guardarPadron(data) {
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    Swal.fire("Error", "Sesión inválida", "error");
-    return;
-  }
-
-  try {
-    if (editandoId) {
-      const payloadUpdate = {
-        nombre: data.nombre,
-        apellido: data.apellido,
-        nombre_completo: `${data.apellido} ${data.nombre}`,
-        telefono: data.telefono || null,
-        afiliado: data.afiliado || null,
-        grupo_familiar_id: data.grupoFamiliarId || null,
-        fecha_nacimiento: data.fechaNacimiento || null,
-        updated_at: new Date()
-      };
-
-      await supabase
-        .from("padron")
-        .update(payloadUpdate)
-        .eq("id", editandoId);
-
-      editandoId = null;
-      Swal.fire("Actualizado", "Afiliado modificado", "success");
-
-    } else {
-      const payloadInsert = {
-        nombre: data.nombre,
-        apellido: data.apellido,
-        nombre_completo: `${data.apellido} ${data.nombre}`,
-        telefono: data.telefono || null,
-        afiliado: data.afiliado || null,
-        grupo_familiar_id: data.grupoFamiliarId || null,
-        fecha_nacimiento: data.fechaNacimiento || null,
+    try {
+      const payload = {
+        nombre: f.nombre.value.trim(),
+        apellido: f.apellido.value.trim(),
+        nombre_completo: `${f.apellido.value.trim()} ${f.nombre.value.trim()}`,
+        telefono: f.telefono.value.trim() || null,
+        afiliado: f.afiliado.value.trim() || null,
+        grupo_familiar_id: f.grupoFamiliarId.value.trim() || null,
+        fecha_nacimiento: f.fechaNacimiento.value || null,
         created_by: user.id
       };
 
       await supabase
         .from("padron")
-        .insert(payloadInsert);
+        .insert(payload);
 
       Swal.fire("Guardado", "Afiliado agregado", "success");
+      f.reset();
+
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "No se pudo guardar el afiliado", "error");
     }
-
-    cargarPadron(true);
-    limpiarFormulario();
-
-  } catch (err) {
-    console.error(err);
-    Swal.fire("Error", "No se pudo guardar el afiliado", "error");
-  }
-}
-
-/* =====================
-   CARGAR PARA EDICIÓN
-===================== */
-async function cargarPadronParaEdicion(id) {
-  const { data, error } = await supabase
-    .from("padron")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error || !data) return;
-
-  const f = document.getElementById("PadronForm");
-
-  editandoId = id;
-  f.nombre.value = data.nombre || "";
-  f.apellido.value = data.apellido || "";
-  f.telefono.value = data.telefono || "";
-  f.afiliado.value = data.afiliado || "";
-  f.grupoFamiliarId.value = data.grupo_familiar_id || "";
-  f.fechaNacimiento.value = data.fecha_nacimiento || "";
-}
-
-/* =====================
-   ELIMINAR
-===================== */
-async function eliminarPadron(id) {
-  const r = await Swal.fire({
-    title: "¿Eliminar afiliado?",
-    text: "Esta acción es permanente",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Sí, eliminar",
-    cancelButtonText: "Cancelar"
   });
 
-  if (!r.isConfirmed) return;
+const btnNuevo = document.getElementById("btnNuevoAfiliado");
+const btnCancelar = document.getElementById("btnCancelarNuevo");
+const nuevoSection = document.getElementById("nuevoAfiliadoSection");
 
-  await supabase
-    .from("padron")
-    .delete()
-    .eq("id", id);
+btnNuevo.onclick = () => {
+  nuevoSection.style.display = "block";
+  btnNuevo.style.display = "none";
+};
 
-  Swal.fire("Eliminado", "Afiliado eliminado", "success");
-  cargarPadron(true);
-}
-
-/* =====================
-   FORM
-===================== */
-function limpiarFormulario() {
-  document.getElementById("PadronForm")?.reset();
-}
-
-document
-  .getElementById("PadronForm")
-  ?.addEventListener("submit", async e => {
-    e.preventDefault();
-    const f = e.target;
-
-    await guardarPadron({
-      nombre: f.nombre.value.trim(),
-      apellido: f.apellido.value.trim(),
-      telefono: f.telefono.value.trim(),
-      afiliado: f.afiliado.value.trim(),
-      grupoFamiliarId: f.grupoFamiliarId.value.trim(),
-      fechaNacimiento: f.fechaNacimiento.value || null
-    });
-  });
+btnCancelar.onclick = () => {
+  nuevoSection.style.display = "none";
+  btnNuevo.style.display = "inline-block";
+};

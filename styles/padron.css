@@ -1,0 +1,147 @@
+/* RESET BÁSICO */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f5f7fa;
+  color: #222;
+  min-height: 100vh;
+}
+
+/* HEADER */
+header {
+  background: #1e293b;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  font-size: 1.4rem;
+}
+
+.user-bar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+#logoutBtn {
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* MAIN */
+.padron-home {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+/* BUSCADOR */
+.buscador-principal {
+  margin-bottom: 2rem;
+}
+
+.buscador-principal input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+}
+
+/* RESULTADOS */
+.resultados {
+  margin-top: 1rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.05);
+}
+
+.resultado-item {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+}
+
+.resultado-item:hover {
+  background: #f1f5f9;
+}
+
+.resultado-item strong {
+  display: block;
+}
+
+/* ACCIONES */
+.acciones-principales {
+  margin-bottom: 1.5rem;
+}
+
+#btnNuevoAfiliado {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* FORMULARIO */
+#nuevoAfiliadoSection {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+#nuevoAfiliadoSection h2 {
+  margin-bottom: 1rem;
+}
+
+.form-afiliado {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.form-afiliado input {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.form-actions button {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.form-actions button[type="submit"] {
+  background: #16a34a;
+  color: white;
+}
+
+#btnCancelarNuevo {
+  background: #64748b;
+  color: white;
+}

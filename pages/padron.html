@@ -4,15 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Padron – Padron y Afiliados Luz y Fuerza Olavarría</title>
+  <title>Padrón de Afiliados – Luz y Fuerza Olavarría</title>
 
-  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="stylesheet" href="../styles/padron.css" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
 <header>
-  <h1>Padron de Afiliados</h1>
+  <h1>Padrón de Afiliados</h1>
 
   <div class="user-bar">
     <span id="status"></span>
@@ -20,94 +20,49 @@
   </div>
 </header>
 
-<main>
+<main class="padron-home">
 
-  <!-- FILTROS -->
-  <section class="filters">
-
+  <!-- BUSCADOR PRINCIPAL -->
+  <section class="buscador-principal">
     <input
       type="text"
       id="searchInput"
-      placeholder="Buscar por nombre, teléfono, afiliado o Grupo Familiar"
+      placeholder="Buscar afiliado, DNI, teléfono o grupo familiar..."
+      autofocus
     />
-
-    <select id="orderSelect">
-      <option value="apellido_asc">Apellido A–Z</option>
-      <option value="apellido_desc">Apellido Z–A</option>
-      <option value="afiliado_asc">Afiliado A–Z</option>
-      <option value="afiliado_desc">Afiliado Z–A</option>
-      <option value="grupo_familiar_id_asc">Grupo Familiar A–Z</option>
-      <option value="grupo_familiar_id_desc">Grupo Familiar Z–A</option>
-
-    </select>
-
-    <select id="pageSizeSelect">
-      <option value="10">10</option>
-      <option value="25">25</option>
-      <option value="50" selected>50</option>
-      <option value="100">100</option>
-    </select>
-
+    <!-- Los resultados se inyectan por JS -->
   </section>
 
-  <!-- IMPORTAR / EXPORTAR -->
-  <section class="import-export" style="margin: 1rem 0;">
-    <button id="btnExportCSV">📤 Exportar CSV</button>
-    <button id="btnExportExcel">📤 Exportar Excel</button>
-
-    <label style="margin-left: 1rem; cursor: pointer;">
-      📥 Importar CSV / Excel
-      <input
-        type="file"
-        id="importFileInput"
-        accept=".csv,.xlsx"
-        style="display: none;"
-      />
-    </label>
+  <!-- ACCIONES -->
+  <section class="acciones-principales">
+    <button id="btnNuevoAfiliado">
+      ➕ Nuevo afiliado
+    </button>
   </section>
 
-  <!-- FORMULARIO -->
-  <section>
-    <h2>Agregar / Editar contacto</h2>
+  <!-- FORMULARIO NUEVO AFILIADO -->
+  <section id="nuevoAfiliadoSection" style="display:none;">
+    <h2>Nuevo Afiliado</h2>
 
-    <form id="PadronForm">
-      <input type="text" name="nombre" placeholder="Nombre" required>
-      <input type="text" name="apellido" placeholder="Apellido" required>
-      <input type="text" name="telefono" placeholder="Teléfono" required>
-      <input type="text" name="afiliado" placeholder="N° Afiliado">
-      <input type="date" name="fechaNacimiento">
-      <input type="text" name="grupoFamiliarId" placeholder="Grupo Familiar">
+    <form id="PadronForm" class="form-afiliado">
+      <input type="text" name="nombre" placeholder="Nombre" required />
+      <input type="text" name="apellido" placeholder="Apellido" required />
+      <input type="text" name="telefono" placeholder="Teléfono" />
+      <input type="text" name="afiliado" placeholder="N° Afiliado" />
+      <input type="date" name="fechaNacimiento" />
+      <input type="text" name="grupoFamiliarId" placeholder="Grupo Familiar" />
 
-      <button type="submit">Guardar</button>
+      <div class="form-actions">
+        <button type="submit">Guardar</button>
+        <button type="button" id="btnCancelarNuevo">
+          Cancelar
+        </button>
+      </div>
     </form>
   </section>
 
-  <!-- TABLA -->
-  <table id="tablaPadron">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Apellido y Nombre</th>
-        <th>Fecha Nac.</th>
-        <th>Edad</th>
-        <th>Grupo Familiar</th>
-        <th>Teléfono</th>
-        <th>Afiliado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-
-    <tbody id="PadronBody"></tbody>
-  </table>
-
-  <!-- PAGINACIÓN -->
-  <div style="margin-top: 1rem;">
-    <button id="btnCargarMas">Cargar más</button>
-  </div>
-
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script type="module" src="../scripts/padron.js"></script>
 
 </body>
