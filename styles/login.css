@@ -71,7 +71,7 @@ input:focus-visible {
 /* =========================
    BOTÓN
 ========================= */
-button {
+.btn-primary {
   width: 100%;
   padding: 0.75rem;
   margin-top: 0.5rem;
@@ -85,9 +85,12 @@ button {
   transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
 }
 
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+}
 
-
-button:active {
+.btn-primary:active {
   transform: translateY(0);
   box-shadow: none;
   opacity: 0.9;
@@ -121,12 +124,13 @@ button:active {
     position: absolute;
     top: 15%;
     left: 130px;
+    transform: translateY(-20%);
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
     outline: none;
-    box-shadow: none;
+    box-shadow: none !important;
 }
 
 .toggle-password img {
