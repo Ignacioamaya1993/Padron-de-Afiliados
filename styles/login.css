@@ -121,19 +121,27 @@ button:active {
 }
 
 .toggle-password {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
+    position: absolute;
+    top: 15%;
+    left: 130px;
+    transform: translateY(-20%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+    box-shadow: none;
 }
 
 .toggle-password img {
-  width: 20px;
-  height: 20px;
+    object-fit: contain;
+    transition: transform 0.2s;
+    width: 25px;
+}
+
+.toggle-password:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .input-error {
