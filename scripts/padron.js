@@ -39,11 +39,20 @@ searchInput.addEventListener("input", async e => {
 
   try {
     const { data, error } = await supabase
-      .from("padron")
-      .select("id, nombre_completo, dni, afiliado, grupo_familiar_id")
-      .or(
-        `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,afiliado.ilike.%${texto}%,grupo_familiar_id.ilike.%${texto}%`
-      )
+      .from("afiliados_view")
+      .select(`
+        id,
+        nombre,
+        dni,
+        numero_afiliado,
+        grupo_id,
+        relacion
+      `)
+      .or(`
+        nombre.ilike.%${texto}%,
+        dni.ilike.%${texto}%,
+        numero_afiliado.ilike.%${texto}%
+      `)
       .limit(20);
 
     if (error) throw error;
@@ -59,10 +68,10 @@ searchInput.addEventListener("input", async e => {
       item.className = "resultado-item";
 
       item.innerHTML = `
-        <strong>${a.nombre_completo}</strong><br>
+        <strong>${a.nombre}</strong><br>
         DNI: ${a.dni || "-"} |
-        Afiliado: ${a.afiliado || "-"} |
-        Grupo: ${a.grupo_familiar_id || "-"}
+        Afiliado: ${a.numero_afiliado} |
+        ${a.relacion}
       `;
 
       item.onclick = () => {
@@ -96,44 +105,87 @@ document
       return;
     }
 
+    const numeroBase = f.numeroBase.value.trim();
+    const relacion = f.relacion.value;
+
+    if (!numeroBase || !relacion) {
+      Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
+      return;
+    }
+
     try {
-      const payload = {
-        nombre: f.nombre.value.trim(),
-        apellido: f.apellido.value.trim(),
-        nombre_completo: `${f.apellido.value.trim()} ${f.nombre.value.trim()}`,
-        dni: f.dni.value.trim(),
-        telefono: f.telefono.value.trim() || null,
-        afiliado: f.afiliado.value.trim() || null,
-        grupo_familiar_id: f.grupoFamiliarId.value.trim() || null,
-        fecha_nacimiento: f.fechaNacimiento.value || null,
-        created_by: user.id
-      };
+      /* =====================
+         1. BUSCAR O CREAR GRUPO
+      ===================== */
+      let grupoId;
 
-      await supabase
-        .from("padron")
-        .insert(payload);
+      const { data: grupoExistente } = await supabase
+        .from("grupos_familiares")
+        .select("id")
+        .eq("numero_afiliado_base", numeroBase)
+        .single();
 
-      Swal.fire("Guardado", "Afiliado agregado", "success");
+      if (grupoExistente) {
+        grupoId = grupoExistente.id;
+      } else {
+        const { data: nuevoGrupo, error } = await supabase
+          .from("grupos_familiares")
+          .insert({ numero_afiliado_base: numeroBase })
+          .select()
+          .single();
+
+        if (error) throw error;
+        grupoId = nuevoGrupo.id;
+      }
+
+      /* =====================
+         2. DEFINIR SUFIJO
+      ===================== */
+      let sufijo;
+
+      if (relacion === "Titular") {
+        sufijo = "00";
+      } else if (relacion === "Cónyuge") {
+        sufijo = "99";
+      } else {
+        // Hijo/a → siguiente disponible
+        const { data: existentes } = await supabase
+          .from("afiliados")
+          .select("sufijo")
+          .eq("grupo_id", grupoId);
+
+        const usados = existentes.map(a => parseInt(a.sufijo, 10));
+        let next = 1;
+        while (usados.includes(next)) next++;
+        sufijo = next.toString().padStart(2, "0");
+      }
+
+      /* =====================
+         3. INSERTAR AFILIADO
+      ===================== */
+      const nombreCompleto =
+        `${f.apellido.value.trim()} ${f.nombre.value.trim()}`;
+
+      const { error: insertError } = await supabase
+        .from("afiliados")
+        .insert({
+          grupo_id: grupoId,
+          sufijo,
+          nombre: nombreCompleto,
+          dni: f.dni.value.trim(),
+          telefono: f.telefono.value.trim() || null,
+          fecha_nacimiento: f.fechaNacimiento.value || null,
+          relacion
+        });
+
+      if (insertError) throw insertError;
+
+      Swal.fire("Guardado", "Afiliado agregado correctamente", "success");
       f.reset();
 
     } catch (err) {
       console.error(err);
-
-      if (err.message?.includes("padron_dni_unique")) {
-        Swal.fire(
-          "DNI duplicado",
-          "Ya existe un afiliado con ese DNI",
-          "warning"
-        ).then(() => {
-          f.dni.focus();
-        });
-      } else {
-        Swal.fire(
-          "Error",
-          "No se pudo guardar el afiliado",
-          "error"
-        );
-      }
+      Swal.fire("Error", "No se pudo guardar el afiliado", "error");
     }
   });
 

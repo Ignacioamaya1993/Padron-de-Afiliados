@@ -49,9 +49,20 @@
       <input type="text" name="apellido" placeholder="Apellido" required />
       <input type="text" name="dni" placeholder="DNI" required />
       <input type="text" name="telefono" placeholder="Teléfono" />
-      <input type="text" name="afiliado" placeholder="N° Afiliado" />
       <input type="date" name="fechaNacimiento" />
-      <input type="text" name="grupoFamiliarId" placeholder="Grupo Familiar" />
+      <input
+        type="text"
+        name="numeroBase"
+        placeholder="N° Afiliado base (ej: 50271-5)"
+        required
+      />
+
+      <select name="relacion" required>
+        <option value="">Relación</option>
+        <option value="Titular">Titular</option>
+        <option value="Cónyuge">Cónyuge</option>
+        <option value="Hijo/a">Hijo/a</option>
+      </select>
 
       <div class="form-actions">
         <button type="submit">Guardar</button>
