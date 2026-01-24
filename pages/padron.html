@@ -12,7 +12,7 @@
 <body>
 
 <header>
-  <h1>Padrón de Afiliados Luz y Fuerza de Olavarria</h1>
+  <h1>Padrón de Afiliados Luz y Fuerza de Olavarría</h1>
 
   <div class="user-bar">
     <span id="status"></span>
@@ -27,10 +27,10 @@
     <input
       type="text"
       id="searchInput"
-      placeholder="Buscar afiliado, DNI, teléfono o grupo familiar..."
+      placeholder="Buscar afiliado, DNI o N° de afiliado..."
       autofocus
     />
-    <!-- Los resultados se inyectan por JS -->
+    <!-- Resultados por JS -->
   </section>
 
   <!-- ACCIONES -->
@@ -45,15 +45,50 @@
     <h2>Nuevo Afiliado</h2>
 
     <form id="PadronForm" class="form-afiliado">
-      <input type="text" name="nombre" placeholder="Nombre" required />
-      <input type="text" name="apellido" placeholder="Apellido" required />
-      <input type="text" name="dni" placeholder="DNI" required />
-      <input type="text" name="telefono" placeholder="Teléfono" />
-      <input type="date" name="fechaNacimiento" />
+
+      <input
+        type="text"
+        name="nombre"
+        placeholder="Nombre"
+        required
+      />
+
+      <input
+        type="text"
+        name="apellido"
+        placeholder="Apellido"
+        required
+      />
+
+      <input
+        type="text"
+        name="dni"
+        placeholder="DNI"
+        required
+      />
+
+      <input
+        type="text"
+        name="telefono"
+        placeholder="Teléfono"
+      />
+
+      <input
+        type="date"
+        name="fechaNacimiento"
+      />
+
       <input
         type="text"
         name="numeroBase"
         placeholder="N° Afiliado base (ej: 50271-5)"
+        required
+      />
+
+      <input
+        type="text"
+        name="sufijo"
+        placeholder="Sufijo"
         required
       />
 
@@ -62,6 +97,7 @@
         <option value="Titular">Titular</option>
         <option value="Cónyuge">Cónyuge</option>
         <option value="Hijo/a">Hijo/a</option>
+        <option value="Otro">Otro</option>
       </select>
 
       <div class="form-actions">
@@ -70,6 +106,7 @@
           Cancelar
         </button>
       </div>
+
     </form>
   </section>
 

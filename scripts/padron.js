@@ -39,19 +39,19 @@ searchInput.addEventListener("input", async e => {
 
   try {
     const { data, error } = await supabase
-      .from("afiliados_view")
+      .from("padron")
       .select(`
         id,
-        nombre,
+        nombre_completo,
         dni,
-        numero_afiliado,
-        grupo_id,
+        afiliado,
+        grupo_familiar_id,
         relacion
       `)
       .or(`
-        nombre.ilike.%${texto}%,
+        nombre_completo.ilike.%${texto}%,
         dni.ilike.%${texto}%,
-        numero_afiliado.ilike.%${texto}%
+        afiliado.ilike.%${texto}%
       `)
       .limit(20);
 
@@ -68,9 +68,9 @@ searchInput.addEventListener("input", async e => {
       item.className = "resultado-item";
 
       item.innerHTML = `
-        <strong>${a.nombre}</strong><br>
+        <strong>${a.nombre_completo}</strong><br>
         DNI: ${a.dni || "-"} |
-        Afiliado: ${a.numero_afiliado} |
+        Afiliado: ${a.afiliado} |
         ${a.relacion}
       `;
 
@@ -98,20 +98,37 @@ document
     e.preventDefault();
 
     const f = e.target;
-    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) {
-      Swal.fire("Error", "Sesión inválida", "error");
-      return;
-    }
+    const nombre = f.nombre.value.trim();
+    const apellido = f.apellido.value.trim();
+    const dni = f.dni.value.trim();
+    const telefono = f.telefono.value.trim() || null;
+    const fechaNacimiento = f.fechaNacimiento.value || null;
 
-    const numeroBase = f.numeroBase.value.trim();
+    const numeroBaseInput = f.numeroBase.value.trim(); // ej: 50271-5
+    const sufijo = f.sufijo.value.trim();              // libre: 00, 99, etc
     const relacion = f.relacion.value;
 
-    if (!numeroBase || !relacion) {
-      Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
+    if (
+      !nombre ||
+      !apellido ||
+      !dni ||
+      !numeroBaseInput ||
+      !sufijo ||
+      !relacion
+    ) {
+      Swal.fire(
+        "Atención",
+        "Completá todos los campos obligatorios",
+        "warning"
+      );
       return;
     }
+
+    const nombreCompleto =
+      `${apellido.toUpperCase()} ${nombre.toUpperCase()}`;
+
+    const numeroBase = `19-${numeroBaseInput}`;
 
     try {
       /* =====================
@@ -119,18 +136,22 @@ document
       ===================== */
       let grupoId;
 
-      const { data: grupoExistente } = await supabase
+      const { data: grupoExistente, error: errorGrupo } = await supabase
         .from("grupos_familiares")
         .select("id")
         .eq("numero_afiliado_base", numeroBase)
-        .single();
+        .maybeSingle();
+
+      if (errorGrupo) throw errorGrupo;
 
       if (grupoExistente) {
         grupoId = grupoExistente.id;
       } else {
         const { data: nuevoGrupo, error } = await supabase
           .from("grupos_familiares")
-          .insert({ numero_afiliado_base: numeroBase })
+          .insert({
+            numero_afiliado_base: numeroBase
+          })
           .select()
           .single();
 
@@ -139,53 +160,50 @@ document
       }
 
       /* =====================
-         2. DEFINIR SUFIJO
+         2. INSERTAR AFILIADO
       ===================== */
-      let sufijo;
-
-      if (relacion === "Titular") {
-        sufijo = "00";
-      } else if (relacion === "Cónyuge") {
-        sufijo = "99";
-      } else {
-        // Hijo/a → siguiente disponible
-        const { data: existentes } = await supabase
-          .from("afiliados")
-          .select("sufijo")
-          .eq("grupo_id", grupoId);
-
-        const usados = existentes.map(a => parseInt(a.sufijo, 10));
-        let next = 1;
-        while (usados.includes(next)) next++;
-        sufijo = next.toString().padStart(2, "0");
-      }
-
-      /* =====================
-         3. INSERTAR AFILIADO
-      ===================== */
-      const nombreCompleto =
-        `${f.apellido.value.trim()} ${f.nombre.value.trim()}`;
-
       const { error: insertError } = await supabase
         .from("afiliados")
         .insert({
           grupo_id: grupoId,
+          nombre,
+          apellido,
+          nombre_completo: nombreCompleto,
+          dni,
+          telefono,
+          fecha_nacimiento: fechaNacimiento,
           sufijo,
-          nombre: nombreCompleto,
-          dni: f.dni.value.trim(),
-          telefono: f.telefono.value.trim() || null,
-          fecha_nacimiento: f.fechaNacimiento.value || null,
           relacion
         });
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        if (insertError.message?.includes("grupo_sufijo_unico")) {
+          Swal.fire(
+            "Error",
+            "Ese sufijo ya existe dentro del grupo familiar",
+            "error"
+          );
+          return;
+        }
 
-      Swal.fire("Guardado", "Afiliado agregado correctamente", "success");
+        throw insertError;
+      }
+
+      Swal.fire(
+        "Guardado",
+        "Afiliado agregado correctamente",
+        "success"
+      );
+
       f.reset();
 
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "No se pudo guardar el afiliado", "error");
+      Swal.fire(
+        "Error",
+        "No se pudo guardar el afiliado",
+        "error"
+      );
     }
   });
 
