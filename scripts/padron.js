@@ -30,7 +30,6 @@ searchInput.after(resultadosDiv);
 
 searchInput.addEventListener("input", async e => {
   const texto = e.target.value.trim();
-
   resultadosDiv.innerHTML = "";
 
   if (texto.length < 3) return;
@@ -41,9 +40,10 @@ searchInput.addEventListener("input", async e => {
   try {
     const { data, error } = await supabase
       .from("padron")
-      .select("id, nombre_completo, afiliado, grupo_familiar_id")
+      .select("id, nombre_completo, dni, afiliado, grupo_familiar_id")
       .or(`
         nombre_completo.ilike.%${texto}%,
+        dni.ilike.%${texto}%,
         afiliado.ilike.%${texto}%,
         grupo_familiar_id.ilike.%${texto}%
       `)
@@ -63,6 +63,7 @@ searchInput.addEventListener("input", async e => {
 
       item.innerHTML = `
         <strong>${a.nombre_completo}</strong><br>
+        DNI: ${a.dni || "-"} |
         Afiliado: ${a.afiliado || "-"} |
         Grupo: ${a.grupo_familiar_id || "-"}
       `;
@@ -103,6 +104,7 @@ document
         nombre: f.nombre.value.trim(),
         apellido: f.apellido.value.trim(),
         nombre_completo: `${f.apellido.value.trim()} ${f.nombre.value.trim()}`,
+        dni: f.dni.value.trim(),
         telefono: f.telefono.value.trim() || null,
         afiliado: f.afiliado.value.trim() || null,
         grupo_familiar_id: f.grupoFamiliarId.value.trim() || null,
@@ -119,10 +121,28 @@ document
 
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "No se pudo guardar el afiliado", "error");
+
+      if (err.message?.includes("padron_dni_unique")) {
+        Swal.fire(
+          "DNI duplicado",
+          "Ya existe un afiliado con ese DNI",
+          "warning"
+        ).then(() => {
+          f.dni.focus();
+        });
+      } else {
+        Swal.fire(
+          "Error",
+          "No se pudo guardar el afiliado",
+          "error"
+        );
+      }
     }
   });
 
+/* =====================
+   MOSTRAR / OCULTAR FORM
+===================== */
 const btnNuevo = document.getElementById("btnNuevoAfiliado");
 const btnCancelar = document.getElementById("btnCancelarNuevo");
 const nuevoSection = document.getElementById("nuevoAfiliadoSection");
