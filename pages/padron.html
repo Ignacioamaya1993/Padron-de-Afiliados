@@ -36,8 +36,9 @@
       <option value="apellido_desc">Apellido Z–A</option>
       <option value="afiliado_asc">Afiliado A–Z</option>
       <option value="afiliado_desc">Afiliado Z–A</option>
-      <option value="grupoFamiliarId_asc">Grupo Familiar A–Z</option>
-      <option value="grupoFamiliarId_desc">Grupo Familiar Z–A</option>
+      <option value="grupo_familiar_id_asc">Grupo Familiar A–Z</option>
+      <option value="grupo_familiar_id_desc">Grupo Familiar Z–A</option>
+
     </select>
 
     <select id="pageSizeSelect">
@@ -69,7 +70,7 @@
   <section>
     <h2>Agregar / Editar contacto</h2>
 
-    <form id="contactoForm">
+    <form id="PadronForm">
       <input type="text" name="nombre" placeholder="Nombre" required>
       <input type="text" name="apellido" placeholder="Apellido" required>
       <input type="text" name="telefono" placeholder="Teléfono" required>
@@ -82,7 +83,7 @@
   </section>
 
   <!-- TABLA -->
-  <table id="tablapadron">
+  <table id="tablaPadron">
     <thead>
       <tr>
         <th></th>
@@ -96,7 +97,7 @@
       </tr>
     </thead>
 
-    <tbody id="padronBody"></tbody>
+    <tbody id="PadronBody"></tbody>
   </table>
 
   <!-- PAGINACIÓN -->

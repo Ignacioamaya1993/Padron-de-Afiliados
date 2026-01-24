@@ -40,7 +40,7 @@ authObserver(user => {
   } else {
     document.getElementById("status").textContent =
       `Bienvenido ${user.email}`;
-    cargarpadron(true);
+    cargarPadron(true);
   }
 });
 
@@ -51,8 +51,8 @@ document
 /* =====================
    CARGA DE PADRON
 ===================== */
-async function cargarpadron(reset = true) {
-  const tbody = document.getElementById("padronBody");
+async function cargarPadron(reset = true) {
+  const tbody = document.getElementById("PadronBody");
 
   if (reset) {
     tbody.innerHTML = "";
@@ -71,7 +71,7 @@ async function cargarpadron(reset = true) {
 
     if (!data.length && reset) {
       tbody.innerHTML =
-        `<tr><td colspan="8">No hay Afiliados</td></tr>`;
+        `<tr><td colspan="7">No hay afiliados</td></tr>`;
       return;
     }
 
@@ -82,7 +82,7 @@ async function cargarpadron(reset = true) {
 
   } catch (err) {
     console.error(err);
-    Swal.fire("Error", "No se pudieron cargar los Afiliados", "error");
+    Swal.fire("Error", "No se pudieron cargar los afiliados", "error");
   }
 }
 
@@ -90,22 +90,21 @@ async function cargarpadron(reset = true) {
    RENDER TABLA
 ===================== */
 function renderTabla() {
-  const tbody = document.getElementById("padronBody");
+  const tbody = document.getElementById("PadronBody");
   tbody.innerHTML = "";
 
-  const filtrados = padronCache.filter(c => {
-    const t = searchText.toLowerCase();
-    return (
-      c.nombre_completo?.toLowerCase().includes(t) ||
-      c.telefono?.includes(t) ||
-      c.afiliado?.includes(t) ||
-      c.grupo_familiar_id?.toLowerCase().includes(t)
-    );
-  });
+  const t = searchText.toLowerCase();
+
+  const filtrados = padronCache.filter(c =>
+    c.nombre_completo?.toLowerCase().includes(t) ||
+    c.telefono?.includes(t) ||
+    c.afiliado?.includes(t) ||
+    c.grupo_familiar_id?.toLowerCase().includes(t)
+  );
 
   if (!filtrados.length) {
     tbody.innerHTML =
-      `<tr><td colspan="8">Sin resultados</td></tr>`;
+      `<tr><td colspan="7">Sin resultados</td></tr>`;
     return;
   }
 
@@ -113,7 +112,6 @@ function renderTabla() {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td><input type="checkbox" data-id="${c.id}"></td>
       <td>${c.nombre_completo}</td>
       <td>${formatearFecha(c.fecha_nacimiento)}</td>
       <td>${calcularEdad(c.fecha_nacimiento)}</td>
@@ -138,12 +136,12 @@ function renderTabla() {
 function agregarEventosFila() {
   document.querySelectorAll("[data-edit]").forEach(btn => {
     btn.onclick = () =>
-      cargarContactoParaEdicion(btn.dataset.edit);
+      cargarPadronParaEdicion(btn.dataset.edit);
   });
 
   document.querySelectorAll("[data-delete]").forEach(btn => {
     btn.onclick = () =>
-      eliminarContacto(btn.dataset.delete);
+      eliminarPadron(btn.dataset.delete);
   });
 }
 
@@ -163,65 +161,84 @@ document
     const [field, dir] = e.target.value.split("_");
     orderField = field;
     orderDirection = dir;
-    cargarpadron(true);
+    cargarPadron(true);
   });
 
 document
   .getElementById("pageSizeSelect")
   ?.addEventListener("change", e => {
     pageSize = Number(e.target.value);
-    cargarpadron(true);
+    cargarPadron(true);
   });
 
 document
   .getElementById("btnCargarMas")
-  ?.addEventListener("click", () => cargarpadron(false));
+  ?.addEventListener("click", () => cargarPadron(false));
 
 /* =====================
    ALTA / EDICIÓN
 ===================== */
-async function guardarContacto(data) {
-  const payload = {
-    nombre: data.nombre,
-    apellido: data.apellido,
-    nombre_completo: `${data.apellido} ${data.nombre}`,
-    telefono: data.telefono || null,
-    afiliado: data.afiliado || null,
-    grupo_familiar_id: data.grupoFamiliarId || null,
-    fecha_nacimiento: data.fechaNacimiento || null,
-    updated_at: new Date()
-  };
+async function guardarPadron(data) {
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    Swal.fire("Error", "Sesión inválida", "error");
+    return;
+  }
 
   try {
     if (editandoId) {
+      const payloadUpdate = {
+        nombre: data.nombre,
+        apellido: data.apellido,
+        nombre_completo: `${data.apellido} ${data.nombre}`,
+        telefono: data.telefono || null,
+        afiliado: data.afiliado || null,
+        grupo_familiar_id: data.grupoFamiliarId || null,
+        fecha_nacimiento: data.fechaNacimiento || null,
+        updated_at: new Date()
+      };
+
       await supabase
         .from("padron")
-        .update(payload)
+        .update(payloadUpdate)
         .eq("id", editandoId);
 
       editandoId = null;
-      Swal.fire("Actualizado", "Contacto modificado", "success");
-    } else {
-      await supabase
-          .from("padron")
-        .insert(payload);
+      Swal.fire("Actualizado", "Afiliado modificado", "success");
 
-      Swal.fire("Guardado", "Contacto agregado", "success");
+    } else {
+      const payloadInsert = {
+        nombre: data.nombre,
+        apellido: data.apellido,
+        nombre_completo: `${data.apellido} ${data.nombre}`,
+        telefono: data.telefono || null,
+        afiliado: data.afiliado || null,
+        grupo_familiar_id: data.grupoFamiliarId || null,
+        fecha_nacimiento: data.fechaNacimiento || null,
+        created_by: user.id
+      };
+
+      await supabase
+        .from("padron")
+        .insert(payloadInsert);
+
+      Swal.fire("Guardado", "Afiliado agregado", "success");
     }
 
-    cargarpadron(true);
+    cargarPadron(true);
     limpiarFormulario();
 
   } catch (err) {
     console.error(err);
-    Swal.fire("Error", "No se pudo guardar el contacto", "error");
+    Swal.fire("Error", "No se pudo guardar el afiliado", "error");
   }
 }
 
 /* =====================
    CARGAR PARA EDICIÓN
 ===================== */
-async function cargarContactoParaEdicion(id) {
+async function cargarPadronParaEdicion(id) {
   const { data, error } = await supabase
     .from("padron")
     .select("*")
@@ -230,7 +247,7 @@ async function cargarContactoParaEdicion(id) {
 
   if (error || !data) return;
 
-  const f = document.getElementById("contactoForm");
+  const f = document.getElementById("PadronForm");
 
   editandoId = id;
   f.nombre.value = data.nombre || "";
@@ -244,9 +261,9 @@ async function cargarContactoParaEdicion(id) {
 /* =====================
    ELIMINAR
 ===================== */
-async function eliminarContacto(id) {
+async function eliminarPadron(id) {
   const r = await Swal.fire({
-    title: "¿Eliminar contacto?",
+    title: "¿Eliminar afiliado?",
     text: "Esta acción es permanente",
     icon: "warning",
     showCancelButton: true,
@@ -262,23 +279,23 @@ async function eliminarContacto(id) {
     .eq("id", id);
 
   Swal.fire("Eliminado", "Afiliado eliminado", "success");
-  cargarpadron(true);
+  cargarPadron(true);
 }
 
 /* =====================
    FORM
 ===================== */
 function limpiarFormulario() {
-  document.getElementById("contactoForm")?.reset();
+  document.getElementById("PadronForm")?.reset();
 }
 
 document
-  .getElementById("contactoForm")
+  .getElementById("PadronForm")
   ?.addEventListener("submit", async e => {
     e.preventDefault();
     const f = e.target;
 
-    await guardarContacto({
+    await guardarPadron({
       nombre: f.nombre.value.trim(),
       apellido: f.apellido.value.trim(),
       telefono: f.telefono.value.trim(),
