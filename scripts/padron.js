@@ -8,7 +8,7 @@ let pageSize = 50;
 let editandoId = null;
 let offset = 0;
 
-let contactosCache = [];
+let padronCache = [];
 let searchText = "";
 let orderField = "apellido";
 let orderDirection = "asc";
@@ -40,7 +40,7 @@ authObserver(user => {
   } else {
     document.getElementById("status").textContent =
       `Bienvenido ${user.email}`;
-    cargarContactos(true);
+    cargarpadron(true);
   }
 });
 
@@ -49,20 +49,20 @@ document
   ?.addEventListener("click", logout);
 
 /* =====================
-   CARGA DE CONTACTOS
+   CARGA DE PADRON
 ===================== */
-async function cargarContactos(reset = true) {
-  const tbody = document.getElementById("contactosBody");
+async function cargarpadron(reset = true) {
+  const tbody = document.getElementById("padronBody");
 
   if (reset) {
     tbody.innerHTML = "";
-    contactosCache = [];
+    padronCache = [];
     offset = 0;
   }
 
   try {
     const { data, error } = await supabase
-      .from("contactos")
+      .from("padron")
       .select("*")
       .order(orderField, { ascending: orderDirection === "asc" })
       .range(offset, offset + pageSize - 1);
@@ -71,18 +71,18 @@ async function cargarContactos(reset = true) {
 
     if (!data.length && reset) {
       tbody.innerHTML =
-        `<tr><td colspan="8">No hay contactos</td></tr>`;
+        `<tr><td colspan="8">No hay Afiliados</td></tr>`;
       return;
     }
 
-    contactosCache.push(...data);
+    padronCache.push(...data);
     offset += pageSize;
 
     renderTabla();
 
   } catch (err) {
     console.error(err);
-    Swal.fire("Error", "No se pudieron cargar los contactos", "error");
+    Swal.fire("Error", "No se pudieron cargar los Afiliados", "error");
   }
 }
 
@@ -90,10 +90,10 @@ async function cargarContactos(reset = true) {
    RENDER TABLA
 ===================== */
 function renderTabla() {
-  const tbody = document.getElementById("contactosBody");
+  const tbody = document.getElementById("padronBody");
   tbody.innerHTML = "";
 
-  const filtrados = contactosCache.filter(c => {
+  const filtrados = padronCache.filter(c => {
     const t = searchText.toLowerCase();
     return (
       c.nombre_completo?.toLowerCase().includes(t) ||
@@ -163,19 +163,19 @@ document
     const [field, dir] = e.target.value.split("_");
     orderField = field;
     orderDirection = dir;
-    cargarContactos(true);
+    cargarpadron(true);
   });
 
 document
   .getElementById("pageSizeSelect")
   ?.addEventListener("change", e => {
     pageSize = Number(e.target.value);
-    cargarContactos(true);
+    cargarpadron(true);
   });
 
 document
   .getElementById("btnCargarMas")
-  ?.addEventListener("click", () => cargarContactos(false));
+  ?.addEventListener("click", () => cargarpadron(false));
 
 /* =====================
    ALTA / EDICIÓN
@@ -195,7 +195,7 @@ async function guardarContacto(data) {
   try {
     if (editandoId) {
       await supabase
-        .from("contactos")
+        .from("padron")
         .update(payload)
         .eq("id", editandoId);
 
@@ -203,13 +203,13 @@ async function guardarContacto(data) {
       Swal.fire("Actualizado", "Contacto modificado", "success");
     } else {
       await supabase
-        .from("contactos")
+          .from("padron")
         .insert(payload);
 
       Swal.fire("Guardado", "Contacto agregado", "success");
     }
 
-    cargarContactos(true);
+    cargarpadron(true);
     limpiarFormulario();
 
   } catch (err) {
@@ -223,7 +223,7 @@ async function guardarContacto(data) {
 ===================== */
 async function cargarContactoParaEdicion(id) {
   const { data, error } = await supabase
-    .from("contactos")
+    .from("padron")
     .select("*")
     .eq("id", id)
     .single();
@@ -257,12 +257,12 @@ async function eliminarContacto(id) {
   if (!r.isConfirmed) return;
 
   await supabase
-    .from("contactos")
+    .from("padron")
     .delete()
     .eq("id", id);
 
-  Swal.fire("Eliminado", "Contacto eliminado", "success");
-  cargarContactos(true);
+  Swal.fire("Eliminado", "Afiliado eliminado", "success");
+  cargarpadron(true);
 }
 
 /* =====================
