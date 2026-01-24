@@ -48,11 +48,9 @@ searchInput.addEventListener("input", async e => {
         grupo_familiar_id,
         relacion
       `)
-      .or(`
-        nombre_completo.ilike.%${texto}%,
-        dni.ilike.%${texto}%,
-        afiliado.ilike.%${texto}%
-      `)
+    .or(
+      `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,afiliado.ilike.%${texto}%`
+    )
       .limit(20);
 
     if (error) throw error;
