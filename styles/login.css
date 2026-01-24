@@ -99,11 +99,52 @@ button:active {
 /* =========================
    ERROR
 ========================= */
+.input-error {
+  border: 2px solid #e53935;
+  background-color: #fff5f5;
+}
+
 #error {
-  margin-top: 1rem;
-  text-align: center;
+  color: #e53935;
+  margin-top: 0.5rem;
   font-size: 0.9rem;
-  color: #dc2626;
+}
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.toggle-password img {
+  width: 20px;
+  height: 20px;
+}
+
+.input-error {
+  border: 2px solid #e53935;
+  background-color: #fff5f5;
+}
+
+#error {
+  color: #e53935;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
 /* =========================
@@ -119,3 +160,5 @@ button:active {
     font-size: 1.4rem;
   }
 }
+
+
