@@ -122,8 +122,8 @@ input:focus-visible {
 
 .toggle-password {
     position: absolute;
-    top: 15%;
-    left: 130px;
+    top: 30%;
+    left: 90%;
     transform: translateY(-20%);
     background: none;
     border: none;
