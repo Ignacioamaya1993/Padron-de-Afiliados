@@ -32,25 +32,23 @@ searchInput.addEventListener("input", async e => {
   const texto = e.target.value.trim();
   resultadosDiv.innerHTML = "";
 
-  if (texto.length < 3) return;
-  if (buscando) return;
+  if (texto.length < 3 || buscando) return;
 
   buscando = true;
 
   try {
     const { data, error } = await supabase
-      .from("padron")
+      .from("afiliados")
       .select(`
         id,
         nombre_completo,
         dni,
-        afiliado,
-        grupo_familiar_id,
+        numero_afiliado,
         relacion
       `)
-    .or(
-      `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,afiliado.ilike.%${texto}%`
-    )
+      .or(
+        `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,numero_afiliado.ilike.%${texto}%`
+      )
       .limit(20);
 
     if (error) throw error;
@@ -68,7 +66,7 @@ searchInput.addEventListener("input", async e => {
       item.innerHTML = `
         <strong>${a.nombre_completo}</strong><br>
         DNI: ${a.dni || "-"} |
-        Afiliado: ${a.afiliado} |
+        Afiliado: ${a.numero_afiliado} |
         ${a.relacion}
       `;
 
@@ -102,17 +100,14 @@ document
     const dni = f.dni.value.trim();
     const telefono = f.telefono.value.trim() || null;
     const fechaNacimiento = f.fechaNacimiento.value || null;
-
-    const numeroBaseInput = f.numeroBase.value.trim(); // ej: 50271-5
-    const sufijo = f.sufijo.value.trim();              // libre: 00, 99, etc
+    const numeroAfiliado = f.numeroAfiliado.value.trim();
     const relacion = f.relacion.value;
 
     if (
       !nombre ||
       !apellido ||
       !dni ||
-      !numeroBaseInput ||
-      !sufijo ||
+      !numeroAfiliado ||
       !relacion
     ) {
       Swal.fire(
@@ -123,69 +118,38 @@ document
       return;
     }
 
-    const nombreCompleto =
-      `${apellido.toUpperCase()} ${nombre.toUpperCase()}`;
+    /* =====================
+       DERIVAR GRUPO FAMILIAR
+       ej: 19-00639-4/00 → 00639-4
+    ===================== */
+    const match = numeroAfiliado.match(/^[^-]+-([^/]+)\//);
 
-    const numeroBase = `19-${numeroBaseInput}`;
+    if (!match) {
+      Swal.fire(
+        "Formato incorrecto",
+        "El número de afiliado debe tener formato válido (ej: 19-00639-4/00)",
+        "error"
+      );
+      return;
+    }
+
+    const grupoFamiliarCodigo = match[1];
 
     try {
-      /* =====================
-         1. BUSCAR O CREAR GRUPO
-      ===================== */
-      let grupoId;
-
-      const { data: grupoExistente, error: errorGrupo } = await supabase
-        .from("grupos_familiares")
-        .select("id")
-        .eq("numero_afiliado_base", numeroBase)
-        .maybeSingle();
-
-      if (errorGrupo) throw errorGrupo;
-
-      if (grupoExistente) {
-        grupoId = grupoExistente.id;
-      } else {
-        const { data: nuevoGrupo, error } = await supabase
-          .from("grupos_familiares")
-          .insert({
-            numero_afiliado_base: numeroBase
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        grupoId = nuevoGrupo.id;
-      }
-
-      /* =====================
-         2. INSERTAR AFILIADO
-      ===================== */
-      const { error: insertError } = await supabase
+      const { error } = await supabase
         .from("afiliados")
         .insert({
-          grupo_id: grupoId,
           nombre,
           apellido,
-          nombre_completo: nombreCompleto,
           dni,
           telefono,
           fecha_nacimiento: fechaNacimiento,
-          sufijo,
+          numero_afiliado: numeroAfiliado,
+          grupo_familiar_codigo: grupoFamiliarCodigo,
           relacion
         });
 
-      if (insertError) {
-        if (insertError.message?.includes("grupo_sufijo_unico")) {
-          Swal.fire(
-            "Error",
-            "Ese sufijo ya existe dentro del grupo familiar",
-            "error"
-          );
-          return;
-        }
-
-        throw insertError;
-      }
+      if (error) throw error;
 
       Swal.fire(
         "Guardado",
@@ -197,11 +161,20 @@ document
 
     } catch (err) {
       console.error(err);
-      Swal.fire(
-        "Error",
-        "No se pudo guardar el afiliado",
-        "error"
-      );
+
+      if (err.message?.includes("dni")) {
+        Swal.fire(
+          "DNI duplicado",
+          "Ya existe un afiliado con ese DNI",
+          "warning"
+        );
+      } else {
+        Swal.fire(
+          "Error",
+          "No se pudo guardar el afiliado",
+          "error"
+        );
+      }
     }
   });
 
