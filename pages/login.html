@@ -3,23 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <title>Login – Afiliados Luz y Fuerza Olavarría</title>
-    <link rel="stylesheet" href="../styles/login.css" />
+
+  <link rel="stylesheet" href="../styles/login.css" />
 </head>
 <body>
 
-<div class="login-container">
-  <h2>Iniciar sesión</h2>
+  <div class="login-container">
+    <h2>Iniciar sesión</h2>
 
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Contraseña">
+    <!-- EMAIL -->
+    <input
+      type="email"
+      id="email"
+      placeholder="Email"
+      autocomplete="email"
+      required
+    />
 
-  <button id="loginBtn">Ingresar</button>
+    <!-- PASSWORD CON OJO -->
+    <div class="password-wrapper">
+      <input
+        type="password"
+        id="password"
+        placeholder="Contraseña"
+        autocomplete="current-password"
+        required
+      />
 
-  <p id="error"></p>
-</div>
+      <button
+        type="button"
+        id="togglePassword"
+        class="toggle-password"
+        aria-label="Mostrar u ocultar contraseña"
+      >
+        <img
+          id="togglePasswordIcon"
+          src="../assets/images/eye-closed.png"
+          alt="Mostrar contraseña"
+        />
+      </button>
+    </div>
 
+    <!-- BOTÓN -->
+    <button id="loginBtn">Ingresar</button>
 
-  <!-- JS externo -->
+    <!-- ERROR -->
+    <p id="error"></p>
+  </div>
+
+  <!-- JS -->
   <script type="module" src="../scripts/login.js"></script>
 
 </body>
