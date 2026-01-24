@@ -41,12 +41,9 @@ searchInput.addEventListener("input", async e => {
     const { data, error } = await supabase
       .from("padron")
       .select("id, nombre_completo, dni, afiliado, grupo_familiar_id")
-      .or(`
-        nombre_completo.ilike.%${texto}%,
-        dni.ilike.%${texto}%,
-        afiliado.ilike.%${texto}%,
-        grupo_familiar_id.ilike.%${texto}%
-      `)
+      .or(
+        `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,afiliado.ilike.%${texto}%,grupo_familiar_id.ilike.%${texto}%`
+      )
       .limit(20);
 
     if (error) throw error;
