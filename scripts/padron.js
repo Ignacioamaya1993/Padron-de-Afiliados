@@ -96,8 +96,9 @@ authObserver(user => {
     return;
   }
 
-  document.getElementById("status").textContent =
-    `Bienvenido ${user.email}`;
+  document.getElementById("status").innerHTML =
+      `Bienvenido, <strong>${user.email}</strong>`;
+
 });
 
 document
