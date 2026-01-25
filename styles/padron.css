@@ -62,7 +62,7 @@ header h1 {
 }
 
 /* RESULTADOS */
-.resultados {
+.resultados-busqueda {
   margin-top: 1rem;
   background: white;
   border-radius: 10px;
@@ -144,4 +144,13 @@ header h1 {
 #btnCancelarNuevo {
   background: #64748b;
   color: white;
+}
+
+#estudiosField {
+  grid-column: 1 / -1;
+}
+
+#estudiosField input {
+  border: 1px solid #f59e0b;
+  background: #fff7ed;
 }
