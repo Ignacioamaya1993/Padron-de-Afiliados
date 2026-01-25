@@ -111,8 +111,10 @@ function renderFicha() {
   document.getElementById("nombreCompleto").textContent =
     `${afiliado.nombre} ${afiliado.apellido}`;
   document.getElementById("dni").textContent = afiliado.dni || "-";
-  document.getElementById("fechaNacimiento").textContent =
-    afiliado.fecha_nacimiento || "-";
+    document.getElementById("fechaNacimiento").textContent =
+    afiliado.fecha_nacimiento
+        ? new Date(afiliado.fecha_nacimiento).toLocaleDateString("es-AR")
+        : "-";
 
   const edad = calcularEdad(afiliado.fecha_nacimiento);
   document.getElementById("edad").textContent =
