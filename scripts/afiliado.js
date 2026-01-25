@@ -29,15 +29,24 @@ function calcularEdad(fecha) {
   return edad;
 }
 
-function estadoHTML(activo) {
-  return activo
-    ? `<span>Activo</span>`
-    : `<span style="color:#dc2626;font-weight:700">Dado de baja</span>`;
+function mostrarEstadoAfiliado(activo) {
+  const estado = document.getElementById("estadoAfiliado");
+  if (!estado) return;
+
+  if (activo) {
+    estado.textContent = "Activo";
+    estado.style.color = "";
+    estado.style.fontWeight = "normal";
+  } else {
+    estado.textContent = "Dado de baja";
+    estado.style.color = "#dc2626";
+    estado.style.fontWeight = "700";
+  }
 }
 
 /* =====================
    CARGAR AFILIADO
-===================== */
+==================== */
 
 async function cargarAfiliado() {
   const { data, error } = await supabase
@@ -58,76 +67,70 @@ async function cargarAfiliado() {
 
 /* =====================
    RENDER FICHA
-===================== */
+==================== */
 
 function renderFicha() {
   modoEdicion = false;
 
   document.getElementById("nombreCompleto").textContent =
     `${afiliado.nombre} ${afiliado.apellido}`;
-
-  document.getElementById("dni").replaceWith(crearSpan("dni", afiliado.dni));
-  document.getElementById("telefono").replaceWith(crearSpan("telefono", afiliado.telefono || "-"));
-  document.getElementById("numeroAfiliado").replaceWith(crearSpan("numeroAfiliado", afiliado.numero_afiliado));
-  document.getElementById("fechaNacimiento").replaceWith(crearSpan("fechaNacimiento", afiliado.fecha_nacimiento || "-"));
+  document.getElementById("dni").textContent = afiliado.dni;
+  document.getElementById("fechaNacimiento").textContent = afiliado.fecha_nacimiento || "-";
 
   const edad = calcularEdad(afiliado.fecha_nacimiento);
-  document.getElementById("edad").textContent =
-    edad !== null ? `${edad} años` : "-";
+  document.getElementById("edad").textContent = edad !== null ? `${edad} años` : "-";
 
-  document.getElementById("grupoFamiliar").textContent =
-    afiliado.grupo_familiar_codigo || "-";
-
-  document.getElementById("relacion").innerHTML =
-    `${afiliado.relacion} | ${estadoHTML(afiliado.activo)}`;
+  document.getElementById("telefono").textContent = afiliado.telefono || "-";
+  document.getElementById("numeroAfiliado").textContent = afiliado.numero_afiliado;
+  document.getElementById("grupoFamiliar").textContent = afiliado.grupo_familiar_codigo || "-";
+  document.getElementById("relacion").textContent = afiliado.relacion;
+  mostrarEstadoAfiliado(afiliado.activo);
 
   // Estudios
   const estudiosField = document.getElementById("estudiosField");
   if (afiliado.relacion === "Hijo/a" && edad >= 18 && edad <= 25) {
     estudiosField.style.display = "block";
-    document.getElementById("estudios").replaceWith(
-      crearSpan("estudios", afiliado.estudios || "-")
-    );
+    document.getElementById("estudios").textContent = afiliado.estudios || "-";
   } else {
     estudiosField.style.display = "none";
   }
 
   toggleBotones(false);
 
-  document.getElementById("btnEditar").style.display =
-    afiliado.activo ? "inline-block" : "none";
-
-  document.getElementById("btnBaja").style.display =
-    afiliado.activo ? "inline-block" : "none";
-
-  document.getElementById("btnReactivar").style.display =
-    afiliado.activo ? "none" : "inline-block";
+  document.getElementById("btnEditar").style.display = afiliado.activo ? "inline-block" : "none";
+  document.getElementById("btnBaja").style.display = afiliado.activo ? "inline-block" : "none";
+  document.getElementById("btnReactivar").style.display = afiliado.activo ? "none" : "inline-block";
 }
 
 /* =====================
    MODO EDICIÓN
-===================== */
+==================== */
 
 function entrarModoEdicion() {
   if (!afiliado.activo) return;
+
   modoEdicion = true;
 
-  reemplazarPorInput("telefono", afiliado.telefono);
-  reemplazarPorInput("fechaNacimiento", afiliado.fecha_nacimiento, "date");
-  reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
+  // TODOS los campos editables
+  ["telefono", "fechaNacimiento", "numeroAfiliado", "dni", "relacion"].forEach(id => {
+    reemplazarPorInput(id, afiliado[id] || "");
+  });
 
+  // Escucha cambios en fecha de nacimiento
   const fechaInput = document.getElementById("fechaNacimiento");
   fechaInput.addEventListener("input", actualizarEdadYEstudios);
-  fechaInput.addEventListener("change", actualizarEdadYEstudios);
 
+  // Estudios
   actualizarEdadYEstudios();
+
   toggleBotones(true);
 }
 
 function actualizarEdadYEstudios() {
-  if (!modoEdicion || afiliado.relacion !== "Hijo/a") return;
+  if (!modoEdicion) return;
 
   const fechaInput = document.getElementById("fechaNacimiento");
+  const relacionInput = document.getElementById("relacion");
   const edadSpan = document.getElementById("edad");
   const estudiosField = document.getElementById("estudiosField");
 
@@ -136,7 +139,8 @@ function actualizarEdadYEstudios() {
   const edad = calcularEdad(fechaInput.value);
   edadSpan.textContent = edad !== null ? `${edad} años` : "-";
 
-  if (edad >= 18 && edad <= 25) {
+  // Mostrar selector de estudios solo si Hijo/a y edad entre 18-25
+  if (relacionInput.value === "Hijo/a" && edad >= 18 && edad <= 25) {
     estudiosField.style.display = "block";
     convertirEstudiosASelect();
   } else {
@@ -164,18 +168,13 @@ function convertirEstudiosASelect() {
 
 function reemplazarPorInput(id, valor, tipo = "text") {
   const span = document.getElementById(id);
+  if (!span) return;
+
   const input = document.createElement("input");
   input.type = tipo;
   input.id = id;
   input.value = valor || "";
   span.replaceWith(input);
-}
-
-function crearSpan(id, texto) {
-  const span = document.createElement("span");
-  span.id = id;
-  span.textContent = texto;
-  return span;
 }
 
 function toggleBotones(editando) {
@@ -185,19 +184,25 @@ function toggleBotones(editando) {
 }
 
 /* =====================
-   GUARDAR / BAJA / ETC
-===================== */
+   GUARDAR
+==================== */
 
 async function guardarCambios() {
   const payload = {
     telefono: document.getElementById("telefono").value || null,
     fecha_nacimiento: document.getElementById("fechaNacimiento").value || null,
     numero_afiliado: document.getElementById("numeroAfiliado").value,
+    dni: document.getElementById("dni").value,
+    relacion: document.getElementById("relacion").value,
   };
 
   const estudiosEl = document.getElementById("estudios");
-  if (estudiosEl?.tagName === "SELECT") {
+  if (estudiosEl && estudiosEl.tagName === "SELECT") {
     payload.estudios = estudiosEl.value;
+  }
+
+  if (payload.numero_afiliado !== afiliado.numero_afiliado) {
+    payload.grupo_familiar_codigo = payload.numero_afiliado;
   }
 
   const { error } = await supabase
@@ -214,27 +219,68 @@ async function guardarCambios() {
   cargarAfiliado();
 }
 
+/* =====================
+   BAJA / REACTIVAR / ELIMINAR
+==================== */
+
 async function darDeBaja() {
-  if (!(await Swal.fire({ title: "¿Dar de baja?", showCancelButton: true })).isConfirmed) return;
-  await supabase.from("afiliados").update({ activo: false }).eq("id", afiliado.id);
+  const res = await Swal.fire({
+    title: "¿Dar de baja afiliado?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Dar de baja"
+  });
+
+  if (!res.isConfirmed) return;
+
+  await supabase
+    .from("afiliados")
+    .update({ activo: false })
+    .eq("id", afiliado.id);
+
   cargarAfiliado();
 }
 
 async function reactivar() {
-  if (!(await Swal.fire({ title: "¿Reactivar?", showCancelButton: true })).isConfirmed) return;
-  await supabase.from("afiliados").update({ activo: true }).eq("id", afiliado.id);
+  const res = await Swal.fire({
+    title: "¿Reactivar afiliado?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Reactivar"
+  });
+
+  if (!res.isConfirmed) return;
+
+  await supabase
+    .from("afiliados")
+    .update({ activo: true })
+    .eq("id", afiliado.id);
+
   cargarAfiliado();
 }
 
 async function eliminarDefinitivo() {
-  if (!(await Swal.fire({ title: "ELIMINAR DEFINITIVO", icon: "error", showCancelButton: true })).isConfirmed) return;
-  await supabase.from("afiliados").delete().eq("id", afiliado.id);
+  const res = await Swal.fire({
+    title: "ELIMINAR DEFINITIVAMENTE",
+    text: "Esta acción no se puede deshacer",
+    icon: "error",
+    showCancelButton: true,
+    confirmButtonText: "Eliminar"
+  });
+
+  if (!res.isConfirmed) return;
+
+  await supabase
+    .from("afiliados")
+    .delete()
+    .eq("id", afiliado.id);
+
   window.location.href = "/pages/padron.html";
 }
 
 /* =====================
    GRUPO FAMILIAR
-===================== */
+==================== */
 
 async function cargarGrupoFamiliar() {
   if (!afiliado.grupo_familiar_codigo) return;
@@ -275,17 +321,17 @@ async function cargarGrupoFamiliar() {
 
 /* =====================
    EVENTOS
-===================== */
+==================== */
 
 document.getElementById("btnEditar").onclick = entrarModoEdicion;
 document.getElementById("btnGuardar").onclick = guardarCambios;
-document.getElementById("btnCancelar").onclick = renderFicha;
+document.getElementById("btnCancelar").onclick = cargarAfiliado;
 document.getElementById("btnBaja").onclick = darDeBaja;
 document.getElementById("btnEliminar").onclick = eliminarDefinitivo;
 document.getElementById("btnReactivar").onclick = reactivar;
 
 /* =====================
    INIT
-===================== */
+==================== */
 
 cargarAfiliado();
