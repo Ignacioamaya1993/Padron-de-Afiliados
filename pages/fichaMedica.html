@@ -11,7 +11,12 @@
 
 <header>
   <h1>Ficha Médica de <span id="nombreAfiliado"></span></h1>
-  <button id="btnVolver">⬅ Volver al buscador</button>
+  
+  <div class="user-bar">
+    <span id="bienvenido">Bienvenido, <strong id="userEmail"></strong></span>
+    <button id="logoutBtn">Cerrar sesión</button>
+    <button id="btnVolver">⬅ Volver a la Ficha del Afiliado</button>
+  </div>
 </header>
 
 <main>
@@ -34,7 +39,6 @@
   <section id="incidencias" class="tab-content">
     <button id="btnAgregarIncidencia">➕ Nueva incidencia</button>
     <div id="listaIncidencias"></div>
-    <!-- Input oculto para adjuntar archivos -->
     <input type="file" id="archivoIncidencia" accept="image/*,application/pdf" style="display:none;">
   </section>
 </main>
