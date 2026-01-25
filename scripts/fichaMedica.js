@@ -13,19 +13,17 @@ let user = null;
    AUTENTICACIÓN
 ===================== */
 async function verificarUsuario() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    // Si no hay usuario logueado, redirigir al login
+  const { data: { user: u } } = await supabase.auth.getUser();
+  if (!u) {
     window.location.href = "/pages/login.html";
     return;
   }
 
-  // Mostrar email logueado en header
+  user = u; // <-- Asignamos el usuario globalmente
   const bienvenidoSpan = document.getElementById("userEmail");
   if (bienvenidoSpan) bienvenidoSpan.textContent = user.email;
 }
 
-// Cerrar sesión
 async function cerrarSesion() {
   const { error } = await supabase.auth.signOut();
   if (error) {
@@ -135,6 +133,7 @@ function setupNuevoCancelar(nuevoBtnId, cancelarBtnId, formId, callbackGuardar) 
 
 /* ===================== Guardado en Supabase ===================== */
 async function guardarEnfermedad(formData) {
+  if (!user) return Swal.fire("Error", "Usuario no definido", "error");
   const { error } = await supabase.from("enfermedades_cronicas").insert([{
     afiliado_id: afiliadoId,
     enfermedad: formData.get("enfermedad"),
@@ -149,6 +148,7 @@ async function guardarEnfermedad(formData) {
 }
 
 async function guardarMedicamento(formData) {
+  if (!user) return Swal.fire("Error", "Usuario no definido", "error");
   const { error } = await supabase.from("medicamentos").insert([{
     afiliado_id: afiliadoId,
     medicamento: formData.get("medicamento"),
@@ -164,6 +164,7 @@ async function guardarMedicamento(formData) {
 }
 
 async function guardarIncidencia(formData) {
+  if (!user) return Swal.fire("Error", "Usuario no definido", "error");
   let adjuntoUrl = null;
   const file = formData.get("adjunto");
   if (file && file.size > 0) adjuntoUrl = await subirArchivoCloudinary(file);
@@ -184,6 +185,7 @@ async function guardarIncidencia(formData) {
 }
 
 async function guardarAdiccion(formData) {
+  if (!user) return Swal.fire("Error", "Usuario no definido", "error");
   const { error } = await supabase.from("adicciones").insert([{
     afiliado_id: afiliadoId,
     adiccion: formData.get("adiccion"),
@@ -205,7 +207,7 @@ setupNuevoCancelar("btnNuevoAdiccion", "btnCancelarAdiccion", "formAdiccion", gu
 
 /* ===================== INIT ===================== */
 async function init() {
-  await obtenerUsuario();
+  await verificarUsuario();
   await cargarAfiliado();
   await cargarEnfermedades();
   await cargarMedicamentos();
@@ -215,5 +217,4 @@ async function init() {
 
 document.getElementById("logoutBtn").onclick = cerrarSesion;
 
-verificarUsuario();
 init();
