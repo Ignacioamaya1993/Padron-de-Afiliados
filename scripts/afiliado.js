@@ -31,12 +31,15 @@ function calcularEdad(fecha) {
 
 function mostrarEstado(activo) {
   const status = document.getElementById("status");
+
   if (activo) {
-    status.textContent = "🟢 ACTIVO";
-    status.style.color = "#16a34a";
+    status.textContent = "Activo";
+    status.style.color = "";
+    status.style.fontWeight = "normal";
   } else {
-    status.textContent = "🔴 DADO DE BAJA";
+    status.textContent = "Dado de baja";
     status.style.color = "#dc2626";
+    status.style.fontWeight = "700";
   }
 }
 
@@ -104,14 +107,17 @@ function renderFicha() {
   }
 
   mostrarEstado(afiliado.activo);
-
   salirModoEdicion();
 
-  // Bloquear acciones si está dado de baja
-  if (!afiliado.activo) {
-    document.getElementById("btnEditar").style.display = "none";
-    document.getElementById("btnBaja").style.display = "none";
-  }
+  // Botones según estado
+  document.getElementById("btnEditar").style.display =
+    afiliado.activo ? "inline-block" : "none";
+
+  document.getElementById("btnBaja").style.display =
+    afiliado.activo ? "inline-block" : "none";
+
+  document.getElementById("btnReactivar").style.display =
+    afiliado.activo ? "none" : "inline-block";
 }
 
 /* =====================
@@ -127,7 +133,6 @@ function entrarModoEdicion() {
   reemplazarPorInput("fechaNacimiento", afiliado.fecha_nacimiento, "date");
   reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
 
-  // Estudios → select
   if (document.getElementById("estudiosField").style.display === "block") {
     const span = document.getElementById("estudios");
     const select = document.createElement("select");
@@ -165,9 +170,11 @@ function reemplazarPorInput(id, valor, tipo = "text") {
 
 function toggleBotones(editando) {
   document.getElementById("btnEditar").style.display =
-    editando ? "none" : "inline-block";
+    editando ? "none" : document.getElementById("btnEditar").style.display;
+
   document.getElementById("btnGuardar").style.display =
     editando ? "inline-block" : "none";
+
   document.getElementById("btnCancelar").style.display =
     editando ? "inline-block" : "none";
 }
@@ -188,7 +195,6 @@ async function guardarCambios() {
     payload.estudios = estudiosEl.value;
   }
 
-  // Si cambia número → actualizar grupo familiar
   if (payload.numero_afiliado !== afiliado.numero_afiliado) {
     payload.grupo_familiar_codigo = payload.numero_afiliado;
   }
@@ -208,13 +214,12 @@ async function guardarCambios() {
 }
 
 /* =====================
-   BAJA / ELIMINAR
+   BAJA / REACTIVAR / ELIMINAR
 ===================== */
 
 async function darDeBaja() {
   const res = await Swal.fire({
     title: "¿Dar de baja afiliado?",
-    text: "El afiliado quedará inactivo",
     icon: "warning",
     showCancelButton: true,
     confirmButtonText: "Dar de baja"
@@ -222,17 +227,20 @@ async function darDeBaja() {
 
   if (!res.isConfirmed) return;
 
-  const { error } = await supabase
+  await supabase
     .from("afiliados")
     .update({ activo: false })
     .eq("id", afiliado.id);
 
-  if (error) {
-    Swal.fire("Error", error.message, "error");
-    return;
-  }
+  cargarAfiliado();
+}
 
-  Swal.fire("Baja realizada", "", "success");
+async function reactivar() {
+  await supabase
+    .from("afiliados")
+    .update({ activo: true })
+    .eq("id", afiliado.id);
+
   cargarAfiliado();
 }
 
@@ -247,17 +255,11 @@ async function eliminarDefinitivo() {
 
   if (!res.isConfirmed) return;
 
-  const { error } = await supabase
+  await supabase
     .from("afiliados")
     .delete()
     .eq("id", afiliado.id);
 
-  if (error) {
-    Swal.fire("Error", error.message, "error");
-    return;
-  }
-
-  Swal.fire("Eliminado", "", "success");
   window.location.href = "/pages/padron.html";
 }
 
@@ -268,22 +270,18 @@ async function eliminarDefinitivo() {
 async function cargarGrupoFamiliar() {
   if (!afiliado.grupo_familiar_codigo) return;
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("afiliados")
     .select("id, nombre, apellido, dni, numero_afiliado, relacion, activo")
     .eq("grupo_familiar_codigo", afiliado.grupo_familiar_codigo)
     .order("relacion");
-
-  if (error) {
-    console.error(error);
-    return;
-  }
 
   const tbody = document.querySelector("#tablaGrupoFamiliar tbody");
   tbody.innerHTML = "";
 
   data.forEach(a => {
     const tr = document.createElement("tr");
+    tr.style.cursor = "pointer";
 
     if (a.id === afiliado.id) {
       tr.style.background = "#e0f2fe";
@@ -295,8 +293,11 @@ async function cargarGrupoFamiliar() {
       <td>${a.dni}</td>
       <td>${a.numero_afiliado}</td>
       <td>${a.relacion}</td>
-      <td>${a.activo ? "🟢" : "🔴"}</td>
     `;
+
+    tr.onclick = () => {
+      window.location.href = `/pages/afiliado.html?id=${a.id}`;
+    };
 
     tbody.appendChild(tr);
   });
@@ -311,6 +312,7 @@ document.getElementById("btnGuardar").onclick = guardarCambios;
 document.getElementById("btnCancelar").onclick = renderFicha;
 document.getElementById("btnBaja").onclick = darDeBaja;
 document.getElementById("btnEliminar").onclick = eliminarDefinitivo;
+document.getElementById("btnReactivar").onclick = reactivar;
 
 /* =====================
    INIT
