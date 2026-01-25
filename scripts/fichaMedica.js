@@ -1,5 +1,5 @@
 import { supabase } from "./supabase.js";
-import { subirArchivoCloudinary } from "./cloudinary.js";
+import { subirArchivoCloudinary } from "./cloudinary.js"; // Si usás Cloudinary
 
 const params = new URLSearchParams(window.location.search);
 const afiliadoId = params.get("id");
@@ -27,7 +27,7 @@ async function obtenerUsuario() {
   }
 }
 
-/* ===================== Cargar afiliado ===================== */
+/* ===================== Cargar Afiliado ===================== */
 async function cargarAfiliado() {
   const { data, error } = await supabase.from("afiliados").select("*").eq("id", afiliadoId).single();
   if (error || !data) return console.error(error);
@@ -35,36 +35,56 @@ async function cargarAfiliado() {
   document.getElementById("nombreAfiliado").textContent = `${afiliado.nombre} ${afiliado.apellido}`;
 }
 
-/* ===================== Cargar registros ===================== */
-async function cargarRegistros(tabla, containerId, mostrar) {
-  const { data } = await supabase.from(tabla).select("*").eq("afiliado_id", afiliadoId);
-  const container = document.getElementById(containerId);
+/* ===================== Funciones de carga de datos ===================== */
+async function cargarEnfermedades() {
+  const { data } = await supabase.from("enfermedades_cronicas").select("*").eq("afiliado_id", afiliadoId);
+  const container = document.getElementById("listaEnfermedades");
   container.innerHTML = "";
-  data.forEach(item => {
+  data.forEach(e => {
     const card = document.createElement("div");
     card.className = "card";
-    card.innerHTML = mostrar(item);
+    card.innerHTML = `<strong>${e.enfermedad}</strong> - ${e.fecha_diagnostico}<br>${e.observaciones || ""}`;
     container.appendChild(card);
   });
 }
 
-/* ===================== Cargar todo ===================== */
-async function cargarTodo() {
-  await cargarRegistros("enfermedades_cronicas", "listaEnfermedades",
-    e => `<strong>${e.enfermedad}</strong> - ${e.fecha_diagnostico}<br>${e.observaciones || ""}${e.adjunto ? `<br><a href="${e.adjunto}" target="_blank">Ver adjunto</a>` : ""}`
-  );
-  await cargarRegistros("medicamentos", "listaMedicamentos",
-    m => `<strong>${m.medicamento}</strong> - ${m.dosis} - Próxima entrega: ${m.proximo_entrega || "-"}<br>${m.observaciones || ""}${m.adjunto ? `<br><a href="${m.adjunto}" target="_blank">Ver adjunto</a>` : ""}`
-  );
-  await cargarRegistros("incidencias_salud", "listaIncidencias",
-    i => `<strong>${i.titulo}</strong> (${i.tipo}) - ${new Date(i.fecha).toLocaleString()}<br>${i.descripcion || ""}${i.adjunto ? `<br><a href="${i.adjunto}" target="_blank">Ver adjunto</a>` : ""}`
-  );
-  await cargarRegistros("adicciones", "listaAdicciones",
-    a => `<strong>${a.nombre}</strong><br>${a.descripcion || ""}${a.adjunto ? `<br><a href="${a.adjunto}" target="_blank">Ver adjunto</a>` : ""}`
-  );
+async function cargarMedicamentos() {
+  const { data } = await supabase.from("medicamentos").select("*").eq("afiliado_id", afiliadoId);
+  const container = document.getElementById("listaMedicamentos");
+  container.innerHTML = "";
+  data.forEach(m => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `<strong>${m.medicamento}</strong> - ${m.dosis} - Próxima entrega: ${m.proximo_entrega || "-"}<br>${m.observaciones || ""}`;
+    container.appendChild(card);
+  });
 }
 
-/* ================= Tabs ================= */
+async function cargarIncidencias() {
+  const { data } = await supabase.from("incidencias_salud").select("*").eq("afiliado_id", afiliadoId);
+  const container = document.getElementById("listaIncidencias");
+  container.innerHTML = "";
+  data.forEach(i => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `<strong>${i.titulo}</strong> (${i.tipo}) - ${new Date(i.fecha).toLocaleString()}<br>${i.descripcion || ""}<br>${i.adjunto ? `<a href="${i.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
+    container.appendChild(card);
+  });
+}
+
+async function cargarAdicciones() {
+  const { data } = await supabase.from("adicciones").select("*").eq("afiliado_id", afiliadoId);
+  const container = document.getElementById("listaAdicciones");
+  container.innerHTML = "";
+  data.forEach(a => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `<strong>${a.adiccion}</strong> - ${a.frecuencia || ""}<br>${a.observaciones || ""}`;
+    container.appendChild(card);
+  });
+}
+
+/* ===================== Tabs ===================== */
 document.querySelectorAll(".tab-button").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
@@ -74,71 +94,115 @@ document.querySelectorAll(".tab-button").forEach(btn => {
   });
 });
 
-/* ================= Botón volver ================= */
+/* ===================== Botón Volver ===================== */
 document.getElementById("btnVolver").onclick = () => {
   window.location.href = `./afiliado.html?id=${afiliadoId}`;
 };
 
-/* ================= Función genérica agregar registro ================= */
-function setupAgregarRegistro(btnId, formId, inputs, tabla) {
-  const btn = document.getElementById(btnId);
+/* ===================== Función genérica para mostrar/ocultar formularios ===================== */
+function setupNuevoCancelar(nuevoBtnId, cancelarBtnId, formId, callbackGuardar) {
+  const btnNuevo = document.getElementById(nuevoBtnId);
+  const btnCancelar = document.getElementById(cancelarBtnId);
   const form = document.getElementById(formId);
-  if (!btn || !form) return;
 
-  const archivoInput = form.querySelector('input[type="file"]');
+  btnNuevo.onclick = () => {
+    form.classList.remove("hidden");
+    btnNuevo.style.display = "none";
+  };
 
-  btn.onclick = () => form.classList.remove("hidden");
-
-  form.querySelector(".cancelar").onclick = () => {
+  btnCancelar.onclick = () => {
     form.classList.add("hidden");
+    btnNuevo.style.display = "inline-block";
     form.reset?.();
   };
 
-  form.querySelector(".guardar").onclick = async () => {
-    const valores = {};
-    inputs.forEach(id => {
-      valores[id] = form.querySelector("#" + id).value;
-    });
-
-    let adjuntoUrl = null;
-    if (archivoInput && archivoInput.files.length > 0) {
-      adjuntoUrl = await subirArchivoCloudinary(archivoInput.files[0]);
-    }
-
-    const { error } = await supabase.from(tabla).insert([{
-      ...valores,
-      afiliado_id: afiliadoId,
-      created_by: user.id,
-      updated_by: user.id,
-      adjunto: adjuntoUrl
-    }]);
-
-    if (error) return alert("Error: " + error.message);
-
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    await callbackGuardar(new FormData(form));
+    form.reset();
     form.classList.add("hidden");
-    archivoInput.value = null;
-    cargarTodo();
-  };
+    btnNuevo.style.display = "inline-block";
+  });
 }
 
-/* ================= Setup agregar registros ================= */
-setupAgregarRegistro("btnAgregarEnfermedad", "formEnfermedad",
-  ["input-enfermedad","input-fecha","input-observaciones"], "enfermedades_cronicas");
+/* ===================== Guardado en Supabase ===================== */
+async function guardarEnfermedad(formData) {
+  const { error } = await supabase.from("enfermedades_cronicas").insert([{
+    afiliado_id: afiliadoId,
+    enfermedad: formData.get("enfermedad"),
+    fecha_diagnostico: formData.get("fecha_diagnostico"),
+    observaciones: formData.get("observaciones"),
+    created_by: user.id,
+    updated_by: user.id
+  }]);
+  if (error) return Swal.fire("Error", error.message, "error");
+  Swal.fire("Agregado", "Enfermedad registrada", "success");
+  cargarEnfermedades();
+}
 
-setupAgregarRegistro("btnAgregarMedicamento", "formMedicamento",
-  ["input-medicamento","input-dosis","input-proximo","input-med-observaciones"], "medicamentos");
+async function guardarMedicamento(formData) {
+  const { error } = await supabase.from("medicamentos").insert([{
+    afiliado_id: afiliadoId,
+    medicamento: formData.get("medicamento"),
+    dosis: formData.get("dosis"),
+    proximo_entrega: formData.get("proximo_entrega"),
+    observaciones: formData.get("observaciones"),
+    created_by: user.id,
+    updated_by: user.id
+  }]);
+  if (error) return Swal.fire("Error", error.message, "error");
+  Swal.fire("Agregado", "Medicamento registrado", "success");
+  cargarMedicamentos();
+}
 
-setupAgregarRegistro("btnAgregarIncidencia", "formIncidencia",
-  ["input-titulo","input-tipo","input-descripcion"], "incidencias_salud");
+async function guardarIncidencia(formData) {
+  let adjuntoUrl = null;
+  const file = formData.get("adjunto");
+  if (file && file.size > 0) adjuntoUrl = await subirArchivoCloudinary(file);
 
-setupAgregarRegistro("btnAgregarAdiccion", "formAdiccion",
-  ["input-adiccion","input-adiccion-descripcion"], "adicciones");
+  const { error } = await supabase.from("incidencias_salud").insert([{
+    afiliado_id: afiliadoId,
+    titulo: formData.get("titulo"),
+    tipo: formData.get("tipo"),
+    descripcion: formData.get("descripcion"),
+    fecha: new Date().toISOString(),
+    adjunto: adjuntoUrl,
+    created_by: user.id,
+    updated_by: user.id
+  }]);
+  if (error) return Swal.fire("Error", error.message, "error");
+  Swal.fire("Agregado", "Incidencia registrada", "success");
+  cargarIncidencias();
+}
 
-/* ===================== Init ===================== */
+async function guardarAdiccion(formData) {
+  const { error } = await supabase.from("adicciones").insert([{
+    afiliado_id: afiliadoId,
+    adiccion: formData.get("adiccion"),
+    frecuencia: formData.get("frecuencia"),
+    observaciones: formData.get("observaciones"),
+    created_by: user.id,
+    updated_by: user.id
+  }]);
+  if (error) return Swal.fire("Error", error.message, "error");
+  Swal.fire("Agregado", "Adicción registrada", "success");
+  cargarAdicciones();
+}
+
+/* ===================== Setup botones Nuevo/Cancelar ===================== */
+setupNuevoCancelar("btnNuevoEnfermedad", "btnCancelarEnfermedad", "formEnfermedad", guardarEnfermedad);
+setupNuevoCancelar("btnNuevoMedicamento", "btnCancelarMedicamento", "formMedicamento", guardarMedicamento);
+setupNuevoCancelar("btnNuevoIncidencia", "btnCancelarIncidencia", "formIncidencia", guardarIncidencia);
+setupNuevoCancelar("btnNuevoAdiccion", "btnCancelarAdiccion", "formAdiccion", guardarAdiccion);
+
+/* ===================== INIT ===================== */
 async function init() {
   await obtenerUsuario();
   await cargarAfiliado();
-  await cargarTodo();
+  await cargarEnfermedades();
+  await cargarMedicamentos();
+  await cargarIncidencias();
+  await cargarAdicciones();
 }
 
 init();

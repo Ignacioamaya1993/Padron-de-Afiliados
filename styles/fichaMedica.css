@@ -1,23 +1,56 @@
-/* =====================
-   FICHA HEADER
-===================== */
-.ficha-header {
+/* ===================== RESET BÁSICO ===================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f5f7fa;
+  color: #222;
+  min-height: 100vh;
+}
+
+/* ===================== HEADER ===================== */
+header {
+  background: #1e293b;
+  color: #fff;
+  padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
 }
 
-.ficha-header h2 {
-  font-size: 1.6rem;
-  color: #0f172a;
+header h1 {
+  font-size: 1.4rem;
 }
 
-/* Botón volver debajo del header */
+.user-bar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+#logoutBtn {
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#logoutBtn:hover {
+  background: #dc2626;
+}
+
+/* ===================== BOTÓN VOLVER ===================== */
 #btnVolver {
-  position: absolute;   
-  top: 70px;              
-  right: 20px;            
+  position: absolute;
+  top: 70px;
+  right: 20px;
   background-color: #f3f4f6;
   border: 1px solid #d1d5db;
   border-radius: 8px;
@@ -36,26 +69,27 @@
   background-color: #e5e7eb;
 }
 
-/* =====================
-   MAIN Y TABS
-===================== */
-main { 
+/* ===================== MAIN ===================== */
+main {
   padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.tabs { 
-  display: flex; 
-  gap: 0.5rem; 
-  margin-bottom: 1.5rem; 
+/* ===================== TABS ===================== */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
 }
 
-.tab-button { 
-  padding: 0.6rem 1.2rem; 
-  cursor: pointer; 
-  border: none; 
-  background: #e5e7eb; 
-  border-radius: 6px; 
+.tab-button {
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  border: none;
+  background: #e5e7eb;
+  border-radius: 6px;
   font-weight: 500;
   transition: 0.2s;
 }
@@ -64,31 +98,27 @@ main {
   background: #d1d5db;
 }
 
-.tab-button.active { 
-  background: #3b82f6; 
-  color: white; 
+.tab-button.active {
+  background: #3b82f6;
+  color: white;
 }
 
-/* =====================
-   SECCIONES
-===================== */
-.tab-content { 
-  display: none; 
+/* ===================== TAB CONTENT ===================== */
+.tab-content {
+  display: none;
 }
 
-.tab-content.active { 
-  display: block; 
+.tab-content.active {
+  display: block;
 }
 
-/* =====================
-   CARDS
-===================== */
-.card { 
-  border: 1px solid #d1d5db; 
-  border-radius: 8px; 
-  padding: 1rem; 
-  margin-bottom: 1rem; 
-  background: white; 
+/* ===================== CARDS ===================== */
+.card {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   transition: 0.2s;
 }
@@ -97,66 +127,81 @@ main {
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* =====================
-   BOTONES EN SECCIONES
-===================== */
+/* ===================== BOTONES NUEVO / CANCELAR ===================== */
 section button {
-  background: #10b981;
+  background: #2563eb;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1rem;
   border-radius: 6px;
   font-weight: 500;
   margin-bottom: 1rem;
+  cursor: pointer;
   transition: 0.2s;
 }
 
 section button:hover {
-  background: #059669;
+  background: #1d4ed8;
 }
 
-/* =====================
-   FORMULARIOS INLINE PARA AGREGAR REGISTROS
-===================== */
+section .btn-cancelar {
+  background: #64748b;
+}
+
+section .btn-cancelar:hover {
+  background: #475569;
+}
+
+/* ===================== FORMULARIOS INLINE ===================== */
 .form-inline {
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  background: white;
   padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
   margin-bottom: 1rem;
-  background-color: #f9fafb;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.form-inline.hidden {
+  display: none;
 }
 
 .form-inline input,
-.form-inline textarea,
-.form-inline select {
-  border: 1px solid #d1d5db;
+.form-inline select,
+.form-inline textarea {
+  border: 1px solid #cbd5e1;
   border-radius: 6px;
   padding: 0.5rem;
-  font-size: 1rem;
-  width: 100%;
+  background: white;
 }
 
-.form-inline button {
-  width: fit-content;
-  align-self: flex-start;
+.form-inline .form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  margin-top: 0.5rem;
+}
+
+.form-inline .form-actions button {
   padding: 0.5rem 1rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
 }
 
-.form-inline .cancelar {
-  background-color: #ef4444;
-  margin-left: 0.5rem;
+/* ===================== SWEETALERT INPUTS ===================== */
+.swal2-input,
+.swal2-textarea {
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem;
 }
 
-.form-inline .cancelar:hover {
-  background-color: #b91c1c;
-}
-
-/* =====================
-   RESPONSIVO
-===================== */
+/* ===================== RESPONSIVE ===================== */
 @media (max-width: 700px) {
   header {
     flex-direction: column;
@@ -182,7 +227,7 @@ section button:hover {
     width: 100%;
   }
 
-  .form-inline button {
-    width: 100%;
+  .form-inline {
+    grid-template-columns: 1fr;
   }
 }
