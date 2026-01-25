@@ -7,6 +7,14 @@ const afiliadoId = params.get("id");
 if (!afiliadoId) throw new Error("ID de afiliado faltante");
 
 let afiliado = null;
+let user = null;
+
+/* ===================== Obtener usuario logueado ===================== */
+async function obtenerUsuario() {
+  const { data: { user: u } } = await supabase.auth.getUser();
+  if (!u) throw new Error("Usuario no logueado");
+  user = u;
+}
 
 /* ===================== Cargar afiliado ===================== */
 async function cargarAfiliado() {
@@ -55,7 +63,7 @@ async function cargarIncidencias() {
   });
 }
 
-/* ===================== Tabs ===================== */
+/* ================= Tabs ================= */
 document.querySelectorAll(".tab-button").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
@@ -65,10 +73,10 @@ document.querySelectorAll(".tab-button").forEach(btn => {
   });
 });
 
-/* ===================== Botón volver ===================== */
+/* ================= Botón volver ================= */
 document.getElementById("btnVolver").onclick = () => window.history.back();
 
-/* ===================== Botones agregar ===================== */
+/* ================= Botones agregar ================= */
 document.getElementById("btnAgregarEnfermedad").onclick = async () => {
   const { value: formValues } = await Swal.fire({
     title: "Agregar enfermedad",
@@ -86,7 +94,12 @@ document.getElementById("btnAgregarEnfermedad").onclick = async () => {
   });
 
   if (!formValues) return;
-  const { error } = await supabase.from("enfermedades_cronicas").insert([{ ...formValues, afiliado_id: afiliadoId }]);
+  const { error } = await supabase.from("enfermedades_cronicas").insert([{
+    ...formValues,
+    afiliado_id: afiliadoId,
+    created_by: user.id,
+    updated_by: user.id
+  }]);
   if (error) return Swal.fire("Error", error.message, "error");
   Swal.fire("Agregado", "Enfermedad registrada", "success");
   cargarEnfermedades();
@@ -111,15 +124,20 @@ document.getElementById("btnAgregarMedicamento").onclick = async () => {
   });
 
   if (!formValues) return;
-  const { error } = await supabase.from("medicamentos").insert([{ ...formValues, afiliado_id: afiliadoId }]);
+  const { error } = await supabase.from("medicamentos").insert([{
+    ...formValues,
+    afiliado_id: afiliadoId,
+    created_by: user.id,
+    updated_by: user.id
+  }]);
   if (error) return Swal.fire("Error", error.message, "error");
   Swal.fire("Agregado", "Medicamento registrado", "success");
   cargarMedicamentos();
 };
 
 document.getElementById("btnAgregarIncidencia").onclick = async () => {
-  const archivoInput = document.getElementById("archivoIncidencia");
-  archivoInput.value = ""; // reset
+  const archivoInput = document.createElement("input");
+  archivoInput.type = "file";
 
   const { value: formValues } = await Swal.fire({
     title: "Nueva incidencia",
@@ -150,7 +168,12 @@ document.getElementById("btnAgregarIncidencia").onclick = async () => {
   });
 
   if (!formValues) return;
-  const { error } = await supabase.from("incidencias_salud").insert([{ ...formValues, afiliado_id: afiliadoId }]);
+  const { error } = await supabase.from("incidencias_salud").insert([{
+    ...formValues,
+    afiliado_id: afiliadoId,
+    created_by: user.id,
+    updated_by: user.id
+  }]);
   if (error) return Swal.fire("Error", error.message, "error");
   Swal.fire("Agregado", "Incidencia registrada", "success");
   cargarIncidencias();
@@ -158,6 +181,7 @@ document.getElementById("btnAgregarIncidencia").onclick = async () => {
 
 /* ===================== Init ===================== */
 async function init() {
+  await obtenerUsuario();
   await cargarAfiliado();
   await cargarEnfermedades();
   await cargarMedicamentos();
