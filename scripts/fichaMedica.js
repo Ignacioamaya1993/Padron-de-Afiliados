@@ -9,22 +9,30 @@ if (!afiliadoId) throw new Error("ID de afiliado faltante");
 let afiliado = null;
 let user = null;
 
-/* ===================== Obtener usuario logueado ===================== */
-async function obtenerUsuario() {
-  const { data: { user: u } } = await supabase.auth.getUser();
-  if (!u) throw new Error("Usuario no logueado");
-  user = u;
+/* =====================
+   AUTENTICACIÓN
+===================== */
+async function verificarUsuario() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    // Si no hay usuario logueado, redirigir al login
+    window.location.href = "/pages/login.html";
+    return;
+  }
 
+  // Mostrar email logueado en header
   const bienvenidoSpan = document.getElementById("userEmail");
   if (bienvenidoSpan) bienvenidoSpan.textContent = user.email;
+}
 
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.onclick = async () => {
-      await supabase.auth.signOut();
-      window.location.href = "/login.html";
-    };
+// Cerrar sesión
+async function cerrarSesion() {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    Swal.fire("Error", error.message, "error");
+    return;
   }
+  window.location.href = "/pages/login.html";
 }
 
 /* ===================== Cargar Afiliado ===================== */
