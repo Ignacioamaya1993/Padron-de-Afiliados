@@ -79,6 +79,9 @@ async function cargarAfiliado() {
 function renderFicha() {
   modoEdicion = false;
 
+  // Restaurar todos los campos a spans si estaban en edición
+  restaurarCampos();
+
   document.getElementById("nombreCompleto").textContent =
     `${afiliado.nombre} ${afiliado.apellido}`;
   document.getElementById("dni").textContent = afiliado.dni || "-";
@@ -136,6 +139,7 @@ function entrarModoEdicion() {
 
   const fechaInput = document.getElementById("fechaNacimiento");
   const relacionSelect = document.getElementById("relacionSelect");
+
   fechaInput.addEventListener("input", actualizarEdadYEstudios);
   relacionSelect.addEventListener("change", actualizarEdadYEstudios);
 
@@ -205,13 +209,35 @@ function convertirEstudiosASelect() {
   actual.replaceWith(select);
 }
 
-function toggleBotones(editando) {
-  document.getElementById("btnEditar").style.display =
-    editando ? "none" : "inline-block";
-  document.getElementById("btnGuardar").style.display =
-    editando ? "inline-block" : "none";
-  document.getElementById("btnCancelar").style.display =
-    editando ? "inline-block" : "none";
+function restaurarCampos() {
+  // Restaurar spans originales si existían inputs
+  ["telefono", "fechaNacimiento", "numeroAfiliado", "dni"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.tagName === "INPUT") {
+      const span = document.createElement("span");
+      span.id = id;
+      span.textContent = afiliado[id] || "-";
+      el.replaceWith(span);
+    }
+  });
+
+  // Relacion
+  const rel = document.getElementById("relacionSelect");
+  if (rel) {
+    const span = document.createElement("span");
+    span.id = "relacion";
+    span.textContent = afiliado.relacion || "-";
+    rel.replaceWith(span);
+  }
+
+  // Estudios
+  const est = document.getElementById("estudios");
+  if (est && est.tagName === "SELECT") {
+    const span = document.createElement("span");
+    span.id = "estudios";
+    span.textContent = afiliado.estudios || "-";
+    est.replaceWith(span);
+  }
 }
 
 /* =====================
@@ -246,8 +272,21 @@ async function guardarCambios() {
     return;
   }
 
+  // Restaurar campos a modo visual antes de recargar datos
+  restaurarCampos();
+  modoEdicion = false;
+
   Swal.fire("Guardado", "Cambios guardados", "success");
   cargarAfiliado();
+}
+
+/* =====================
+   CANCELAR EDICIÓN
+===================== */
+function cancelarEdicion() {
+  restaurarCampos();
+  modoEdicion = false;
+  renderFicha();
 }
 
 /* =====================
@@ -338,7 +377,7 @@ async function cargarGrupoFamiliar() {
 ===================== */
 document.getElementById("btnEditar").onclick = entrarModoEdicion;
 document.getElementById("btnGuardar").onclick = guardarCambios;
-document.getElementById("btnCancelar").onclick = cargarAfiliado;
+document.getElementById("btnCancelar").onclick = cancelarEdicion;
 document.getElementById("btnBaja").onclick = darDeBaja;
 document.getElementById("btnEliminar").onclick = eliminarDefinitivo;
 document.getElementById("btnReactivar").onclick = reactivar;
