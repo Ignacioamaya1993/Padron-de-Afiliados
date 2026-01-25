@@ -29,6 +29,10 @@ const relacionSelect = document.querySelector('select[name="relacion"]');
 const fechaNacimientoInput = document.querySelector('input[name="fechaNacimiento"]');
 const estudiosField = document.getElementById("estudiosField");
 const estudiosSelect = document.querySelector('select[name="estudios"]');
+const edad = a.fecha_nacimiento
+  ? calcularEdad(a.fecha_nacimiento)
+  : null;
+
 
 function actualizarCampoEstudios() {
   const relacion = relacionSelect.value;
@@ -159,7 +163,9 @@ searchInput.addEventListener("input", async e => {
           ${a.nombre_completo}
           ${alerta ? `<span title="Alerta por edad">${alerta.icono}</span>` : ""}
         </strong>
-        DNI: ${a.dni || "-"} |
+        DNI: ${a.dni || "-"}
+        ${edad !== null ? ` | Edad: ${edad}` : ""}
+        <br>
         Afiliado: ${a.numero_afiliado} |
         ${a.relacion}
       `;
@@ -270,10 +276,33 @@ document
 
 
     } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "No se pudo guardar el afiliado", "error");
-    }
-  });
+  console.error(err);
+
+  if (err.message?.includes("dni")) {
+    Swal.fire(
+      "DNI duplicado",
+      "Ya existe un afiliado con ese DNI",
+      "warning"
+    );
+    return;
+  }
+
+  if (err.message?.includes("numero_afiliado")) {
+    Swal.fire(
+      "Número de afiliado duplicado",
+      "Ya existe un afiliado con ese número",
+      "warning"
+    );
+    return;
+  }
+
+  Swal.fire(
+    "Error",
+    "No se pudo guardar el afiliado",
+    "error"
+  );
+}
+});
 
 /* =====================
    MOSTRAR / OCULTAR FORM
