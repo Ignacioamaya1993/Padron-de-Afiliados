@@ -248,7 +248,6 @@ document
         .insert({
           nombre,
           apellido,
-          nombre_completo: `${apellido.toUpperCase()} ${nombre.toUpperCase()}`,
           dni,
           telefono,
           fecha_nacimiento: fechaNacimiento,
