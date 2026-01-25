@@ -11,34 +11,40 @@
 
 <header>
   <h1>Ficha Médica de <span id="nombreAfiliado"></span></h1>
-  
+
   <div class="user-bar">
     <span id="bienvenido">Bienvenido, <strong id="userEmail"></strong></span>
     <button id="logoutBtn">Cerrar sesión</button>
-    <button id="btnVolver">⬅ Volver a la Ficha del Afiliado</button>
   </div>
+
+  <button id="btnVolver">⬅ Volver a la Ficha del Afiliado</button>
 </header>
 
 <main>
+  <!-- Tabs -->
   <div class="tabs">
     <button class="tab-button active" data-tab="enfermedades">Enfermedades</button>
     <button class="tab-button" data-tab="medicamentos">Medicamentos</button>
     <button class="tab-button" data-tab="incidencias">Incidencias</button>
   </div>
 
+  <!-- Enfermedades -->
   <section id="enfermedades" class="tab-content active">
     <button id="btnAgregarEnfermedad">➕ Agregar enfermedad</button>
     <div id="listaEnfermedades"></div>
   </section>
 
+  <!-- Medicamentos -->
   <section id="medicamentos" class="tab-content">
     <button id="btnAgregarMedicamento">➕ Agregar medicamento</button>
     <div id="listaMedicamentos"></div>
   </section>
 
+  <!-- Incidencias -->
   <section id="incidencias" class="tab-content">
     <button id="btnAgregarIncidencia">➕ Nueva incidencia</button>
     <div id="listaIncidencias"></div>
+    <!-- Input oculto para adjuntar archivos -->
     <input type="file" id="archivoIncidencia" accept="image/*,application/pdf" style="display:none;">
   </section>
 </main>

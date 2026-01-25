@@ -14,6 +14,19 @@ async function obtenerUsuario() {
   const { data: { user: u } } = await supabase.auth.getUser();
   if (!u) throw new Error("Usuario no logueado");
   user = u;
+
+  // Mostrar email en header
+  const bienvenidoSpan = document.getElementById("userEmail");
+  if (bienvenidoSpan) bienvenidoSpan.textContent = user.email;
+
+  // Botón cerrar sesión
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.onclick = async () => {
+      await supabase.auth.signOut();
+      window.location.href = "/login.html"; // redirigir al login
+    };
+  }
 }
 
 /* ===================== Cargar afiliado ===================== */
@@ -74,7 +87,9 @@ document.querySelectorAll(".tab-button").forEach(btn => {
 });
 
 /* ================= Botón volver ================= */
-document.getElementById("btnVolver").onclick = () => window.history.back();
+document.getElementById("btnVolver").onclick = () => {
+  window.location.href = `./afiliado.html?id=${afiliadoId}`;
+};
 
 /* ================= Botones agregar ================= */
 document.getElementById("btnAgregarEnfermedad").onclick = async () => {

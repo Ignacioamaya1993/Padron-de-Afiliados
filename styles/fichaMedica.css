@@ -1,156 +1,193 @@
-/* ================== Reset básico ================== */
+/* =====================
+   RESET BÁSICO
+===================== */
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body { 
-    font-family: Arial, sans-serif; 
-    background: #f9fafb;
-    color: #111827;
-    line-height: 1.5;
+  font-family: Arial, sans-serif; 
+  background: #f9fafb;
+  color: #111827;
+  line-height: 1.5;
 }
 
-/* ================== Header ================== */
+/* =====================
+   HEADER
+===================== */
 header { 
-    display: flex;
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 1rem 2rem; 
-    background: #f3f4f6; 
-    border-bottom: 1px solid #e5e7eb;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 1rem 2rem; 
+  background: #f3f4f6; 
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 header h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
+/* User bar (Bienvenido + Cerrar sesión) */
 .user-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .user-bar span {
-    font-size: 0.9rem;
+  font-size: 0.9rem;
+  color: #1f2937;
 }
 
 header button {
-    background: #3b82f6;
-    color: white;
-    border: none;
-    padding: 0.4rem 0.9rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 header button:hover {
-    background: #2563eb;
+  background: #2563eb;
 }
 
-/* ================== Main y tabs ================== */
+/* Botón volver */
+#btnVolver {
+  background: #f3f4f6;
+  color: #1f2937;
+  border: 1px solid #d1d5db;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#btnVolver:hover {
+  background: #e5e7eb;
+}
+
+/* =====================
+   MAIN Y TABS
+===================== */
 main { 
-    padding: 2rem;
+  padding: 2rem;
 }
 
 .tabs { 
-    display: flex; 
-    gap: 0.5rem; 
-    margin-bottom: 1.5rem; 
-    flex-wrap: wrap;
+  display: flex; 
+  gap: 0.5rem; 
+  margin-bottom: 1.5rem; 
+  flex-wrap: wrap;
 }
 
 .tab-button { 
-    padding: 0.6rem 1.2rem; 
-    cursor: pointer; 
-    border: none; 
-    background: #e5e7eb; 
-    border-radius: 6px; 
-    font-weight: 500;
-    transition: 0.2s;
+  padding: 0.6rem 1.2rem; 
+  cursor: pointer; 
+  border: none; 
+  background: #e5e7eb; 
+  border-radius: 6px; 
+  font-weight: 500;
+  transition: 0.2s;
 }
 
 .tab-button:hover {
-    background: #d1d5db;
+  background: #d1d5db;
 }
 
 .tab-button.active { 
-    background: #3b82f6; 
-    color: white; 
+  background: #3b82f6; 
+  color: white; 
 }
 
-/* ================== Secciones ================== */
+/* =====================
+   SECCIONES
+===================== */
 .tab-content { 
-    display: none; 
+  display: none; 
 }
 
 .tab-content.active { 
-    display: block; 
+  display: block; 
 }
 
-/* ================== Cards ================== */
+/* =====================
+   CARDS
+===================== */
 .card { 
-    border: 1px solid #d1d5db; 
-    border-radius: 8px; 
-    padding: 1rem; 
-    margin-bottom: 1rem; 
-    background: white; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    transition: 0.2s;
+  border: 1px solid #d1d5db; 
+  border-radius: 8px; 
+  padding: 1rem; 
+  margin-bottom: 1rem; 
+  background: white; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: 0.2s;
 }
 
 .card:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* ================== Botones dentro de contenido ================== */
+/* =====================
+   BOTONES EN SECCIONES
+===================== */
 section button {
-    background: #10b981;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-weight: 500;
-    margin-bottom: 1rem;
-    transition: 0.2s;
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  transition: 0.2s;
 }
 
 section button:hover {
-    background: #059669;
+  background: #059669;
 }
 
-/* ================== Inputs de SweetAlert ================== */
+/* =====================
+   INPUTS SWEETALERT
+===================== */
 .swal2-input, .swal2-textarea {
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
-    padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem;
 }
 
-/* ================== Responsivo ================== */
-@media (max-width: 600px) {
-    header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
+/* =====================
+   RESPONSIVO
+===================== */
+@media (max-width: 700px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 
-    .user-bar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
+  .user-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 
-    .tabs {
-        flex-direction: column;
-    }
+  .tabs {
+    flex-direction: column;
+  }
 
-    section button {
-        width: 100%;
-    }
+  section button {
+    width: 100%;
+  }
+
+  #btnVolver {
+    width: 100%;
+  }
 }
