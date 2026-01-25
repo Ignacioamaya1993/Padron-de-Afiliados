@@ -111,10 +111,14 @@ function renderFicha() {
   document.getElementById("nombreCompleto").textContent =
     `${afiliado.nombre} ${afiliado.apellido}`;
   document.getElementById("dni").textContent = afiliado.dni || "-";
+    function formatearFecha(fecha) {
+    if (!fecha) return "-";
+    const [yyyy, mm, dd] = fecha.split("-"); 
+    return `${dd}/${mm}/${yyyy}`;
+    }
+
     document.getElementById("fechaNacimiento").textContent =
-    afiliado.fecha_nacimiento
-        ? new Date(afiliado.fecha_nacimiento).toLocaleDateString("es-AR")
-        : "-";
+        formatearFecha(afiliado.fecha_nacimiento);
 
   const edad = calcularEdad(afiliado.fecha_nacimiento);
   document.getElementById("edad").textContent =
