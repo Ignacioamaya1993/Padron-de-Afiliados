@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Ficha de Afiliado</title>
+
+    <link rel="stylesheet" href="../styles/padron.css" />
+    <link rel="stylesheet" href="../styles/afiliado.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+<header>
+  <h1>Ficha del Afiliado</h1>
+
+  <div class="user-bar">
+    <span id="status"></span>
+    <button id="logoutBtn">Cerrar sesión</button>
+  </div>
+</header>
+
+<main class="padron-home">
+
+  <section id="fichaAfiliado" class="ficha-afiliado">
+    <h2 id="nombreCompleto"></h2>
+
+    <div class="ficha-grid">
+      <div><strong>DNI:</strong> <span id="dni"></span></div>
+      <div><strong>Fecha de nacimiento:</strong> <span id="fechaNacimiento"></span></div>
+      <div><strong>Edad:</strong> <span id="edad"></span></div>
+      <div><strong>Teléfono:</strong> <span id="telefono"></span></div>
+
+      <div><strong>N° Afiliado:</strong> <span id="numeroAfiliado"></span></div>
+      <div><strong>Grupo familiar:</strong> <span id="grupoFamiliar"></span></div>
+      <div><strong>Relación:</strong> <span id="relacion"></span></div>
+
+      <div id="estudiosField" style="display:none;">
+        <strong>Estudios:</strong> <span id="estudios"></span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script type="module" src="../scripts/afiliado.js"></script>
+</body>
+</html>
