@@ -54,6 +54,10 @@ function obtenerAlertaHijo(fechaNacimiento, relacion) {
   return null;
 }
 
+const estado = a.activo
+  ? ""
+  : `<span style="color:#dc2626;font-weight:600"> 🔴 BAJA</span>`;
+
 /* =====================
    MOSTRAR / OCULTAR ESTUDIOS
 ===================== */
@@ -128,7 +132,8 @@ searchInput.addEventListener("input", async e => {
         dni,
         numero_afiliado,
         relacion,
-        fecha_nacimiento
+        fecha_nacimiento,
+        activo
       `)
       .or(
         `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,numero_afiliado.ilike.%${texto}%`
@@ -152,8 +157,10 @@ searchInput.addEventListener("input", async e => {
       item.innerHTML = `
         <strong>
           ${a.nombre_completo}
+          ${estado}
           ${alerta ? `<span title="${alerta.texto}">${alerta.icono}</span>` : ""}
         </strong>
+        
         DNI: ${a.dni || "-"}
         ${edad !== null ? ` | Edad: ${edad}` : ""}
         <br>
