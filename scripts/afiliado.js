@@ -441,6 +441,11 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+/* ================= Botón Ficha Médica ================= */
+document.getElementById("btnFichaMedica").onclick = () => {
+  window.location.href = `/pages/fichaMedica.html?id=${afiliadoId}`;
+};
+
 /* =====================
    INIT
 ===================== */
