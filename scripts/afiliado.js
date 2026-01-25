@@ -109,7 +109,6 @@ function renderFicha() {
   mostrarEstado(afiliado.activo);
   salirModoEdicion();
 
-  // Botones según estado
   document.getElementById("btnEditar").style.display =
     afiliado.activo ? "inline-block" : "none";
 
@@ -170,7 +169,7 @@ function reemplazarPorInput(id, valor, tipo = "text") {
 
 function toggleBotones(editando) {
   document.getElementById("btnEditar").style.display =
-    editando ? "none" : document.getElementById("btnEditar").style.display;
+    editando ? "none" : "inline-block";
 
   document.getElementById("btnGuardar").style.display =
     editando ? "inline-block" : "none";
@@ -209,6 +208,7 @@ async function guardarCambios() {
     return;
   }
 
+  salirModoEdicion();
   Swal.fire("Guardado", "Cambios guardados", "success");
   cargarAfiliado();
 }
@@ -236,6 +236,15 @@ async function darDeBaja() {
 }
 
 async function reactivar() {
+  const res = await Swal.fire({
+    title: "¿Reactivar afiliado?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Reactivar"
+  });
+
+  if (!res.isConfirmed) return;
+
   await supabase
     .from("afiliados")
     .update({ activo: true })
@@ -293,6 +302,7 @@ async function cargarGrupoFamiliar() {
       <td>${a.dni}</td>
       <td>${a.numero_afiliado}</td>
       <td>${a.relacion}</td>
+      <td>${a.activo ? "Activo" : "Dado de baja"}</td>
     `;
 
     tr.onclick = () => {

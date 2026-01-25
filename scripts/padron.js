@@ -147,9 +147,9 @@ searchInput.addEventListener("input", async e => {
       const alerta = obtenerAlertaHijo(a.fecha_nacimiento, a.relacion);
       const edad = a.fecha_nacimiento ? calcularEdad(a.fecha_nacimiento) : null;
 
-        const estado = a.activo
-    ? ""
-    : `<span style="color:#dc2626;font-weight:600"> 🔴 BAJA</span>`;
+    const estado = a.activo
+      ? `<span style="color:#16a34a;font-weight:600"> 🟢 Activo</span>`
+      : `<span style="color:#dc2626;font-weight:600"> 🔴 Dado de baja</span>`;
 
       const item = document.createElement("div");
       item.className = "resultado-item";
