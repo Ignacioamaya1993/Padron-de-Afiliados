@@ -43,12 +43,12 @@ function obtenerAlertaHijo(fechaNacimiento, relacion) {
 
   const meses18 = mesesHastaCumple(fechaNacimiento, 18);
   if (edad === 17 && meses18 <= 2 && meses18 >= 0) {
-    return { nivel: "warning", icono: "🟡" };
+    return { icono: "🟡", texto: "Cumple 18 pronto" };
   }
 
   const meses25 = mesesHastaCumple(fechaNacimiento, 25);
   if (edad === 24 && meses25 <= 2 && meses25 >= 0) {
-    return { nivel: "critical", icono: "🔴" };
+    return { icono: "🔴", texto: "Cumple 25 pronto" };
   }
 
   return null;
@@ -63,6 +63,8 @@ const estudiosField = document.getElementById("estudiosField");
 const estudiosSelect = document.querySelector('select[name="estudios"]');
 
 function actualizarCampoEstudios() {
+  if (!relacionSelect || !fechaNacimientoInput) return;
+
   const relacion = relacionSelect.value;
   const fechaNacimiento = fechaNacimientoInput.value;
 
@@ -82,10 +84,8 @@ function actualizarCampoEstudios() {
   }
 }
 
-if (relacionSelect && fechaNacimientoInput && estudiosField && estudiosSelect) {
-  relacionSelect.addEventListener("change", actualizarCampoEstudios);
-  fechaNacimientoInput.addEventListener("change", actualizarCampoEstudios);
-}
+relacionSelect?.addEventListener("change", actualizarCampoEstudios);
+fechaNacimientoInput?.addEventListener("change", actualizarCampoEstudios);
 
 /* =====================
    AUTH
@@ -131,27 +131,20 @@ searchInput.addEventListener("input", async e => {
         fecha_nacimiento
       `)
       .or(
-        `nombre_completo.ilike.%${texto}%,numero_afiliado.ilike.%${texto}%`
+        `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,numero_afiliado.ilike.%${texto}%`
       )
       .limit(20);
 
     if (error) throw error;
 
     if (!data.length) {
-      resultadosDiv.innerHTML =
-        `<p style="opacity:.7">Sin resultados</p>`;
+      resultadosDiv.innerHTML = `<p style="opacity:.7">Sin resultados</p>`;
       return;
     }
 
     data.forEach(a => {
-      const alerta = obtenerAlertaHijo(
-        a.fecha_nacimiento,
-        a.relacion
-      );
-
-      const edad = a.fecha_nacimiento
-        ? calcularEdad(a.fecha_nacimiento)
-        : null;
+      const alerta = obtenerAlertaHijo(a.fecha_nacimiento, a.relacion);
+      const edad = a.fecha_nacimiento ? calcularEdad(a.fecha_nacimiento) : null;
 
       const item = document.createElement("div");
       item.className = "resultado-item";
@@ -159,18 +152,15 @@ searchInput.addEventListener("input", async e => {
       item.innerHTML = `
         <strong>
           ${a.nombre_completo}
-          ${alerta ? `<span title="Alerta por edad">${alerta.icono}</span>` : ""}
+          ${alerta ? `<span title="${alerta.texto}">${alerta.icono}</span>` : ""}
         </strong>
         DNI: ${a.dni || "-"}
         ${edad !== null ? ` | Edad: ${edad}` : ""}
         <br>
-        Afiliado: ${a.numero_afiliado} |
-        ${a.relacion}
+        Afiliado: ${a.numero_afiliado} | ${a.relacion}
       `;
 
       item.onclick = () => {
-        resultadosDiv.innerHTML = "";
-        searchInput.value = "";
         window.location.href = `/pages/afiliado.html?id=${a.id}`;
       };
 
@@ -193,52 +183,49 @@ document
   ?.addEventListener("submit", async e => {
     e.preventDefault();
 
-    if (buscando) return;
-    buscando = true;
-
     const f = e.target;
+    const submitBtn = f.querySelector('button[type="submit"]');
 
-    const nombre = f.nombre.value.trim();
-    const apellido = f.apellido.value.trim();
-    const dni = f.dni.value.trim();
-    const telefono = f.telefono.value.trim() || null;
-    const fechaNacimiento = f.fechaNacimiento.value || null;
-    const numeroAfiliado = f.numeroAfiliado.value.trim();
-    const relacion = f.relacion.value;
-    const estudios = f.estudios?.value || null;
-
-    if (!nombre || !apellido || !dni || !numeroAfiliado || !relacion) {
-      Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
-      buscando = false;
-      return;
-    }
-
-    if (relacion === "Hijo/a" && fechaNacimiento) {
-      const edad = calcularEdad(fechaNacimiento);
-
-      if (edad > 25) {
-        Swal.fire("No permitido", "Los hijos mayores de 25 años no pueden afiliarse", "error");
-        buscando = false;
-        return;
-      }
-
-      if (edad >= 18 && !estudios) {
-        Swal.fire("Atención", "Debe indicar qué estudios cursa", "warning");
-        buscando = false;
-        return;
-      }
-    }
-
-    const match = numeroAfiliado.match(/^[^-]+-([^/]+)\//);
-    if (!match) {
-      Swal.fire("Formato incorrecto", "Formato esperado: 19-00639-4/00", "error");
-      buscando = false;
-      return;
-    }
-
-    const grupoFamiliarCodigo = match[1];
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Guardando...";
 
     try {
+      const nombre = f.nombre.value.trim();
+      const apellido = f.apellido.value.trim();
+      const dni = f.dni.value.trim();
+      const telefono = f.telefono.value.trim() || null;
+      const fechaNacimiento = f.fechaNacimiento.value || null;
+      const numeroAfiliado = f.numeroAfiliado.value.trim();
+      const relacion = f.relacion.value;
+      const estudios = f.estudios?.value || null;
+
+      if (!nombre || !apellido || !dni || !numeroAfiliado || !relacion) {
+        Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
+        return;
+      }
+
+      if (relacion === "Hijo/a" && fechaNacimiento) {
+        const edad = calcularEdad(fechaNacimiento);
+
+        if (edad > 25) {
+          Swal.fire("No permitido", "Los hijos mayores de 25 años no pueden afiliarse", "error");
+          return;
+        }
+
+        if (edad >= 18 && !estudios) {
+          Swal.fire("Atención", "Debe indicar qué estudios cursa", "warning");
+          return;
+        }
+      }
+
+      const match = numeroAfiliado.match(/^[^-]+-([^/]+)\//);
+      if (!match) {
+        Swal.fire("Formato incorrecto", "Formato esperado: 19-00639-4/00", "error");
+        return;
+      }
+
+      const grupoFamiliarCodigo = match[1];
+
       const { error } = await supabase
         .from("afiliados")
         .insert({
@@ -259,45 +246,31 @@ document
       f.reset();
       actualizarCampoEstudios();
 
-} catch (err) {
-  console.error(err);
+    } catch (err) {
+      console.error(err);
 
-  // Violación de UNIQUE (Postgres)
-  if (err.code === "23505") {
+      if (err.code === "23505") {
+        if (err.message.includes("afiliados_dni")) {
+          Swal.fire("DNI duplicado", "Ya existe un afiliado con ese DNI", "warning");
+          return;
+        }
 
-    if (err.message.includes("afiliados_dni")) {
-      Swal.fire(
-        "DNI duplicado",
-        "Ya existe un afiliado con ese DNI",
-        "warning"
-      );
-      return;
+        if (err.message.includes("afiliados_numero")) {
+          Swal.fire(
+            "Número de afiliado duplicado",
+            "Ya existe un afiliado con ese número de afiliado",
+            "warning"
+          );
+          return;
+        }
+      }
+
+      Swal.fire("Error", "No se pudo guardar el afiliado", "error");
+
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Guardar";
     }
-
-    if (err.message.includes("afiliados_numero")) {
-      Swal.fire(
-        "Número de afiliado duplicado",
-        "Ya existe un afiliado con ese número de afiliado",
-        "warning"
-      );
-      return;
-    }
-
-    Swal.fire(
-      "Dato duplicado",
-      "Ya existe un registro con uno de los datos ingresados",
-      "warning"
-    );
-    return;
-  }
-
-  Swal.fire(
-    "Error",
-    "No se pudo guardar el afiliado",
-    "error"
-  );
-}
-
   });
 
 /* =====================
