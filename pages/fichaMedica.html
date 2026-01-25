@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ficha Médica</title>
-<link rel="stylesheet" href="../styles/fichaMedica.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Ficha Medica</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../styles/padron.css" />
+  <link rel="stylesheet" href="../styles/fichaMedica.css" />
+
+  <!-- SweetAlert -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -13,11 +19,10 @@
   <h1>Ficha Médica de <span id="nombreAfiliado"></span></h1>
 
   <div class="user-bar">
+    <button id="btnVolver" class="volver-btn">⬅️ Volver al buscador</button>
     <span id="bienvenido">Bienvenido, <strong id="userEmail"></strong></span>
     <button id="logoutBtn">Cerrar sesión</button>
   </div>
-
-  <button id="btnVolver">⬅ Volver a la Ficha del Afiliado</button>
 </header>
 
 <main>
