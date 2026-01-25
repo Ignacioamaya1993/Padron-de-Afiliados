@@ -24,8 +24,8 @@ function calcularEdad(fecha) {
   return edad;
 }
 
-function extraerCodigoGrupo(numeroAfiliado) {
-  const match = numeroAfiliado?.match(/^[^-]+-([^/]+)\//);
+function extraerCodigoGrupo(numero) {
+  const match = numero?.match(/^[^-]+-([^/]+)\//);
   return match ? match[1] : null;
 }
 
@@ -51,7 +51,7 @@ async function cargarAfiliado() {
 }
 
 /* =====================
-   RENDER FICHA
+   RENDER VISTA
 ===================== */
 
 function renderVista(a) {
@@ -98,6 +98,29 @@ function idMap(id) {
   }[id] || id;
 }
 
+function crearSelectEstudios(valorActual) {
+  const select = document.createElement("select");
+  select.id = "estudios";
+
+  const opciones = [
+    "",
+    "Primario",
+    "Secundario",
+    "Terciario",
+    "Universitario"
+  ];
+
+  opciones.forEach(op => {
+    const option = document.createElement("option");
+    option.value = op || null;
+    option.textContent = op || "— Seleccionar —";
+    if (op === valorActual) option.selected = true;
+    select.appendChild(option);
+  });
+
+  return select;
+}
+
 function entrarModoEdicion() {
   if (modoEdicion) return;
   modoEdicion = true;
@@ -106,10 +129,17 @@ function entrarModoEdicion() {
     const span = document.getElementById(id);
     if (!span) return;
 
-    const input = document.createElement("input");
-    input.id = id;
-    input.value = afiliadoOriginal[idMap(id)] || "";
-    span.replaceWith(input);
+    let campo;
+
+    if (id === "estudios") {
+      campo = crearSelectEstudios(afiliadoOriginal.estudios);
+    } else {
+      campo = document.createElement("input");
+      campo.value = afiliadoOriginal[idMap(id)] || "";
+    }
+
+    campo.id = id;
+    span.replaceWith(campo);
   });
 
   toggleBotones(true);
@@ -119,13 +149,13 @@ function salirModoEdicion() {
   modoEdicion = false;
 
   camposEditables.forEach(id => {
-    const input = document.getElementById(id);
-    if (!input || input.tagName !== "INPUT") return;
+    const el = document.getElementById(id);
+    if (!el) return;
 
     const span = document.createElement("span");
     span.id = id;
     span.textContent = afiliadoOriginal[idMap(id)] || "-";
-    input.replaceWith(span);
+    el.replaceWith(span);
   });
 
   toggleBotones(false);
@@ -149,28 +179,20 @@ async function guardarCambios() {
 
   camposEditables.forEach(id => {
     const el = document.getElementById(id);
-    if (el && el.tagName === "INPUT") {
-      payload[idMap(id)] = el.value.trim() || null;
-    }
+    if (!el) return;
+    payload[idMap(id)] = el.value || null;
   });
 
-  // 🔑 Si cambia el número de afiliado → recalcular grupo familiar
   if (
     payload.numero_afiliado &&
     payload.numero_afiliado !== afiliadoOriginal.numero_afiliado
   ) {
-    const nuevoCodigo = extraerCodigoGrupo(payload.numero_afiliado);
-
-    if (!nuevoCodigo) {
-      Swal.fire(
-        "Formato inválido",
-        "Formato esperado: 19-00639-4/00",
-        "error"
-      );
+    const codigo = extraerCodigoGrupo(payload.numero_afiliado);
+    if (!codigo) {
+      Swal.fire("Error", "Formato inválido de N° Afiliado", "error");
       return;
     }
-
-    payload.grupo_familiar_codigo = nuevoCodigo;
+    payload.grupo_familiar_codigo = codigo;
   }
 
   const { error } = await supabase
