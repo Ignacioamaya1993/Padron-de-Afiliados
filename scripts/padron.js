@@ -22,6 +22,39 @@ function calcularEdad(fechaNacimiento) {
   return edad;
 }
 
+/* =====================
+   MOSTRAR / OCULTAR ESTUDIOS
+===================== */
+const relacionSelect = document.querySelector('select[name="relacion"]');
+const fechaNacimientoInput = document.querySelector('input[name="fechaNacimiento"]');
+const estudiosField = document.getElementById("estudiosField");
+const estudiosSelect = document.querySelector('select[name="estudios"]');
+
+function actualizarCampoEstudios() {
+  const relacion = relacionSelect.value;
+  const fechaNacimiento = fechaNacimientoInput.value;
+
+  if (relacion !== "Hijo/a" || !fechaNacimiento) {
+    estudiosField.style.display = "none";
+    estudiosSelect.value = "";
+    return;
+  }
+
+  const edad = calcularEdad(fechaNacimiento);
+
+  if (edad >= 18 && edad <= 25) {
+    estudiosField.style.display = "block";
+  } else {
+    estudiosField.style.display = "none";
+    estudiosSelect.value = "";
+  }
+}
+
+if (relacionSelect && fechaNacimientoInput && estudiosField && estudiosSelect) {
+  relacionSelect.addEventListener("change", actualizarCampoEstudios);
+  fechaNacimientoInput.addEventListener("change", actualizarCampoEstudios);
+}
+
 function mesesHastaCumple(fechaNacimiento, edadObjetivo) {
   const hoy = new Date();
   const fn = new Date(fechaNacimiento);
@@ -234,6 +267,8 @@ document
       );
 
       f.reset();
+      actualizarCampoEstudios();
+
 
     } catch (err) {
       console.error(err);
