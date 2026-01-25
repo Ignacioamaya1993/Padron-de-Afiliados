@@ -81,7 +81,7 @@ function renderFicha() {
   document.getElementById("edad").textContent = edad !== null ? `${edad} años` : "-";
 
   document.getElementById("telefono").textContent = afiliado.telefono || "-";
-  document.getElementById("numeroAfiliado").textContent = afiliado.numero_afiliado;
+  document.getElementById("numeroAfiliado").textContent = afiliado.numero_afiliado || "-";
   document.getElementById("grupoFamiliar").textContent = afiliado.grupo_familiar_codigo || "-";
   document.getElementById("relacion").textContent = afiliado.relacion;
   mostrarEstadoAfiliado(afiliado.activo);
@@ -111,16 +111,28 @@ function entrarModoEdicion() {
 
   modoEdicion = true;
 
-  // TODOS los campos editables
-  ["telefono", "fechaNacimiento", "numeroAfiliado", "dni", "relacion"].forEach(id => {
-    reemplazarPorInput(id, afiliado[id] || "");
-  });
+  // DNI y número de afiliado como input normal
+  reemplazarPorInput("dni", afiliado.dni);
+  reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
+
+  // Fecha de nacimiento como input date
+  reemplazarPorInput("fechaNacimiento", afiliado.fecha_nacimiento, "date");
+
+  // Teléfono como input
+  reemplazarPorInput("telefono", afiliado.telefono);
+
+  // Relación como select
+  convertirRelacionASelect();
 
   // Escucha cambios en fecha de nacimiento
   const fechaInput = document.getElementById("fechaNacimiento");
   fechaInput.addEventListener("input", actualizarEdadYEstudios);
 
-  // Estudios
+  // Escucha cambios en relación para actualizar estudios
+  const relacionSelect = document.getElementById("relacion");
+  relacionSelect.addEventListener("change", actualizarEdadYEstudios);
+
+  // Inicializa edad y estudios
   actualizarEdadYEstudios();
 
   toggleBotones(true);
@@ -166,6 +178,24 @@ function convertirEstudiosASelect() {
   actual.replaceWith(select);
 }
 
+function convertirRelacionASelect() {
+  const actual = document.getElementById("relacion");
+  if (actual.tagName === "SELECT") return;
+
+  const select = document.createElement("select");
+  select.id = "relacion";
+
+  ["Titular", "Hijo/a", "Cónyuge", "Otro"].forEach(op => {
+    const o = document.createElement("option");
+    o.value = op;
+    o.textContent = op;
+    if (op === afiliado.relacion) o.selected = true;
+    select.appendChild(o);
+  });
+
+  actual.replaceWith(select);
+}
+
 function reemplazarPorInput(id, valor, tipo = "text") {
   const span = document.getElementById(id);
   if (!span) return;
@@ -173,7 +203,12 @@ function reemplazarPorInput(id, valor, tipo = "text") {
   const input = document.createElement("input");
   input.type = tipo;
   input.id = id;
-  input.value = valor || "";
+  if (tipo === "date" && valor) {
+    // formatear YYYY-MM-DD
+    input.value = valor.split("T")[0]; 
+  } else {
+    input.value = valor || "";
+  }
   span.replaceWith(input);
 }
 
