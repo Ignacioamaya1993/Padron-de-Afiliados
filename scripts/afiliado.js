@@ -40,6 +40,10 @@ async function cerrarSesion() {
   window.location.href = "/pages/login.html";
 }
 
+document.getElementById("btnVolver").onclick = () => {
+  window.location.href = "/pages/padron.html"; // vuelve al buscador
+};
+
 /* =====================
    HELPERS
 ===================== */
