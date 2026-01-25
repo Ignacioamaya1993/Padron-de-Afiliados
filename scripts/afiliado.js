@@ -40,10 +40,6 @@ async function cerrarSesion() {
   window.location.href = "/pages/login.html";
 }
 
-document.getElementById("btnVolver").onclick = () => {
-  window.location.href = "/pages/padron.html"; // vuelve al buscador
-};
-
 /* =====================
    HELPERS
 ===================== */
@@ -421,6 +417,29 @@ document.getElementById("btnBaja").onclick = darDeBaja;
 document.getElementById("btnEliminar").onclick = eliminarDefinitivo;
 document.getElementById("btnReactivar").onclick = reactivar;
 document.getElementById("logoutBtn").onclick = cerrarSesion;
+
+/* =====================
+   BOTÓN VOLVER AL BUSCADOR (flotante)
+===================== */
+function agregarBotonVolver() {
+  const btn = document.createElement("button");
+  btn.id = "btnVolver";
+  btn.innerHTML = "⬅️ Volver al buscador";
+  btn.onclick = () => {
+    window.location.href = "/pages/padron.html";
+  };
+  document.body.appendChild(btn);
+}
+agregarBotonVolver();
+
+/* =====================
+   CERRAR MODO EDICIÓN CON ESCAPE
+===================== */
+document.addEventListener("keydown", (e) => {
+  if (modoEdicion && e.key === "Escape") {
+    cancelarEdicion();
+  }
+});
 
 /* =====================
    INIT
