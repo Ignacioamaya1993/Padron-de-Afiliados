@@ -65,6 +65,10 @@ async function cargarAfiliado() {
   }
 
   afiliado = data;
+
+  // Calcular grupo familiar para tabla
+  afiliado.grupo_familiar_codigo = calcularGrupoFamiliar(afiliado.numero_afiliado);
+
   renderFicha();
   cargarGrupoFamiliar();
 
@@ -240,6 +244,15 @@ function restaurarCampos() {
   }
 }
 
+function toggleBotones(editando) {
+  document.getElementById("btnEditar").style.display =
+    editando ? "none" : "inline-block";
+  document.getElementById("btnGuardar").style.display =
+    editando ? "inline-block" : "none";
+  document.getElementById("btnCancelar").style.display =
+    editando ? "inline-block" : "none";
+}
+
 /* =====================
    GUARDAR
 ===================== */
@@ -272,10 +285,6 @@ async function guardarCambios() {
     return;
   }
 
-  // Restaurar campos a modo visual antes de recargar datos
-  restaurarCampos();
-  modoEdicion = false;
-
   Swal.fire("Guardado", "Cambios guardados", "success");
   cargarAfiliado();
 }
@@ -284,9 +293,8 @@ async function guardarCambios() {
    CANCELAR EDICIÓN
 ===================== */
 function cancelarEdicion() {
-  restaurarCampos();
   modoEdicion = false;
-  renderFicha();
+  cargarAfiliado();
 }
 
 /* =====================
@@ -346,6 +354,8 @@ async function cargarGrupoFamiliar() {
 
   const tbody = document.querySelector("#tablaGrupoFamiliar tbody");
   tbody.innerHTML = "";
+
+  if (!data || data.length === 0) return;
 
   data.forEach(a => {
     const tr = document.createElement("tr");
