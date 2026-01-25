@@ -18,11 +18,10 @@
 <header>
   <h1>Ficha del Afiliado</h1>
 
-<div class="user-bar">
-  <span id="userStatus"></span>
-  <button id="logoutBtn">Cerrar sesión</button>
-</div>
-
+  <div class="user-bar">
+    <span id="bienvenido">Bienvenido, <strong id="userEmail"></strong></span>
+    <button id="logoutBtn">Cerrar sesión</button>
+  </div>
 </header>
 
 <main class="padron-home">
@@ -66,15 +65,15 @@
         <span id="grupoFamiliar"></span>
       </div>
 
-        <div>
+      <div>
         <strong>Relación</strong>
         <span id="relacion"></span>
-        </div>
+      </div>
 
-        <div>
+      <div>
         <strong>Estado</strong>
         <span id="estadoAfiliado"></span>
-        </div>
+      </div>
 
       <!-- Estudios (solo visible si corresponde) -->
       <div id="estudiosField" style="display:none;">
@@ -105,9 +104,9 @@
         🔴 Dar de baja
       </button>
 
-        <button id="btnReactivar" style="display:none;">
+      <button id="btnReactivar" style="display:none;">
         🟢 Reactivar afiliado
-        </button>
+      </button>
 
       <button id="btnEliminar" class="danger-outline">
         🗑️ Eliminar definitivo
