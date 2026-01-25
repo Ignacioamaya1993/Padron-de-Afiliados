@@ -26,8 +26,8 @@ async function verificarUsuario() {
   }
 
   // Mostrar email logueado en header
-  const userEmailSpan = document.getElementById("userEmail");
-  if (userEmailSpan) userEmailSpan.textContent = user.email || "";
+  const bienvenidoSpan = document.getElementById("userEmail");
+  if (bienvenidoSpan) bienvenidoSpan.textContent = user.email;
 }
 
 // Cerrar sesión
