@@ -1,9 +1,11 @@
-/* Contenedor del nombre y botón de ficha médica */
+/* =====================
+   FICHA HEADER
+===================== */
 .ficha-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.5rem;
 }
 
 .ficha-header h2 {
@@ -11,7 +13,7 @@
   color: #0f172a;
 }
 
-/* Botón volver debajo del cerrar sesión */
+/* Botón volver debajo del header */
 #btnVolver {
   position: absolute;   
   top: 70px;              
@@ -114,12 +116,42 @@ section button:hover {
 }
 
 /* =====================
-   INPUTS SWEETALERT
+   FORMULARIOS INLINE PARA AGREGAR REGISTROS
 ===================== */
-.swal2-input, .swal2-textarea {
-  border-radius: 6px;
+.form-inline {
   border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-inline input,
+.form-inline textarea,
+.form-inline select {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
   padding: 0.5rem;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.form-inline button {
+  width: fit-content;
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+}
+
+.form-inline .cancelar {
+  background-color: #ef4444;
+  margin-left: 0.5rem;
+}
+
+.form-inline .cancelar:hover {
+  background-color: #b91c1c;
 }
 
 /* =====================
@@ -147,6 +179,10 @@ section button:hover {
   }
 
   #btnVolver {
+    width: 100%;
+  }
+
+  .form-inline button {
     width: 100%;
   }
 }

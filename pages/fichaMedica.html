@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ficha Médica</title>
 
-  <title>Ficha Medica</title>
+<!-- CSS -->
+<link rel="stylesheet" href="../styles/padron.css" />
+<link rel="stylesheet" href="../styles/fichaMedica.css" />
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="../styles/padron.css" />
-  <link rel="stylesheet" href="../styles/fichaMedica.css" />
-
-  <!-- SweetAlert -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -26,36 +23,101 @@
 </header>
 
 <main>
-        <!-- Nombre y botón Ficha Médica -->
-    <div class="ficha-header">
+  <!-- Nombre del afiliado -->
+  <div class="ficha-header">
     <h2>Ficha Médica de <span id="nombreAfiliado"></span></h2>
-    </div>
+  </div>
 
   <!-- Tabs -->
   <div class="tabs">
     <button class="tab-button active" data-tab="enfermedades">Enfermedades</button>
     <button class="tab-button" data-tab="medicamentos">Medicamentos</button>
     <button class="tab-button" data-tab="incidencias">Incidencias</button>
+    <button class="tab-button" data-tab="adicciones">Adicciones</button>
   </div>
 
-  <!-- Enfermedades -->
+  <!-- ================== ENFERMEDADES ================== -->
   <section id="enfermedades" class="tab-content active">
     <button id="btnAgregarEnfermedad">➕ Agregar enfermedad</button>
+
+    <div id="formEnfermedad" class="modal hidden">
+      <div class="modal-content">
+        <h3>Agregar Enfermedad</h3>
+        <input type="text" placeholder="Nombre enfermedad" id="input-enfermedad">
+        <input type="date" id="input-fecha">
+        <textarea placeholder="Observaciones" id="input-observaciones"></textarea>
+        <input type="file" id="archivoEnfermedad" accept="image/*,application/pdf">
+        <div class="modal-actions">
+          <button id="guardarEnfermedad">Guardar</button>
+          <button id="cancelarEnfermedad">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
     <div id="listaEnfermedades"></div>
   </section>
 
-  <!-- Medicamentos -->
+  <!-- ================== MEDICAMENTOS ================== -->
   <section id="medicamentos" class="tab-content">
     <button id="btnAgregarMedicamento">➕ Agregar medicamento</button>
+
+    <div id="formMedicamento" class="modal hidden">
+      <div class="modal-content">
+        <h3>Agregar Medicamento</h3>
+        <input type="text" placeholder="Nombre medicamento" id="input-medicamento">
+        <input type="text" placeholder="Dosis" id="input-dosis">
+        <input type="date" id="input-proximo">
+        <textarea placeholder="Observaciones" id="input-med-observaciones"></textarea>
+        <input type="file" id="archivoMedicamento" accept="image/*,application/pdf">
+        <div class="modal-actions">
+          <button id="guardarMedicamento">Guardar</button>
+          <button id="cancelarMedicamento">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
     <div id="listaMedicamentos"></div>
   </section>
 
-  <!-- Incidencias -->
+  <!-- ================== INCIDENCIAS ================== -->
   <section id="incidencias" class="tab-content">
     <button id="btnAgregarIncidencia">➕ Nueva incidencia</button>
+
+    <div id="formIncidencia" class="modal hidden">
+      <div class="modal-content">
+        <h3>Nueva Incidencia</h3>
+        <input type="text" placeholder="Título" id="input-titulo">
+        <input type="text" placeholder="Tipo (ej. enfermedad, accidente)" id="input-tipo">
+        <textarea placeholder="Descripción" id="input-descripcion"></textarea>
+        <input type="file" id="archivoIncidenciaModal" accept="image/*,application/pdf">
+        <div class="modal-actions">
+          <button id="guardarIncidencia">Guardar</button>
+          <button id="cancelarIncidencia">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
     <div id="listaIncidencias"></div>
-    <!-- Input oculto para adjuntar archivos -->
-    <input type="file" id="archivoIncidencia" accept="image/*,application/pdf" style="display:none;">
+  </section>
+
+  <!-- ================== ADICCIONES ================== -->
+  <section id="adicciones" class="tab-content">
+    <button id="btnAgregarAdiccion">➕ Agregar adicción</button>
+
+    <div id="formAdiccion" class="modal hidden">
+      <div class="modal-content">
+        <h3>Agregar Adicción</h3>
+        <input type="text" placeholder="Nombre de adicción" id="input-adiccion">
+        <textarea placeholder="Descripción" id="input-adiccion-descripcion"></textarea>
+        <input type="file" id="archivoAdiccion" accept="image/*,application/pdf">
+        <div class="modal-actions">
+          <button id="guardarAdiccion">Guardar</button>
+          <button id="cancelarAdiccion">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="listaAdicciones"></div>
   </section>
 </main>
 
