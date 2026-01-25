@@ -1,5 +1,9 @@
 import { supabase } from "./supabase.js";
 
+/* =====================
+   PARAMS
+===================== */
+
 const params = new URLSearchParams(window.location.search);
 const afiliadoId = params.get("id");
 
@@ -80,7 +84,7 @@ function renderFicha() {
     afiliado.numero_afiliado;
 
   document.getElementById("grupoFamiliar").textContent =
-    afiliado.grupo_familiar;
+    afiliado.grupo_familiar_codigo || "-";
 
   document.getElementById("relacion").textContent =
     afiliado.relacion;
@@ -103,7 +107,7 @@ function renderFicha() {
 
   salirModoEdicion();
 
-  // Si está dado de baja → bloquear acciones
+  // Bloquear acciones si está dado de baja
   if (!afiliado.activo) {
     document.getElementById("btnEditar").style.display = "none";
     document.getElementById("btnBaja").style.display = "none";
@@ -186,7 +190,7 @@ async function guardarCambios() {
 
   // Si cambia número → actualizar grupo familiar
   if (payload.numero_afiliado !== afiliado.numero_afiliado) {
-    payload.grupo_familiar = payload.numero_afiliado;
+    payload.grupo_familiar_codigo = payload.numero_afiliado;
   }
 
   const { error } = await supabase
@@ -218,10 +222,15 @@ async function darDeBaja() {
 
   if (!res.isConfirmed) return;
 
-  await supabase
+  const { error } = await supabase
     .from("afiliados")
     .update({ activo: false })
     .eq("id", afiliado.id);
+
+  if (error) {
+    Swal.fire("Error", error.message, "error");
+    return;
+  }
 
   Swal.fire("Baja realizada", "", "success");
   cargarAfiliado();
@@ -238,10 +247,15 @@ async function eliminarDefinitivo() {
 
   if (!res.isConfirmed) return;
 
-  await supabase
+  const { error } = await supabase
     .from("afiliados")
     .delete()
     .eq("id", afiliado.id);
+
+  if (error) {
+    Swal.fire("Error", error.message, "error");
+    return;
+  }
 
   Swal.fire("Eliminado", "", "success");
   window.location.href = "/pages/padron.html";
@@ -252,13 +266,18 @@ async function eliminarDefinitivo() {
 ===================== */
 
 async function cargarGrupoFamiliar() {
-  if (!afiliado.grupo_familiar) return;
+  if (!afiliado.grupo_familiar_codigo) return;
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("afiliados")
     .select("id, nombre, apellido, dni, numero_afiliado, relacion, activo")
-    .eq("grupo_familiar", afiliado.grupo_familiar)
+    .eq("grupo_familiar_codigo", afiliado.grupo_familiar_codigo)
     .order("relacion");
+
+  if (error) {
+    console.error(error);
+    return;
+  }
 
   const tbody = document.querySelector("#tablaGrupoFamiliar tbody");
   tbody.innerHTML = "";
