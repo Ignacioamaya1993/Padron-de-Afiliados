@@ -1,3 +1,16 @@
+/* Contenedor del nombre y botón de ficha médica */
+.ficha-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.ficha-header h2 {
+  font-size: 1.6rem;
+  color: #0f172a;
+}
+
 /* Botón volver debajo del cerrar sesión */
 #btnVolver {
   position: absolute;   
