@@ -54,10 +54,6 @@ function obtenerAlertaHijo(fechaNacimiento, relacion) {
   return null;
 }
 
-const estado = a.activo
-  ? ""
-  : `<span style="color:#dc2626;font-weight:600"> 🔴 BAJA</span>`;
-
 /* =====================
    MOSTRAR / OCULTAR ESTUDIOS
 ===================== */
@@ -151,6 +147,10 @@ searchInput.addEventListener("input", async e => {
       const alerta = obtenerAlertaHijo(a.fecha_nacimiento, a.relacion);
       const edad = a.fecha_nacimiento ? calcularEdad(a.fecha_nacimiento) : null;
 
+        const estado = a.activo
+    ? ""
+    : `<span style="color:#dc2626;font-weight:600"> 🔴 BAJA</span>`;
+
       const item = document.createElement("div");
       item.className = "resultado-item";
 
@@ -160,7 +160,7 @@ searchInput.addEventListener("input", async e => {
           ${estado}
           ${alerta ? `<span title="${alerta.texto}">${alerta.icono}</span>` : ""}
         </strong>
-        
+
         DNI: ${a.dni || "-"}
         ${edad !== null ? ` | Edad: ${edad}` : ""}
         <br>
