@@ -15,6 +15,32 @@ let afiliado = null;
 let modoEdicion = false;
 
 /* =====================
+   AUTENTICACIÓN
+===================== */
+async function verificarUsuario() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    // Si no hay usuario logueado, redirigir al login
+    window.location.href = "/pages/login.html";
+    return;
+  }
+
+  // Mostrar email logueado en header
+  const userEmailSpan = document.getElementById("userEmail");
+  if (userEmailSpan) userEmailSpan.textContent = user.email || "";
+}
+
+// Cerrar sesión
+async function cerrarSesion() {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    Swal.fire("Error", error.message, "error");
+    return;
+  }
+  window.location.href = "/pages/login.html";
+}
+
+/* =====================
    HELPERS
 ===================== */
 function calcularEdad(fecha) {
@@ -71,10 +97,6 @@ async function cargarAfiliado() {
 
   renderFicha();
   cargarGrupoFamiliar();
-
-  // Mostrar email en header
-  const userEmailSpan = document.getElementById("userEmail");
-  if (userEmailSpan) userEmailSpan.textContent = afiliado.email || "";
 }
 
 /* =====================
@@ -214,7 +236,6 @@ function convertirEstudiosASelect() {
 }
 
 function restaurarCampos() {
-  // Restaurar spans originales si existían inputs
   ["telefono", "fechaNacimiento", "numeroAfiliado", "dni"].forEach(id => {
     const el = document.getElementById(id);
     if (el && el.tagName === "INPUT") {
@@ -225,7 +246,6 @@ function restaurarCampos() {
     }
   });
 
-  // Relacion
   const rel = document.getElementById("relacionSelect");
   if (rel) {
     const span = document.createElement("span");
@@ -234,7 +254,6 @@ function restaurarCampos() {
     rel.replaceWith(span);
   }
 
-  // Estudios
   const est = document.getElementById("estudios");
   if (est && est.tagName === "SELECT") {
     const span = document.createElement("span");
@@ -391,8 +410,10 @@ document.getElementById("btnCancelar").onclick = cancelarEdicion;
 document.getElementById("btnBaja").onclick = darDeBaja;
 document.getElementById("btnEliminar").onclick = eliminarDefinitivo;
 document.getElementById("btnReactivar").onclick = reactivar;
+document.getElementById("logoutBtn").onclick = cerrarSesion;
 
 /* =====================
    INIT
 ===================== */
+verificarUsuario();
 cargarAfiliado();
