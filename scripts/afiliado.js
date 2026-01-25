@@ -29,18 +29,10 @@ function calcularEdad(fecha) {
   return edad;
 }
 
-function mostrarEstado(activo) {
-  const status = document.getElementById("status");
-
-  if (activo) {
-    status.textContent = "Activo";
-    status.style.color = "";
-    status.style.fontWeight = "normal";
-  } else {
-    status.textContent = "Dado de baja";
-    status.style.color = "#dc2626";
-    status.style.fontWeight = "700";
-  }
+function estadoHTML(activo) {
+  return activo
+    ? `<span>Activo</span>`
+    : `<span style="color:#dc2626;font-weight:700">Dado de baja</span>`;
 }
 
 /* =====================
@@ -74,41 +66,31 @@ function renderFicha() {
   document.getElementById("nombreCompleto").textContent =
     `${afiliado.nombre} ${afiliado.apellido}`;
 
-  document.getElementById("dni").textContent = afiliado.dni;
-  document.getElementById("fechaNacimiento").textContent =
-    afiliado.fecha_nacimiento || "-";
+  document.getElementById("dni").replaceWith(crearSpan("dni", afiliado.dni));
+  document.getElementById("telefono").replaceWith(crearSpan("telefono", afiliado.telefono || "-"));
+  document.getElementById("numeroAfiliado").replaceWith(crearSpan("numeroAfiliado", afiliado.numero_afiliado));
+  document.getElementById("fechaNacimiento").replaceWith(crearSpan("fechaNacimiento", afiliado.fecha_nacimiento || "-"));
 
   const edad = calcularEdad(afiliado.fecha_nacimiento);
   document.getElementById("edad").textContent =
     edad !== null ? `${edad} años` : "-";
 
-  document.getElementById("telefono").textContent =
-    afiliado.telefono || "-";
-
-  document.getElementById("numeroAfiliado").textContent =
-    afiliado.numero_afiliado;
-
   document.getElementById("grupoFamiliar").textContent =
     afiliado.grupo_familiar_codigo || "-";
 
-  document.getElementById("relacion").textContent =
-    afiliado.relacion;
+  document.getElementById("relacion").innerHTML =
+    `${afiliado.relacion} | ${estadoHTML(afiliado.activo)}`;
 
   // Estudios
   const estudiosField = document.getElementById("estudiosField");
-  if (
-    afiliado.relacion === "Hijo/a" &&
-    edad >= 18 &&
-    edad <= 25
-  ) {
+  if (afiliado.relacion === "Hijo/a" && edad >= 18 && edad <= 25) {
     estudiosField.style.display = "block";
-    document.getElementById("estudios").textContent =
-      afiliado.estudios || "-";
+    document.getElementById("estudios").replaceWith(
+      crearSpan("estudios", afiliado.estudios || "-")
+    );
   } else {
     estudiosField.style.display = "none";
   }
-
-  mostrarEstado(afiliado.activo);
 
   toggleBotones(false);
 
@@ -128,34 +110,31 @@ function renderFicha() {
 
 function entrarModoEdicion() {
   if (!afiliado.activo) return;
-
   modoEdicion = true;
 
   reemplazarPorInput("telefono", afiliado.telefono);
   reemplazarPorInput("fechaNacimiento", afiliado.fecha_nacimiento, "date");
   reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
 
-  // Listener para recalcular estudios en tiempo real
   const fechaInput = document.getElementById("fechaNacimiento");
-  fechaInput.addEventListener("change", actualizarEstudiosEnEdicion);
+  fechaInput.addEventListener("input", actualizarEdadYEstudios);
+  fechaInput.addEventListener("change", actualizarEdadYEstudios);
 
-  // Estudios inicial
-  if (document.getElementById("estudiosField").style.display === "block") {
-    convertirEstudiosASelect();
-  }
-
+  actualizarEdadYEstudios();
   toggleBotones(true);
 }
 
-function actualizarEstudiosEnEdicion() {
-  if (!modoEdicion) return;
-  if (afiliado.relacion !== "Hijo/a") return;
+function actualizarEdadYEstudios() {
+  if (!modoEdicion || afiliado.relacion !== "Hijo/a") return;
 
   const fechaInput = document.getElementById("fechaNacimiento");
+  const edadSpan = document.getElementById("edad");
+  const estudiosField = document.getElementById("estudiosField");
+
   if (!fechaInput.value) return;
 
   const edad = calcularEdad(fechaInput.value);
-  const estudiosField = document.getElementById("estudiosField");
+  edadSpan.textContent = edad !== null ? `${edad} años` : "-";
 
   if (edad >= 18 && edad <= 25) {
     estudiosField.style.display = "block";
@@ -167,7 +146,6 @@ function actualizarEstudiosEnEdicion() {
 
 function convertirEstudiosASelect() {
   const actual = document.getElementById("estudios");
-
   if (actual.tagName === "SELECT") return;
 
   const select = document.createElement("select");
@@ -186,8 +164,6 @@ function convertirEstudiosASelect() {
 
 function reemplazarPorInput(id, valor, tipo = "text") {
   const span = document.getElementById(id);
-  if (!span) return;
-
   const input = document.createElement("input");
   input.type = tipo;
   input.id = id;
@@ -195,19 +171,21 @@ function reemplazarPorInput(id, valor, tipo = "text") {
   span.replaceWith(input);
 }
 
+function crearSpan(id, texto) {
+  const span = document.createElement("span");
+  span.id = id;
+  span.textContent = texto;
+  return span;
+}
+
 function toggleBotones(editando) {
-  document.getElementById("btnEditar").style.display =
-    editando ? "none" : "inline-block";
-
-  document.getElementById("btnGuardar").style.display =
-    editando ? "inline-block" : "none";
-
-  document.getElementById("btnCancelar").style.display =
-    editando ? "inline-block" : "none";
+  document.getElementById("btnEditar").style.display = editando ? "none" : "inline-block";
+  document.getElementById("btnGuardar").style.display = editando ? "inline-block" : "none";
+  document.getElementById("btnCancelar").style.display = editando ? "inline-block" : "none";
 }
 
 /* =====================
-   GUARDAR
+   GUARDAR / BAJA / ETC
 ===================== */
 
 async function guardarCambios() {
@@ -218,12 +196,8 @@ async function guardarCambios() {
   };
 
   const estudiosEl = document.getElementById("estudios");
-  if (estudiosEl && estudiosEl.tagName === "SELECT") {
+  if (estudiosEl?.tagName === "SELECT") {
     payload.estudios = estudiosEl.value;
-  }
-
-  if (payload.numero_afiliado !== afiliado.numero_afiliado) {
-    payload.grupo_familiar_codigo = payload.numero_afiliado;
   }
 
   const { error } = await supabase
@@ -237,65 +211,24 @@ async function guardarCambios() {
   }
 
   Swal.fire("Guardado", "Cambios guardados", "success");
-  cargarAfiliado(); // ← restaura spans correctamente
+  cargarAfiliado();
 }
 
-/* =====================
-   BAJA / REACTIVAR / ELIMINAR
-===================== */
-
 async function darDeBaja() {
-  const res = await Swal.fire({
-    title: "¿Dar de baja afiliado?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Dar de baja"
-  });
-
-  if (!res.isConfirmed) return;
-
-  await supabase
-    .from("afiliados")
-    .update({ activo: false })
-    .eq("id", afiliado.id);
-
+  if (!(await Swal.fire({ title: "¿Dar de baja?", showCancelButton: true })).isConfirmed) return;
+  await supabase.from("afiliados").update({ activo: false }).eq("id", afiliado.id);
   cargarAfiliado();
 }
 
 async function reactivar() {
-  const res = await Swal.fire({
-    title: "¿Reactivar afiliado?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Reactivar"
-  });
-
-  if (!res.isConfirmed) return;
-
-  await supabase
-    .from("afiliados")
-    .update({ activo: true })
-    .eq("id", afiliado.id);
-
+  if (!(await Swal.fire({ title: "¿Reactivar?", showCancelButton: true })).isConfirmed) return;
+  await supabase.from("afiliados").update({ activo: true }).eq("id", afiliado.id);
   cargarAfiliado();
 }
 
 async function eliminarDefinitivo() {
-  const res = await Swal.fire({
-    title: "ELIMINAR DEFINITIVAMENTE",
-    text: "Esta acción no se puede deshacer",
-    icon: "error",
-    showCancelButton: true,
-    confirmButtonText: "Eliminar"
-  });
-
-  if (!res.isConfirmed) return;
-
-  await supabase
-    .from("afiliados")
-    .delete()
-    .eq("id", afiliado.id);
-
+  if (!(await Swal.fire({ title: "ELIMINAR DEFINITIVO", icon: "error", showCancelButton: true })).isConfirmed) return;
+  await supabase.from("afiliados").delete().eq("id", afiliado.id);
   window.location.href = "/pages/padron.html";
 }
 
