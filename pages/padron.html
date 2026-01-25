@@ -93,12 +93,14 @@
         <option value="Otro">Otro</option>
       </select>
 
+      <!-- Estudios (solo hijos >18) -->
       <div id="estudiosField" style="display:none;">
-        <input
-          type="text"
-          id="estudios"
-          placeholder="Estudios que cursa (terciario, universitario, etc)"
-        />
+        <select name="estudios">
+          <option value="">Nivel de estudios</option>
+          <option value="Terciario">Terciario</option>
+          <option value="Universitario">Universitario</option>
+          <option value="Posgrado">Posgrado</option>
+        </select>
       </div>
 
       <div class="form-actions">

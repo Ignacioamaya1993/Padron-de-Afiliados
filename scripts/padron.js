@@ -4,6 +4,59 @@ import { supabase } from "./supabase.js";
 let buscando = false;
 
 /* =====================
+   HELPERS
+===================== */
+function calcularEdad(fechaNacimiento) {
+  if (!fechaNacimiento) return null;
+
+  const hoy = new Date();
+  const fn = new Date(fechaNacimiento);
+
+  let edad = hoy.getFullYear() - fn.getFullYear();
+  const m = hoy.getMonth() - fn.getMonth();
+
+  if (m < 0 || (m === 0 && hoy.getDate() < fn.getDate())) {
+    edad--;
+  }
+
+  return edad;
+}
+
+function mesesHastaCumple(fechaNacimiento, edadObjetivo) {
+  const hoy = new Date();
+  const fn = new Date(fechaNacimiento);
+
+  const cumpleObjetivo = new Date(
+    fn.getFullYear() + edadObjetivo,
+    fn.getMonth(),
+    fn.getDate()
+  );
+
+  const diffMs = cumpleObjetivo - hoy;
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30));
+}
+
+function obtenerAlertaHijo(fechaNacimiento, relacion) {
+  if (relacion !== "Hijo/a" || !fechaNacimiento) return null;
+
+  const edad = calcularEdad(fechaNacimiento);
+
+  // Cerca de los 18
+  const meses18 = mesesHastaCumple(fechaNacimiento, 18);
+  if (edad === 17 && meses18 <= 2 && meses18 >= 0) {
+    return { nivel: "warning", icono: "🟡" };
+  }
+
+  // Cerca de los 25
+  const meses25 = mesesHastaCumple(fechaNacimiento, 25);
+  if (edad === 24 && meses25 <= 2 && meses25 >= 0) {
+    return { nivel: "critical", icono: "🔴" };
+  }
+
+  return null;
+}
+
+/* =====================
    AUTH
 ===================== */
 authObserver(user => {
@@ -43,7 +96,8 @@ searchInput.addEventListener("input", async e => {
         nombre_completo,
         dni,
         numero_afiliado,
-        relacion
+        relacion,
+        fecha_nacimiento
       `)
       .or(
         `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,numero_afiliado.ilike.%${texto}%`
@@ -59,11 +113,19 @@ searchInput.addEventListener("input", async e => {
     }
 
     data.forEach(a => {
+      const alerta = obtenerAlertaHijo(
+        a.fecha_nacimiento,
+        a.relacion
+      );
+
       const item = document.createElement("div");
       item.className = "resultado-item";
 
       item.innerHTML = `
-        <strong>${a.nombre_completo}</strong><br>
+        <strong>
+          ${a.nombre_completo}
+          ${alerta ? `<span title="Alerta por edad">${alerta.icono}</span>` : ""}
+        </strong>
         DNI: ${a.dni || "-"} |
         Afiliado: ${a.numero_afiliado} |
         ${a.relacion}
@@ -87,133 +149,97 @@ searchInput.addEventListener("input", async e => {
 /* =====================
    NUEVO AFILIADO
 ===================== */
-const form = document.getElementById("PadronForm");
-const estudiosField = document.getElementById("estudiosField");
-const estudiosInput = document.getElementById("estudios");
+document
+  .getElementById("PadronForm")
+  ?.addEventListener("submit", async e => {
+    e.preventDefault();
 
-function calcularEdad(fecha) {
-  const hoy = new Date();
-  const nac = new Date(fecha);
-  let edad = hoy.getFullYear() - nac.getFullYear();
-  const m = hoy.getMonth() - nac.getMonth();
-  if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
-  return edad;
-}
+    const f = e.target;
 
-/* Mostrar / ocultar estudios en tiempo real */
-form.relacion.addEventListener("change", validarHijo);
-form.fechaNacimiento.addEventListener("change", validarHijo);
+    const nombre = f.nombre.value.trim();
+    const apellido = f.apellido.value.trim();
+    const dni = f.dni.value.trim();
+    const telefono = f.telefono.value.trim() || null;
+    const fechaNacimiento = f.fechaNacimiento.value || null;
+    const numeroAfiliado = f.numeroAfiliado.value.trim();
+    const relacion = f.relacion.value;
+    const estudios = f.estudios?.value || null;
 
-function validarHijo() {
-  estudiosField.style.display = "none";
-  estudiosInput.value = "";
-
-  if (form.relacion.value !== "Hijo/a") return;
-  if (!form.fechaNacimiento.value) return;
-
-  const edad = calcularEdad(form.fechaNacimiento.value);
-
-  if (edad > 25) {
-    Swal.fire(
-      "No permitido",
-      "Los hijos mayores de 25 años no pueden afiliarse",
-      "warning"
-    );
-    form.fechaNacimiento.value = "";
-    return;
-  }
-
-  if (edad >= 18) {
-    estudiosField.style.display = "block";
-  }
-}
-
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-
-  const nombre = form.nombre.value.trim();
-  const apellido = form.apellido.value.trim();
-  const dni = form.dni.value.trim();
-  const telefono = form.telefono.value.trim() || null;
-  const fechaNacimiento = form.fechaNacimiento.value || null;
-  const numeroAfiliado = form.numeroAfiliado.value.trim();
-  const relacion = form.relacion.value;
-  const estudios = estudiosInput.value.trim() || null;
-
-  if (!nombre || !apellido || !dni || !numeroAfiliado || !relacion) {
-    Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
-    return;
-  }
-
-  if (relacion === "Hijo/a" && fechaNacimiento) {
-    const edad = calcularEdad(fechaNacimiento);
-
-    if (edad > 25) {
+    if (!nombre || !apellido || !dni || !numeroAfiliado || !relacion) {
       Swal.fire(
-        "No permitido",
-        "Los hijos mayores de 25 años no pueden afiliarse",
+        "Atención",
+        "Completá todos los campos obligatorios",
+        "warning"
+      );
+      return;
+    }
+
+    // Validaciones especiales para hijos
+    if (relacion === "Hijo/a" && fechaNacimiento) {
+      const edad = calcularEdad(fechaNacimiento);
+
+      if (edad > 25) {
+        Swal.fire(
+          "No permitido",
+          "Los hijos mayores de 25 años no pueden afiliarse",
+          "error"
+        );
+        return;
+      }
+
+      if (edad >= 18 && !estudios) {
+        Swal.fire(
+          "Atención",
+          "Debe indicar qué estudios cursa",
+          "warning"
+        );
+        return;
+      }
+    }
+
+    const match = numeroAfiliado.match(/^[^-]+-([^/]+)\//);
+    if (!match) {
+      Swal.fire(
+        "Formato incorrecto",
+        "Formato esperado: 19-00639-4/00",
         "error"
       );
       return;
     }
 
-    if (edad >= 18 && !estudios) {
+    const grupoFamiliarCodigo = match[1];
+
+    try {
+      const { error } = await supabase
+        .from("afiliados")
+        .insert({
+          nombre,
+          apellido,
+          nombre_completo: `${apellido.toUpperCase()} ${nombre.toUpperCase()}`,
+          dni,
+          telefono,
+          fecha_nacimiento: fechaNacimiento,
+          numero_afiliado: numeroAfiliado,
+          grupo_familiar_codigo: grupoFamiliarCodigo,
+          relacion,
+          estudios
+        });
+
+      if (error) throw error;
+
       Swal.fire(
-        "Falta información",
-        "Indicá los estudios que está cursando",
-        "warning"
+        "Guardado",
+        "Afiliado agregado correctamente",
+        "success"
       );
-      return;
-    }
-  }
 
-  /* =====================
-     GRUPO FAMILIAR
-  ===================== */
-  const match = numeroAfiliado.match(/^[^-]+-([^/]+)\//);
+      f.reset();
 
-  if (!match) {
-    Swal.fire(
-      "Formato incorrecto",
-      "El número de afiliado debe tener formato válido (ej: 19-00639-4/00)",
-      "error"
-    );
-    return;
-  }
-
-  const grupoFamiliarCodigo = match[1];
-
-  try {
-    const { error } = await supabase
-      .from("afiliados")
-      .insert({
-        nombre,
-        apellido,
-        dni,
-        telefono,
-        fecha_nacimiento: fechaNacimiento,
-        numero_afiliado: numeroAfiliado,
-        grupo_familiar_codigo: grupoFamiliarCodigo,
-        relacion,
-        estudios
-      });
-
-    if (error) throw error;
-
-    Swal.fire("Guardado", "Afiliado agregado correctamente", "success");
-    form.reset();
-    estudiosField.style.display = "none";
-
-  } catch (err) {
-    console.error(err);
-
-    if (err.message?.includes("dni")) {
-      Swal.fire("DNI duplicado", "Ya existe un afiliado con ese DNI", "warning");
-    } else {
+    } catch (err) {
+      console.error(err);
       Swal.fire("Error", "No se pudo guardar el afiliado", "error");
     }
-  }
-});
+  });
 
 /* =====================
    MOSTRAR / OCULTAR FORM

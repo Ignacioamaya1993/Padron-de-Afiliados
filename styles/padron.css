@@ -150,7 +150,15 @@ header h1 {
   grid-column: 1 / -1;
 }
 
-#estudiosField input {
+#estudiosField select {
   border: 1px solid #f59e0b;
   background: #fff7ed;
+}
+
+.form-afiliado input,
+.form-afiliado select {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: white;
 }
