@@ -69,6 +69,8 @@ async function cargarAfiliado() {
 ===================== */
 
 function renderFicha() {
+  modoEdicion = false;
+
   document.getElementById("nombreCompleto").textContent =
     `${afiliado.nombre} ${afiliado.apellido}`;
 
@@ -107,7 +109,8 @@ function renderFicha() {
   }
 
   mostrarEstado(afiliado.activo);
-  salirModoEdicion();
+
+  toggleBotones(false);
 
   document.getElementById("btnEditar").style.display =
     afiliado.activo ? "inline-block" : "none";
@@ -132,28 +135,53 @@ function entrarModoEdicion() {
   reemplazarPorInput("fechaNacimiento", afiliado.fecha_nacimiento, "date");
   reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
 
+  // Listener para recalcular estudios en tiempo real
+  const fechaInput = document.getElementById("fechaNacimiento");
+  fechaInput.addEventListener("change", actualizarEstudiosEnEdicion);
+
+  // Estudios inicial
   if (document.getElementById("estudiosField").style.display === "block") {
-    const span = document.getElementById("estudios");
-    const select = document.createElement("select");
-    select.id = "estudios";
-
-    ["Primario", "Secundario", "Terciario", "Universitario"].forEach(op => {
-      const o = document.createElement("option");
-      o.value = op;
-      o.textContent = op;
-      if (op === afiliado.estudios) o.selected = true;
-      select.appendChild(o);
-    });
-
-    span.replaceWith(select);
+    convertirEstudiosASelect();
   }
 
   toggleBotones(true);
 }
 
-function salirModoEdicion() {
-  modoEdicion = false;
-  toggleBotones(false);
+function actualizarEstudiosEnEdicion() {
+  if (!modoEdicion) return;
+  if (afiliado.relacion !== "Hijo/a") return;
+
+  const fechaInput = document.getElementById("fechaNacimiento");
+  if (!fechaInput.value) return;
+
+  const edad = calcularEdad(fechaInput.value);
+  const estudiosField = document.getElementById("estudiosField");
+
+  if (edad >= 18 && edad <= 25) {
+    estudiosField.style.display = "block";
+    convertirEstudiosASelect();
+  } else {
+    estudiosField.style.display = "none";
+  }
+}
+
+function convertirEstudiosASelect() {
+  const actual = document.getElementById("estudios");
+
+  if (actual.tagName === "SELECT") return;
+
+  const select = document.createElement("select");
+  select.id = "estudios";
+
+  ["Primario", "Secundario", "Terciario", "Universitario"].forEach(op => {
+    const o = document.createElement("option");
+    o.value = op;
+    o.textContent = op;
+    if (op === afiliado.estudios) o.selected = true;
+    select.appendChild(o);
+  });
+
+  actual.replaceWith(select);
 }
 
 function reemplazarPorInput(id, valor, tipo = "text") {
@@ -208,9 +236,8 @@ async function guardarCambios() {
     return;
   }
 
-  salirModoEdicion();
   Swal.fire("Guardado", "Cambios guardados", "success");
-  cargarAfiliado();
+  cargarAfiliado(); // ← restaura spans correctamente
 }
 
 /* =====================
