@@ -1,5 +1,22 @@
 import { supabase } from "./supabase.js";
+import { authObserver, logout } from "./auth.js";
 
+/* =====================
+   AUTH
+===================== */
+authObserver(user => {
+  if (!user) {
+    window.location.href = "/pages/login.html";
+    return;
+  }
+  document.getElementById("status").textContent = `Bienvenido ${user.email}`;
+});
+
+document.getElementById("logoutBtn")?.addEventListener("click", logout);
+
+/* =====================
+   ID
+===================== */
 const params = new URLSearchParams(window.location.search);
 const afiliadoId = params.get("id");
 
@@ -9,6 +26,7 @@ if (!afiliadoId) {
 }
 
 let afiliadoActual = null;
+let editando = false;
 
 /* =====================
    HELPERS
@@ -23,16 +41,6 @@ function calcularEdad(fecha) {
   return edad;
 }
 
-function setEditable(editable) {
-  document
-    .querySelectorAll("input, select")
-    .forEach(el => el.disabled = !editable);
-
-  document.getElementById("btnGuardar").style.display = editable ? "inline-block" : "none";
-  document.getElementById("btnCancelar").style.display = editable ? "inline-block" : "none";
-  document.getElementById("btnEditar").style.display = editable ? "none" : "inline-block";
-}
-
 /* =====================
    CARGAR AFILIADO
 ===================== */
@@ -43,70 +51,134 @@ async function cargarAfiliado() {
     .eq("id", afiliadoId)
     .single();
 
-  if (error) {
+  if (error || !data) {
     Swal.fire("Error", "No se pudo cargar el afiliado", "error");
     return;
   }
 
   afiliadoActual = data;
-  renderAfiliado();
-}
-
-function renderAfiliado() {
-  const a = afiliadoActual;
-
-  document.getElementById("nombre").value = a.nombre;
-  document.getElementById("apellido").value = a.apellido;
-  document.getElementById("dni").value = a.dni;
-  document.getElementById("telefono").value = a.telefono || "";
-  document.getElementById("fechaNacimiento").value = a.fecha_nacimiento || "";
-  document.getElementById("numeroAfiliado").value = a.numero_afiliado;
-  document.getElementById("relacion").value = a.relacion;
-  document.getElementById("estudios").value = a.estudios || "";
-
-  const edad = calcularEdad(a.fecha_nacimiento);
-  document.getElementById("edad").textContent =
-    edad !== null ? `${edad} años` : "-";
-
-  const estado = document.getElementById("estadoAfiliado");
-  if (!a.activo) {
-    estado.textContent = "🔴 AFILIADO DADO DE BAJA";
-    estado.style.color = "#dc2626";
-  }
-
-  if (!a.activo) {
-    setEditable(false);
-    document.getElementById("btnEditar").style.display = "none";
-    document.getElementById("btnBaja").style.display = "none";
-  } else {
-    setEditable(false);
-  }
+  render();
 }
 
 /* =====================
-   EDITAR
+   RENDER
+===================== */
+function render() {
+  const a = afiliadoActual;
+  editando ? renderEdit() : renderView(a);
+}
+
+function renderView(a) {
+  editando = false;
+
+  document.getElementById("nombreCompleto").innerHTML =
+    `${a.nombre} ${a.apellido}` +
+    (!a.activo ? ` <span style="color:#dc2626">(BAJA)</span>` : "");
+
+  setSpan("dni", a.dni);
+  setSpan("telefono", a.telefono);
+  setSpan("numeroAfiliado", a.numero_afiliado);
+  setSpan("grupoFamiliar", a.grupo_familiar_codigo);
+  setSpan("relacion", a.relacion);
+
+  if (a.fecha_nacimiento) {
+    setSpan(
+      "fechaNacimiento",
+      new Date(a.fecha_nacimiento).toLocaleDateString("es-AR")
+    );
+    setSpan("edad", `${calcularEdad(a.fecha_nacimiento)} años`);
+  } else {
+    setSpan("fechaNacimiento", "-");
+    setSpan("edad", "-");
+  }
+
+  const edad = calcularEdad(a.fecha_nacimiento);
+  const estudiosField = document.getElementById("estudiosField");
+
+  if (
+    a.relacion === "Hijo/a" &&
+    edad >= 18 &&
+    edad <= 25 &&
+    a.estudios
+  ) {
+    estudiosField.style.display = "block";
+    setSpan("estudios", a.estudios);
+  } else {
+    estudiosField.style.display = "none";
+  }
+
+  toggleButtons();
+}
+
+function renderEdit() {
+  editando = true;
+
+  replaceWithInput("dni", afiliadoActual.dni);
+  replaceWithInput("telefono", afiliadoActual.telefono);
+  replaceWithInput("numeroAfiliado", afiliadoActual.numero_afiliado);
+  replaceWithInput("fechaNacimiento", afiliadoActual.fecha_nacimiento, "date");
+
+  replaceWithSelect("relacion", ["Titular", "Cónyuge", "Hijo/a", "Otro"], afiliadoActual.relacion);
+  replaceWithSelect("estudios", ["Terciario", "Universitario", "Posgrado"], afiliadoActual.estudios);
+
+  toggleButtons();
+}
+
+/* =====================
+   DOM HELPERS
+===================== */
+function setSpan(id, value) {
+  document.getElementById(id).textContent = value || "-";
+}
+
+function replaceWithInput(id, value, type = "text") {
+  const el = document.getElementById(id);
+  el.innerHTML = `<input type="${type}" id="${id}Input" value="${value || ""}">`;
+}
+
+function replaceWithSelect(id, options, selected) {
+  const el = document.getElementById(id);
+  el.innerHTML = `
+    <select id="${id}Input">
+      ${options
+        .map(
+          o => `<option value="${o}" ${o === selected ? "selected" : ""}>${o}</option>`
+        )
+        .join("")}
+    </select>
+  `;
+}
+
+function toggleButtons() {
+  document.getElementById("btnEditar").style.display =
+    !editando && afiliadoActual.activo ? "inline-block" : "none";
+  document.getElementById("btnGuardar").style.display =
+    editando ? "inline-block" : "none";
+  document.getElementById("btnCancelar").style.display =
+    editando ? "inline-block" : "none";
+  document.getElementById("btnBaja").style.display =
+    afiliadoActual.activo ? "inline-block" : "none";
+}
+
+/* =====================
+   EVENTS
 ===================== */
 document.getElementById("btnEditar").onclick = () => {
-  setEditable(true);
+  renderEdit();
 };
 
 document.getElementById("btnCancelar").onclick = () => {
-  renderAfiliado();
+  renderView(afiliadoActual);
 };
 
-/* =====================
-   GUARDAR CAMBIOS
-===================== */
 document.getElementById("btnGuardar").onclick = async () => {
   const payload = {
-    nombre: nombre.value.trim(),
-    apellido: apellido.value.trim(),
-    dni: dni.value.trim(),
-    telefono: telefono.value.trim() || null,
-    fecha_nacimiento: fechaNacimiento.value || null,
-    numero_afiliado: numeroAfiliado.value.trim(),
-    relacion: relacion.value,
-    estudios: estudios.value || null
+    dni: document.getElementById("dniInput").value.trim(),
+    telefono: document.getElementById("telefonoInput").value.trim() || null,
+    numero_afiliado: document.getElementById("numeroAfiliadoInput").value.trim(),
+    fecha_nacimiento: document.getElementById("fechaNacimientoInput").value || null,
+    relacion: document.getElementById("relacionInput").value,
+    estudios: document.getElementById("estudiosInput")?.value || null
   };
 
   const { error } = await supabase
@@ -116,35 +188,23 @@ document.getElementById("btnGuardar").onclick = async () => {
 
   if (error) {
     if (error.code === "23505") {
-      if (error.message.includes("dni")) {
-        Swal.fire("DNI duplicado", "Ese DNI ya existe", "warning");
-        return;
-      }
-      if (error.message.includes("numero")) {
-        Swal.fire("Número duplicado", "Ese número ya existe", "warning");
-        return;
-      }
+      Swal.fire("Duplicado", "DNI o número de afiliado ya existe", "warning");
+      return;
     }
-
-    Swal.fire("Error", "No se pudieron guardar los cambios", "error");
+    Swal.fire("Error", "No se pudo guardar", "error");
     return;
   }
 
-  Swal.fire("Actualizado", "Cambios guardados", "success");
+  Swal.fire("Guardado", "Cambios actualizados", "success");
   cargarAfiliado();
 };
 
-/* =====================
-   DAR DE BAJA
-===================== */
 document.getElementById("btnBaja").onclick = async () => {
   const res = await Swal.fire({
-    title: "¿Dar de baja afiliado?",
-    text: "El afiliado quedará inactivo pero no se elimina",
+    title: "¿Dar de baja?",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Dar de baja",
-    cancelButtonText: "Cancelar"
+    confirmButtonText: "Dar de baja"
   });
 
   if (!res.isConfirmed) return;
@@ -158,28 +218,23 @@ document.getElementById("btnBaja").onclick = async () => {
   cargarAfiliado();
 };
 
-/* =====================
-   ELIMINAR DEFINITIVO
-===================== */
 document.getElementById("btnEliminar").onclick = async () => {
   const res = await Swal.fire({
-    title: "ELIMINAR DEFINITIVAMENTE",
+    title: "ELIMINAR DEFINITIVO",
     text: "Esta acción no se puede deshacer",
     icon: "error",
     showCancelButton: true,
-    confirmButtonText: "Eliminar",
-    cancelButtonText: "Cancelar"
+    confirmButtonText: "Eliminar"
   });
 
   if (!res.isConfirmed) return;
 
-  await supabase
-    .from("afiliados")
-    .delete()
-    .eq("id", afiliadoId);
-
+  await supabase.from("afiliados").delete().eq("id", afiliadoId);
   Swal.fire("Eliminado", "", "success");
   window.location.href = "/pages/padron.html";
 };
 
+/* =====================
+   INIT
+===================== */
 cargarAfiliado();

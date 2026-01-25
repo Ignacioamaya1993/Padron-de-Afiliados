@@ -6,8 +6,11 @@
 
   <title>Ficha de Afiliado</title>
 
-    <link rel="stylesheet" href="../styles/padron.css" />
-    <link rel="stylesheet" href="../styles/afiliado.css" />
+  <!-- CSS -->
+  <link rel="stylesheet" href="../styles/padron.css" />
+  <link rel="stylesheet" href="../styles/afiliado.css" />
+
+  <!-- SweetAlert -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
@@ -23,27 +26,91 @@
 
 <main class="padron-home">
 
+  <!-- =====================
+       FICHA AFILIADO
+  ====================== -->
   <section id="fichaAfiliado" class="ficha-afiliado">
+
     <h2 id="nombreCompleto"></h2>
 
     <div class="ficha-grid">
-      <div><strong>DNI:</strong> <span id="dni"></span></div>
-      <div><strong>Fecha de nacimiento:</strong> <span id="fechaNacimiento"></span></div>
-      <div><strong>Edad:</strong> <span id="edad"></span></div>
-      <div><strong>Teléfono:</strong> <span id="telefono"></span></div>
 
-      <div><strong>N° Afiliado:</strong> <span id="numeroAfiliado"></span></div>
-      <div><strong>Grupo familiar:</strong> <span id="grupoFamiliar"></span></div>
-      <div><strong>Relación:</strong> <span id="relacion"></span></div>
-
-      <div id="estudiosField" style="display:none;">
-        <strong>Estudios:</strong> <span id="estudios"></span>
+      <div>
+        <strong>DNI:</strong>
+        <span id="dni"></span>
       </div>
+
+      <div>
+        <strong>Fecha de nacimiento:</strong>
+        <span id="fechaNacimiento"></span>
+      </div>
+
+      <div>
+        <strong>Edad:</strong>
+        <span id="edad"></span>
+      </div>
+
+      <div>
+        <strong>Teléfono:</strong>
+        <span id="telefono"></span>
+      </div>
+
+      <div>
+        <strong>N° Afiliado:</strong>
+        <span id="numeroAfiliado"></span>
+      </div>
+
+      <div>
+        <strong>Grupo familiar:</strong>
+        <span id="grupoFamiliar"></span>
+      </div>
+
+      <div>
+        <strong>Relación:</strong>
+        <span id="relacion"></span>
+      </div>
+
+      <!-- Estudios: solo visible si corresponde -->
+      <div id="estudiosField" style="display:none;">
+        <strong>Estudios:</strong>
+        <span id="estudios"></span>
+      </div>
+
     </div>
+
+    <!-- =====================
+         ACCIONES
+    ====================== -->
+    <div class="acciones-ficha">
+
+      <button id="btnEditar">
+        ✏️ Editar
+      </button>
+
+      <button id="btnGuardar" style="display:none;">
+        💾 Guardar
+      </button>
+
+      <button id="btnCancelar" style="display:none;">
+        Cancelar
+      </button>
+
+      <button id="btnBaja" class="danger">
+        🔴 Dar de baja
+      </button>
+
+      <button id="btnEliminar" class="danger-outline">
+        🗑️ Eliminar definitivo
+      </button>
+
+    </div>
+
   </section>
 
 </main>
 
+<!-- JS -->
 <script type="module" src="../scripts/afiliado.js"></script>
+
 </body>
 </html>
