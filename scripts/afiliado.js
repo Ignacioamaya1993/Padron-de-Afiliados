@@ -1,5 +1,9 @@
 import { supabase } from "./supabase.js";
 
+/* =====================
+   PARAMS Y ESTADO
+===================== */
+
 const params = new URLSearchParams(window.location.search);
 const afiliadoId = params.get("id");
 
@@ -20,6 +24,11 @@ function calcularEdad(fecha) {
   return edad;
 }
 
+function extraerCodigoGrupo(numeroAfiliado) {
+  const match = numeroAfiliado?.match(/^[^-]+-([^/]+)\//);
+  return match ? match[1] : null;
+}
+
 /* =====================
    CARGAR AFILIADO
 ===================== */
@@ -32,13 +41,13 @@ async function cargarAfiliado() {
     .single();
 
   if (error) {
-    Swal.fire("Error", "No se pudo cargar el afiliado", "error");
+    console.error(error);
     return;
   }
 
   afiliadoOriginal = data;
-  renderVista(data);
-  cargarGrupoFamiliar(data.grupo_familiar);
+  renderVista(afiliadoOriginal);
+  cargarGrupoFamiliar(afiliadoOriginal.grupo_familiar_codigo);
 }
 
 /* =====================
@@ -56,7 +65,8 @@ function renderVista(a) {
     calcularEdad(a.fecha_nacimiento);
   document.getElementById("telefono").textContent = a.telefono || "-";
   document.getElementById("numeroAfiliado").textContent = a.numero_afiliado;
-  document.getElementById("grupoFamiliar").textContent = a.grupo_familiar;
+  document.getElementById("grupoFamiliar").textContent =
+    a.grupo_familiar_codigo || "-";
   document.getElementById("relacion").textContent = a.relacion;
 
   if (a.estudios) {
@@ -81,6 +91,13 @@ const camposEditables = [
   "estudios"
 ];
 
+function idMap(id) {
+  return {
+    fechaNacimiento: "fecha_nacimiento",
+    numeroAfiliado: "numero_afiliado"
+  }[id] || id;
+}
+
 function entrarModoEdicion() {
   if (modoEdicion) return;
   modoEdicion = true;
@@ -90,8 +107,8 @@ function entrarModoEdicion() {
     if (!span) return;
 
     const input = document.createElement("input");
-    input.value = afiliadoOriginal[idMap(id)] || "";
     input.id = id;
+    input.value = afiliadoOriginal[idMap(id)] || "";
     span.replaceWith(input);
   });
 
@@ -115,16 +132,12 @@ function salirModoEdicion() {
 }
 
 function toggleBotones(editando) {
-  document.getElementById("btnEditar").style.display = editando ? "none" : "inline-block";
-  document.getElementById("btnGuardar").style.display = editando ? "inline-block" : "none";
-  document.getElementById("btnCancelar").style.display = editando ? "inline-block" : "none";
-}
-
-function idMap(id) {
-  return {
-    fechaNacimiento: "fecha_nacimiento",
-    numeroAfiliado: "numero_afiliado"
-  }[id] || id;
+  document.getElementById("btnEditar").style.display =
+    editando ? "none" : "inline-block";
+  document.getElementById("btnGuardar").style.display =
+    editando ? "inline-block" : "none";
+  document.getElementById("btnCancelar").style.display =
+    editando ? "inline-block" : "none";
 }
 
 /* =====================
@@ -141,12 +154,23 @@ async function guardarCambios() {
     }
   });
 
-  // 🔑 Si cambia el número de afiliado → actualizar grupo familiar
+  // 🔑 Si cambia el número de afiliado → recalcular grupo familiar
   if (
     payload.numero_afiliado &&
     payload.numero_afiliado !== afiliadoOriginal.numero_afiliado
   ) {
-    payload.grupo_familiar = payload.numero_afiliado;
+    const nuevoCodigo = extraerCodigoGrupo(payload.numero_afiliado);
+
+    if (!nuevoCodigo) {
+      Swal.fire(
+        "Formato inválido",
+        "Formato esperado: 19-00639-4/00",
+        "error"
+      );
+      return;
+    }
+
+    payload.grupo_familiar_codigo = nuevoCodigo;
   }
 
   const { error } = await supabase
@@ -163,21 +187,26 @@ async function guardarCambios() {
 
   Swal.fire("Guardado", "Cambios guardados correctamente", "success");
   renderVista(afiliadoOriginal);
-  cargarGrupoFamiliar(afiliadoOriginal.grupo_familiar);
+  cargarGrupoFamiliar(afiliadoOriginal.grupo_familiar_codigo);
 }
 
 /* =====================
    GRUPO FAMILIAR
 ===================== */
 
-async function cargarGrupoFamiliar(grupo) {
+async function cargarGrupoFamiliar(codigo) {
+  if (!codigo) return;
+
   const { data, error } = await supabase
     .from("afiliados")
     .select("id, nombre, apellido, dni, numero_afiliado, relacion")
-    .eq("grupo_familiar", grupo)
+    .eq("grupo_familiar_codigo", codigo)
     .order("relacion");
 
-  if (error) return;
+  if (error) {
+    console.error(error);
+    return;
+  }
 
   const tbody = document.querySelector("#tablaGrupoFamiliar tbody");
   tbody.innerHTML = "";
