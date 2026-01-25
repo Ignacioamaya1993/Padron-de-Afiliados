@@ -26,9 +26,6 @@
 
 <main class="padron-home">
 
-  <!-- =====================
-       FICHA AFILIADO
-  ====================== -->
   <section id="fichaAfiliado" class="ficha-afiliado">
 
     <h2 id="nombreCompleto"></h2>
@@ -75,7 +72,6 @@
         <span id="estadoAfiliado"></span>
       </div>
 
-      <!-- Estudios (solo visible si corresponde) -->
       <div id="estudiosField" style="display:none;">
         <strong>Estudios</strong>
         <span id="estudios"></span>
@@ -83,46 +79,19 @@
 
     </div>
 
-    <!-- =====================
-         ACCIONES
-    ====================== -->
     <div class="acciones-ficha">
-
-      <button id="btnEditar">
-        ✏️ Editar
-      </button>
-
-      <button id="btnGuardar" style="display:none;">
-        💾 Guardar
-      </button>
-
-      <button id="btnCancelar" style="display:none;">
-        Cancelar
-      </button>
-
-      <button id="btnBaja" class="danger">
-        🔴 Dar de baja
-      </button>
-
-      <button id="btnReactivar" style="display:none;">
-        🟢 Reactivar afiliado
-      </button>
-
-      <button id="btnEliminar" class="danger-outline">
-        🗑️ Eliminar definitivo
-      </button>
-
+      <button id="btnEditar">✏️ Editar</button>
+      <button id="btnGuardar" style="display:none;">💾 Guardar</button>
+      <button id="btnCancelar" style="display:none;">Cancelar</button>
+      <button id="btnBaja" class="danger">🔴 Dar de baja</button>
+      <button id="btnReactivar" style="display:none;">🟢 Reactivar afiliado</button>
+      <button id="btnEliminar" class="danger-outline">🗑️ Eliminar definitivo</button>
     </div>
 
   </section>
 
-  <!-- =====================
-       GRUPO FAMILIAR
-  ====================== -->
   <section class="grupo-familiar">
-
     <h3>Grupo familiar</h3>
-
     <table id="tablaGrupoFamiliar">
         <thead>
         <tr>
@@ -133,17 +102,12 @@
             <th>Estado</th>
         </tr>
         </thead>
-
-      <tbody>
-        <!-- Se completa por JS -->
-      </tbody>
+      <tbody></tbody>
     </table>
-
   </section>
 
 </main>
 
-<!-- JS -->
 <script type="module" src="../scripts/afiliado.js"></script>
 
 </body>
