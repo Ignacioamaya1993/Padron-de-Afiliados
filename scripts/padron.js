@@ -259,23 +259,45 @@ document
       f.reset();
       actualizarCampoEstudios();
 
-    } catch (err) {
-      console.error(err);
+} catch (err) {
+  console.error(err);
 
-      if (err.message?.includes("dni")) {
-        Swal.fire("DNI duplicado", "Ya existe un afiliado con ese DNI", "warning");
-        return;
-      }
+  // Violación de UNIQUE (Postgres)
+  if (err.code === "23505") {
 
-      if (err.message?.includes("numero_afiliado")) {
-        Swal.fire("Número duplicado", "Ya existe un afiliado con ese número", "warning");
-        return;
-      }
-
-      Swal.fire("Error", "No se pudo guardar el afiliado", "error");
-    } finally {
-      buscando = false;
+    if (err.message.includes("afiliados_dni")) {
+      Swal.fire(
+        "DNI duplicado",
+        "Ya existe un afiliado con ese DNI",
+        "warning"
+      );
+      return;
     }
+
+    if (err.message.includes("afiliados_numero")) {
+      Swal.fire(
+        "Número de afiliado duplicado",
+        "Ya existe un afiliado con ese número de afiliado",
+        "warning"
+      );
+      return;
+    }
+
+    Swal.fire(
+      "Dato duplicado",
+      "Ya existe un registro con uno de los datos ingresados",
+      "warning"
+    );
+    return;
+  }
+
+  Swal.fire(
+    "Error",
+    "No se pudo guardar el afiliado",
+    "error"
+  );
+}
+
   });
 
 /* =====================
