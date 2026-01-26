@@ -170,14 +170,16 @@ async function eliminarRegistro(tabla, id) {
 
   if (!resp.isConfirmed) return;
 
+  // Obtener adjunto (si existe)
   const { data, error } = await supabase.from(tabla).select("adjunto").eq("id", id).single();
   if (error) return Swal.fire("Error", error.message, "error");
 
+  // Borrar archivo en Cloudinary si hay adjunto
   if (data?.adjunto) {
     try {
       const url = new URL(data.adjunto);
       const parts = url.pathname.split("/");
-      const filename = parts.pop() || parts.pop();
+      const filename = parts.pop() || parts.pop(); // tomar último segmento
       const public_id = filename.split(".")[0];
 
       const cloudinaryResp = await eliminarArchivoCloudinary(public_id);
@@ -190,9 +192,11 @@ async function eliminarRegistro(tabla, id) {
     }
   }
 
+  // Borrar registro en Supabase
   const { error: delError } = await supabase.from(tabla).delete().eq("id", id);
   if (delError) return Swal.fire("Error", delError.message, "error");
 
+  // 4️⃣ Mensaje de éxito y recargar tabla correspondiente
   Swal.fire("Eliminado", "Registro eliminado correctamente", "success");
 
   switch (tabla) {
@@ -202,6 +206,7 @@ async function eliminarRegistro(tabla, id) {
     case "adicciones": cargarAdicciones(); break;
   }
 }
+
 
 /* ===================== EDITAR ===================== */
 async function editarRegistro(tabla, id) {
