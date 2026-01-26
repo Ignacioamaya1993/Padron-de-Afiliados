@@ -6,7 +6,7 @@
   <title>Ficha Medica</title>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="../styles/padron.css" />
+  <link rel="stylesheet" href="../styles/header.css" />
   <link rel="stylesheet" href="../styles/fichaMedica.css" />
 
   <!-- SweetAlert -->
@@ -14,18 +14,17 @@
 </head>
 <body>
 
-<header>
-  <h1>Ficha Medica</h1>
-
-  <div class="user-bar">
-    <button id="btnVolver" class="volver-btn">⬅️ Volver a la Ficha del Afiliado</button>
-    <span id="bienvenido">Bienvenido, <strong id="userEmail"></strong></span>
-    <button id="logoutBtn">Cerrar sesión</button>
-  </div>
-</header>
+<!-- HEADER COMÚN -->
+<div id="header-container"></div>
 
 <main>
+
+  <!-- 🔙 ACCIONES DE LA FICHA (propias de esta página) -->
   <div class="ficha-header">
+    <button id="btnVolver" class="volver-btn">
+      ⬅️ Volver a la Ficha del Afiliado
+    </button>
+
     <h2 id="nombreAfiliado">Nombre Afiliado</h2>
   </div>
 

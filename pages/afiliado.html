@@ -7,7 +7,7 @@
   <title>Ficha de Afiliado</title>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="../styles/padron.css" />
+  <link rel="stylesheet" href="../styles/header.css" />
   <link rel="stylesheet" href="../styles/afiliado.css" />
 
   <!-- SweetAlert -->
@@ -15,23 +15,19 @@
 </head>
 <body>
 
-<header>
-  <h1>Ficha del Afiliado</h1>
+    <header>
+      <h1>Ficha del Afiliado</h1>
 
-  <div class="user-bar">
-    <button id="btnVolver" class="volver-btn">⬅️ Volver al buscador</button>
-    <span id="bienvenido">Bienvenido, <strong id="userEmail"></strong></span>
-    <button id="logoutBtn">Cerrar sesión</button>
-  </div>
-</header>
+    <!-- HEADER COMÚN -->
+    <div id="header-container"></div>
 
-<main class="padron-home">
-
-  <section id="fichaAfiliado" class="ficha-afiliado">
-
-    <!-- Nombre y botón Ficha Médica -->
     <div class="ficha-header">
+      <button id="btnVolver" class="volver-btn">
+        ⬅️ Volver al buscador
+      </button>
+
       <h2 id="nombreCompleto"></h2>
+
       <button id="btnFichaMedica">📋 Ficha Médica</button>
     </div>
 

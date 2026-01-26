@@ -1,5 +1,6 @@
+import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
-import { subirArchivoCloudinary } from "./cloudinary.js"; // Cloudinary unsigned
+import { subirArchivoCloudinary } from "./cloudinary.js";
 const CLOUDINARY_DELETE_ENDPOINT = "https://vzqduywffrzhcrjtercs.supabase.co/functions/v1/borrarCloudinary";
 
 const params = new URLSearchParams(window.location.search);
@@ -18,24 +19,6 @@ function formatoArgentino(fechaString) {
   const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Enero = 0
   const anio = fecha.getFullYear();
   return `${dia}/${mes}/${anio}`;
-}
-
-/* ===================== AUTENTICACIÓN ===================== */
-async function verificarUsuario() {
-  const { data: { user: u } } = await supabase.auth.getUser();
-  if (!u) {
-    window.location.href = "/pages/login.html";
-    return;
-  }
-  user = u;
-  const bienvenidoSpan = document.getElementById("userEmail");
-  if (bienvenidoSpan) bienvenidoSpan.textContent = user.email;
-}
-
-async function cerrarSesion() {
-  const { error } = await supabase.auth.signOut();
-  if (error) Swal.fire("Error", error.message, "error");
-  else window.location.href = "/pages/login.html";
 }
 
 /* ===================== CARGAR AFILIADO ===================== */
@@ -109,7 +92,11 @@ const cargarAdicciones = () => cargarTabla("adicciones", "listaAdicciones");
 
 /* ===================== GUARDAR / EDITAR ===================== */
 async function guardarRegistro(tabla, formData, campos = [], id = null) {
-  if (!user) return Swal.fire("Error", "Usuario no definido", "error");
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    window.location.href = "/pages/login.html";
+    return;
+  }
 
   let adjuntoUrl = null;
   const file = formData.get("adjunto");
@@ -291,6 +278,7 @@ document.getElementById("btnVolver").onclick = () => {
 
 /* ===================== INIT ===================== */
 async function init() {
+  await cargarHeader(); 
   await verificarUsuario();
   await cargarAfiliado();
   await cargarEnfermedades();

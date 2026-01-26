@@ -1,5 +1,7 @@
-import { authObserver, logout } from "./auth.js";
+import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+
+await cargarHeader();
 
 let buscando = false;
 
@@ -98,23 +100,6 @@ function actualizarCampoEstudios() {
 
 parentescoSelect?.addEventListener("change", actualizarCampoEstudios);
 fechaNacimientoInput?.addEventListener("change", actualizarCampoEstudios);
-
-/* =====================
-   AUTH
-===================== */
-authObserver(user => {
-  if (!user) {
-    window.location.href = "/pages/login.html";
-    return;
-  }
-
-  document.getElementById("status").innerHTML =
-      `Bienvenido, <strong>${user.email}</strong>`;
-});
-
-document
-  .getElementById("logoutBtn")
-  ?.addEventListener("click", logout);
 
 /* =====================
    BUSCADOR

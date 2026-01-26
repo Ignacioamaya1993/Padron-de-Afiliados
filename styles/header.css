@@ -1,0 +1,27 @@
+header {
+  background: #1e293b;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  font-size: 1.4rem;
+}
+
+.user-bar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+#logoutBtn {
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}

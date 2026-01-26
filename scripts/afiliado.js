@@ -1,3 +1,4 @@
+import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
 
 /* =====================
@@ -13,25 +14,6 @@ if (!afiliadoId) {
 
 let afiliado = null;
 let modoEdicion = false;
-
-/* =====================
-   AUTENTICACIÓN
-===================== */
-async function verificarUsuario() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    window.location.href = "/pages/login.html";
-    return;
-  }
-  const bienvenidoSpan = document.getElementById("userEmail");
-  if (bienvenidoSpan) bienvenidoSpan.textContent = user.email;
-}
-
-async function cerrarSesion() {
-  const { error } = await supabase.auth.signOut();
-  if (error) Swal.fire("Error", error.message, "error");
-  else window.location.href = "/pages/login.html";
-}
 
 /* =====================
    HELPERS
@@ -547,6 +529,8 @@ document.addEventListener("keydown", (e) => {
 document.getElementById("btnFichaMedica").onclick = () => {
   window.location.href = `/pages/fichaMedica.html?id=${afiliadoId}`;
 };
+  
+await cargarHeader(); 
 
 /* =====================
    INIT
