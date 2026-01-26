@@ -226,10 +226,16 @@ async function editarRegistro(tabla, id) {
   const btnNuevoId = formId.replace("form", "btnNuevo");
   document.getElementById(btnNuevoId).style.display = "none";
 
-  Object.keys(data).forEach(k => {
-    const field = form.querySelector(`[name="${k}"]`);
-    if (field) field.value = data[k] || "";
-  });
+Object.keys(data).forEach(k => {
+  const field = form.querySelector(`[name="${k}"]`);
+  if (!field) return;
+
+  if (field.type === "file") {
+    field.value = ""; // solo vaciar
+  } else {
+    field.value = data[k] || "";
+  }
+});
 
   form.onsubmit = async e => {
     e.preventDefault();
