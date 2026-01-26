@@ -147,11 +147,12 @@ async function eliminarArchivoCloudinary(public_id) {
     const resp = await fetch(CLOUDINARY_DELETE_ENDPOINT, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${session.access_token}`
+        "Content-Type": "application/json"
+        // "Authorization": `Bearer ${session.access_token}` // temporalmente comentar
       },
       body: JSON.stringify({ public_id, resource_type: "image" })
     });
+
 
     if (!resp.ok) {
       const data = await resp.json();
