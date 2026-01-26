@@ -1,6 +1,5 @@
 import { supabase } from "./supabase.js";
-import { subirArchivoCloudinary } from "./cloudinary.js";
-
+import { subirArchivoCloudinary } from "./cloudinary.js"; // Cloudinary unsigned
 const CLOUDINARY_DELETE_ENDPOINT = "https://vzqduywffrzhcrjtercs.supabase.co/functions/v1/borrarCloudinary";
 
 const params = new URLSearchParams(window.location.search);
@@ -19,7 +18,8 @@ async function verificarUsuario() {
     return;
   }
   user = u;
-  document.getElementById("userEmail").textContent = user.email;
+  const bienvenidoSpan = document.getElementById("userEmail");
+  if (bienvenidoSpan) bienvenidoSpan.textContent = user.email;
 }
 
 async function cerrarSesion() {
@@ -36,7 +36,7 @@ async function cargarAfiliado() {
   document.getElementById("nombreAfiliado").textContent = `${afiliado.nombre} ${afiliado.apellido}`;
 }
 
-/* ===================== FUNCIONES DE CARGA ===================== */
+/* ===================== CARGAR TABLAS ===================== */
 async function cargarTabla(tabla, containerId) {
   const { data } = await supabase.from(tabla).select("*").eq("afiliado_id", afiliadoId);
   const container = document.getElementById(containerId);
@@ -72,6 +72,7 @@ async function cargarTabla(tabla, containerId) {
         break;
     }
 
+    // Botones editar y eliminar
     inner += `<div class="card-actions">
                 <button class="btn-editar" data-id="${item.id}" data-tabla="${tabla}">✏️ Editar</button>
                 <button class="btn-eliminar" data-id="${item.id}" data-tabla="${tabla}" data-adjunto="${item.adjunto || ""}">🗑️ Eliminar</button>
@@ -81,11 +82,10 @@ async function cargarTabla(tabla, containerId) {
     container.appendChild(card);
   });
 
-  // Asignar eventos a botones
+  // Eventos de editar y eliminar
   container.querySelectorAll(".btn-editar").forEach(btn => {
     btn.onclick = () => editarRegistro(btn.dataset.tabla, btn.dataset.id);
   });
-
   container.querySelectorAll(".btn-eliminar").forEach(btn => {
     btn.onclick = () => eliminarRegistro(btn.dataset.tabla, btn.dataset.id, btn.dataset.adjunto);
   });
@@ -97,7 +97,7 @@ const cargarMedicamentos = () => cargarTabla("medicamentos", "listaMedicamentos"
 const cargarIncidencias = () => cargarTabla("incidencias_salud", "listaIncidencias");
 const cargarAdicciones = () => cargarTabla("adicciones", "listaAdicciones");
 
-/* ===================== GUARDAR/EDITAR ===================== */
+/* ===================== GUARDAR / EDITAR ===================== */
 async function guardarRegistro(tabla, formData, campos = [], id = null) {
   if (!user) return Swal.fire("Error", "Usuario no definido", "error");
 
@@ -111,15 +111,14 @@ async function guardarRegistro(tabla, formData, campos = [], id = null) {
   if (!id) registro.created_by = user.id;
 
   let res;
-  if (id) {
-    res = await supabase.from(tabla).update(registro).eq("id", id);
-  } else {
-    res = await supabase.from(tabla).insert([registro]);
-  }
+  if (id) res = await supabase.from(tabla).update(registro).eq("id", id);
+  else res = await supabase.from(tabla).insert([registro]);
 
   if (res.error) return Swal.fire("Error", res.error.message, "error");
+
   Swal.fire("Éxito", id ? "Registro actualizado" : "Registro creado", "success");
 
+  // Recargar
   switch (tabla) {
     case "enfermedades_cronicas": cargarEnfermedades(); break;
     case "medicamentos": cargarMedicamentos(); break;
@@ -129,7 +128,7 @@ async function guardarRegistro(tabla, formData, campos = [], id = null) {
 }
 
 /* ===================== ELIMINAR ===================== */
-async function eliminarRegistro(tabla, id, adjuntoUrl) {
+async function eliminarRegistro(tabla, id, adjunto) {
   const resp = await Swal.fire({
     title: "¿Eliminar registro?",
     text: "Esta acción no se puede deshacer",
@@ -141,27 +140,28 @@ async function eliminarRegistro(tabla, id, adjuntoUrl) {
 
   if (!resp.isConfirmed) return;
 
-  // 1️⃣ Borrar de Cloudinary si hay adjunto
-  if (adjuntoUrl) {
+  // Primero eliminar archivo en Cloudinary si existe
+  if (adjunto) {
     try {
-      // Obtener public_id del URL
-      const public_id = adjuntoUrl.split("/").pop().split(".")[0];
+      // Se espera que la función reciba el public_id (sin extensión)
+      const public_id = adjunto.split("/").pop().split(".")[0];
       await fetch(CLOUDINARY_DELETE_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ public_id })
       });
     } catch (err) {
-      console.error("No se pudo eliminar archivo de Cloudinary:", err);
+      console.warn("No se pudo eliminar archivo de Cloudinary:", err);
     }
   }
 
-  // 2️⃣ Borrar registro de Supabase
+  // Eliminar registro en Supabase
   const { error } = await supabase.from(tabla).delete().eq("id", id);
   if (error) return Swal.fire("Error", error.message, "error");
 
   Swal.fire("Eliminado", "Registro eliminado correctamente", "success");
 
+  // Recargar
   switch (tabla) {
     case "enfermedades_cronicas": cargarEnfermedades(); break;
     case "medicamentos": cargarMedicamentos(); break;
@@ -184,7 +184,6 @@ async function editarRegistro(tabla, id) {
 
   const form = document.getElementById(formId);
   form.classList.remove("hidden");
-
   const btnNuevoId = formId.replace("form", "btnNuevo");
   document.getElementById(btnNuevoId).style.display = "none";
 
@@ -229,7 +228,7 @@ function setupNuevoCancelar(nuevoBtnId, cancelarBtnId, formId, tabla, campos) {
   };
 }
 
-/* ===================== CONFIG NUEVO/CANCELAR ===================== */
+/* ===================== CONFIGURAR NUEVO/CANCELAR ===================== */
 setupNuevoCancelar("btnNuevoEnfermedad", "btnCancelarEnfermedad", "formEnfermedad", "enfermedades_cronicas", ["enfermedad","fecha_diagnostico","observaciones"]);
 setupNuevoCancelar("btnNuevoMedicamento", "btnCancelarMedicamento", "formMedicamento", "medicamentos", ["medicamento","dosis","frecuencia","fecha_inicio","fecha_fin","ultima_entrega","proximo_entrega","observaciones"]);
 setupNuevoCancelar("btnNuevoIncidencia", "btnCancelarIncidencia", "formIncidencia", "incidencias_salud", ["titulo","descripcion","tipo","fecha"]);
@@ -245,7 +244,7 @@ document.querySelectorAll(".tab-button").forEach(btn => {
   });
 });
 
-/* ===================== VOLVER ===================== */
+/* ===================== BOTÓN VOLVER ===================== */
 document.getElementById("btnVolver").onclick = () => {
   window.location.href = `./afiliado.html?id=${afiliadoId}`;
 };
