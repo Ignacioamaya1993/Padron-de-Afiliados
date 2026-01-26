@@ -282,10 +282,20 @@ setupNuevoCancelar("btnNuevoAdiccion", "btnCancelarAdiccion", "formAdiccion", "a
 /* ===================== TABS ===================== */
 document.querySelectorAll(".tab-button").forEach(btn => {
   btn.addEventListener("click", () => {
+    // 1️Cambiar tab activa
     document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
     document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
     btn.classList.add("active");
     document.getElementById(btn.dataset.tab).classList.add("active");
+
+    // Cerrar todos los formularios y mostrar botones "Nuevo"
+    const forms = document.querySelectorAll("form[id^='form']");
+    forms.forEach(f => {
+      f.classList.add("hidden");
+      f.reset();
+    });
+    const btnNuevos = document.querySelectorAll("[id^='btnNuevo']");
+    btnNuevos.forEach(b => b.style.display = "inline-block");
   });
 });
 
