@@ -80,7 +80,7 @@ main {
   background: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   transition: 0.2s;
-  overflow-x: auto; /* para muchas columnas */
+  overflow-x: auto;
   word-break: break-word;
 }
 
@@ -120,13 +120,22 @@ section .btn-cancelar:hover {
   border-radius: 10px;
   box-shadow: 0 6px 15px rgba(0,0,0,0.08);
   margin-bottom: 1rem;
+
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
+  align-items: start;
 }
 
 .form-inline.hidden {
   display: none;
+}
+
+.form-inline label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  font-size: 0.95rem;
 }
 
 .form-inline input,
@@ -136,6 +145,9 @@ section .btn-cancelar:hover {
   border-radius: 6px;
   padding: 0.5rem;
   background: white;
+  font-size: 0.95rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-inline input[type="file"] {
@@ -144,11 +156,19 @@ section .btn-cancelar:hover {
   padding: 0.4rem;
   background: #f9fafb;
   cursor: pointer;
+  font-size: 0.9rem;
 }
 
+.form-inline textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* ===================== FORM ACTIONS ===================== */
 .form-inline .form-actions {
   grid-column: 1 / -1;
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: flex-start;
   margin-top: 0.5rem;
@@ -180,7 +200,7 @@ section .btn-cancelar:hover {
 
 .card .card-actions .btn-editar {
   background: #2563eb;
-    color: white;
+  color: white;
 }
 
 .card .card-actions .btn-editar:hover {
@@ -205,6 +225,12 @@ section .btn-cancelar:hover {
 }
 
 /* ===================== RESPONSIVE ===================== */
+@media (max-width: 900px) {
+  .form-inline {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
 @media (max-width: 700px) {
   header {
     flex-direction: column;
