@@ -128,7 +128,29 @@ async function guardarRegistro(tabla, formData, campos = [], id = null) {
 }
 
 /* ===================== ELIMINAR ===================== */
-async function eliminarRegistro(tabla, id, adjunto) {
+async function eliminarArchivoCloudinary(public_id) {
+  try {
+    const resp = await fetch('https://vzqduywffrzhcrjtercs.supabase.co/functions/v1/borrarCloudinary', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ public_id })
+    });
+
+    if (!resp.ok) {
+      const data = await resp.json();
+      throw new Error(data?.error || "Error al eliminar archivo");
+    }
+
+    return await resp.json();
+  } catch (err) {
+    console.error("Error al eliminar archivo Cloudinary:", err);
+    return null;
+  }
+}
+
+async function eliminarRegistro(tabla, id) {
   const resp = await Swal.fire({
     title: "¿Eliminar registro?",
     text: "Esta acción no se puede deshacer",
@@ -140,28 +162,27 @@ async function eliminarRegistro(tabla, id, adjunto) {
 
   if (!resp.isConfirmed) return;
 
-  // Primero eliminar archivo en Cloudinary si existe
-  if (adjunto) {
-    try {
-      // Se espera que la función reciba el public_id (sin extensión)
-      const public_id = adjunto.split("/").pop().split(".")[0];
-      await fetch(CLOUDINARY_DELETE_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ public_id })
-      });
-    } catch (err) {
-      console.warn("No se pudo eliminar archivo de Cloudinary:", err);
-    }
+  // 1️⃣ Primero obtenemos el registro para saber si tiene adjunto
+  const { data, error } = await supabase.from(tabla).select("adjunto").eq("id", id).single();
+  if (error) return Swal.fire("Error", error.message, "error");
+
+  if (data?.adjunto) {
+    // Extraemos el public_id de la URL
+    const url = new URL(data.adjunto);
+    const parts = url.pathname.split("/");
+    const filename = parts.pop() || parts.pop(); // último segmento
+    const public_id = filename.split(".")[0];
+
+    await eliminarArchivoCloudinary(public_id);
   }
 
-  // Eliminar registro en Supabase
-  const { error } = await supabase.from(tabla).delete().eq("id", id);
-  if (error) return Swal.fire("Error", error.message, "error");
+  // 2️⃣ Luego eliminamos la fila en Supabase
+  const { error: delError } = await supabase.from(tabla).delete().eq("id", id);
+  if (delError) return Swal.fire("Error", delError.message, "error");
 
   Swal.fire("Eliminado", "Registro eliminado correctamente", "success");
 
-  // Recargar
+  // Recargar lista
   switch (tabla) {
     case "enfermedades_cronicas": cargarEnfermedades(); break;
     case "medicamentos": cargarMedicamentos(); break;
