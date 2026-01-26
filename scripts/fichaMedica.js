@@ -10,6 +10,16 @@ if (!afiliadoId) throw new Error("ID de afiliado faltante");
 let afiliado = null;
 let user = null;
 
+/* ===================== UTIL ===================== */
+function formatoArgentino(fechaString) {
+  if (!fechaString) return "-";
+  const fecha = new Date(fechaString);
+  const dia = String(fecha.getDate()).padStart(2, '0');
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Enero = 0
+  const anio = fecha.getFullYear();
+  return `${dia}/${mes}/${anio}`;
+}
+
 /* ===================== AUTENTICACIÓN ===================== */
 async function verificarUsuario() {
   const { data: { user: u } } = await supabase.auth.getUser();
@@ -49,19 +59,19 @@ async function cargarTabla(tabla, containerId) {
     let inner = "";
     switch (tabla) {
       case "enfermedades_cronicas":
-        inner = `<strong>${item.enfermedad}</strong> - ${item.fecha_diagnostico || "-"}<br>
+        inner = `<strong>${item.enfermedad}</strong> - ${formatoArgentino(item.fecha_diagnostico)}<br>
                  ${item.observaciones || ""}<br>
                  ${item.adjunto ? `<a href="${item.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
         break;
       case "medicamentos":
         inner = `<strong>${item.medicamento}</strong> - ${item.dosis} - ${item.frecuencia || "-"}<br>
-                 Inicio: ${item.fecha_inicio || "-"} | Fin: ${item.fecha_fin || "-"}<br>
-                 Última: ${item.ultima_entrega || "-"} | Próxima: ${item.proximo_entrega || "-"}<br>
+                 Inicio: ${formatoArgentino(item.fecha_inicio)} | Fin: ${formatoArgentino(item.fecha_fin)}<br>
+                 Última: ${formatoArgentino(item.ultima_entrega)} | Próxima: ${formatoArgentino(item.proximo_entrega)}<br>
                  ${item.observaciones || ""}<br>
                  ${item.adjunto ? `<a href="${item.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
         break;
       case "incidencias_salud":
-        inner = `<strong>${item.titulo}</strong> (${item.tipo}) - ${item.fecha || "-"}<br>
+        inner = `<strong>${item.titulo}</strong> (${item.tipo}) - ${formatoArgentino(item.fecha)}<br>
                  ${item.descripcion || ""}<br>
                  ${item.adjunto ? `<a href="${item.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
         break;
@@ -118,7 +128,7 @@ async function guardarRegistro(tabla, formData, campos = [], id = null) {
 
   Swal.fire("Éxito", id ? "Registro actualizado" : "Registro creado", "success");
 
-  // Recargar
+  // Recargar tabla
   switch (tabla) {
     case "enfermedades_cronicas": cargarEnfermedades(); break;
     case "medicamentos": cargarMedicamentos(); break;
@@ -127,19 +137,17 @@ async function guardarRegistro(tabla, formData, campos = [], id = null) {
   }
 }
 
-/* ===================== ELIMINAR ARCHIVO CLOUDINARY ===================== */
+/* ===================== ELIMINAR ===================== */
 async function eliminarArchivoCloudinary(public_id) {
   try {
-    // Obtenemos la sesión activa
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error("Usuario no autenticado");
 
-    // Usamos supabase.functions.invoke con Authorization manual
-    const resp = await fetch('https://vzqduywffrzhcrjtercs.supabase.co/functions/v1/borrarCloudinary', {
+    const resp = await fetch(CLOUDINARY_DELETE_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${session.access_token}` // ✅ token JWT del usuario
+        "Authorization": `Bearer ${session.access_token}`
       },
       body: JSON.stringify({ public_id, resource_type: "image" })
     });
@@ -156,7 +164,6 @@ async function eliminarArchivoCloudinary(public_id) {
   }
 }
 
-/* ===================== ELIMINAR REGISTRO ===================== */
 async function eliminarRegistro(tabla, id) {
   const resp = await Swal.fire({
     title: "¿Eliminar registro?",
@@ -169,16 +176,14 @@ async function eliminarRegistro(tabla, id) {
 
   if (!resp.isConfirmed) return;
 
-  // 1️⃣ Obtener registro para saber si tiene adjunto
   const { data, error } = await supabase.from(tabla).select("adjunto").eq("id", id).single();
   if (error) return Swal.fire("Error", error.message, "error");
 
-  // 2️⃣ Borrar archivo Cloudinary si existe
   if (data?.adjunto) {
     try {
       const url = new URL(data.adjunto);
       const parts = url.pathname.split("/");
-      const filename = parts.pop() || parts.pop(); // último segmento
+      const filename = parts.pop() || parts.pop();
       const public_id = filename.split(".")[0];
 
       const cloudinaryResp = await eliminarArchivoCloudinary(public_id);
@@ -191,13 +196,11 @@ async function eliminarRegistro(tabla, id) {
     }
   }
 
-  // 3️⃣ Borrar registro en Supabase
   const { error: delError } = await supabase.from(tabla).delete().eq("id", id);
   if (delError) return Swal.fire("Error", delError.message, "error");
 
   Swal.fire("Eliminado", "Registro eliminado correctamente", "success");
 
-  // 4️⃣ Recargar tabla
   switch (tabla) {
     case "enfermedades_cronicas": cargarEnfermedades(); break;
     case "medicamentos": cargarMedicamentos(); break;

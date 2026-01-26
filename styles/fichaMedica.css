@@ -179,8 +179,8 @@ section .btn-cancelar:hover {
 }
 
 .card .card-actions .btn-editar {
-  background-color: #facc15;
-  color: #1f2937;
+  background: #2563eb;
+    color: white;
 }
 
 .card .card-actions .btn-editar:hover {
