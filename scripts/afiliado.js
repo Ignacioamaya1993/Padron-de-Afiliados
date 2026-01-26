@@ -1,5 +1,4 @@
 import { supabase } from "./supabase.js";
-import Swal from "sweetalert2";
 
 /* =====================
    PARAMS
