@@ -62,7 +62,7 @@ body {
   color: #0f172a;
 }
 
-.ficha-header button {
+.btn-primary {
   background: #3b82f6;
   color: white;
   border: none;
@@ -73,7 +73,7 @@ body {
   transition: all .2s ease;
 }
 
-.ficha-header button:hover {
+.btn-primary:hover {
   background: #2563eb;
 }
 
