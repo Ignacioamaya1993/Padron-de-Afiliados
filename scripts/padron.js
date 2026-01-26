@@ -126,13 +126,13 @@ searchInput.addEventListener("input", async e => {
         id,
         nombre_completo,
         dni,
-        numeroAfiliado,
+        numero_afiliado,
         parentesco,
         fecha_nacimiento,
         activo
       `)
       .or(
-        `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,numeroAfiliado.ilike.%${texto}%`
+        `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,numero_afiliado.ilike.%${texto}%`
       )
       .limit(20);
 
@@ -164,7 +164,7 @@ searchInput.addEventListener("input", async e => {
         DNI: ${a.dni || "-"}
         ${edad !== null ? ` | Edad: ${edad}` : ""}
         <br>
-        Afiliado: ${a.numeroAfiliado} | ${a.parentesco}
+        Afiliado: ${a.numero_afiliado} | ${a.parentesco}
       `;
 
       item.onclick = () => {
@@ -202,7 +202,7 @@ document
       const dni = f.dni.value.trim();
       const telefono = f.telefono.value.trim() || null;
       const fechaNacimiento = f.fechaNacimiento.value || null;
-      const numeroAfiliado = f.numeroAfiliado.value.trim();
+      const numero_afiliado = f.numero_afiliado.value.trim();
 
       const parentesco = f.parentesco.value;
       const sexo = f.sexo.value;
@@ -213,7 +213,7 @@ document
       const nivel_discapacidad = f.nivelDiscapacidad?.value || null;
       const estudios = f.estudios?.value || null;
 
-      if (!nombre || !apellido || !dni || !numeroAfiliado || !parentesco || !sexo) {
+      if (!nombre || !apellido || !dni || !numero_afiliado || !parentesco || !sexo) {
         Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
         return;
       }
@@ -232,7 +232,7 @@ document
         }
       }
 
-      const match = numeroAfiliado.match(/^[^-]+-([^/]+)\//);
+      const match = numero_afiliado.match(/^[^-]+-([^/]+)\//);
       if (!match) {
         Swal.fire("Formato incorrecto", "Formato esperado: 19-00639-4/00", "error");
         return;
@@ -251,7 +251,7 @@ document
           dni,
           telefono,
           fecha_nacimiento: fechaNacimiento,
-          numeroAfiliado,
+          numero_afiliado,
           grupo_familiar_codigo: grupoFamiliarCodigo,
           parentesco,
           sexo,
