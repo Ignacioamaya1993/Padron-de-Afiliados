@@ -107,8 +107,10 @@ body {
 .ficha-grid span,
 .ficha-grid input,
 .ficha-grid select {
-  font-size: 0.95rem;
-  color: #0f172a;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: white;
 }
 
 /* =====================
