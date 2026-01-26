@@ -85,12 +85,62 @@
         required
       />
 
-      <select name="relacion" required>
-        <option value="">Relación</option>
+      <select name="parentesco" required>
+        <option value="">Parentesco</option>
         <option value="Titular">Titular</option>
-        <option value="Cónyuge">Cónyuge</option>
-        <option value="Hijo/a">Hijo/a</option>
-        <option value="Otro">Otro</option>
+        <option value="Conyuge">Conyuge</option>
+        <option value="Concubino/a">Concubino/a</option>
+        <option value="Hijos">Hijos</option>
+        <option value="Menor B/ guarda">Menor B/ guarda</option>
+      </select>
+
+      <select name="sexo" required>
+        <option value="">Sexo</option>
+        <option value="F">F</option>
+        <option value="M">M</option>
+      </select>
+
+      <select name="plan">
+        <option value="">Plan</option>
+        <option value="Adherentes">Adherentes</option>
+        <option value="Aport. Sol">Aport. Sol</option>
+        <option value="Monotrib.">Monotrib.</option>
+        <option value="Pasiv Tram">Pasiv Tram</option>
+        <option value="Plan B-ESP">Plan B-ESP</option>
+        <option value="Plan joven">Plan joven</option>
+        <option value="PMO">PMO</option>
+      </select>
+
+      <select name="categoria">
+        <option value="">Categoría</option>
+        <option value="Adherentes">Adherentes</option>
+        <option value="Jubilado ANSES">Jubilado ANSES</option>
+        <option value="Jubilado conyuge AF. vivo">Jubilado conyuge AF. vivo</option>
+        <option value="Jubilado tramite">Jubilado tramite</option>
+        <option value="Monotributista">Monotributista</option>
+        <option value="Obligatorios">Obligatorios</option>
+        <option value="Opcion c/ convenio">Opcion c/ convenio</option>
+        <option value="Opcion s/ convenio">Opcion s/ convenio</option>
+        <option value="Pensionado ANSES reparto">Pensionado ANSES reparto</option>
+      </select>
+
+      <select name="localidad">
+        <option value="">Localidad</option>
+        <option value="Espigas">Espigas</option>
+        <option value="Hinojo">Hinojo</option>
+        <option value="Olavarria">Olavarria</option>
+        <option value="Sierra Chica">Sierra Chica</option>
+        <option value="Sierras Bayas">Sierras Bayas</option>
+      </select>
+
+      <label>
+        <input type="checkbox" name="discapacidad" /> Discapacidad
+      </label>
+
+      <select name="nivelDiscapacidad">
+        <option value="">Nivel de discapacidad</option>
+        <option value="Permanente">Permanente</option>
+        <option value="Temporal">Temporal</option>
       </select>
 
       <!-- Estudios (solo hijos >18) -->

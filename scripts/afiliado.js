@@ -1,4 +1,5 @@
 import { supabase } from "./supabase.js";
+import Swal from "sweetalert2";
 
 /* =====================
    PARAMS
@@ -20,17 +21,14 @@ let modoEdicion = false;
 async function verificarUsuario() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    // Si no hay usuario logueado, redirigir al login
     window.location.href = "/pages/login.html";
     return;
   }
 
-  // Mostrar email logueado en header
   const bienvenidoSpan = document.getElementById("userEmail");
   if (bienvenidoSpan) bienvenidoSpan.textContent = user.email;
 }
 
-// Cerrar sesión
 async function cerrarSesion() {
   const { error } = await supabase.auth.signOut();
   if (error) {
@@ -91,8 +89,6 @@ async function cargarAfiliado() {
   }
 
   afiliado = data;
-
-  // Calcular grupo familiar para tabla
   afiliado.grupo_familiar_codigo = calcularGrupoFamiliar(afiliado.numero_afiliado);
 
   renderFicha();
@@ -104,55 +100,49 @@ async function cargarAfiliado() {
 ===================== */
 function renderFicha() {
   modoEdicion = false;
-
-  // Restaurar todos los campos a spans si estaban en edición
   restaurarCampos();
 
   document.getElementById("nombreCompleto").textContent =
     `${afiliado.nombre} ${afiliado.apellido}`;
-  document.getElementById("dni").textContent = afiliado.dni || "-";
-    function formatearFecha(fecha) {
+    
+  function formatearFecha(fecha) {
     if (!fecha) return "-";
-    const [yyyy, mm, dd] = fecha.split("-"); 
+    const [yyyy, mm, dd] = fecha.split("-");
     return `${dd}/${mm}/${yyyy}`;
-    }
-
-    document.getElementById("fechaNacimiento").textContent =
-        formatearFecha(afiliado.fecha_nacimiento);
+  }
+  document.getElementById("fechaNacimiento").textContent =
+      formatearFecha(afiliado.fecha_nacimiento);
 
   const edad = calcularEdad(afiliado.fecha_nacimiento);
   document.getElementById("edad").textContent =
     edad !== null ? `${edad} años` : "-";
 
-  document.getElementById("telefono").textContent =
-    afiliado.telefono || "-";
-  document.getElementById("numeroAfiliado").textContent =
-    afiliado.numero_afiliado || "-";
-  document.getElementById("grupoFamiliar").textContent =
-    afiliado.grupo_familiar_codigo || "-";
+  document.getElementById("telefono").textContent = afiliado.telefono || "-";
+  document.getElementById("numeroAfiliado").textContent = afiliado.numero_afiliado || "-";
+  document.getElementById("grupoFamiliar").textContent = afiliado.grupo_familiar_codigo || "-";
 
-  document.getElementById("relacion").textContent =
-    afiliado.relacion || "-";
+  document.getElementById("parentesco").textContent = afiliado.parentesco || "-";
+  document.getElementById("sexo").textContent = afiliado.sexo || "-";
+  document.getElementById("plan").textContent = afiliado.plan || "-";
+  document.getElementById("categoria").textContent = afiliado.categoria || "-";
+  document.getElementById("localidad").textContent = afiliado.localidad || "-";
+  document.getElementById("discapacidad").textContent = afiliado.discapacidad ? "Sí" : "No";
+  document.getElementById("nivelDiscapacidad").textContent = afiliado.nivel_discapacidad || "-";
 
-  mostrarEstado(afiliado.activo);
+  document.getElementById("parentesco").textContent = afiliado.parentesco || "-";
 
   const estudiosField = document.getElementById("estudiosField");
-  if (afiliado.relacion === "Hijo/a" && edad >= 18 && edad <= 25) {
+  if (afiliado.parentesco === "Hijo/a" && edad >= 18 && edad <= 25) {
     estudiosField.style.display = "block";
-    const estudiosSpan = document.getElementById("estudios");
-    estudiosSpan.textContent = afiliado.estudios || "-";
+    document.getElementById("estudios").textContent = afiliado.estudios || "-";
   } else {
     estudiosField.style.display = "none";
   }
 
   toggleBotones(false);
-
-  document.getElementById("btnEditar").style.display =
-    afiliado.activo ? "inline-block" : "none";
-  document.getElementById("btnBaja").style.display =
-    afiliado.activo ? "inline-block" : "none";
-  document.getElementById("btnReactivar").style.display =
-    afiliado.activo ? "none" : "inline-block";
+  document.getElementById("btnEditar").style.display = afiliado.activo ? "inline-block" : "none";
+  document.getElementById("btnBaja").style.display = afiliado.activo ? "inline-block" : "none";
+  document.getElementById("btnReactivar").style.display = afiliado.activo ? "none" : "inline-block";
 }
 
 /* =====================
@@ -167,13 +157,19 @@ function entrarModoEdicion() {
   reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
   reemplazarPorInput("dni", afiliado.dni);
 
-  reemplazarRelacion();
+  reemplazarPorSelect("parentesco", ["Titular","Conyuge","Concubino/a","Hijos","Menor B/ guarda"], afiliado.parentesco);
+  reemplazarPorSelect("sexo", ["F","M"], afiliado.sexo);
+  reemplazarPorSelect("plan", ["Adherentes","Aport. Sol","Monotrib.","Pasiv Tram","Plan B-ESP","Plan joven","PMO"], afiliado.plan);
+  reemplazarPorSelect("categoria", ["Adherentes","Jubilado ANSES","Jubilado conyuge AF. vivo","Jubilado tramite","Monotributista","Obligatorios","Opcion c/ convenio","Opcion s/ convenio","Pensionado ANSES reparto"], afiliado.categoria);
+  reemplazarPorSelect("localidad", ["Espigas","Hinojo","Olavarria","Sierra Chica","Sierras Bayas"], afiliado.localidad);
+  reemplazarPorCheckbox("discapacidad", afiliado.discapacidad);
+  reemplazarPorSelect("nivelDiscapacidad", ["Permanente","Temporal"], afiliado.nivel_discapacidad);
 
   const fechaInput = document.getElementById("fechaNacimiento");
-  const relacionSelect = document.getElementById("relacionSelect");
+  const parentescoSelect = document.getElementById("parentesco");
 
   fechaInput.addEventListener("input", actualizarEdadYEstudios);
-  relacionSelect.addEventListener("change", actualizarEdadYEstudios);
+  parentescoSelect.addEventListener("change", actualizarEdadYEstudios);
 
   actualizarEdadYEstudios();
   toggleBotones(true);
@@ -189,33 +185,41 @@ function reemplazarPorInput(id, valor, tipo = "text") {
   span.replaceWith(input);
 }
 
-function reemplazarRelacion() {
-  const span = document.getElementById("relacion");
+function reemplazarPorSelect(id, opciones, valorActual) {
+  const span = document.getElementById(id);
+  if (!span) return;
   const select = document.createElement("select");
-  select.id = "relacionSelect";
-
-  ["Titular", "Cónyuge", "Hijo/a", "Otro"].forEach(op => {
+  select.id = id;
+  opciones.forEach(op => {
     const o = document.createElement("option");
     o.value = op;
     o.textContent = op;
-    if (afiliado.relacion === op) o.selected = true;
+    if (valorActual === op) o.selected = true;
     select.appendChild(o);
   });
-
   span.replaceWith(select);
+}
+
+function reemplazarPorCheckbox(id, valorActual) {
+  const span = document.getElementById(id);
+  if (!span) return;
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.id = id;
+  input.checked = !!valorActual;
+  span.replaceWith(input);
 }
 
 function actualizarEdadYEstudios() {
   if (!modoEdicion) return;
   const fechaInput = document.getElementById("fechaNacimiento");
-  const relacionSelect = document.getElementById("relacionSelect");
+  const parentescoSelect = document.getElementById("parentesco");
   const estudiosField = document.getElementById("estudiosField");
 
   const edad = fechaInput.value ? calcularEdad(fechaInput.value) : null;
-  document.getElementById("edad").textContent =
-    edad !== null ? `${edad} años` : "-";
+  document.getElementById("edad").textContent = edad !== null ? `${edad} años` : "-";
 
-  if (relacionSelect.value === "Hijo/a" && edad >= 18 && edad <= 25) {
+  if (parentescoSelect.value === "Hijo/a" && edad >= 18 && edad <= 25) {
     estudiosField.style.display = "block";
     convertirEstudiosASelect();
   } else {
@@ -252,13 +256,17 @@ function restaurarCampos() {
     }
   });
 
-  const rel = document.getElementById("relacionSelect");
-  if (rel) {
-    const span = document.createElement("span");
-    span.id = "relacion";
-    span.textContent = afiliado.relacion || "-";
-    rel.replaceWith(span);
-  }
+  ["parentesco","sexo","plan","categoria","localidad","discapacidad","nivelDiscapacidad"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === "SELECT" || el.tagName === "INPUT") {
+      const span = document.createElement("span");
+      span.id = id;
+      if(id === "discapacidad") span.textContent = afiliado.discapacidad ? "Sí" : "No";
+      else span.textContent = afiliado[id] || "-";
+      el.replaceWith(span);
+    }
+  });
 
   const est = document.getElementById("estudios");
   if (est && est.tagName === "SELECT") {
@@ -270,12 +278,9 @@ function restaurarCampos() {
 }
 
 function toggleBotones(editando) {
-  document.getElementById("btnEditar").style.display =
-    editando ? "none" : "inline-block";
-  document.getElementById("btnGuardar").style.display =
-    editando ? "inline-block" : "none";
-  document.getElementById("btnCancelar").style.display =
-    editando ? "inline-block" : "none";
+  document.getElementById("btnEditar").style.display = editando ? "none" : "inline-block";
+  document.getElementById("btnGuardar").style.display = editando ? "inline-block" : "none";
+  document.getElementById("btnCancelar").style.display = editando ? "inline-block" : "none";
 }
 
 /* =====================
@@ -286,24 +291,33 @@ async function guardarCambios() {
   const fecha_nacimiento = document.getElementById("fechaNacimiento").value || null;
   const numero_afiliado = document.getElementById("numeroAfiliado").value;
   const dni = document.getElementById("dni").value;
-  const relacion = document.getElementById("relacionSelect").value;
+  const parentesco = document.getElementById("parentesco")?.value || null;
+  const sexo = document.getElementById("sexo")?.value || null;
+  const plan = document.getElementById("plan")?.value || null;
+  const categoria = document.getElementById("categoria")?.value || null;
+  const localidad = document.getElementById("localidad")?.value || null;
+  const discapacidad = document.getElementById("discapacidad")?.checked || false;
+  const nivel_discapacidad = document.getElementById("nivelDiscapacidad")?.value || null;
 
   const payload = {
     telefono,
     fecha_nacimiento,
     numero_afiliado,
     dni,
-    relacion,
+    parentesco,
+    sexo,
+    plan,
+    categoria,
+    localidad,
+    discapacidad,
+    nivel_discapacidad,
     grupo_familiar_codigo: calcularGrupoFamiliar(numero_afiliado)
   };
 
   const estudiosEl = document.getElementById("estudios");
   if (estudiosEl && estudiosEl.tagName === "SELECT") payload.estudios = estudiosEl.value;
 
-  const { error } = await supabase
-    .from("afiliados")
-    .update(payload)
-    .eq("id", afiliado.id);
+  const { error } = await supabase.from("afiliados").update(payload).eq("id", afiliado.id);
 
   if (error) {
     Swal.fire("Error", error.message, "error");
@@ -373,9 +387,9 @@ async function cargarGrupoFamiliar() {
 
   const { data } = await supabase
     .from("afiliados")
-    .select("id, nombre, apellido, dni, numero_afiliado, relacion, activo")
+    .select("id, nombre, apellido, dni, numero_afiliado, parentesco, activo")
     .eq("grupo_familiar_codigo", afiliado.grupo_familiar_codigo)
-    .order("relacion");
+    .order("parentesco");
 
   const tbody = document.querySelector("#tablaGrupoFamiliar tbody");
   tbody.innerHTML = "";
@@ -395,7 +409,7 @@ async function cargarGrupoFamiliar() {
       <td>${a.nombre} ${a.apellido}</td>
       <td>${a.dni}</td>
       <td>${a.numero_afiliado}</td>
-      <td>${a.relacion}</td>
+      <td>${a.parentesco}</td>
       <td>${a.activo ? "Activo" : "Dado de baja"}</td>
     `;
 
@@ -419,26 +433,17 @@ document.getElementById("btnReactivar").onclick = reactivar;
 document.getElementById("logoutBtn").onclick = cerrarSesion;
 
 /* =====================
-   BOTÓN VOLVER AL BUSCADOR (flotante)
+   BOTÓN VOLVER AL BUSCADOR
 ===================== */
-function agregarBotonVolver() {
-  const btn = document.createElement("button");
-  btn.id = "btnVolver";
-  btn.innerHTML = "⬅️ Volver al buscador";
-  btn.onclick = () => {
-    window.location.href = "/pages/padron.html";
-  };
-  document.body.appendChild(btn);
-}
-agregarBotonVolver();
+document.getElementById("btnVolver").onclick = () => {
+  window.location.href = "/pages/padron.html";
+};
 
 /* =====================
    CERRAR MODO EDICIÓN CON ESCAPE
 ===================== */
 document.addEventListener("keydown", (e) => {
-  if (modoEdicion && e.key === "Escape") {
-    cancelarEdicion();
-  }
+  if (modoEdicion && e.key === "Escape") cancelarEdicion();
 });
 
 /* ================= Botón Ficha Médica ================= */

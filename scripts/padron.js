@@ -36,8 +36,8 @@ function mesesHastaCumple(fechaNacimiento, edadObjetivo) {
   return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30));
 }
 
-function obtenerAlertaHijo(fechaNacimiento, relacion) {
-  if (relacion !== "Hijo/a" || !fechaNacimiento) return null;
+function obtenerAlertaHijo(fechaNacimiento, parentesco) {
+  if (parentesco !== "Hijos" || !fechaNacimiento) return null;
 
   const edad = calcularEdad(fechaNacimiento);
 
@@ -57,18 +57,18 @@ function obtenerAlertaHijo(fechaNacimiento, relacion) {
 /* =====================
    MOSTRAR / OCULTAR ESTUDIOS
 ===================== */
-const relacionSelect = document.querySelector('select[name="relacion"]');
+const parentescoSelect = document.querySelector('select[name="parentesco"]');
 const fechaNacimientoInput = document.querySelector('input[name="fechaNacimiento"]');
 const estudiosField = document.getElementById("estudiosField");
 const estudiosSelect = document.querySelector('select[name="estudios"]');
 
 function actualizarCampoEstudios() {
-  if (!relacionSelect || !fechaNacimientoInput) return;
+  if (!parentescoSelect || !fechaNacimientoInput) return;
 
-  const relacion = relacionSelect.value;
+  const parentesco = parentescoSelect.value;
   const fechaNacimiento = fechaNacimientoInput.value;
 
-  if (relacion !== "Hijo/a" || !fechaNacimiento) {
+  if (parentesco !== "Hijos" || !fechaNacimiento) {
     estudiosField.style.display = "none";
     estudiosSelect.value = "";
     return;
@@ -84,7 +84,7 @@ function actualizarCampoEstudios() {
   }
 }
 
-relacionSelect?.addEventListener("change", actualizarCampoEstudios);
+parentescoSelect?.addEventListener("change", actualizarCampoEstudios);
 fechaNacimientoInput?.addEventListener("change", actualizarCampoEstudios);
 
 /* =====================
@@ -98,7 +98,6 @@ authObserver(user => {
 
   document.getElementById("status").innerHTML =
       `Bienvenido, <strong>${user.email}</strong>`;
-
 });
 
 document
@@ -122,13 +121,13 @@ searchInput.addEventListener("input", async e => {
 
   try {
     const { data, error } = await supabase
-      .from("afiliados")
+      .from("afiliados_detalle")
       .select(`
         id,
         nombre_completo,
         dni,
         numero_afiliado,
-        relacion,
+        parentesco,
         fecha_nacimiento,
         activo
       `)
@@ -145,12 +144,12 @@ searchInput.addEventListener("input", async e => {
     }
 
     data.forEach(a => {
-      const alerta = obtenerAlertaHijo(a.fecha_nacimiento, a.relacion);
+      const alerta = obtenerAlertaHijo(a.fecha_nacimiento, a.parentesco);
       const edad = a.fecha_nacimiento ? calcularEdad(a.fecha_nacimiento) : null;
 
-    const estado = a.activo
-      ? `<span style="color:#16a34a;font-weight:600"> 🟢 Activo</span>`
-      : `<span style="color:#dc2626;font-weight:600"> 🔴 Dado de baja</span>`;
+      const estado = a.activo
+        ? `<span style="color:#16a34a;font-weight:600"> 🟢 Activo</span>`
+        : `<span style="color:#dc2626;font-weight:600"> 🔴 Dado de baja</span>`;
 
       const item = document.createElement("div");
       item.className = "resultado-item";
@@ -165,7 +164,7 @@ searchInput.addEventListener("input", async e => {
         DNI: ${a.dni || "-"}
         ${edad !== null ? ` | Edad: ${edad}` : ""}
         <br>
-        Afiliado: ${a.numero_afiliado} | ${a.relacion}
+        Afiliado: ${a.numero_afiliado} | ${a.parentesco}
       `;
 
       item.onclick = () => {
@@ -204,15 +203,22 @@ document
       const telefono = f.telefono.value.trim() || null;
       const fechaNacimiento = f.fechaNacimiento.value || null;
       const numeroAfiliado = f.numeroAfiliado.value.trim();
-      const relacion = f.relacion.value;
+
+      const parentesco = f.parentesco.value;
+      const sexo = f.sexo.value;
+      const plan = f.plan?.value || null;
+      const categoria = f.categoria?.value || null;
+      const localidad = f.localidad?.value || null;
+      const discapacidad = f.discapacidad?.checked || false;
+      const nivel_discapacidad = f.nivelDiscapacidad?.value || null;
       const estudios = f.estudios?.value || null;
 
-      if (!nombre || !apellido || !dni || !numeroAfiliado || !relacion) {
+      if (!nombre || !apellido || !dni || !numeroAfiliado || !parentesco || !sexo) {
         Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
         return;
       }
 
-      if (relacion === "Hijo/a" && fechaNacimiento) {
+      if (parentesco === "Hijos" && fechaNacimiento) {
         const edad = calcularEdad(fechaNacimiento);
 
         if (edad > 25) {
@@ -234,18 +240,28 @@ document
 
       const grupoFamiliarCodigo = match[1];
 
+      const user = await supabase.auth.getUser();
+      const userId = user.data.user.id;
+
       const { error } = await supabase
-        .from("afiliados")
+        .from("afiliados_detalle")
         .insert({
           nombre,
           apellido,
           dni,
           telefono,
           fecha_nacimiento: fechaNacimiento,
-          numero_afiliado: numeroAfiliado,
+          numero_afiliado,
           grupo_familiar_codigo: grupoFamiliarCodigo,
-          relacion,
-          estudios
+          parentesco,
+          sexo,
+          plan,
+          categoria,
+          localidad,
+          discapacidad,
+          nivel_discapacidad,
+          estudios,
+          created_by: userId
         });
 
       if (error) throw error;
@@ -258,12 +274,12 @@ document
       console.error(err);
 
       if (err.code === "23505") {
-        if (err.message.includes("afiliados_dni")) {
+        if (err.message.includes("afiliados_detalle_dni")) {
           Swal.fire("DNI duplicado", "Ya existe un afiliado con ese DNI", "warning");
           return;
         }
 
-        if (err.message.includes("afiliados_numero")) {
+        if (err.message.includes("afiliados_detalle_numero")) {
           Swal.fire(
             "Número de afiliado duplicado",
             "Ya existe un afiliado con ese número de afiliado",
