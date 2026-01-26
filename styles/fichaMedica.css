@@ -1,3 +1,9 @@
+.ficha-header h2 {
+  font-size: 1.6rem;
+  color: #0f172a;
+  margin-bottom: 1rem; /* separa del contenido de abajo */
+}
+
 /* ===================== BOTÓN VOLVER ===================== */
 /* Botón volver debajo del cerrar sesión */
 #btnVolver {
