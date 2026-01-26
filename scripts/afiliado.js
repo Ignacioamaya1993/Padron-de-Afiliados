@@ -534,5 +534,4 @@ await cargarHeader();
 /* =====================
    INIT
 ===================== */
-verificarUsuario();
 cargarAfiliado();
