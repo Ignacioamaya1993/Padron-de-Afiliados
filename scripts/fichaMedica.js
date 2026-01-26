@@ -130,15 +130,26 @@ async function guardarRegistro(tabla, formData, campos = [], id = null) {
 /* ===================== ELIMINAR ARCHIVO CLOUDINARY ===================== */
 async function eliminarArchivoCloudinary(public_id) {
   try {
-    // Llamada segura a la Edge Function usando supabase.functions.invoke
-    const { data, error } = await supabase.functions.invoke("borrarCloudinary", {
+    // Obtenemos la sesión activa
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error("Usuario no autenticado");
+
+    // Usamos supabase.functions.invoke con Authorization manual
+    const resp = await fetch('https://vzqduywffrzhcrjtercs.supabase.co/functions/v1/borrarCloudinary', {
       method: "POST",
-      body: { public_id, resource_type: "image" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${session.access_token}` // ✅ token JWT del usuario
+      },
+      body: JSON.stringify({ public_id, resource_type: "image" })
     });
 
-    if (error) throw new Error(error.message || "Error al eliminar archivo Cloudinary");
+    if (!resp.ok) {
+      const data = await resp.json();
+      throw new Error(data?.error || "Error al eliminar archivo");
+    }
 
-    return data;
+    return await resp.json();
   } catch (err) {
     console.error("Error al eliminar archivo Cloudinary:", err);
     return null;
