@@ -509,7 +509,6 @@ document.getElementById("btnCancelar").onclick = cancelarEdicion;
 document.getElementById("btnBaja").onclick = darDeBaja;
 document.getElementById("btnEliminar").onclick = eliminarDefinitivo;
 document.getElementById("btnReactivar").onclick = reactivar;
-document.getElementById("logoutBtn").onclick = cerrarSesion;
 
 /* =====================
    BOTÓN VOLVER AL BUSCADOR
