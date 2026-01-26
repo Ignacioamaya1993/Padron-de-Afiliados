@@ -1,4 +1,5 @@
 import { supabase } from "./supabase.js";
+import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js";
 
 /* =====================
    PARAMS
@@ -23,18 +24,14 @@ async function verificarUsuario() {
     window.location.href = "/pages/login.html";
     return;
   }
-
   const bienvenidoSpan = document.getElementById("userEmail");
   if (bienvenidoSpan) bienvenidoSpan.textContent = user.email;
 }
 
 async function cerrarSesion() {
   const { error } = await supabase.auth.signOut();
-  if (error) {
-    Swal.fire("Error", error.message, "error");
-    return;
-  }
-  window.location.href = "/pages/login.html";
+  if (error) Swal.fire("Error", error.message, "error");
+  else window.location.href = "/pages/login.html";
 }
 
 /* =====================
@@ -103,7 +100,8 @@ function renderFicha() {
 
   document.getElementById("nombreCompleto").textContent =
     `${afiliado.nombre} ${afiliado.apellido}`;
-    
+
+  // Formatear fecha
   function formatearFecha(fecha) {
     if (!fecha) return "-";
     const [yyyy, mm, dd] = fecha.split("-");
@@ -119,16 +117,22 @@ function renderFicha() {
   document.getElementById("telefono").textContent = afiliado.telefono || "-";
   document.getElementById("numeroAfiliado").textContent = afiliado.numero_afiliado || "-";
   document.getElementById("grupoFamiliar").textContent = afiliado.grupo_familiar_codigo || "-";
-
+  document.getElementById("dni").textContent = afiliado.dni || "-";
   document.getElementById("parentesco").textContent = afiliado.parentesco || "-";
   document.getElementById("sexo").textContent = afiliado.sexo || "-";
   document.getElementById("plan").textContent = afiliado.plan || "-";
   document.getElementById("categoria").textContent = afiliado.categoria || "-";
   document.getElementById("localidad").textContent = afiliado.localidad || "-";
   document.getElementById("discapacidad").textContent = afiliado.discapacidad ? "Sí" : "No";
-  document.getElementById("nivelDiscapacidad").textContent = afiliado.nivel_discapacidad || "-";
 
-  document.getElementById("parentesco").textContent = afiliado.parentesco || "-";
+  // Nivel de discapacidad solo si corresponde
+  const nivelField = document.getElementById("nivelDiscapacidadField");
+  if (afiliado.discapacidad) {
+    nivelField.style.display = "block";
+    document.getElementById("nivelDiscapacidad").textContent = afiliado.nivel_discapacidad || "-";
+  } else {
+    nivelField.style.display = "none";
+  }
 
   const estudiosField = document.getElementById("estudiosField");
   if (afiliado.parentesco === "Hijo/a" && edad >= 18 && edad <= 25) {
@@ -138,6 +142,7 @@ function renderFicha() {
     estudiosField.style.display = "none";
   }
 
+  mostrarEstado(afiliado.activo);
   toggleBotones(false);
   document.getElementById("btnEditar").style.display = afiliado.activo ? "inline-block" : "none";
   document.getElementById("btnBaja").style.display = afiliado.activo ? "inline-block" : "none";
@@ -156,13 +161,34 @@ function entrarModoEdicion() {
   reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
   reemplazarPorInput("dni", afiliado.dni);
 
-  reemplazarPorSelect("parentesco", ["Titular","Conyuge","Concubino/a","Hijos","Menor B/ guarda"], afiliado.parentesco);
+  reemplazarPorSelect("parentesco", ["Titular","Conyuge","Concubino/a","Hijo/a","Menor B/ guarda"], afiliado.parentesco);
   reemplazarPorSelect("sexo", ["F","M"], afiliado.sexo);
   reemplazarPorSelect("plan", ["Adherentes","Aport. Sol","Monotrib.","Pasiv Tram","Plan B-ESP","Plan joven","PMO"], afiliado.plan);
   reemplazarPorSelect("categoria", ["Adherentes","Jubilado ANSES","Jubilado conyuge AF. vivo","Jubilado tramite","Monotributista","Obligatorios","Opcion c/ convenio","Opcion s/ convenio","Pensionado ANSES reparto"], afiliado.categoria);
   reemplazarPorSelect("localidad", ["Espigas","Hinojo","Olavarria","Sierra Chica","Sierras Bayas"], afiliado.localidad);
+
+  // Checkbox discapacidad
   reemplazarPorCheckbox("discapacidad", afiliado.discapacidad);
-  reemplazarPorSelect("nivelDiscapacidad", ["Permanente","Temporal"], afiliado.nivel_discapacidad);
+
+  // Mostrar nivel de discapacidad solo si checked
+  const nivelField = document.getElementById("nivelDiscapacidadField");
+  const dispCheckbox = document.getElementById("discapacidad");
+  if (afiliado.discapacidad) {
+    nivelField.style.display = "block";
+    reemplazarPorSelect("nivelDiscapacidad", ["Permanente","Temporal"], afiliado.nivel_discapacidad);
+  } else {
+    nivelField.style.display = "none";
+  }
+
+  // Listener para mostrar/ocultar nivel de discapacidad dinámicamente
+  dispCheckbox.addEventListener("change", () => {
+    if (dispCheckbox.checked) {
+      nivelField.style.display = "block";
+      convertirNivelDiscapacidadASelect();
+    } else {
+      nivelField.style.display = "none";
+    }
+  });
 
   const fechaInput = document.getElementById("fechaNacimiento");
   const parentescoSelect = document.getElementById("parentesco");
@@ -174,6 +200,24 @@ function entrarModoEdicion() {
   toggleBotones(true);
 }
 
+function convertirNivelDiscapacidadASelect() {
+  const span = document.getElementById("nivelDiscapacidad");
+  if (!span || span.tagName === "SELECT") return;
+  const select = document.createElement("select");
+  select.id = "nivelDiscapacidad";
+  ["Permanente","Temporal"].forEach(op => {
+    const o = document.createElement("option");
+    o.value = op;
+    o.textContent = op;
+    if (afiliado.nivel_discapacidad === op) o.selected = true;
+    select.appendChild(o);
+  });
+  span.replaceWith(select);
+}
+
+/* =====================
+   FUNCIONES COMUNES EDICIÓN
+===================== */
 function reemplazarPorInput(id, valor, tipo = "text") {
   const span = document.getElementById(id);
   if (!span) return;
@@ -262,6 +306,7 @@ function restaurarCampos() {
       const span = document.createElement("span");
       span.id = id;
       if(id === "discapacidad") span.textContent = afiliado.discapacidad ? "Sí" : "No";
+      else if(id === "nivelDiscapacidad") span.textContent = afiliado.nivel_discapacidad || "-";
       else span.textContent = afiliado[id] || "-";
       el.replaceWith(span);
     }
@@ -283,7 +328,7 @@ function toggleBotones(editando) {
 }
 
 /* =====================
-   GUARDAR
+   GUARDAR CAMBIOS
 ===================== */
 async function guardarCambios() {
   const telefono = document.getElementById("telefono").value || null;
@@ -296,7 +341,7 @@ async function guardarCambios() {
   const categoria = document.getElementById("categoria")?.value || null;
   const localidad = document.getElementById("localidad")?.value || null;
   const discapacidad = document.getElementById("discapacidad")?.checked || false;
-  const nivel_discapacidad = document.getElementById("nivelDiscapacidad")?.value || null;
+  const nivel_discapacidad = (discapacidad && document.getElementById("nivelDiscapacidad")?.value) || null;
 
   const payload = {
     telefono,
