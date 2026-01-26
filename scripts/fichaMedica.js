@@ -140,21 +140,13 @@ async function guardarRegistro(tabla, formData, campos = [], id = null) {
 /* ===================== ELIMINAR ===================== */
 async function eliminarArchivoCloudinary(public_id) {
   try {
-    const resp = await fetch(CLOUDINARY_DELETE_ENDPOINT, {
+    await fetch(CLOUDINARY_DELETE_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ public_id, resource_type: "image" })
     });
-
-    if (!resp.ok) {
-      const data = await resp.json();
-      throw new Error(data?.error || "Error al eliminar archivo");
-    }
-
-    return await resp.json();
   } catch (err) {
-    console.error("Error al eliminar archivo Cloudinary:", err);
-    return null;
+    // ignorar cualquier error
   }
 }
 
@@ -171,34 +163,29 @@ async function eliminarRegistro(tabla, id) {
   if (!resp.isConfirmed) return;
 
   // Obtener adjunto (si existe)
-  const { data, error } = await supabase.from(tabla).select("adjunto").eq("id", id).single();
-  if (error) return Swal.fire("Error", error.message, "error");
+  const { data } = await supabase.from(tabla).select("adjunto").eq("id", id).single();
 
-  // Borrar archivo en Cloudinary si hay adjunto
+  // Intentar borrar archivo en Cloudinary si hay adjunto (ignorar errores)
   if (data?.adjunto) {
     try {
       const url = new URL(data.adjunto);
       const parts = url.pathname.split("/");
-      const filename = parts.pop() || parts.pop(); // tomar último segmento
+      const filename = parts.pop() || parts.pop(); // último segmento
       const public_id = filename.split(".")[0];
-
-      const cloudinaryResp = await eliminarArchivoCloudinary(public_id);
-      if (!cloudinaryResp?.success) {
-        return Swal.fire("Error", "No se pudo eliminar el archivo de Cloudinary", "error");
-      }
+      eliminarArchivoCloudinary(public_id); // no await, solo fire-and-forget
     } catch (err) {
-      console.error("Error al extraer public_id o eliminar imagen:", err);
-      return Swal.fire("Error", "Error al eliminar archivo", "error");
+      // ignorar cualquier error
     }
   }
 
-  // Borrar registro en Supabase
+  // 3Borrar registro en Supabase
   const { error: delError } = await supabase.from(tabla).delete().eq("id", id);
   if (delError) return Swal.fire("Error", delError.message, "error");
 
-  // 4️⃣ Mensaje de éxito y recargar tabla correspondiente
+  // Mensaje de éxito
   Swal.fire("Eliminado", "Registro eliminado correctamente", "success");
 
+  // Recargar tabla correspondiente
   switch (tabla) {
     case "enfermedades_cronicas": cargarEnfermedades(); break;
     case "medicamentos": cargarMedicamentos(); break;
@@ -206,7 +193,6 @@ async function eliminarRegistro(tabla, id) {
     case "adicciones": cargarAdicciones(); break;
   }
 }
-
 
 /* ===================== EDITAR ===================== */
 async function editarRegistro(tabla, id) {
