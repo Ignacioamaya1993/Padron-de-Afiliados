@@ -121,18 +121,18 @@ searchInput.addEventListener("input", async e => {
 
   try {
     const { data, error } = await supabase
-      .from("afiliados_detalle")
+      .from("afiliados")
       .select(`
         id,
         nombre_completo,
         dni,
-        numero_afiliado,
+        numeroAfiliado,
         parentesco,
         fecha_nacimiento,
         activo
       `)
       .or(
-        `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,numero_afiliado.ilike.%${texto}%`
+        `nombre_completo.ilike.%${texto}%,dni.ilike.%${texto}%,numeroAfiliado.ilike.%${texto}%`
       )
       .limit(20);
 
@@ -164,7 +164,7 @@ searchInput.addEventListener("input", async e => {
         DNI: ${a.dni || "-"}
         ${edad !== null ? ` | Edad: ${edad}` : ""}
         <br>
-        Afiliado: ${a.numero_afiliado} | ${a.parentesco}
+        Afiliado: ${a.numeroAfiliado} | ${a.parentesco}
       `;
 
       item.onclick = () => {
@@ -244,14 +244,14 @@ document
       const userId = user.data.user.id;
 
       const { error } = await supabase
-        .from("afiliados_detalle")
+        .from("afiliados")
         .insert({
           nombre,
           apellido,
           dni,
           telefono,
           fecha_nacimiento: fechaNacimiento,
-          numero_afiliado,
+          numeroAfiliado,
           grupo_familiar_codigo: grupoFamiliarCodigo,
           parentesco,
           sexo,
@@ -274,12 +274,12 @@ document
       console.error(err);
 
       if (err.code === "23505") {
-        if (err.message.includes("afiliados_detalle_dni")) {
+        if (err.message.includes("afiliados_dni")) {
           Swal.fire("DNI duplicado", "Ya existe un afiliado con ese DNI", "warning");
           return;
         }
 
-        if (err.message.includes("afiliados_detalle_numero")) {
+        if (err.message.includes("afiliados_numero")) {
           Swal.fire(
             "Número de afiliado duplicado",
             "Ya existe un afiliado con ese número de afiliado",
