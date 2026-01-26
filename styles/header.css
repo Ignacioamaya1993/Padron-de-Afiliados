@@ -1,27 +1,85 @@
-header {
-  background: #1e293b;
-  color: #fff;
-  padding: 1rem 1.5rem;
+/* =====================
+   HEADER APP
+===================== */
+
+.app-header {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0.9rem 1.5rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
-header h1 {
-  font-size: 1.4rem;
+/* Título */
+.app-header h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
+/* User bar */
 .user-bar {
   display: flex;
-  gap: 1rem;
   align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
 }
 
+/* Email */
+#status {
+  opacity: 0.85;
+}
+
+/* Logout */
 #logoutBtn {
-  background: #ef4444;
-  border: none;
-  color: white;
-  padding: 0.4rem 0.8rem;
+  background: transparent;
+  color: #fca5a5;
+  border: 1px solid #fca5a5;
+  padding: 0.35rem 0.7rem;
   border-radius: 6px;
+  font-size: 0.8rem;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#logoutBtn:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+/* =====================
+   RESPONSIVE
+===================== */
+
+@media (max-width: 700px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .app-header h1 {
+    font-size: 1.1rem;
+  }
+
+  .user-bar {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.subtitle {
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.6;
+  margin-left: 0.4rem;
 }
