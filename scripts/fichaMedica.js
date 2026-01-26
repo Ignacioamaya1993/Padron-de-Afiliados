@@ -141,6 +141,7 @@ async function guardarRegistro(tabla, formData, campos = [], id = null) {
 async function eliminarArchivoCloudinary(public_id) {
   try {
     const { data: { session } } = await supabase.auth.getSession();
+    console.log("Token dentro de la función:", session?.access_token); // <--- aquí
     if (!session) throw new Error("Usuario no autenticado");
 
     const resp = await fetch(CLOUDINARY_DELETE_ENDPOINT, {
