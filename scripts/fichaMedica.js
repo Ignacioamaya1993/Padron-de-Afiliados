@@ -1,5 +1,7 @@
 import { supabase } from "./supabase.js";
-import { subirArchivoCloudinary } from "./cloudinary.js"; // Si usás Cloudinary
+import { subirArchivoCloudinary } from "./cloudinary.js";
+
+const CLOUDINARY_DELETE_ENDPOINT = "https://vzqduywffrzhcrjtercs.supabase.co/functions/v1/borrarCloudinary";
 
 const params = new URLSearchParams(window.location.search);
 const afiliadoId = params.get("id");
@@ -17,8 +19,7 @@ async function verificarUsuario() {
     return;
   }
   user = u;
-  const bienvenidoSpan = document.getElementById("userEmail");
-  if (bienvenidoSpan) bienvenidoSpan.textContent = user.email;
+  document.getElementById("userEmail").textContent = user.email;
 }
 
 async function cerrarSesion() {
@@ -45,7 +46,6 @@ async function cargarTabla(tabla, containerId) {
     const card = document.createElement("div");
     card.className = "card";
 
-    // Construir el contenido de la card según tabla
     let inner = "";
     switch (tabla) {
       case "enfermedades_cronicas":
@@ -72,10 +72,9 @@ async function cargarTabla(tabla, containerId) {
         break;
     }
 
-    // Botones de editar y eliminar
     inner += `<div class="card-actions">
                 <button class="btn-editar" data-id="${item.id}" data-tabla="${tabla}">✏️ Editar</button>
-                <button class="btn-eliminar" data-id="${item.id}" data-tabla="${tabla}">🗑️ Eliminar</button>
+                <button class="btn-eliminar" data-id="${item.id}" data-tabla="${tabla}" data-adjunto="${item.adjunto || ""}">🗑️ Eliminar</button>
               </div>`;
 
     card.innerHTML = inner;
@@ -88,17 +87,17 @@ async function cargarTabla(tabla, containerId) {
   });
 
   container.querySelectorAll(".btn-eliminar").forEach(btn => {
-    btn.onclick = () => eliminarRegistro(btn.dataset.tabla, btn.dataset.id);
+    btn.onclick = () => eliminarRegistro(btn.dataset.tabla, btn.dataset.id, btn.dataset.adjunto);
   });
 }
 
-// Wrappers para cada tabla
+// Wrappers
 const cargarEnfermedades = () => cargarTabla("enfermedades_cronicas", "listaEnfermedades");
 const cargarMedicamentos = () => cargarTabla("medicamentos", "listaMedicamentos");
 const cargarIncidencias = () => cargarTabla("incidencias_salud", "listaIncidencias");
 const cargarAdicciones = () => cargarTabla("adicciones", "listaAdicciones");
 
-/* ===================== FUNCIONES GUARDAR/EDITAR ===================== */
+/* ===================== GUARDAR/EDITAR ===================== */
 async function guardarRegistro(tabla, formData, campos = [], id = null) {
   if (!user) return Swal.fire("Error", "Usuario no definido", "error");
 
@@ -119,10 +118,8 @@ async function guardarRegistro(tabla, formData, campos = [], id = null) {
   }
 
   if (res.error) return Swal.fire("Error", res.error.message, "error");
-
   Swal.fire("Éxito", id ? "Registro actualizado" : "Registro creado", "success");
 
-  // Recargar la lista
   switch (tabla) {
     case "enfermedades_cronicas": cargarEnfermedades(); break;
     case "medicamentos": cargarMedicamentos(); break;
@@ -131,8 +128,8 @@ async function guardarRegistro(tabla, formData, campos = [], id = null) {
   }
 }
 
-/* ===================== FUNCION ELIMINAR ===================== */
-async function eliminarRegistro(tabla, id) {
+/* ===================== ELIMINAR ===================== */
+async function eliminarRegistro(tabla, id, adjuntoUrl) {
   const resp = await Swal.fire({
     title: "¿Eliminar registro?",
     text: "Esta acción no se puede deshacer",
@@ -142,23 +139,38 @@ async function eliminarRegistro(tabla, id) {
     cancelButtonText: "Cancelar"
   });
 
-  if (resp.isConfirmed) {
-    const { error } = await supabase.from(tabla).delete().eq("id", id);
-    if (error) return Swal.fire("Error", error.message, "error");
+  if (!resp.isConfirmed) return;
 
-    Swal.fire("Eliminado", "El registro ha sido eliminado", "success");
-
-    // Recargar lista
-    switch (tabla) {
-      case "enfermedades_cronicas": cargarEnfermedades(); break;
-      case "medicamentos": cargarMedicamentos(); break;
-      case "incidencias_salud": cargarIncidencias(); break;
-      case "adicciones": cargarAdicciones(); break;
+  // 1️⃣ Borrar de Cloudinary si hay adjunto
+  if (adjuntoUrl) {
+    try {
+      // Obtener public_id del URL
+      const public_id = adjuntoUrl.split("/").pop().split(".")[0];
+      await fetch(CLOUDINARY_DELETE_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ public_id })
+      });
+    } catch (err) {
+      console.error("No se pudo eliminar archivo de Cloudinary:", err);
     }
+  }
+
+  // 2️⃣ Borrar registro de Supabase
+  const { error } = await supabase.from(tabla).delete().eq("id", id);
+  if (error) return Swal.fire("Error", error.message, "error");
+
+  Swal.fire("Eliminado", "Registro eliminado correctamente", "success");
+
+  switch (tabla) {
+    case "enfermedades_cronicas": cargarEnfermedades(); break;
+    case "medicamentos": cargarMedicamentos(); break;
+    case "incidencias_salud": cargarIncidencias(); break;
+    case "adicciones": cargarAdicciones(); break;
   }
 }
 
-/* ===================== FUNCION EDITAR ===================== */
+/* ===================== EDITAR ===================== */
 async function editarRegistro(tabla, id) {
   const { data, error } = await supabase.from(tabla).select("*").eq("id", id).single();
   if (error || !data) return Swal.fire("Error", "No se pudo cargar el registro", "error");
@@ -173,24 +185,21 @@ async function editarRegistro(tabla, id) {
   const form = document.getElementById(formId);
   form.classList.remove("hidden");
 
-  // Mostrar botón nuevo oculto
   const btnNuevoId = formId.replace("form", "btnNuevo");
   document.getElementById(btnNuevoId).style.display = "none";
 
-  // Llenar formulario
   Object.keys(data).forEach(k => {
     const field = form.querySelector(`[name="${k}"]`);
     if (field) field.value = data[k] || "";
   });
 
-  // Reconfigurar submit para actualizar
   form.onsubmit = async e => {
     e.preventDefault();
-    await guardarRegistro(tabla, new FormData(form), Object.keys(data).filter(k => k !== "id" && k !== "afiliado_id" && k !== "created_by" && k !== "updated_at"), id);
+    await guardarRegistro(tabla, new FormData(form), Object.keys(data).filter(k => !["id","afiliado_id","created_by","updated_at"].includes(k)), id);
     form.reset();
     form.classList.add("hidden");
     document.getElementById(btnNuevoId).style.display = "inline-block";
-    form.onsubmit = null; // resetear submit original
+    form.onsubmit = null;
   };
 }
 
@@ -216,15 +225,30 @@ function setupNuevoCancelar(nuevoBtnId, cancelarBtnId, formId, tabla, campos) {
     form.classList.add("hidden");
     btnNuevo.style.display = "inline-block";
     form.reset();
-    form.onsubmit = null; // resetear submit original
+    form.onsubmit = null;
   };
 }
 
-/* ===================== CONFIGURACIÓN NUEVO/CANCELAR ===================== */
+/* ===================== CONFIG NUEVO/CANCELAR ===================== */
 setupNuevoCancelar("btnNuevoEnfermedad", "btnCancelarEnfermedad", "formEnfermedad", "enfermedades_cronicas", ["enfermedad","fecha_diagnostico","observaciones"]);
 setupNuevoCancelar("btnNuevoMedicamento", "btnCancelarMedicamento", "formMedicamento", "medicamentos", ["medicamento","dosis","frecuencia","fecha_inicio","fecha_fin","ultima_entrega","proximo_entrega","observaciones"]);
 setupNuevoCancelar("btnNuevoIncidencia", "btnCancelarIncidencia", "formIncidencia", "incidencias_salud", ["titulo","descripcion","tipo","fecha"]);
 setupNuevoCancelar("btnNuevoAdiccion", "btnCancelarAdiccion", "formAdiccion", "adicciones", ["adiccion","frecuencia","observaciones"]);
+
+/* ===================== TABS ===================== */
+document.querySelectorAll(".tab-button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.tab).classList.add("active");
+  });
+});
+
+/* ===================== VOLVER ===================== */
+document.getElementById("btnVolver").onclick = () => {
+  window.location.href = `./afiliado.html?id=${afiliadoId}`;
+};
 
 /* ===================== INIT ===================== */
 async function init() {
