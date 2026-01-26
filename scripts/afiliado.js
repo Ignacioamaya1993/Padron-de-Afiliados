@@ -46,6 +46,19 @@ function calcularEdad(fecha) {
   return edad;
 }
 
+function pasoEdadLimite(fechaNacimiento, edadLimite) {
+  if (!fechaNacimiento) return true;
+
+  const fn = new Date(fechaNacimiento);
+  const fechaLimite = new Date(
+    fn.getFullYear() + edadLimite,
+    fn.getMonth(),
+    fn.getDate()
+  );
+
+  return new Date() >= fechaLimite;
+}
+
 function calcularGrupoFamiliar(numeroAfiliado) {
   if (!numeroAfiliado) return "";
   const guionIndex = numeroAfiliado.indexOf("-");
@@ -100,14 +113,14 @@ function renderFicha() {
   document.getElementById("nombreCompleto").textContent =
     `${afiliado.nombre} ${afiliado.apellido}`;
 
-  // Formatear fecha
   function formatearFecha(fecha) {
     if (!fecha) return "-";
     const [yyyy, mm, dd] = fecha.split("-");
     return `${dd}/${mm}/${yyyy}`;
   }
+
   document.getElementById("fechaNacimiento").textContent =
-      formatearFecha(afiliado.fecha_nacimiento);
+    formatearFecha(afiliado.fecha_nacimiento);
 
   const edad = calcularEdad(afiliado.fecha_nacimiento);
   document.getElementById("edad").textContent =
@@ -124,7 +137,6 @@ function renderFicha() {
   document.getElementById("localidad").textContent = afiliado.localidad || "-";
   document.getElementById("discapacidad").textContent = afiliado.discapacidad ? "Sí" : "No";
 
-  // Nivel de discapacidad solo si corresponde
   const nivelField = document.getElementById("nivelDiscapacidadField");
   if (afiliado.discapacidad) {
     nivelField.style.display = "block";
@@ -134,7 +146,10 @@ function renderFicha() {
   }
 
   const estudiosField = document.getElementById("estudiosField");
-  if (afiliado.parentesco === "Hijo/a" && edad >= 18 && edad <= 25) {
+  const cumplio21 = pasoEdadLimite(afiliado.fecha_nacimiento, 21); // CAMBIO
+  const cumplio26 = pasoEdadLimite(afiliado.fecha_nacimiento, 26);
+
+  if (afiliado.parentesco === "Hijo/a" && cumplio21 && !cumplio26) { // CAMBIO
     estudiosField.style.display = "block";
     document.getElementById("estudios").textContent = afiliado.estudios || "-";
   } else {
@@ -146,6 +161,36 @@ function renderFicha() {
   document.getElementById("btnEditar").style.display = afiliado.activo ? "inline-block" : "none";
   document.getElementById("btnBaja").style.display = afiliado.activo ? "inline-block" : "none";
   document.getElementById("btnReactivar").style.display = afiliado.activo ? "none" : "inline-block";
+}
+
+/* =====================
+   ACTUALIZAR EDAD / ESTUDIOS
+===================== */
+function actualizarEdadYEstudios() {
+  if (!modoEdicion) return;
+
+  const fechaInput = document.getElementById("fechaNacimiento");
+  const parentescoSelect = document.getElementById("parentesco");
+  const estudiosField = document.getElementById("estudiosField");
+
+  const edad = fechaInput.value ? calcularEdad(fechaInput.value) : null;
+  document.getElementById("edad").textContent =
+    edad !== null ? `${edad} años` : "-";
+
+  const cumplio21 = fechaInput.value
+    ? pasoEdadLimite(fechaInput.value, 21)
+    : false; // CAMBIO
+
+  const cumplio26 = fechaInput.value
+    ? pasoEdadLimite(fechaInput.value, 26)
+    : true;
+
+  if (parentescoSelect.value === "Hijo/a" && cumplio21 && !cumplio26) { // CAMBIO
+    estudiosField.style.display = "block";
+    convertirEstudiosASelect();
+  } else {
+    estudiosField.style.display = "none";
+  }
 }
 
 /* =====================
@@ -252,23 +297,6 @@ function reemplazarPorCheckbox(id, valorActual) {
   span.replaceWith(input);
 }
 
-function actualizarEdadYEstudios() {
-  if (!modoEdicion) return;
-  const fechaInput = document.getElementById("fechaNacimiento");
-  const parentescoSelect = document.getElementById("parentesco");
-  const estudiosField = document.getElementById("estudiosField");
-
-  const edad = fechaInput.value ? calcularEdad(fechaInput.value) : null;
-  document.getElementById("edad").textContent = edad !== null ? `${edad} años` : "-";
-
-  if (parentescoSelect.value === "Hijo/a" && edad >= 18 && edad <= 25) {
-    estudiosField.style.display = "block";
-    convertirEstudiosASelect();
-  } else {
-    estudiosField.style.display = "none";
-  }
-}
-
 function convertirEstudiosASelect() {
   const actual = document.getElementById("estudios");
   if (!actual) return;
@@ -341,6 +369,32 @@ async function guardarCambios() {
   const localidad = document.getElementById("localidad")?.value || null;
   const discapacidad = document.getElementById("discapacidad")?.checked || false;
   const nivel_discapacidad = (discapacidad && document.getElementById("nivelDiscapacidad")?.value) || null;
+
+  if (parentesco === "Hijo/a" && fecha_nacimiento) {
+  const cumplio21 = pasoEdadLimite(fecha_nacimiento, 21);
+  const cumplio26 = pasoEdadLimite(fecha_nacimiento, 26);
+
+  const estudiosEl = document.getElementById("estudios");
+  const estudios = estudiosEl?.value || null;
+
+  if (!estudios && cumplio21) {
+    Swal.fire(
+      "No permitido",
+      "Los hijos pueden afiliarse hasta el día que cumplen 21 años",
+      "error"
+    );
+    return;
+  }
+
+  if (estudios && cumplio26) {
+    Swal.fire(
+      "No permitido",
+      "Los hijos que estudian pueden afiliarse hasta el día que cumplen 26 años",
+      "error"
+    );
+    return;
+  }
+}
 
   const payload = {
     telefono,

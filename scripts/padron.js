@@ -54,6 +54,19 @@ function obtenerAlertaHijo(fechaNacimiento, parentesco) {
   return null;
 }
 
+function pasoEdadLimite(fechaNacimiento, edadLimite) {
+  if (!fechaNacimiento) return true;
+
+  const fn = new Date(fechaNacimiento);
+  const fechaLimite = new Date(
+    fn.getFullYear() + edadLimite,
+    fn.getMonth(),
+    fn.getDate()
+  );
+
+  return new Date() >= fechaLimite;
+}
+
 /* =====================
    MOSTRAR / OCULTAR ESTUDIOS
 ===================== */
@@ -74,9 +87,8 @@ function actualizarCampoEstudios() {
     return;
   }
 
-  const edad = calcularEdad(fechaNacimiento);
-
-  if (edad >= 18 && edad <= 25) {
+  // Se muestra estudios solo si todavía NO cumplió 26
+  if (!pasoEdadLimite(fechaNacimiento, 26)) {
     estudiosField.style.display = "block";
   } else {
     estudiosField.style.display = "none";
@@ -219,15 +231,37 @@ document
       }
 
       if (parentesco === "Hijos" && fechaNacimiento) {
-        const edad = calcularEdad(fechaNacimiento);
 
-        if (edad > 25) {
-          Swal.fire("No permitido", "Los hijos mayores de 25 años no pueden afiliarse", "error");
+        const cumplio21 = pasoEdadLimite(fechaNacimiento, 21);
+        const cumplio26 = pasoEdadLimite(fechaNacimiento, 26);
+
+        // No estudia → hasta el día que cumple 21
+        if (!estudios && cumplio21) {
+          Swal.fire(
+            "No permitido",
+            "Los hijos pueden afiliarse hasta el día que cumplen 21 años",
+            "error"
+          );
           return;
         }
 
-        if (edad >= 18 && !estudios) {
-          Swal.fire("Atención", "Debe indicar qué estudios cursa", "warning");
+        // Estudia → hasta el día que cumple 26
+        if (estudios && cumplio26) {
+          Swal.fire(
+            "No permitido",
+            "Los hijos que estudian pueden afiliarse hasta el día que cumplen 26 años",
+            "error"
+          );
+          return;
+        }
+
+        // Si tiene 18 o más y está dentro del rango → exigir estudios
+        if (!cumplio21 && calcularEdad(fechaNacimiento) >= 18 && !estudios) {
+          Swal.fire(
+            "Atención",
+            "Debe indicar qué estudios cursa",
+            "warning"
+          );
           return;
         }
       }
