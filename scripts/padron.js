@@ -197,21 +197,21 @@ document
     submitBtn.textContent = "Guardando...";
 
     try {
-      const nombre = f.nombre.value.trim();
-      const apellido = f.apellido.value.trim();
-      const dni = f.dni.value.trim();
-      const telefono = f.telefono.value.trim() || null;
-      const fechaNacimiento = f.fechaNacimiento.value || null;
-      const numero_afiliado = f.numero_afiliado.value.trim();
+      const nombre = f.elements.nombre.value.trim();
+      const apellido = f.elements.apellido.value.trim();
+      const dni = f.elements.dni.value.trim();
+      const telefono = f.elements.telefono.value.trim() || null;
+      const fechaNacimiento = f.elements.fechaNacimiento.value || null;
+      const numero_afiliado = f.elements.numero_afiliado.value.trim();
 
-      const parentesco = f.parentesco.value;
-      const sexo = f.sexo.value;
-      const plan = f.plan?.value || null;
-      const categoria = f.categoria?.value || null;
-      const localidad = f.localidad?.value || null;
-      const discapacidad = f.discapacidad?.checked || false;
-      const nivel_discapacidad = f.nivelDiscapacidad?.value || null;
-      const estudios = f.estudios?.value || null;
+      const parentesco = f.elements.parentesco.value;
+      const sexo = f.elements.sexo.value;
+      const plan = f.elements.plan?.value || null;
+      const categoria = f.elements.categoria?.value || null;
+      const localidad = f.elements.localidad?.value || null;
+      const discapacidad = f.elements.discapacidad?.checked || false;
+      const nivel_discapacidad = f.elements.nivelDiscapacidad?.value || null;
+      const estudios = f.elements.estudios?.value || null;
 
       if (!nombre || !apellido || !dni || !numero_afiliado || !parentesco || !sexo) {
         Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
@@ -240,8 +240,8 @@ document
 
       const grupoFamiliarCodigo = match[1];
 
-      const user = await supabase.auth.getUser();
-      const userId = user.data.user.id;
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user.id;
 
       const { error } = await supabase
         .from("afiliados")
