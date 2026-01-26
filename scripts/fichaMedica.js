@@ -287,6 +287,4 @@ async function init() {
   await cargarAdicciones();
 }
 
-document.getElementById("logoutBtn").onclick = cerrarSesion;
-
 init();
