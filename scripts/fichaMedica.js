@@ -23,11 +23,8 @@ async function verificarUsuario() {
 
 async function cerrarSesion() {
   const { error } = await supabase.auth.signOut();
-  if (error) {
-    Swal.fire("Error", error.message, "error");
-    return;
-  }
-  window.location.href = "/pages/login.html";
+  if (error) Swal.fire("Error", error.message, "error");
+  else window.location.href = "/pages/login.html";
 }
 
 /* ===================== CARGAR AFILIADO ===================== */
@@ -39,124 +36,94 @@ async function cargarAfiliado() {
 }
 
 /* ===================== FUNCIONES DE CARGA ===================== */
-async function cargarEnfermedades() {
-  const { data } = await supabase.from("enfermedades_cronicas").select("*").eq("afiliado_id", afiliadoId);
-  const container = document.getElementById("listaEnfermedades");
+async function cargarTabla(tabla, containerId) {
+  const { data } = await supabase.from(tabla).select("*").eq("afiliado_id", afiliadoId);
+  const container = document.getElementById(containerId);
   container.innerHTML = "";
-  data.forEach(e => {
+
+  data.forEach(item => {
     const card = document.createElement("div");
     card.className = "card";
-    card.innerHTML = `<strong>${e.enfermedad}</strong> - ${e.fecha_diagnostico || "-"}<br>
-                      ${e.observaciones || ""}<br>
-                      ${e.adjunto ? `<a href="${e.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
+
+    // Construir el contenido de la card según tabla
+    let inner = "";
+    switch (tabla) {
+      case "enfermedades_cronicas":
+        inner = `<strong>${item.enfermedad}</strong> - ${item.fecha_diagnostico || "-"}<br>
+                 ${item.observaciones || ""}<br>
+                 ${item.adjunto ? `<a href="${item.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
+        break;
+      case "medicamentos":
+        inner = `<strong>${item.medicamento}</strong> - ${item.dosis} - ${item.frecuencia || "-"}<br>
+                 Inicio: ${item.fecha_inicio || "-"} | Fin: ${item.fecha_fin || "-"}<br>
+                 Última: ${item.ultima_entrega || "-"} | Próxima: ${item.proximo_entrega || "-"}<br>
+                 ${item.observaciones || ""}<br>
+                 ${item.adjunto ? `<a href="${item.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
+        break;
+      case "incidencias_salud":
+        inner = `<strong>${item.titulo}</strong> (${item.tipo}) - ${item.fecha || "-"}<br>
+                 ${item.descripcion || ""}<br>
+                 ${item.adjunto ? `<a href="${item.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
+        break;
+      case "adicciones":
+        inner = `<strong>${item.adiccion}</strong> - ${item.frecuencia || "-"}<br>
+                 ${item.observaciones || ""}<br>
+                 ${item.adjunto ? `<a href="${item.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
+        break;
+    }
+
+    // Botones de editar y eliminar
+    inner += `<div class="card-actions">
+                <button class="btn-editar" data-id="${item.id}" data-tabla="${tabla}">✏️ Editar</button>
+                <button class="btn-eliminar" data-id="${item.id}" data-tabla="${tabla}">🗑️ Eliminar</button>
+              </div>`;
+
+    card.innerHTML = inner;
     container.appendChild(card);
   });
-}
 
-async function cargarMedicamentos() {
-  const { data } = await supabase.from("medicamentos").select("*").eq("afiliado_id", afiliadoId);
-  const container = document.getElementById("listaMedicamentos");
-  container.innerHTML = "";
-  data.forEach(m => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `<strong>${m.medicamento}</strong> - ${m.dosis} - ${m.frecuencia || "-"}<br>
-                      Inicio: ${m.fecha_inicio || "-"} | Fin: ${m.fecha_fin || "-"}<br>
-                      Próxima entrega: ${m.proxima_entrega || "-"}<br>
-                      ${m.observaciones || ""}<br>
-                      ${m.adjunto ? `<a href="${m.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
-    container.appendChild(card);
+  // Asignar eventos a botones
+  container.querySelectorAll(".btn-editar").forEach(btn => {
+    btn.onclick = () => editarRegistro(btn.dataset.tabla, btn.dataset.id);
+  });
+
+  container.querySelectorAll(".btn-eliminar").forEach(btn => {
+    btn.onclick = () => eliminarRegistro(btn.dataset.tabla, btn.dataset.id);
   });
 }
 
-async function cargarIncidencias() {
-  const { data } = await supabase.from("incidencias_salud").select("*").eq("afiliado_id", afiliadoId);
-  const container = document.getElementById("listaIncidencias");
-  container.innerHTML = "";
-  data.forEach(i => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `<strong>${i.titulo}</strong> (${i.tipo}) - ${i.fecha ? new Date(i.fecha).toLocaleString() : "-"}<br>
-                      ${i.descripcion || ""}<br>
-                      ${i.adjunto ? `<a href="${i.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
-    container.appendChild(card);
-  });
-}
+// Wrappers para cada tabla
+const cargarEnfermedades = () => cargarTabla("enfermedades_cronicas", "listaEnfermedades");
+const cargarMedicamentos = () => cargarTabla("medicamentos", "listaMedicamentos");
+const cargarIncidencias = () => cargarTabla("incidencias_salud", "listaIncidencias");
+const cargarAdicciones = () => cargarTabla("adicciones", "listaAdicciones");
 
-async function cargarAdicciones() {
-  const { data } = await supabase.from("adicciones").select("*").eq("afiliado_id", afiliadoId);
-  const container = document.getElementById("listaAdicciones");
-  container.innerHTML = "";
-  data.forEach(a => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `<strong>${a.adiccion}</strong> - ${a.frecuencia || ""}<br>
-                      ${a.observaciones || ""}<br>
-                      ${a.adjunto ? `<a href="${a.adjunto}" target="_blank">Ver adjunto</a>` : ""}`;
-    container.appendChild(card);
-  });
-}
-
-/* ===================== TABS ===================== */
-document.querySelectorAll(".tab-button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById(btn.dataset.tab).classList.add("active");
-  });
-});
-
-/* ===================== BOTÓN VOLVER ===================== */
-document.getElementById("btnVolver").onclick = () => {
-  window.location.href = `./afiliado.html?id=${afiliadoId}`;
-};
-
-/* ===================== FUNCION GENÉRICA NUEVO/CANCELAR ===================== */
-function setupNuevoCancelar(nuevoBtnId, cancelarBtnId, formId, callbackGuardar) {
-  const btnNuevo = document.getElementById(nuevoBtnId);
-  const btnCancelar = document.getElementById(cancelarBtnId);
-  const form = document.getElementById(formId);
-
-  btnNuevo.onclick = () => {
-    form.classList.remove("hidden");
-    btnNuevo.style.display = "none";
-  };
-
-  btnCancelar.onclick = () => {
-    form.classList.add("hidden");
-    btnNuevo.style.display = "inline-block";
-    form.reset?.();
-  };
-
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
-    await callbackGuardar(new FormData(form));
-    form.reset();
-    form.classList.add("hidden");
-    btnNuevo.style.display = "inline-block";
-  });
-}
-
-/* ===================== GUARDADO EN SUPABASE ===================== */
-async function guardarRegistro(tabla, formData, campos = []) {
+/* ===================== FUNCIONES GUARDAR/EDITAR ===================== */
+async function guardarRegistro(tabla, formData, campos = [], id = null) {
   if (!user) return Swal.fire("Error", "Usuario no definido", "error");
 
   let adjuntoUrl = null;
   const file = formData.get("adjunto");
   if (file && file.size > 0) adjuntoUrl = await subirArchivoCloudinary(file);
 
-  const registro = { afiliado_id: afiliadoId, created_by: user.id, updated_by: user.id, adjunto: adjuntoUrl };
-  campos.forEach(c => {
-    registro[c] = formData.get(c) || null;
-  });
+  const registro = { afiliado_id: afiliadoId, updated_by: user.id };
+  campos.forEach(c => registro[c] = formData.get(c) || null);
+  if (adjuntoUrl) registro.adjunto = adjuntoUrl;
+  if (!id) registro.created_by = user.id;
 
-  const { error } = await supabase.from(tabla).insert([registro]);
-  if (error) return Swal.fire("Error", error.message, "error");
-  Swal.fire("Agregado", "Registro guardado correctamente", "success");
+  let res;
+  if (id) {
+    res = await supabase.from(tabla).update(registro).eq("id", id);
+  } else {
+    res = await supabase.from(tabla).insert([registro]);
+  }
+
+  if (res.error) return Swal.fire("Error", res.error.message, "error");
+
+  Swal.fire("Éxito", id ? "Registro actualizado" : "Registro creado", "success");
 
   // Recargar la lista
-  switch(tabla) {
+  switch (tabla) {
     case "enfermedades_cronicas": cargarEnfermedades(); break;
     case "medicamentos": cargarMedicamentos(); break;
     case "incidencias_salud": cargarIncidencias(); break;
@@ -164,18 +131,100 @@ async function guardarRegistro(tabla, formData, campos = []) {
   }
 }
 
+/* ===================== FUNCION ELIMINAR ===================== */
+async function eliminarRegistro(tabla, id) {
+  const resp = await Swal.fire({
+    title: "¿Eliminar registro?",
+    text: "Esta acción no se puede deshacer",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar"
+  });
+
+  if (resp.isConfirmed) {
+    const { error } = await supabase.from(tabla).delete().eq("id", id);
+    if (error) return Swal.fire("Error", error.message, "error");
+
+    Swal.fire("Eliminado", "El registro ha sido eliminado", "success");
+
+    // Recargar lista
+    switch (tabla) {
+      case "enfermedades_cronicas": cargarEnfermedades(); break;
+      case "medicamentos": cargarMedicamentos(); break;
+      case "incidencias_salud": cargarIncidencias(); break;
+      case "adicciones": cargarAdicciones(); break;
+    }
+  }
+}
+
+/* ===================== FUNCION EDITAR ===================== */
+async function editarRegistro(tabla, id) {
+  const { data, error } = await supabase.from(tabla).select("*").eq("id", id).single();
+  if (error || !data) return Swal.fire("Error", "No se pudo cargar el registro", "error");
+
+  const formId = {
+    "enfermedades_cronicas": "formEnfermedad",
+    "medicamentos": "formMedicamento",
+    "incidencias_salud": "formIncidencia",
+    "adicciones": "formAdiccion"
+  }[tabla];
+
+  const form = document.getElementById(formId);
+  form.classList.remove("hidden");
+
+  // Mostrar botón nuevo oculto
+  const btnNuevoId = formId.replace("form", "btnNuevo");
+  document.getElementById(btnNuevoId).style.display = "none";
+
+  // Llenar formulario
+  Object.keys(data).forEach(k => {
+    const field = form.querySelector(`[name="${k}"]`);
+    if (field) field.value = data[k] || "";
+  });
+
+  // Reconfigurar submit para actualizar
+  form.onsubmit = async e => {
+    e.preventDefault();
+    await guardarRegistro(tabla, new FormData(form), Object.keys(data).filter(k => k !== "id" && k !== "afiliado_id" && k !== "created_by" && k !== "updated_at"), id);
+    form.reset();
+    form.classList.add("hidden");
+    document.getElementById(btnNuevoId).style.display = "inline-block";
+    form.onsubmit = null; // resetear submit original
+  };
+}
+
+/* ===================== NUEVO / CANCELAR ===================== */
+function setupNuevoCancelar(nuevoBtnId, cancelarBtnId, formId, tabla, campos) {
+  const btnNuevo = document.getElementById(nuevoBtnId);
+  const btnCancelar = document.getElementById(cancelarBtnId);
+  const form = document.getElementById(formId);
+
+  btnNuevo.onclick = () => {
+    form.classList.remove("hidden");
+    btnNuevo.style.display = "none";
+    form.onsubmit = async e => {
+      e.preventDefault();
+      await guardarRegistro(tabla, new FormData(form), campos);
+      form.reset();
+      form.classList.add("hidden");
+      btnNuevo.style.display = "inline-block";
+    };
+  };
+
+  btnCancelar.onclick = () => {
+    form.classList.add("hidden");
+    btnNuevo.style.display = "inline-block";
+    form.reset();
+    form.onsubmit = null; // resetear submit original
+  };
+}
+
 /* ===================== CONFIGURACIÓN NUEVO/CANCELAR ===================== */
-setupNuevoCancelar("btnNuevoEnfermedad", "btnCancelarEnfermedad", "formEnfermedad", f => 
-  guardarRegistro("enfermedades_cronicas", f, ["enfermedad","fecha_diagnostico","observaciones"]));
-
-setupNuevoCancelar("btnNuevoMedicamento", "btnCancelarMedicamento", "formMedicamento", f => 
-  guardarRegistro("medicamentos", f, ["medicamento","dosis","frecuencia","fecha_inicio","fecha_fin","ultima_entrega","proximo_entrega","observaciones"]));
-
-setupNuevoCancelar("btnNuevoIncidencia", "btnCancelarIncidencia", "formIncidencia", f => 
-  guardarRegistro("incidencias_salud", f, ["titulo","descripcion","tipo","fecha"]));
-
-setupNuevoCancelar("btnNuevoAdiccion", "btnCancelarAdiccion", "formAdiccion", f => 
-  guardarRegistro("adicciones", f, ["adiccion","frecuencia","observaciones"]));
+setupNuevoCancelar("btnNuevoEnfermedad", "btnCancelarEnfermedad", "formEnfermedad", "enfermedades_cronicas", ["enfermedad","fecha_diagnostico","observaciones"]);
+setupNuevoCancelar("btnNuevoMedicamento", "btnCancelarMedicamento", "formMedicamento", "medicamentos", ["medicamento","dosis","frecuencia","fecha_inicio","fecha_fin","ultima_entrega","proximo_entrega","observaciones"]);
+setupNuevoCancelar("btnNuevoIncidencia", "btnCancelarIncidencia", "formIncidencia", "incidencias_salud", ["titulo","descripcion","tipo","fecha"]);
+setupNuevoCancelar("btnNuevoAdiccion", "btnCancelarAdiccion", "formAdiccion", "adicciones", ["adiccion","frecuencia","observaciones"]);
 
 /* ===================== INIT ===================== */
 async function init() {

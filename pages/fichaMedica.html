@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Ficha Médica</title>
+  <title>Ficha Medica</title>
 
   <!-- CSS -->
   <link rel="stylesheet" href="../styles/padron.css" />
@@ -16,7 +15,7 @@
 <body>
 
 <header>
-  <h1>Ficha Médica</h1>
+  <h1>Ficha Medica</h1>
 
   <div class="user-bar">
     <button id="btnVolver" class="volver-btn">⬅️ Volver a la Ficha del Afiliado</button>
@@ -40,15 +39,24 @@
 
   <!-- TAB CONTENIDOS -->
 
-  <!-- Enfermedades -->
+  <!-- ENFERMEDADES -->
   <section id="tabEnfermedades" class="tab-content active">
     <button id="btnNuevoEnfermedad" class="btn-nuevo">+ Nueva Enfermedad</button>
 
     <form id="formEnfermedad" class="form-inline hidden">
-      <input type="text" name="enfermedad" placeholder="Nombre enfermedad" required>
-      <input type="date" name="fecha_diagnostico" required>
-      <textarea name="observaciones" placeholder="Observaciones"></textarea>
-      <input type="file" name="adjunto">
+      <input type="hidden" name="id">
+      <label>Nombre de la enfermedad
+        <input type="text" name="enfermedad" placeholder="Nombre enfermedad" required>
+      </label>
+      <label>Fecha de diagnóstico
+        <input type="date" name="fecha_diagnostico" required>
+      </label>
+      <label>Observaciones
+        <textarea name="observaciones" placeholder="Observaciones"></textarea>
+      </label>
+      <label>Adjunto
+        <input type="file" name="adjunto">
+      </label>
       <div class="form-actions">
         <button type="submit">Guardar</button>
         <button type="button" class="btn-cancelar" id="btnCancelarEnfermedad">Cancelar</button>
@@ -58,20 +66,39 @@
     <div id="listaEnfermedades"></div>
   </section>
 
-  <!-- Medicamentos -->
+  <!-- MEDICAMENTOS -->
   <section id="tabMedicamentos" class="tab-content">
     <button id="btnNuevoMedicamento" class="btn-nuevo">+ Nuevo Medicamento</button>
 
     <form id="formMedicamento" class="form-inline hidden">
-      <input type="text" name="medicamento" placeholder="Nombre medicamento" required>
-      <input type="text" name="dosis" placeholder="Dosis" required>
-      <input type="text" name="frecuencia" placeholder="Frecuencia / Intensidad">
-      <input type="date" name="fecha_inicio" placeholder="Fecha inicio" required>
-      <input type="date" name="fecha_fin" placeholder="Fecha fin">
-      <input type="date" name="ultima_entrega" placeholder="Última entrega">
-      <input type="date" name="proximo_entrega" placeholder="Próxima entrega">
-      <textarea name="observaciones" placeholder="Observaciones"></textarea>
-      <input type="file" name="adjunto">
+      <input type="hidden" name="id">
+      <label>Nombre del medicamento
+        <input type="text" name="medicamento" placeholder="Nombre medicamento" required>
+      </label>
+      <label>Dosis
+        <input type="text" name="dosis" placeholder="Dosis" required>
+      </label>
+      <label>Frecuencia / Intensidad
+        <input type="text" name="frecuencia" placeholder="Frecuencia / Intensidad">
+      </label>
+      <label>Fecha de inicio
+        <input type="date" name="fecha_inicio" required>
+      </label>
+      <label>Fecha de fin
+        <input type="date" name="fecha_fin">
+      </label>
+      <label>Última entrega
+        <input type="date" name="ultima_entrega">
+      </label>
+      <label>Próxima entrega
+        <input type="date" name="proximo_entrega">
+      </label>
+      <label>Observaciones
+        <textarea name="observaciones" placeholder="Observaciones"></textarea>
+      </label>
+      <label>Adjunto
+        <input type="file" name="adjunto">
+      </label>
       <div class="form-actions">
         <button type="submit">Guardar</button>
         <button type="button" class="btn-cancelar" id="btnCancelarMedicamento">Cancelar</button>
@@ -81,16 +108,27 @@
     <div id="listaMedicamentos"></div>
   </section>
 
-  <!-- Incidencias -->
+  <!-- INCIDENCIAS -->
   <section id="tabIncidencias" class="tab-content">
     <button id="btnNuevoIncidencia" class="btn-nuevo">+ Nueva Incidencia</button>
 
     <form id="formIncidencia" class="form-inline hidden">
-      <input type="text" name="titulo" placeholder="Título" required>
-      <input type="text" name="tipo" placeholder="Tipo (enfermedad, accidente...)" required>
-      <textarea name="descripcion" placeholder="Descripción"></textarea>
-      <input type="date" name="fecha" placeholder="Fecha">
-      <input type="file" name="adjunto">
+      <input type="hidden" name="id">
+      <label>Título
+        <input type="text" name="titulo" placeholder="Título" required>
+      </label>
+      <label>Tipo (enfermedad, accidente...)
+        <input type="text" name="tipo" placeholder="Tipo" required>
+      </label>
+      <label>Descripción
+        <textarea name="descripcion" placeholder="Descripción"></textarea>
+      </label>
+      <label>Fecha
+        <input type="date" name="fecha" required>
+      </label>
+      <label>Adjunto
+        <input type="file" name="adjunto">
+      </label>
       <div class="form-actions">
         <button type="submit">Guardar</button>
         <button type="button" class="btn-cancelar" id="btnCancelarIncidencia">Cancelar</button>
@@ -100,15 +138,24 @@
     <div id="listaIncidencias"></div>
   </section>
 
-  <!-- Adicciones -->
+  <!-- ADICCIONES -->
   <section id="tabAdicciones" class="tab-content">
     <button id="btnNuevoAdiccion" class="btn-nuevo">+ Nueva Adicción</button>
 
     <form id="formAdiccion" class="form-inline hidden">
-      <input type="text" name="adiccion" placeholder="Tipo de adicción" required>
-      <input type="text" name="frecuencia" placeholder="Frecuencia / Intensidad">
-      <textarea name="observaciones" placeholder="Observaciones"></textarea>
-      <input type="file" name="adjunto">
+      <input type="hidden" name="id">
+      <label>Tipo de adicción
+        <input type="text" name="adiccion" placeholder="Tipo de adicción" required>
+      </label>
+      <label>Frecuencia / Intensidad
+        <input type="text" name="frecuencia" placeholder="Frecuencia / Intensidad">
+      </label>
+      <label>Observaciones
+        <textarea name="observaciones" placeholder="Observaciones"></textarea>
+      </label>
+      <label>Adjunto
+        <input type="file" name="adjunto">
+      </label>
       <div class="form-actions">
         <button type="submit">Guardar</button>
         <button type="button" class="btn-cancelar" id="btnCancelarAdiccion">Cancelar</button>
@@ -117,6 +164,7 @@
 
     <div id="listaAdicciones"></div>
   </section>
+
 </main>
 
 <script type="module" src="../scripts/fichaMedica.js"></script>

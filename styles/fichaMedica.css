@@ -1,3 +1,4 @@
+/* ===================== ENCABEZADO ===================== */
 .ficha-header h2 {
   font-size: 1.6rem;
   color: #0f172a;
@@ -5,7 +6,6 @@
 }
 
 /* ===================== BOTÓN VOLVER ===================== */
-/* Botón volver debajo del cerrar sesión */
 #btnVolver {
   position: absolute;   
   top: 70px;              
@@ -80,6 +80,8 @@ main {
   background: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   transition: 0.2s;
+  overflow-x: auto; /* para muchas columnas */
+  word-break: break-word;
 }
 
 .card:hover {
@@ -136,6 +138,14 @@ section .btn-cancelar:hover {
   background: white;
 }
 
+.form-inline input[type="file"] {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 0.4rem;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
 .form-inline .form-actions {
   grid-column: 1 / -1;
   display: flex;
@@ -150,6 +160,40 @@ section .btn-cancelar:hover {
   border-radius: 6px;
   border: none;
   cursor: pointer;
+}
+
+/* ===================== CARD ACTIONS: EDITAR / ELIMINAR ===================== */
+.card .card-actions {
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.card .card-actions button {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card .card-actions .btn-editar {
+  background-color: #facc15;
+  color: #1f2937;
+}
+
+.card .card-actions .btn-editar:hover {
+  background-color: #eab308;
+}
+
+.card .card-actions .btn-eliminar {
+  background-color: #ef4444;
+  color: white;
+}
+
+.card .card-actions .btn-eliminar:hover {
+  background-color: #dc2626;
 }
 
 /* ===================== SWEETALERT INPUTS ===================== */
@@ -188,5 +232,16 @@ section .btn-cancelar:hover {
 
   .form-inline {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .card {
+    font-size: 0.9rem;
+  }
+  
+  .card .card-actions button {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.5rem;
   }
 }
