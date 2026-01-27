@@ -37,23 +37,6 @@
   flex-shrink: 0;
 }
 
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-
-.brand-name {
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.brand-city {
-  font-size: 0.75rem;
-  opacity: 0.85;
-}
-
 /* =====================
    CENTRO (MÓDULO)
 ===================== */
