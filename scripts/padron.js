@@ -109,11 +109,26 @@ const resultadosDiv = document.createElement("div");
 resultadosDiv.className = "resultados-busqueda";
 searchInput.after(resultadosDiv);
 
-searchInput.addEventListener("input", async e => {
+let debounceTimer;
+
+searchInput.addEventListener("input", e => {
   const texto = e.target.value.trim();
   resultadosDiv.innerHTML = "";
 
-  if (texto.length < 3 || buscando) return;
+  if (texto.length < 3) {
+    clearTimeout(debounceTimer);
+    return;
+  }
+
+  clearTimeout(debounceTimer);
+
+  debounceTimer = setTimeout(() => {
+    buscarAfiliados(texto);
+  }, 300); // 300ms debounce
+});
+
+async function buscarAfiliados(texto) {
+  if (buscando) return;
   buscando = true;
 
   try {
@@ -135,6 +150,7 @@ searchInput.addEventListener("input", async e => {
 
     if (error) throw error;
 
+    resultadosDiv.innerHTML = "";
     if (!data.length) {
       resultadosDiv.innerHTML = `<p style="opacity:.7">Sin resultados</p>`;
       return;
@@ -157,7 +173,7 @@ searchInput.addEventListener("input", async e => {
           ${estado}
           ${alerta ? `<span title="${alerta.texto}">${alerta.icono}</span>` : ""}
         </strong>
-
+        <br>
         DNI: ${a.dni || "-"}
         ${edad !== null ? ` | Edad: ${edad}` : ""}
         <br>
@@ -177,7 +193,7 @@ searchInput.addEventListener("input", async e => {
   } finally {
     buscando = false;
   }
-});
+}
 
 /* =====================
    NUEVO AFILIADO
