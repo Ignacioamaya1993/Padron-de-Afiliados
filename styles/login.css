@@ -183,11 +183,21 @@ input:focus-visible {
 
   /* Fondo */
   body {
-    font-size: 16px;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+    .login-wrapper {
+    width: 100%;
+    padding-top: 2rem;
   }
 
   /* Contenedor principal del login */
-  .login-container,
+  .login-container {
+    max-width: 100%;
+    width: 100%;
+  }
+
   .login-card {
     width: calc(100% - 2rem);
     max-width: 380px;
