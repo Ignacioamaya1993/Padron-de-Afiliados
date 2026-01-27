@@ -181,7 +181,13 @@ input:focus-visible {
 ========================= */
 @media (max-width: 768px) {
 
-  /* Fondo */
+    body {
+    min-height: 100dvh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 1.5rem 1rem;
+  }
 
     .login-wrapper {
     width: 100%;
