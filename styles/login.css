@@ -21,19 +21,16 @@ body {
 ========================= */
 .app-title {
   text-align: center;
+  color: white;
   margin-bottom: 1.5rem;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #1e293b;
-  line-height: 1.2;
+  font-size: 1.6rem;
+  line-height: 1.3;
 }
 
 .app-title span {
-  display: block;
   font-size: 1rem;
-  font-weight: 500;
-  color: #475569;
-  margin-top: 0.2rem;
+  font-weight: 400;
+  opacity: 0.9;
 }
 
 /* =========================
@@ -175,43 +172,55 @@ input:focus-visible {
 ========================= */
 @media (max-width: 599px) {
 
+  /* Fondo */
   body {
-    font-size: 16px; /* base real mobile */
+    font-size: 16px;
+  }
+  
+  .app-title {
+    margin-top: 2rem;
+    margin-bottom: 1.25rem;
+    padding: 0 1rem;
+    font-size: 1.5rem;
   }
 
-  /* Contenedor del login (genérico y seguro) */
+  .app-title span {
+    font-size: 0.95rem;
+  }
+
+  /* Contenedor principal del login */
   .login-container,
-  .login-card,
-  .login-box {
-    width: 100%;
-    max-width: 100%;
-    padding: 1.5rem;
+  .login-card {
+    width: calc(100% - 2rem);
+    max-width: 380px;
+    margin: auto;
+    padding: 1.75rem 1.5rem;
+    border-radius: 14px;
   }
 
-  /* Inputs del login */
-  .login-container input,
-  .login-card input,
-  .login-box input {
-    font-size: 1rem;
-    min-height: 48px;
-    padding: 0.75rem 0.9rem;
-  }
-
-  /* Botón login */
-  .login-container button,
-  .login-card button,
-  .login-box button {
-    font-size: 1rem;
-    min-height: 48px;
-    padding: 0.75rem;
-  }
-
-  /* Título login */
+  /* Títulos */
   .login-container h1,
   .login-container h2,
   .login-card h1,
   .login-card h2 {
     font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Inputs */
+  .login-container input,
+  .login-card input {
+    min-height: 50px;
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+  }
+
+  /* Botón */
+  .login-container button,
+  .login-card button {
+    min-height: 50px;
+    font-size: 1rem;
+    border-radius: 10px;
   }
 
 }
