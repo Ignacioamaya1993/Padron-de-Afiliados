@@ -189,6 +189,19 @@ input:focus-visible {
     padding: 1.5rem 1rem;
   }
 
+  .toggle-password {
+    position: absolute;
+    top: 30%;
+    left: 85%;
+    transform: translateY(-35%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+    box-shadow: none !important;
+}
+
     .login-wrapper {
     width: 100%;
     padding-top: 2rem;
