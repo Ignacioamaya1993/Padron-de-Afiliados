@@ -19,10 +19,6 @@ body {
 /* =========================
    CONTENEDOR LOGIN
 ========================= */
-body > * {
-  width: 100%;
-}
-
 .login-container {
   background: #ffffff;
   width: 100%;
