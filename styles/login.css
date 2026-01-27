@@ -30,8 +30,8 @@ body {
 ========================= */
 .login-container {
   background: #ffffff;
-  width: 100%;
-  max-width: 380px;
+  width: 400px;
+  max-width: 500px;
   padding: 2.5rem;
   border-radius: 16px;
   box-shadow:
