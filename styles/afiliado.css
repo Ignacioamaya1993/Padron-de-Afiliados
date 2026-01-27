@@ -15,7 +15,7 @@ body {
 /* Botón volver debajo del cerrar sesión */
 #btnVolver {
   position: absolute;   
-  top: 75px;              
+  top: 95px;              
   right: 20px;            
   background-color: #f3f4f6;
   border: 1px solid #d1d5db;
