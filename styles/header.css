@@ -17,6 +17,35 @@
   justify-content: space-between;
 }
 
+.header-home-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.header-home-link:hover .header-logo {
+  transform: scale(1.05);
+}
+
+.header-logo {
+  transition: transform 0.2s ease;
+}
+
+/* =====================
+   LOGO + TÍTULO
+===================== */
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.header-logo {
+  height: 38px;
+  width: auto;
+}
+
 /* Título */
 .app-header h1 {
   font-size: 1.25rem;
@@ -25,7 +54,10 @@
   white-space: nowrap;
 }
 
-/* User bar */
+/* =====================
+   USER BAR
+===================== */
+
 .user-bar {
   display: flex;
   align-items: center;
@@ -33,7 +65,7 @@
   font-size: 0.85rem;
 }
 
-/* Email */
+/* Email / estado */
 #status {
   opacity: 0.85;
 }
@@ -67,8 +99,17 @@
     gap: 0.4rem;
   }
 
+  .header-title {
+    gap: 0.5rem;
+  }
+
+  .header-logo {
+    height: 32px;
+  }
+
   .app-header h1 {
     font-size: 1.1rem;
+    white-space: normal;
   }
 
   .user-bar {
