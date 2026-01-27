@@ -266,6 +266,28 @@ background: #ffffff;
   opacity: 0.6;
 }
 
+
+.ficha-grid .checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ficha-grid .checkbox-field input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  min-height: auto;
+  margin: 0;
+  padding: 0;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.ficha-grid .checkbox-field label {
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
 /* =========================
    TABLET ≤ 900px
 ========================= */
@@ -273,7 +295,7 @@ background: #ffffff;
 
   .ficha-afiliado {
     padding: 1rem;
-    margin-top: 90px;
+    margin-top: 0.5rem;
   }
 
   .ficha-grid {
@@ -290,12 +312,20 @@ background: #ffffff;
 ========================= */
 @media (max-width: 700px) {
 
+    .ficha-afiliado {
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+
   /* Botón volver deja de flotar */
   #btnVolver {
     position: static;
-    width: 100%;
+    width: 30%;
+    min-width: 140px; 
     justify-content: center;
     margin-bottom: 0.6rem;
+    font-size: 0.85rem;
+    padding: 6px 10px;
   }
 
   /* Header ficha en columna */
@@ -346,6 +376,14 @@ background: #ffffff;
   #tablaGrupoFamiliar td {
     padding: 0.45rem 0.5rem;
   }
+
+    .ficha-grid .checkbox-field {
+    gap: 0.4rem;
+  }
+
+  .ficha-grid .checkbox-field label {
+    font-size: 0.85rem;
+  }
 }
 
 /* =========================
@@ -368,5 +406,13 @@ background: #ffffff;
 
   #tablaGrupoFamiliar td {
     font-size: 0.75rem;
+  }
+
+    .ficha-grid .checkbox-field {
+    gap: 0.4rem;
+  }
+
+  .ficha-grid .checkbox-field label {
+    font-size: 0.85rem;
   }
 }
