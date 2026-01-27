@@ -149,6 +149,31 @@ body {
 }
 
 /* =========================
+   CHECKBOX DISCAPACIDAD
+========================= */
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox-field input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  min-height: auto;
+  padding: 0;
+  margin: 0;
+  accent-color: #2563eb; /* azul consistente */
+  cursor: pointer;
+}
+
+.checkbox-field label {
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* =========================
    MOBILE ≤ 599px
 ========================= */
 @media (max-width: 599px) {
@@ -173,11 +198,12 @@ body {
     min-height: 42px;
   }
 
-  /* Checkbox */
-  .form-afiliado label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  .checkbox-field {
+    gap: 0.4rem;
+  }
+
+  .checkbox-field label {
+    font-size: 0.85rem;
   }
 
   /* Campos full width */
