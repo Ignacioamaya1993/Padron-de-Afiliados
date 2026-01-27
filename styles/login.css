@@ -17,6 +17,26 @@ body {
 }
 
 /* =========================
+   TITULO APP LOGIN
+========================= */
+.app-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.app-title span {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #475569;
+  margin-top: 0.2rem;
+}
+
+/* =========================
    CONTENEDOR LOGIN
 ========================= */
 .login-container {
@@ -151,139 +171,47 @@ input:focus-visible {
 }
 
 /* =========================
-   MOBILE ≤ 480px
+   Responsive
 ========================= */
-@media (max-width: 480px) {
+@media (max-width: 599px) {
 
   body {
-    padding: 1rem;
+    font-size: 16px; /* base real mobile */
   }
 
-  .login-container {
-    padding: 2rem 1.5rem;
-    border-radius: 12px;
-  }
-
-  h2 {
-    font-size: 1.4rem;
-  }
-
-  input {
-    font-size: 0.9rem;
-    padding: 0.7rem 0.8rem;
-  }
-
-  .btn-primary {
-    font-size: 0.95rem;
-    padding: 0.7rem;
-  }
-
-  /* Ojo contraseña mejor posicionado */
-  .toggle-password {
-    left: auto;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  .toggle-password img {
-    width: 22px;
-  }
-
-  #error {
-    font-size: 0.85rem;
-  }
-}
-
-/* =========================
-   MOBILE CHICO ≤ 360px
-========================= */
-@media (max-width: 360px) {
-
-  .login-container {
-    padding: 1.6rem 1.2rem;
-  }
-
-  h2 {
-    font-size: 1.25rem;
-  }
-
-  input {
-    font-size: 0.85rem;
-  }
-
-  .btn-primary {
-    font-size: 0.9rem;
-  }
-}
-
-/* =========================
-   TABLET ≤ 768px
-========================= */
-@media (max-width: 768px) {
-  body {
+  /* Contenedor del login (genérico y seguro) */
+  .login-container,
+  .login-card,
+  .login-box {
+    width: 100%;
+    max-width: 100%;
     padding: 1.5rem;
   }
 
-  .login-container {
-    max-width: 420px;
-    padding: 2.2rem;
-  }
-}
-
-/* =========================
-   MOBILE ≤ 480px
-========================= */
-@media (max-width: 480px) {
-  body {
-    padding: 1rem;
+  /* Inputs del login */
+  .login-container input,
+  .login-card input,
+  .login-box input {
+    font-size: 1rem;
+    min-height: 48px;
+    padding: 0.75rem 0.9rem;
   }
 
-  .login-container {
-    padding: 2rem 1.4rem;
-    border-radius: 12px;
+  /* Botón login */
+  .login-container button,
+  .login-card button,
+  .login-box button {
+    font-size: 1rem;
+    min-height: 48px;
+    padding: 0.75rem;
   }
 
-  h2 {
+  /* Título login */
+  .login-container h1,
+  .login-container h2,
+  .login-card h1,
+  .login-card h2 {
     font-size: 1.4rem;
   }
 
-  input {
-    font-size: 0.9rem;
-    padding: 0.7rem 0.85rem;
-  }
-
-  .btn-primary {
-    font-size: 0.95rem;
-    padding: 0.7rem;
-  }
-
-  .toggle-password img {
-    width: 22px;
-  }
-
-  #error {
-    font-size: 0.85rem;
-  }
-}
-
-/* =========================
-   MOBILE CHICO ≤ 360px
-========================= */
-@media (max-width: 360px) {
-  .login-container {
-    padding: 1.6rem 1.2rem;
-  }
-
-  h2 {
-    font-size: 1.25rem;
-  }
-
-  input {
-    font-size: 0.85rem;
-  }
-
-  .btn-primary {
-    font-size: 0.9rem;
-  }
 }
