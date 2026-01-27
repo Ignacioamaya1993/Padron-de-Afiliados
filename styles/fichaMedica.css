@@ -264,8 +264,12 @@ section .btn-cancelar:hover {
     width: 100%;
   }
 
+  /* Botón volver */
   #btnVolver {
+    position: static;
     width: 100%;
+    justify-content: center;
+    margin-bottom: 0.5rem;
   }
 
   .form-inline {

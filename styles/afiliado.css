@@ -266,11 +266,69 @@ background: #ffffff;
   opacity: 0.6;
 }
 
-/* =====================
-   RESPONSIVE
-===================== */
+/* =========================
+   TABLET ≤ 900px
+========================= */
+@media (max-width: 900px) {
 
+  .ficha-afiliado {
+    padding: 1rem;
+    margin-top: 90px;
+  }
+
+  .ficha-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+
+  .grupo-familiar {
+    padding: 1rem;
+  }
+}
+
+/* =========================
+   MOBILE ≤ 700px
+========================= */
 @media (max-width: 700px) {
+
+  /* Botón volver deja de flotar */
+  #btnVolver {
+    position: static;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0.6rem;
+  }
+
+  /* Header ficha en columna */
+  .ficha-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .ficha-header h2 {
+    font-size: 1.35rem;
+  }
+
+  .ficha-header button {
+    width: 100%;
+  }
+
+  /* Grid de datos en una columna */
+  .ficha-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ficha-grid strong {
+    font-size: 0.65rem;
+  }
+
+  .ficha-grid span,
+  .ficha-grid input,
+  .ficha-grid select {
+    font-size: 0.85rem;
+  }
+
+  /* Acciones apiladas */
   .acciones-ficha {
     flex-direction: column;
   }
@@ -279,19 +337,36 @@ background: #ffffff;
     width: 100%;
   }
 
-  #tablaGrupoFamiliar th,
-  #tablaGrupoFamiliar td {
+  /* Tabla grupo familiar más compacta */
+  #tablaGrupoFamiliar {
     font-size: 0.8rem;
   }
 
-  /* Nombre y botón ficha médica pasan a vertical */
-  .ficha-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+  #tablaGrupoFamiliar th,
+  #tablaGrupoFamiliar td {
+    padding: 0.45rem 0.5rem;
+  }
+}
+
+/* =========================
+   MOBILE CHICO ≤ 500px
+========================= */
+@media (max-width: 500px) {
+
+  .ficha-grid > div {
+    padding: 0.45rem 0.55rem;
   }
 
-  .ficha-header button {
-    width: 100%;
+  .acciones-ficha button {
+    font-size: 0.85rem;
+    padding: 0.45rem;
+  }
+
+  #tablaGrupoFamiliar th {
+    font-size: 0.65rem;
+  }
+
+  #tablaGrupoFamiliar td {
+    font-size: 0.75rem;
   }
 }

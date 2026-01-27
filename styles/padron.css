@@ -133,3 +133,99 @@ body {
   border: 1px solid #cbd5e1;
   background: white;
 }
+
+.floating-field {
+  position: relative;
+}
+
+.floating-field label {
+  position: absolute;
+  top: -8px;
+  left: 10px;
+  background: #fff;
+  padding: 0 4px;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+/* =========================
+   MOBILE ≤ 599px
+========================= */
+@media (max-width: 599px) {
+
+  .padron-home {
+    padding: 1rem;
+  }
+
+  .buscador-principal input {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.8rem;
+  }
+
+  .form-afiliado {
+    grid-template-columns: 1fr;
+  }
+
+  .form-afiliado input,
+  .form-afiliado select {
+    width: 100%;
+    min-height: 42px;
+  }
+
+  /* Checkbox */
+  .form-afiliado label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Campos full width */
+  #estudiosField,
+  .form-actions {
+    grid-column: 1 / -1;
+  }
+
+  /* Botones apilados */
+  .form-actions {
+    flex-wrap: wrap;
+  }
+
+  .form-actions button {
+    flex: 1 1 100%;
+  }
+
+  /* Resultados buscador */
+  .resultados-busqueda {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  /* Fecha floating */
+  .floating-field input {
+    padding-top: 0.9rem;
+  }
+
+  .floating-field label {
+    font-size: 0.7rem;
+  }
+}
+
+/* =========================
+   TABLET 600px → 899px
+========================= */
+@media (min-width: 600px) and (max-width: 899px) {
+
+  .padron-home {
+    padding: 1.5rem;
+  }
+
+  .form-afiliado {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Botones en línea */
+  .form-actions button {
+    flex: 0 0 auto;
+  }
+}
