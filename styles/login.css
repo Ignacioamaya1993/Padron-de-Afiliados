@@ -179,7 +179,7 @@ input:focus-visible {
 /* =========================
    Responsive
 ========================= */
-@media (max-width: 599px) {
+@media (max-width: 700px) {
 
   /* Fondo */
   body {
