@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { subirArchivoCloudinary } from "./cloudinary.js";
 
 await cargarHeader();
 
@@ -70,13 +71,18 @@ function pasoEdadLimite(fechaNacimiento, edadLimite) {
 }
 
 /* =====================
-   MOSTRAR / OCULTAR ESTUDIOS
+   ELEMENTOS FORMULARIO
 ===================== */
 const parentescoSelect = document.querySelector('select[name="parentesco"]');
 const fechaNacimientoInput = document.querySelector('input[name="fechaNacimiento"]');
 const estudiosField = document.getElementById("estudiosField");
 const estudiosSelect = document.querySelector('select[name="estudios"]');
+const edadInput = document.querySelector('input[name="edad"]');
+const adjuntoEstudiosField = document.getElementById("adjuntoEstudiosField");
 
+/* =====================
+   FUNCIONES EDAD / ESTUDIOS / ADJUNTO
+===================== */
 function actualizarCampoEstudios() {
   if (!parentescoSelect || !fechaNacimientoInput) return;
 
@@ -98,8 +104,68 @@ function actualizarCampoEstudios() {
   }
 }
 
-parentescoSelect?.addEventListener("change", actualizarCampoEstudios);
-fechaNacimientoInput?.addEventListener("change", actualizarCampoEstudios);
+function actualizarEdadYAdjunto() {
+  const fechaNacimiento = fechaNacimientoInput.value;
+  const parentesco = parentescoSelect.value;
+  const edad = calcularEdad(fechaNacimiento);
+  const estudiosValue = estudiosSelect.value;
+
+  console.log("=== actualizarEdadYAdjunto ===");
+  console.log("Parentesco:", parentesco);
+  console.log("Fecha nacimiento:", fechaNacimiento);
+  console.log("Edad calculada:", edad);
+  console.log("Estudios seleccionados:", estudiosValue);
+
+  // Edad visible
+  edadInput.value = fechaNacimiento ? edad : "";
+
+  // ==========================
+  // CAMPO ESTUDIOS
+  // ==========================
+  if (
+    parentesco === "Hijos" &&
+    fechaNacimiento &&
+    !pasoEdadLimite(fechaNacimiento, 26)
+  ) {
+    estudiosField.style.display = "block";
+    console.log("✔ Estudios: MOSTRAR");
+  } else {
+    estudiosField.style.display = "none";
+    estudiosSelect.value = "";
+    console.log("✖ Estudios: OCULTAR");
+  }
+
+  // ==========================
+  // CAMPO ADJUNTO
+  // ==========================
+  const mostrarAdjunto =
+    parentesco === "Hijos" &&
+    fechaNacimiento &&
+    edad >= 21 &&
+    edad < 26 &&
+    estudiosValue !== "";
+
+  console.log("Condición adjunto:", {
+    esHijo: parentesco === "Hijos",
+    tieneFecha: !!fechaNacimiento,
+    edadValida: edad >= 21 && edad < 26,
+    tieneEstudios: estudiosValue !== "",
+    RESULTADO_FINAL: mostrarAdjunto
+  });
+
+  if (mostrarAdjunto) {
+    adjuntoEstudiosField.style.display = "block";
+    console.log("📎 ADJUNTO: MOSTRAR");
+  } else {
+    adjuntoEstudiosField.style.display = "none";
+    console.log("📎 ADJUNTO: OCULTAR");
+  }
+}
+
+// Listeners
+fechaNacimientoInput.addEventListener("input", actualizarEdadYAdjunto);
+parentescoSelect.addEventListener("change", actualizarEdadYAdjunto);
+estudiosSelect.addEventListener("change", actualizarEdadYAdjunto);
 
 /* =====================
    BUSCADOR
@@ -124,7 +190,7 @@ searchInput.addEventListener("input", e => {
 
   debounceTimer = setTimeout(() => {
     buscarAfiliados(texto);
-  }, 300); // 300ms debounce
+  }, 300);
 });
 
 async function buscarAfiliados(texto) {
@@ -226,17 +292,22 @@ document
       const nivel_discapacidad = f.elements.nivelDiscapacidad?.value || null;
       const estudios = f.elements.estudios?.value || null;
 
+      // Adjuntar constancia (opcional)
+      const file = f.elements.adjuntoEstudios?.files[0];
+      let adjuntoUrl = null;
+      if (file && file.size > 0) {
+        adjuntoUrl = await subirArchivoCloudinary(file);
+      }
+
       if (!nombre || !apellido || !dni || !numero_afiliado || !parentesco || !sexo) {
         Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
         return;
       }
 
       if (parentesco === "Hijos" && fechaNacimiento) {
-
         const cumplio21 = pasoEdadLimite(fechaNacimiento, 21);
         const cumplio26 = pasoEdadLimite(fechaNacimiento, 26);
 
-        // No estudia → hasta el día que cumple 21
         if (!estudios && cumplio21) {
           Swal.fire(
             "No permitido",
@@ -246,7 +317,6 @@ document
           return;
         }
 
-        // Estudia → hasta el día que cumple 26
         if (estudios && cumplio26) {
           Swal.fire(
             "No permitido",
@@ -256,7 +326,6 @@ document
           return;
         }
 
-        // Si tiene 18 o más y está dentro del rango → exigir estudios
         if (!cumplio21 && calcularEdad(fechaNacimiento) >= 18 && !estudios) {
           Swal.fire(
             "Atención",
@@ -296,6 +365,7 @@ document
           discapacidad,
           nivel_discapacidad,
           estudios,
+          adjunto_alumno: adjuntoUrl,
           created_by: userId
         });
 
@@ -304,6 +374,7 @@ document
       Swal.fire("Guardado", "Afiliado agregado correctamente", "success");
       f.reset();
       actualizarCampoEstudios();
+      actualizarEdadYAdjunto();
 
     } catch (err) {
       console.error(err);
@@ -313,7 +384,6 @@ document
           Swal.fire("DNI duplicado", "Ya existe un afiliado con ese DNI", "warning");
           return;
         }
-
         if (err.message.includes("afiliados_numero")) {
           Swal.fire(
             "Número de afiliado duplicado",

@@ -279,7 +279,6 @@ document.getElementById("btnVolver").onclick = () => {
 /* ===================== INIT ===================== */
 async function init() {
   await cargarHeader(); 
-  await verificarUsuario();
   await cargarAfiliado();
   await cargarEnfermedades();
   await cargarMedicamentos();

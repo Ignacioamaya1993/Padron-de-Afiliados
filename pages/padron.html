@@ -82,6 +82,17 @@
       <label>Fecha de nacimiento</label>
     </div>
 
+        <!-- Campo de Edad calculada -->
+    <div class="floating-field">
+      <input
+        type="text"
+        name="edad"
+        placeholder="Edad"
+        readonly
+      />
+      <label>Edad</label>
+    </div>
+
       <input
         type="text"
         name="numero_afiliado"
@@ -157,6 +168,12 @@
           <option value="Posgrado">Posgrado</option>
         </select>
       </div>
+
+          <!-- Adjuntar constancia de alumno regular (solo hijos 21-26 y estudian) -->
+    <div id="adjuntoEstudiosField" style="display:none;">
+      <label>Adjuntar constancia de alumno regular (opcional)</label>
+      <input type="file" name="adjuntoEstudios" accept=".pdf,.jpg,.png" />
+    </div>
 
       <div class="form-actions">
         <button type="submit">Guardar</button>

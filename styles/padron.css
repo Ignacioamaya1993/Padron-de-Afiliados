@@ -173,6 +173,25 @@ body {
   cursor: pointer;
 }
 
+#adjuntoEstudiosField {
+  grid-column: 1 / -1; /* ocupa todo el ancho del form */
+}
+
+#adjuntoEstudiosField label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+  color: #f59e0b; /* mismo color que estudios */
+}
+
+#adjuntoEstudiosField input[type="file"] {
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  background: #fff7ed;
+  padding: 0.4rem;
+  cursor: pointer;
+}
+
 /* =========================
    MOBILE ≤ 599px
 ========================= */
