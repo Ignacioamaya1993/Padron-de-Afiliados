@@ -544,7 +544,8 @@ async function darDeBaja() {
     title: "¿Dar de baja afiliado?",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Dar de baja"
+    confirmButtonText: "Dar de baja",
+    cancelButtonText: "Cancelar"
   });
   if (!res.isConfirmed) return;
 
