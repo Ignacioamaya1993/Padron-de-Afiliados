@@ -95,8 +95,10 @@ function actualizarCampoEstudios() {
     return;
   }
 
-  // Se muestra estudios solo si todavía NO cumplió 26
-  if (!pasoEdadLimite(fechaNacimiento, 26)) {
+  const edad = calcularEdad(fechaNacimiento);
+
+  // Mostrar estudios solo si está entre 21 y 25 inclusive
+  if (edad >= 21 && edad < 26) {
     estudiosField.style.display = "block";
   } else {
     estudiosField.style.display = "none";
@@ -116,11 +118,7 @@ function actualizarEdadYAdjunto() {
   // ==========================
   // CAMPO ESTUDIOS
   // ==========================
-  if (
-    parentesco === "Hijos" &&
-    fechaNacimiento &&
-    !pasoEdadLimite(fechaNacimiento, 26)
-  ) {
+if (parentesco === "Hijos" && fechaNacimiento && edad >= 21 && edad < 26) {
     estudiosField.style.display = "block";
   } else {
     estudiosField.style.display = "none";
@@ -128,15 +126,9 @@ function actualizarEdadYAdjunto() {
   }
 
   // ==========================
-  // CAMPO ADJUNTO
+  // CAMPO ADJUNTO (solo 21-25 y estudia)
   // ==========================
-  if (
-    parentesco === "Hijos" &&
-    fechaNacimiento &&
-    edad >= 21 &&
-    edad < 26 &&
-    estudiosValue !== ""
-  ) {
+  if (parentesco === "Hijos" && fechaNacimiento && edad >= 21 && edad < 26 && estudiosValue !== "") {
     adjuntoEstudiosField.style.display = "block";
   } else {
     adjuntoEstudiosField.style.display = "none";
