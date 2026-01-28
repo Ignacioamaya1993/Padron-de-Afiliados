@@ -110,13 +110,7 @@ function actualizarEdadYAdjunto() {
   const edad = calcularEdad(fechaNacimiento);
   const estudiosValue = estudiosSelect.value;
 
-  console.log("=== actualizarEdadYAdjunto ===");
-  console.log("Parentesco:", parentesco);
-  console.log("Fecha nacimiento:", fechaNacimiento);
-  console.log("Edad calculada:", edad);
-  console.log("Estudios seleccionados:", estudiosValue);
-
-  // Edad visible
+  // Mostrar edad
   edadInput.value = fechaNacimiento ? edad : "";
 
   // ==========================
@@ -128,37 +122,24 @@ function actualizarEdadYAdjunto() {
     !pasoEdadLimite(fechaNacimiento, 26)
   ) {
     estudiosField.style.display = "block";
-    console.log("✔ Estudios: MOSTRAR");
   } else {
     estudiosField.style.display = "none";
     estudiosSelect.value = "";
-    console.log("✖ Estudios: OCULTAR");
   }
 
   // ==========================
   // CAMPO ADJUNTO
   // ==========================
-  const mostrarAdjunto =
+  if (
     parentesco === "Hijos" &&
     fechaNacimiento &&
     edad >= 21 &&
     edad < 26 &&
-    estudiosValue !== "";
-
-  console.log("Condición adjunto:", {
-    esHijo: parentesco === "Hijos",
-    tieneFecha: !!fechaNacimiento,
-    edadValida: edad >= 21 && edad < 26,
-    tieneEstudios: estudiosValue !== "",
-    RESULTADO_FINAL: mostrarAdjunto
-  });
-
-  if (mostrarAdjunto) {
+    estudiosValue !== ""
+  ) {
     adjuntoEstudiosField.style.display = "block";
-    console.log("📎 ADJUNTO: MOSTRAR");
   } else {
     adjuntoEstudiosField.style.display = "none";
-    console.log("📎 ADJUNTO: OCULTAR");
   }
 }
 
