@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { subirArchivoCloudinary } from "./cloudinary.js";
 
 /* =====================
    PARAMS
@@ -131,7 +132,7 @@ function renderFicha() {
   const cumplio21 = pasoEdadLimite(afiliado.fecha_nacimiento, 21); // CAMBIO
   const cumplio26 = pasoEdadLimite(afiliado.fecha_nacimiento, 26);
 
-  if (afiliado.parentesco === "Hijo/a" && cumplio21 && !cumplio26) { // CAMBIO
+  if (afiliado.parentesco === "Hijos" && cumplio21 && !cumplio26) { // CAMBIO
     estudiosField.style.display = "block";
     document.getElementById("estudios").textContent = afiliado.estudios || "-";
   } else {
@@ -143,12 +144,40 @@ function renderFicha() {
   document.getElementById("btnEditar").style.display = afiliado.activo ? "inline-block" : "none";
   document.getElementById("btnBaja").style.display = afiliado.activo ? "inline-block" : "none";
   document.getElementById("btnReactivar").style.display = afiliado.activo ? "none" : "inline-block";
+
+    /* =====================
+      ADJUNTO ESTUDIOS - VISTA
+    ===================== */
+    const adjuntoField = document.getElementById("adjuntoEstudiosField");
+    const adjuntoContenido = document.getElementById("adjuntoContenido");
+
+  const mostrarAdjunto =
+    afiliado.parentesco === "Hijos" &&
+    pasoEdadLimite(afiliado.fecha_nacimiento, 21) &&
+    !pasoEdadLimite(afiliado.fecha_nacimiento, 26);
+
+    if (mostrarAdjunto) {
+      adjuntoField.style.display = "block";
+
+      if (afiliado.adjunto_alumno) {
+        adjuntoContenido.innerHTML = `
+          <a href="${afiliado.adjunto_alumno}" target="_blank">
+            📎 Ver adjunto
+          </a>
+        `;
+      } else {
+        adjuntoContenido.textContent = "No hay adjunto cargado";
+      }
+    } else {
+      adjuntoField.style.display = "none";
+    }
 }
 
 /* =====================
    ACTUALIZAR EDAD / ESTUDIOS
 ===================== */
 function actualizarEdadYEstudios() {
+
   if (!modoEdicion) return;
 
   const fechaInput = document.getElementById("fechaNacimiento");
@@ -167,11 +196,43 @@ function actualizarEdadYEstudios() {
     ? pasoEdadLimite(fechaInput.value, 26)
     : true;
 
-  if (parentescoSelect.value === "Hijo/a" && cumplio21 && !cumplio26) { // CAMBIO
+  if (parentescoSelect.value === "Hijos" && cumplio21 && !cumplio26) { // CAMBIO
     estudiosField.style.display = "block";
     convertirEstudiosASelect();
   } else {
     estudiosField.style.display = "none";
+  }
+}
+
+function actualizarAdjuntoEdicion() {
+  if (!modoEdicion) return;
+
+  const adjuntoField = document.getElementById("adjuntoEstudiosField");
+  const adjuntoContenido = document.getElementById("adjuntoContenido");
+
+  const parentesco = document.getElementById("parentesco")?.value;
+  const fechaNac = document.getElementById("fechaNacimiento")?.value;
+
+  if (
+    parentesco === "Hijos" &&
+    fechaNac &&
+    pasoEdadLimite(fechaNac, 21) &&
+    !pasoEdadLimite(fechaNac, 26)
+  ) {
+    adjuntoField.style.display = "block";
+
+    adjuntoContenido.innerHTML = `
+      ${afiliado.adjunto_alumno
+        ? `<a href="${afiliado.adjunto_alumno}" target="_blank">
+            📎 Adjunto actual
+          </a><br>`
+        : ""
+      }
+      <input type="file" id="adjuntoAlumno" accept=".pdf,.jpg,.png" />
+    `;
+  } else {
+    adjuntoField.style.display = "none";
+    adjuntoContenido.innerHTML = "";
   }
 }
 
@@ -187,7 +248,7 @@ function entrarModoEdicion() {
   reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
   reemplazarPorInput("dni", afiliado.dni);
 
-  reemplazarPorSelect("parentesco", ["Titular","Conyuge","Concubino/a","Hijo/a","Menor B/ guarda"], afiliado.parentesco);
+  reemplazarPorSelect("parentesco", ["Titular","Conyuge","Concubino/a","Hijos","Menor B/ guarda"], afiliado.parentesco);
   reemplazarPorSelect("sexo", ["F","M"], afiliado.sexo);
   reemplazarPorSelect("plan", ["Adherentes","Aport. Sol","Monotrib.","Pasiv Tram","Plan B-ESP","Plan joven","PMO"], afiliado.plan);
   reemplazarPorSelect("categoria", ["Adherentes","Jubilado ANSES","Jubilado conyuge AF. vivo","Jubilado tramite","Monotributista","Obligatorios","Opcion c/ convenio","Opcion s/ convenio","Pensionado ANSES reparto"], afiliado.categoria);
@@ -221,9 +282,43 @@ function entrarModoEdicion() {
 
   fechaInput.addEventListener("input", actualizarEdadYEstudios);
   parentescoSelect.addEventListener("change", actualizarEdadYEstudios);
+  fechaInput.addEventListener("input", actualizarAdjuntoEdicion);
+  parentescoSelect.addEventListener("change", actualizarAdjuntoEdicion);
+
 
   actualizarEdadYEstudios();
   toggleBotones(true);
+
+    /* =====================
+     ADJUNTO ESTUDIOS - EDICIÓN
+  ===================== */
+  const adjuntoField = document.getElementById("adjuntoEstudiosField");
+  const adjuntoContenido = document.getElementById("adjuntoContenido");
+
+  const fechaNac = document.getElementById("fechaNacimiento").value;
+
+  if (
+    document.getElementById("parentesco").value === "Hijos" &&
+    pasoEdadLimite(fechaNac, 21) &&
+    !pasoEdadLimite(fechaNac, 26)
+  ) {
+
+    adjuntoField.style.display = "block";
+
+    adjuntoContenido.innerHTML = `
+      ${afiliado.adjunto_alumno
+        ? `<a href="${afiliado.adjunto_alumno}" target="_blank">
+            📎 Adjunto actual
+          </a><br>`
+        : ""
+      }
+      <input type="file" id="adjuntoAlumno" accept=".pdf,.jpg,.png" />
+    `;
+  } else {
+    adjuntoField.style.display = "none";
+  }
+
+  actualizarAdjuntoEdicion();
 }
 
 function convertirNivelDiscapacidadASelect() {
@@ -286,7 +381,7 @@ function convertirEstudiosASelect() {
 
   const select = document.createElement("select");
   select.id = "estudios";
-  ["Primario", "Secundario", "Terciario", "Universitario"].forEach(op => {
+  ["Posgrado", "Tercerio", "Universitario"].forEach(op => {
     const o = document.createElement("option");
     o.value = op;
     o.textContent = op;
@@ -352,7 +447,7 @@ async function guardarCambios() {
   const discapacidad = document.getElementById("discapacidad")?.checked || false;
   const nivel_discapacidad = (discapacidad && document.getElementById("nivelDiscapacidad")?.value) || null;
 
-  if (parentesco === "Hijo/a" && fecha_nacimiento) {
+  if (parentesco === "Hijos" && fecha_nacimiento) {
   const cumplio21 = pasoEdadLimite(fecha_nacimiento, 21);
   const cumplio26 = pasoEdadLimite(fecha_nacimiento, 26);
 
@@ -378,6 +473,31 @@ async function guardarCambios() {
   }
 }
 
+  /* =====================
+     ADJUNTO ESTUDIOS
+  ===================== */
+  let adjuntoAlumnoUrl = afiliado.adjunto_alumno;
+
+  const fechaNac = fecha_nacimiento;
+  const correspondeAdjunto =
+    parentesco === "Hijos" &&
+    fechaNac &&
+    pasoEdadLimite(fechaNac, 21) &&
+    !pasoEdadLimite(fechaNac, 26);
+
+  // Si ya NO corresponde, lo limpiamos
+  if (!correspondeAdjunto) {
+    adjuntoAlumnoUrl = null;
+  }
+
+  // Si corresponde y subió uno nuevo, lo reemplazamos
+  const adjuntoInput = document.getElementById("adjuntoAlumno");
+  if (correspondeAdjunto && adjuntoInput && adjuntoInput.files.length > 0) {
+    const file = adjuntoInput.files[0];
+    adjuntoAlumnoUrl = await subirArchivoCloudinary(file);
+  }
+
+
   const payload = {
     telefono,
     fecha_nacimiento,
@@ -390,7 +510,8 @@ async function guardarCambios() {
     localidad,
     discapacidad,
     nivel_discapacidad,
-    grupo_familiar_codigo: calcularGrupoFamiliar(numero_afiliado)
+    grupo_familiar_codigo: calcularGrupoFamiliar(numero_afiliado),
+    adjunto_alumno: adjuntoAlumnoUrl
   };
 
   const estudiosEl = document.getElementById("estudios");
