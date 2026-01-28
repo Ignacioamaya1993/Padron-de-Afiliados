@@ -39,27 +39,23 @@ function mesesHastaCumple(fechaNacimiento, edadObjetivo) {
   return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30));
 }
 
-function obtenerAlertaHijo(fechaNacimiento, parentesco) {
+function obtenerAlertaHijo(fechaNacimiento, parentesco, estudios) {
   if (parentesco !== "Hijos" || !fechaNacimiento) return null;
 
   const edad = calcularEdad(fechaNacimiento);
 
-  const meses18 = mesesHastaCumple(fechaNacimiento, 18);
-  if (edad === 17 && meses18 <= 2 && meses18 >= 0) {
-    return { icono: "🟡", texto: "Cumple 18 pronto" };
-  }
-
+  // 21 años (siempre)
   const meses21 = mesesHastaCumple(fechaNacimiento, 21);
   if (edad === 20 && meses21 <= 2 && meses21 >= 0) {
-    return {
-      icono: "🟠",
-      texto: "Se acerca el límite de cobertura (21 años)"
-    };
+    return "⚠ Próximo a cumplir 21 años (límite de cobertura)";
   }
 
-  const meses25 = mesesHastaCumple(fechaNacimiento, 25);
-  if (edad === 24 && meses25 <= 2 && meses25 >= 0) {
-    return { icono: "🔴", texto: "Cumple 25 pronto" };
+  // 26 años (solo si estudia)
+  if (estudios) {
+    const meses26 = mesesHastaCumple(fechaNacimiento, 26);
+    if (edad === 25 && meses26 <= 2 && meses26 >= 0) {
+      return "⚠ Próximo a cumplir 26 años (fin cobertura por estudios)";
+    }
   }
 
   return null;
@@ -87,6 +83,10 @@ const estudiosField = document.getElementById("estudiosField");
 const estudiosSelect = document.querySelector('select[name="estudios"]');
 const edadInput = document.querySelector('input[name="edad"]');
 const adjuntoEstudiosField = document.getElementById("adjuntoEstudiosField");
+const discapacidadCheckbox = document.getElementById("discapacidad");
+const nivelDiscapacidadSelect = document.querySelector('select[name="nivelDiscapacidad"]');
+const adjuntoDiscapacidadField = document.getElementById("adjuntoDiscapacidadField");
+const adjuntoDiscapacidadInput = document.querySelector('input[name="adjuntoDiscapacidad"]');
 
 /* =====================
    FUNCIONES EDAD / ESTUDIOS / ADJUNTO
@@ -141,9 +141,67 @@ function actualizarEdadYAdjunto() {
   }
 }
 
+function actualizarAdjuntoDiscapacidad() {
+  const discapacidad = discapacidadCheckbox.checked;
+  const nivel = nivelDiscapacidadSelect.value;
+
+  if (discapacidad && nivel !== "") {
+    adjuntoDiscapacidadField.style.display = "block";
+    adjuntoDiscapacidadInput.required = true;
+  } else {
+    adjuntoDiscapacidadField.style.display = "none";
+    adjuntoDiscapacidadInput.required = false;
+    adjuntoDiscapacidadInput.value = "";
+  }
+}
+
+async function obtenerTitularGrupo(grupoFamiliarCodigo) {
+  const { data, error } = await supabase
+    .from("afiliados")
+    .select("nombre_completo, numero_afiliado")
+    .eq("grupo_familiar_codigo", grupoFamiliarCodigo)
+    .ilike("numero_afiliado", "%/00")
+    .limit(1)
+    .single();
+
+  if (error) return null;
+  return data;
+}
+
+const numeroAfiliadoInput = document.querySelector('input[name="numero_afiliado"]');
+const titularGrupoInput = document.getElementById("titularGrupo");
+const titularGrupoWrapper = document.getElementById("titularGrupoWrapper");
+
+function esTitular(numeroAfiliado) {
+  return numeroAfiliado.endsWith("/00");
+}
+
+numeroAfiliadoInput.addEventListener("input", async () => {
+  const numeroAfiliado = numeroAfiliadoInput.value.trim();
+
+  // Reset visual
+  titularGrupoWrapper.style.display = "none";
+  titularGrupoInput.value = "";
+
+  if (!numeroAfiliado || esTitular(numeroAfiliado)) return;
+
+  const match = numeroAfiliado.match(/^[^-]+-([^/]+)\//);
+  if (!match) return;
+
+  const grupoFamiliarCodigo = match[1];
+
+  const titular = await obtenerTitularGrupo(grupoFamiliarCodigo);
+  if (!titular) return;
+
+  titularGrupoInput.value = titular.nombre_completo;
+  titularGrupoWrapper.style.display = "block";
+});
+
 fechaNacimientoInput.addEventListener("input", actualizarEdadYAdjunto);
 parentescoSelect.addEventListener("change", actualizarEdadYAdjunto);
 estudiosSelect.addEventListener("change", actualizarEdadYAdjunto);
+discapacidadCheckbox.addEventListener("change", actualizarAdjuntoDiscapacidad);
+nivelDiscapacidadSelect.addEventListener("change", actualizarAdjuntoDiscapacidad);
 
 /* =====================
    BUSCADOR
@@ -182,6 +240,7 @@ async function buscarAfiliados(texto) {
         numero_afiliado,
         parentesco,
         fecha_nacimiento,
+        estudios,
         activo
       `)
       .or(
@@ -198,7 +257,7 @@ async function buscarAfiliados(texto) {
     }
 
     data.forEach(a => {
-      const alerta = obtenerAlertaHijo(a.fecha_nacimiento, a.parentesco);
+      const alerta = obtenerAlertaHijo(a.fecha_nacimiento, a.parentesco, a.estudios);
       const edad = a.fecha_nacimiento ? calcularEdad(a.fecha_nacimiento) : null;
 
       const estado = a.activo
@@ -212,12 +271,12 @@ async function buscarAfiliados(texto) {
         <strong>
           ${a.nombre_completo}
           ${estado}
-          ${alerta ? `<span title="${alerta.texto}"> ${alerta.icono}</span>` : ""}
         </strong>
         <br>
         DNI: ${a.dni || "-"} ${edad !== null ? `| Edad: ${edad}` : ""}
         <br>
         Afiliado: ${a.numero_afiliado} | ${a.parentesco}
+        ${alerta ? `<div class="alerta-edad">${alerta}</div>` : ""}
       `;
 
       item.onclick = () => {
@@ -247,6 +306,9 @@ document.getElementById("PadronForm")?.addEventListener("submit", async e => {
   submitBtn.textContent = "Guardando...";
 
   try {
+    /* =========================
+       DATOS BÁSICOS
+    ========================= */
     const nombre = f.elements.nombre.value.trim();
     const apellido = f.elements.apellido.value.trim();
     const dni = f.elements.dni.value.trim();
@@ -254,42 +316,43 @@ document.getElementById("PadronForm")?.addEventListener("submit", async e => {
     const fechaNacimiento = f.elements.fechaNacimiento.value || null;
     const numero_afiliado = f.elements.numero_afiliado.value.trim();
 
-    // 👉 grupo familiar REAL (nuevo)
-    const grupoFamiliarReal =
-      f.elements.grupo_familiar_real?.value.trim() || null;
-
-    // 👉 grupo familiar CODIGO (como siempre)
-    const match = numero_afiliado.match(/^[^-]+-([^/]+)\//);
-    if (!match) {
-      Swal.fire(
-        "Formato incorrecto",
-        "Formato esperado: 19-00639-4/00",
-        "error"
-      );
-      return;
-    }
-    const grupoFamiliarCodigo = match[1];
-
     const parentesco = f.elements.parentesco.value;
     const sexo = f.elements.sexo.value;
     const plan = f.elements.plan?.value || null;
     const categoria = f.elements.categoria?.value || null;
     const localidad = f.elements.localidad?.value || null;
+
     const discapacidad = f.elements.discapacidad?.checked || false;
     const nivel_discapacidad = f.elements.nivelDiscapacidad?.value || null;
     const estudios = f.elements.estudios?.value || null;
 
-    const file = f.elements.adjuntoEstudios?.files[0];
-    let adjuntoUrl = null;
-    if (file && file.size > 0) {
-      adjuntoUrl = await subirArchivoCloudinary(file);
-    }
-
+    /* =========================
+       VALIDACIONES GENERALES
+    ========================= */
     if (!nombre || !apellido || !dni || !numero_afiliado || !parentesco || !sexo) {
       Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
       return;
     }
 
+    /* =========================
+       VALIDACIÓN DISCAPACIDAD
+    ========================= */
+    if (discapacidad && nivel_discapacidad) {
+      const adjunto = f.elements.adjuntoDiscapacidad?.files;
+
+      if (!adjunto || !adjunto.length) {
+        Swal.fire(
+          "Falta adjunto",
+          "Debe adjuntar el certificado de discapacidad",
+          "warning"
+        );
+        return;
+      }
+    }
+
+    /* =========================
+       VALIDACIÓN HIJOS
+    ========================= */
     if (parentesco === "Hijos" && fechaNacimiento) {
       const cumplio21 = pasoEdadLimite(fechaNacimiento, 21);
       const cumplio26 = pasoEdadLimite(fechaNacimiento, 26);
@@ -313,6 +376,38 @@ document.getElementById("PadronForm")?.addEventListener("submit", async e => {
       }
     }
 
+    /* =========================
+       GRUPO FAMILIAR
+    ========================= */
+    const match = numero_afiliado.match(/^[^-]+-([^/]+)\//);
+    if (!match) {
+      Swal.fire("Formato incorrecto", "Formato esperado: 19-00639-4/00", "error");
+      return;
+    }
+
+    const grupoFamiliarCodigo = match[1];
+
+    /* =========================
+       SUBIDA DE ARCHIVOS
+    ========================= */
+    let adjuntoEstudiosUrl = null;
+    let adjuntoDiscapacidadUrl = null;
+
+    if (f.elements.adjuntoEstudios?.files[0]) {
+      adjuntoEstudiosUrl = await subirArchivoCloudinary(
+        f.elements.adjuntoEstudios.files[0]
+      );
+    }
+
+    if (f.elements.adjuntoDiscapacidad?.files[0]) {
+      adjuntoDiscapacidadUrl = await subirArchivoCloudinary(
+        f.elements.adjuntoDiscapacidad.files[0]
+      );
+    }
+
+    /* =========================
+       INSERT SUPABASE
+    ========================= */
     const { data: userData } = await supabase.auth.getUser();
     const userId = userData.user.id;
 
@@ -323,10 +418,7 @@ document.getElementById("PadronForm")?.addEventListener("submit", async e => {
       telefono,
       fecha_nacimiento: fechaNacimiento,
       numero_afiliado,
-
       grupo_familiar_codigo: grupoFamiliarCodigo,
-      grupo_familiar_real: grupoFamiliarReal,
-
       parentesco,
       sexo,
       plan,
@@ -335,7 +427,8 @@ document.getElementById("PadronForm")?.addEventListener("submit", async e => {
       discapacidad,
       nivel_discapacidad,
       estudios,
-      adjunto_alumno: adjuntoUrl,
+      adjunto_alumno: adjuntoEstudiosUrl,
+      adjunto_discapacidad: adjuntoDiscapacidadUrl,
       created_by: userId
     });
 
@@ -345,6 +438,7 @@ document.getElementById("PadronForm")?.addEventListener("submit", async e => {
     f.reset();
     actualizarCampoEstudios();
     actualizarEdadYAdjunto();
+
   } catch (err) {
     console.error(err);
     Swal.fire("Error", "No se pudo guardar el afiliado", "error");

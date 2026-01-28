@@ -100,6 +100,15 @@
         required
       />
 
+      <div class="floating-field" id="titularGrupoWrapper" style="display:none;">
+        <input
+          type="text"
+          id="titularGrupo"
+          readonly
+        />
+        <label>Titular del grupo</label>
+      </div>
+
             <input
         type="text"
         name="grupo_familiar_real"
@@ -175,6 +184,16 @@
         <option value="Temporal">Temporal</option>
       </select>
 
+      <div id="adjuntoDiscapacidadField" style="display:none;">
+        <label>Adjuntar certificado de discapacidad (CUD)</label>
+        <input
+          type="file"
+          name="adjuntoDiscapacidad"
+          accept=".pdf,.jpg,.png"
+          required
+        />
+      </div>
+
       <!-- Estudios (solo hijos >18) -->
       <div id="estudiosField" style="display:none;">
         <select name="estudios">
@@ -187,7 +206,7 @@
 
           <!-- Adjuntar constancia de alumno regular (solo hijos 21-26 y estudian) -->
     <div id="adjuntoEstudiosField" style="display:none;">
-      <label>Adjuntar constancia de alumno regular (opcional)</label>
+      <label>Adjuntar constancia de alumno regular</label>
       <input type="file" name="adjuntoEstudios" accept=".pdf,.jpg,.png" />
     </div>
 

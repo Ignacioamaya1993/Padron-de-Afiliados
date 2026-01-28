@@ -192,6 +192,24 @@ body {
   cursor: pointer;
 }
 
+/* =========================
+   TITULAR GRUPO FAMILIAR
+========================= */
+
+.titular-grupo {
+  grid-column: 1 / -1;         
+  font-size: 0.85rem;
+  color: #1e40af;               
+  background: #eff6ff;        
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  line-height: 1.4;
+}
+
+.titular-grupo::before {
+  content: "👤 ";
+}
 
 /* =========================
    MOBILE ≤ 599px
@@ -255,6 +273,32 @@ body {
   .floating-field label {
     font-size: 0.7rem;
   }
+}
+
+#adjuntoDiscapacidadField {
+  grid-column: 1 / -1;
+}
+
+#adjuntoDiscapacidadField label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+  color: #f59e0b;
+}
+
+#adjuntoDiscapacidadField input[type="file"] {
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  background: #fff7ed;
+  padding: 0.4rem;
+  cursor: pointer;
+}
+
+.alerta-edad {
+  margin-top: 4px;
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 /* =========================
