@@ -35,18 +35,35 @@ function pasoEdadLimite(fechaNacimiento, edadLimite) {
 }
 
 function obtenerAlertaHijo(fechaNacimiento, parentesco, estudios) {
-  if (parentesco !== "Hijos" || !fechaNacimiento) return null;
-  const edad = calcularEdad(fechaNacimiento);
-  const meses21 = mesesHastaCumple(fechaNacimiento, 21);
-  if (edad === 20 && meses21 <= 2 && meses21 >= 0) {
-    return "⚠ Próximo a cumplir 21 años (límite de cobertura)";
-  }
-  if (estudios) {
-    const meses26 = mesesHastaCumple(fechaNacimiento, 26);
-    if (edad === 25 && meses26 <= 2 && meses26 >= 0) {
-      return "⚠ Próximo a cumplir 26 años (fin cobertura por estudios)";
+  if (!fechaNacimiento) return null;
+
+  // 🔹 Hijos
+  if (parentesco === "Hijos") {
+    const edad = calcularEdad(fechaNacimiento);
+    const meses21 = mesesHastaCumple(fechaNacimiento, 21);
+
+    if (edad === 20 && meses21 <= 2 && meses21 >= 0) {
+      return "⚠ Próximo a cumplir 21 años (límite de cobertura)";
+    }
+
+    if (estudios) {
+      const meses26 = mesesHastaCumple(fechaNacimiento, 26);
+      if (edad === 25 && meses26 <= 2 && meses26 >= 0) {
+        return "⚠ Próximo a cumplir 26 años (fin cobertura por estudios)";
+      }
     }
   }
+
+    // 🔹 Menor b/ guarda
+    if (parentesco === "Menor B/ guarda") {
+      const edad = calcularEdad(fechaNacimiento);
+      const meses18 = mesesHastaCumple(fechaNacimiento, 18);
+
+      if (edad !== null && edad === 17 && meses18 <= 2 && meses18 >= 0) {
+        return "⚠ Próximo a cumplir 18 años (fin cobertura por guarda)";
+      }
+    }
+
   return null;
 }
 
@@ -60,7 +77,7 @@ const fechaNacimientoInput = f.querySelector('[name="fechaNacimiento"]');
 const estudiosField = document.getElementById("estudiosField");
 const estudiosSelect = f.querySelector('[name="estudios"]');
 const edadInput = f.querySelector('[name="edad"]');
-
+const grupoSanguineoSelect = f.querySelector('[name="grupo_sanguineo_id"]');
 const discapacidadCheckbox = document.getElementById("discapacidad");
 const nivelDiscapacidadSelect = f.querySelector('[name="nivelDiscapacidad"]');
 const adjuntoDiscapacidadField = document.getElementById("adjuntoDiscapacidadField");
@@ -102,6 +119,7 @@ async function cargarCatalogos() {
   await cargarSelect("planes", f.querySelector('[name="plan_id"]'));
   await cargarSelect("categorias", f.querySelector('[name="categoria_id"]'));
   await cargarSelect("localidades", f.querySelector('[name="localidad_id"]'));
+  await cargarSelect("grupo_sanguineo", grupoSanguineoSelect);
 }
 
 await cargarCatalogos();
@@ -310,6 +328,27 @@ f.addEventListener("submit", async e => {
         return;
       }
 
+          // =====================
+        // Validación Menor b/ guarda (hasta 18 años exactos)
+        // =====================
+    if (
+      dicParentescos[data.parentesco_id] === "Menor B/ guarda" &&
+      fechaNacimientoInput.value
+    ) {
+      const edadGuarda = calcularEdad(fechaNacimientoInput.value);
+
+      if (edadGuarda !== null && edadGuarda >= 18) {
+        Swal.fire(
+          "Edad inválida",
+          "Un menor bajo guarda solo puede afiliarse si tiene menos de 18 años.",
+          "error"
+        );
+        btn.disabled = false;
+        btn.textContent = "Guardar";
+        return;
+      }
+    }
+
     // Validaciones hijos
     if (dicParentescos[data.parentesco_id] === "Hijos" && fechaNacimientoInput.value) {
       const edadHijo = calcularEdad(fechaNacimientoInput.value);
@@ -346,9 +385,11 @@ f.addEventListener("submit", async e => {
       grupo_familiar_codigo: match[1],
       parentesco_id: data.parentesco_id,
       sexo: data.sexo,
+      grupo_familiar_real: data.grupo_familiar_real || null,
       plan_id: data.plan_id || null,
       categoria_id: data.categoria_id || null,
       localidad_id: data.localidad_id || null,
+      grupo_sanguineo_id: data.grupo_sanguineo_id || null,
       discapacidad: discapacidadCheckbox.checked,
       nivel_discapacidad: nivelDiscapacidadSelect.value || null,
       estudios: estudiosSelect.value || null,

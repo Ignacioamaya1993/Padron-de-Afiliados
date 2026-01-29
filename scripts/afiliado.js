@@ -44,6 +44,14 @@ function calcularGrupoFamiliar(numeroAfiliado) {
   return numeroAfiliado.substring(guionIndex + 1, slashIndex); // toma todo lo que está entre guion y barra
 }
 
+function mesesParaCumplirEdad(fechaNacimiento, edadObjetivo) {
+  if (!fechaNacimiento) return null;
+  const hoy = new Date();
+  const fn = new Date(fechaNacimiento);
+  const fechaLimite = new Date(fn.getFullYear() + edadObjetivo, fn.getMonth(), fn.getDate());
+  const diffMeses = (fechaLimite.getFullYear() - hoy.getFullYear()) * 12 + (fechaLimite.getMonth() - hoy.getMonth());
+  return diffMeses;
+}
 
 function mostrarEstado(activo) {
   const estadoSpan = document.getElementById("estadoAfiliado");
@@ -70,7 +78,8 @@ async function cargarAfiliado() {
       parentesco_id (nombre),
       plan_id (nombre),
       categoria_id (nombre),
-      localidad_id (nombre)
+      localidad_id (nombre),
+      grupo_sanguineo_id (nombre)
     `)
     .eq("id", afiliadoId)
     .single();
@@ -135,6 +144,10 @@ for (const [idSpan, columna] of Object.entries(campos)) {
     span.textContent = afiliado[columna] || "-";
   }
 }
+
+// Mostrar grupo sanguíneo
+const grupoSanguineoSpan = document.getElementById("grupoSanguineo");
+grupoSanguineoSpan.textContent = afiliado.grupo_sanguineo_id?.nombre || "-";
 
 // Mostrar grupo familiar real
 const grupoRealSpan = document.getElementById("grupoFamiliarReal");
@@ -311,6 +324,8 @@ async function entrarModoEdicion() {
   const planNombre = afiliado.plan_id?.nombre || "";
   const categoriaNombre = afiliado.categoria_id?.nombre || "";
   const localidadNombre = afiliado.localidad_id?.nombre || "";
+  const { data: gruposSanguineos } = await supabase.from("grupo_sanguineo").select("nombre");
+  const opcionesGrupoSanguineo = gruposSanguineos?.map(g => g.nombre) || [];  
 
   reemplazarPorInput("telefono", afiliado.telefono);
   reemplazarPorInput("fechaNacimiento", formatoInputDate(afiliado.fechaNacimiento), "date");
@@ -322,6 +337,7 @@ async function entrarModoEdicion() {
   reemplazarPorSelect("plan", opciones.planes, planNombre);
   reemplazarPorSelect("categoria", opciones.categorias, categoriaNombre);
   reemplazarPorSelect("localidad", opciones.localidades, localidadNombre);
+  reemplazarPorSelect("grupoSanguineo", opcionesGrupoSanguineo, afiliado.grupo_sanguineo_id?.nombre);
 
   reemplazarPorCheckbox("discapacidad", afiliado.discapacidad);
 
@@ -437,26 +453,27 @@ function restaurarCampos() {
     }
   });
 
-  const elGrupoReal = document.getElementById("grupoFamiliarReal");
-if (elGrupoReal && elGrupoReal.tagName === "INPUT") {
+const elGrupoReal = document.getElementById("grupoFamiliarReal");
+if (elGrupoReal && (elGrupoReal.tagName === "INPUT" || elGrupoReal.tagName === "SELECT")) {
   const span = document.createElement("span");
   span.id = "grupoFamiliarReal";
   span.textContent = afiliado.grupo_familiar_real || "-";
   elGrupoReal.replaceWith(span);
 }
 
-  ["parentesco","sexo","plan","categoria","localidad","discapacidad","nivelDiscapacidad"].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (el.tagName === "SELECT" || el.tagName === "INPUT") {
-      const span = document.createElement("span");
-      span.id = id;
-      if(id==="discapacidad") span.textContent = afiliado.discapacidad ? "Sí" : "No";
-      else if(id==="nivelDiscapacidad") span.textContent = afiliado.nivel_discapacidad || "-";
-      else span.textContent = afiliado[id] || "-";
-      el.replaceWith(span);
-    }
-  });
+["parentesco","sexo","plan","categoria","localidad","discapacidad","nivelDiscapacidad","grupoSanguineo"].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.tagName === "SELECT" || el.tagName === "INPUT") {
+    const span = document.createElement("span");
+    span.id = id;
+    if(id==="discapacidad") span.textContent = afiliado.discapacidad ? "Sí" : "No";
+    else if(id==="nivelDiscapacidad") span.textContent = afiliado.nivel_discapacidad || "-";
+    else if(id==="grupoSanguineo") span.textContent = afiliado.grupo_sanguineo_id?.nombre || "-";
+    else span.textContent = afiliado[id] || "-";
+    el.replaceWith(span);
+  }
+});
 
   const est = document.getElementById("estudios");
   if (est && est.tagName === "SELECT") {
@@ -492,12 +509,14 @@ async function guardarCambios() {
   const nivel_discapacidad = (discapacidad && document.getElementById("nivelDiscapacidad")?.value) || null;
   const parentescoNombre = document.getElementById("parentesco")?.value || null;
   const grupo_familiar_real = document.getElementById("grupoFamiliarReal")?.value || null;
+  const grupoSanguineoNombre = document.getElementById("grupoSanguineo")?.value || null;
 
   // IDs reales de relaciones
   const { data: parent } = await supabase.from("parentescos").select("id").eq("nombre", parentescoNombre).single();
   const { data: planData } = await supabase.from("planes").select("id").eq("nombre", planNombre).single();
   const { data: categoriaData } = await supabase.from("categorias").select("id").eq("nombre", categoriaNombre).single();
   const { data: localidadData } = await supabase.from("localidades").select("id").eq("nombre", localidadNombre).single();
+  const { data: gsData } = await supabase.from("grupo_sanguineo").select("id").eq("nombre", grupoSanguineoNombre).single();
 
   // =========================
   // Validaciones de edad y adjuntos
@@ -546,6 +565,22 @@ async function guardarCambios() {
   }
 
   // =========================
+// Validación Menor B/ guarda (edición)
+// =========================
+if (
+  parentescoNombre === "Menor B/ guarda" &&
+  fecha_nacimiento &&
+  pasoEdadLimite(fecha_nacimiento, 18)
+) {
+  Swal.fire(
+    "Edad inválida",
+    "Un menor bajo guarda solo puede afiliarse hasta el día exacto en que cumple 18 años.",
+    "error"
+  );
+  return;
+}
+
+  // =========================
   // Payload con IDs y campos
   // =========================
   const payload = {
@@ -564,7 +599,8 @@ async function guardarCambios() {
     grupo_familiar_codigo: calcularGrupoFamiliar(numero_afiliado),
     estudios,
     adjuntoEstudios: adjuntoEstudiosUrl,
-    adjuntoDiscapacidad: adjuntoDiscapacidadUrl
+    adjuntoDiscapacidad: adjuntoDiscapacidadUrl,
+    grupo_sanguineo_id: gsData?.id || null
   };
 
   const { error } = await supabase.from("afiliados").update(payload).eq("id", afiliadoId);
@@ -578,14 +614,15 @@ async function guardarCambios() {
   // =========================
   // Actualizar la variable local y renderizar
   // =========================
-  afiliado = {
-    ...afiliado,
-    ...payload,
-    parentesco_id: parent?.id ? { id: parent.id, nombre: parentescoNombre } : null,
-    plan_id: planData?.id ? { id: planData.id, nombre: planNombre } : null,
-    categoria_id: categoriaData?.id ? { id: categoriaData.id, nombre: categoriaNombre } : null,
-    localidad_id: localidadData?.id ? { id: localidadData.id, nombre: localidadNombre } : null
-  };
+afiliado = {
+  ...afiliado,
+  ...payload,
+  parentesco_id: parent?.id ? { id: parent.id, nombre: parentescoNombre } : null,
+  plan_id: planData?.id ? { id: planData.id, nombre: planNombre } : null,
+  categoria_id: categoriaData?.id ? { id: categoriaData.id, nombre: categoriaNombre } : null,
+  localidad_id: localidadData?.id ? { id: localidadData.id, nombre: localidadNombre } : null,
+  grupo_sanguineo_id: gsData?.id ? { id: gsData.id, nombre: grupoSanguineoNombre } : null
+};
 
   Swal.fire("Guardado", "Cambios guardados correctamente", "success");
   renderFicha(); // Refresca la ficha con los datos actualizados
