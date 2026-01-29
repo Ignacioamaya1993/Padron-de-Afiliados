@@ -12,7 +12,6 @@
 </head>
 <body>
 
-<!-- HEADER COMÚN -->
 <header>
   <div id="header-container"></div>
 </header>
@@ -24,13 +23,12 @@
     <input
       type="text"
       id="searchInput"
-      name="buscar-afiliado"            
+      name="buscar-afiliado"
       placeholder="Buscar afiliado, DNI o N° de afiliado..."
-      autocomplete="new-password"      
+      autocomplete="new-password"
       spellcheck="false"
       autofocus
     />
-    <!-- Resultados inyectados por JS -->
   </section>
 
   <!-- ACCIONES -->
@@ -46,52 +44,20 @@
 
     <form id="PadronForm" class="form-afiliado">
 
-      <input
-        type="text"
-        name="nombre"
-        placeholder="Nombre"
-        required
-      />
+      <input type="text" name="nombre" placeholder="Nombre" required />
+      <input type="text" name="apellido" placeholder="Apellido" required />
+      <input type="text" name="dni" placeholder="DNI" required />
+      <input type="text" name="telefono" placeholder="Teléfono" />
 
-      <input
-        type="text"
-        name="apellido"
-        placeholder="Apellido"
-        required
-      />
+      <div class="floating-field">
+        <input type="date" name="fechaNacimiento" required />
+        <label>Fecha de nacimiento</label>
+      </div>
 
-      <input
-        type="text"
-        name="dni"
-        placeholder="DNI"
-        required
-      />
-
-      <input
-        type="text"
-        name="telefono"
-        placeholder="Teléfono"
-      />
-
-    <div class="floating-field">
-      <input
-        type="date"
-        name="fechaNacimiento"
-        required
-      />
-      <label>Fecha de nacimiento</label>
-    </div>
-
-        <!-- Campo de Edad calculada -->
-    <div class="floating-field">
-      <input
-        type="text"
-        name="edad"
-        placeholder="Edad"
-        readonly
-      />
-      <label>Edad</label>
-    </div>
+      <div class="floating-field">
+        <input type="text" name="edad" placeholder="Edad" readonly />
+        <label>Edad</label>
+      </div>
 
       <input
         type="text"
@@ -101,22 +67,18 @@
       />
 
       <div class="floating-field" id="titularGrupoWrapper" style="display:none;">
-        <input
-          type="text"
-          id="titularGrupo"
-          readonly
-        />
+        <input type="text" id="titularGrupo" readonly />
         <label>Titular del grupo</label>
       </div>
 
-            <input
+      <input
         type="text"
         name="grupo_familiar_real"
         placeholder="Grupo Familiar Real (ej: FAM-OLAV-001)"
         required
       />
 
-            <input
+      <input
         type="text"
         name="cbu_cvu"
         placeholder="CBU / CVU (22 dígitos)"
@@ -125,54 +87,34 @@
         required
       />
 
-      <select name="parentesco" required>
+      <!-- 🔹 PARENTESCO -->
+      <select name="parentesco_id" id="parentescoSelect" required>
         <option value="">Parentesco</option>
-        <option value="Titular">Titular</option>
-        <option value="Conyuge">Conyuge</option>
-        <option value="Concubino/a">Concubino/a</option>
-        <option value="Hijos">Hijos</option>
-        <option value="Menor B/ guarda">Menor B/ guarda</option>
       </select>
 
+      <!-- 🔹 SEXO (se mantiene hardcodeado) -->
       <select name="sexo" required>
         <option value="">Sexo</option>
         <option value="F">F</option>
         <option value="M">M</option>
       </select>
 
-      <select name="plan">
+      <!-- 🔹 PLAN -->
+      <select name="plan_id" id="planSelect">
         <option value="">Plan</option>
-        <option value="Adherentes">Adherentes</option>
-        <option value="Aport. Sol">Aport. Sol</option>
-        <option value="Monotrib.">Monotrib.</option>
-        <option value="Pasiv Tram">Pasiv Tram</option>
-        <option value="Plan B-ESP">Plan B-ESP</option>
-        <option value="Plan joven">Plan joven</option>
-        <option value="PMO">PMO</option>
       </select>
 
-      <select name="categoria">
+      <!-- 🔹 CATEGORÍA -->
+      <select name="categoria_id" id="categoriaSelect">
         <option value="">Categoría</option>
-        <option value="Adherentes">Adherentes</option>
-        <option value="Jubilado ANSES">Jubilado ANSES</option>
-        <option value="Jubilado conyuge AF. vivo">Jubilado conyuge AF. vivo</option>
-        <option value="Jubilado tramite">Jubilado tramite</option>
-        <option value="Monotributista">Monotributista</option>
-        <option value="Obligatorios">Obligatorios</option>
-        <option value="Opcion c/ convenio">Opcion c/ convenio</option>
-        <option value="Opcion s/ convenio">Opcion s/ convenio</option>
-        <option value="Pensionado ANSES reparto">Pensionado ANSES reparto</option>
       </select>
 
-      <select name="localidad">
+      <!-- 🔹 LOCALIDAD -->
+      <select name="localidad_id" id="localidadSelect">
         <option value="">Localidad</option>
-        <option value="Espigas">Espigas</option>
-        <option value="Hinojo">Hinojo</option>
-        <option value="Olavarria">Olavarria</option>
-        <option value="Sierra Chica">Sierra Chica</option>
-        <option value="Sierras Bayas">Sierras Bayas</option>
       </select>
 
+      <!-- DISCAPACIDAD -->
       <div class="checkbox-field">
         <input type="checkbox" id="discapacidad">
         <label for="discapacidad">Discapacidad</label>
@@ -186,15 +128,10 @@
 
       <div id="adjuntoDiscapacidadField" style="display:none;">
         <label>Adjuntar certificado de discapacidad (CUD)</label>
-        <input
-          type="file"
-          name="adjuntoDiscapacidad"
-          accept=".pdf,.jpg,.png"
-          required
-        />
+        <input type="file" name="adjuntoDiscapacidad" accept=".pdf,.jpg,.png" />
       </div>
 
-      <!-- Estudios (solo hijos >18) -->
+      <!-- ESTUDIOS -->
       <div id="estudiosField" style="display:none;">
         <select name="estudios">
           <option value="">Nivel de estudios</option>
@@ -204,17 +141,14 @@
         </select>
       </div>
 
-          <!-- Adjuntar constancia de alumno regular (solo hijos 21-26 y estudian) -->
-    <div id="adjuntoEstudiosField" style="display:none;">
-      <label>Adjuntar constancia de alumno regular</label>
-      <input type="file" name="adjuntoEstudios" accept=".pdf,.jpg,.png" />
-    </div>
+      <div id="adjuntoEstudiosField" style="display:none;">
+        <label>Adjuntar constancia de alumno regular</label>
+        <input type="file" name="adjuntoEstudios" accept=".pdf,.jpg,.png" />
+      </div>
 
       <div class="form-actions">
         <button type="submit">Guardar</button>
-        <button type="button" id="btnCancelarNuevo">
-          Cancelar
-        </button>
+        <button type="button" id="btnCancelarNuevo">Cancelar</button>
       </div>
 
     </form>
@@ -223,6 +157,5 @@
 </main>
 
 <script type="module" src="../scripts/padron.js"></script>
-
 </body>
 </html>

@@ -27,36 +27,36 @@
         ⬅️ Volver al buscador
       </button>
 
-      <h2 id="nombreCompleto"></h2>
+      <h2 id="nombreCompleto">-</h2>
 
-    <button id="btnFichaMedica" class="btn-primary">📋 Ficha Médica</button>
+      <button id="btnFichaMedica" class="btn-primary">📋 Ficha Médica</button>
     </div>
 
     <div class="ficha-grid">
 
       <div>
         <strong>DNI</strong>
-        <span id="dni"></span>
+        <span id="dni">-</span>
       </div>
 
       <div>
         <strong>Fecha de nacimiento</strong>
-        <span id="fechaNacimiento"></span>
+        <span id="fechaNacimiento">-</span>
       </div>
 
       <div>
         <strong>Edad</strong>
-        <span id="edad"></span>
+        <span id="edad">-</span>
       </div>
 
       <div>
         <strong>Teléfono</strong>
-        <span id="telefono"></span>
+        <span id="telefono">-</span>
       </div>
 
       <div>
         <strong>N° Afiliado</strong>
-        <span id="numeroAfiliado"></span>
+        <span id="numeroAfiliado">-</span>
       </div>
 
       <div>
@@ -65,54 +65,64 @@
       </div>
 
       <div>
+        <strong>Grupo familiar real</strong>
+        <span id="grupoFamiliarReal">-</span>
+      </div>
+
+      <div>
         <strong>Parentesco</strong>
-        <span id="parentesco"></span>
+        <span id="parentesco">-</span>
       </div>
 
       <div>
         <strong>Sexo</strong>
-        <span id="sexo"></span>
+        <span id="sexo">-</span>
       </div>
 
       <div>
         <strong>Plan</strong>
-        <span id="plan"></span>
+        <span id="plan">-</span>
       </div>
 
       <div>
         <strong>Categoria</strong>
-        <span id="categoria"></span>
+        <span id="categoria">-</span>
       </div>
 
       <div>
         <strong>Localidad</strong>
-        <span id="localidad"></span>
+        <span id="localidad">-</span>
       </div>
 
       <div>
         <strong>Discapacidad</strong>
-        <span id="discapacidad"></span>
+        <span id="discapacidad">No</span>
       </div>
 
       <div id="nivelDiscapacidadField" style="display:none;">
         <strong>Nivel de discapacidad</strong>
-        <span id="nivelDiscapacidad"></span>
+        <span id="nivelDiscapacidad">-</span>
+      </div>
+
+      <div id="adjuntoDiscapacidadField" style="display:none;">
+        <label>Constancia Discapacidad</label>
+        <br><span id="adjuntoDiscapacidadContenido"></span>
       </div>
 
       <div>
         <strong>Estado</strong>
-        <span id="estadoAfiliado"></span>
+        <span id="estadoAfiliado">-</span>
       </div>
 
       <div id="estudiosField" style="display:none;">
         <strong>Estudios</strong>
-        <span id="estudios"></span>
+        <br><span id="estudios">-</span>
       </div>
 
-      <div id="adjuntoEstudiosField" style="display:none;">
-        <strong>Constancia alumno regular</strong>
-        <div id="adjuntoContenido"></div>
-      </div>
+    <div id="adjuntoEstudiosField" style="display:none;">
+      <label>Constancia Alumno Regular</label>
+      <span id="adjuntoEstudiosContenido"></span>
+    </div>
 
     </div>
 
@@ -125,27 +135,27 @@
       <button id="btnEliminar" class="danger-outline">🗑️ Eliminar definitivo</button>
     </div>
 
-  </section>
+  </main>
 
   <section class="grupo-familiar">
     <h3>Grupo familiar</h3>
     <table id="tablaGrupoFamiliar">
-        <thead>
+      <thead>
         <tr>
-            <th>Nombre y apellido</th>
-            <th>DNI</th>
-            <th>N° Afiliado</th>
-            <th>Relación</th>
-            <th>Estado</th>
+          <th>Nombre y apellido</th>
+          <th>DNI</th>
+          <th>N° Afiliado</th>
+          <th>Parentesco</th>
+          <th>Grupo familiar</th>
+          <th>Grupo familiar real</th>
+          <th>Estado</th>
         </tr>
-        </thead>
+      </thead>
+
       <tbody></tbody>
     </table>
   </section>
 
-</main>
-
-<script type="module" src="../scripts/afiliado.js"></script>
-
+  <script type="module" src="../scripts/afiliado.js"></script>
 </body>
 </html>

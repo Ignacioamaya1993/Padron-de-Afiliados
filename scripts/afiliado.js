@@ -31,24 +31,19 @@ function calcularEdad(fecha) {
 
 function pasoEdadLimite(fechaNacimiento, edadLimite) {
   if (!fechaNacimiento) return true;
-
   const fn = new Date(fechaNacimiento);
-  const fechaLimite = new Date(
-    fn.getFullYear() + edadLimite,
-    fn.getMonth(),
-    fn.getDate()
-  );
-
+  const fechaLimite = new Date(fn.getFullYear() + edadLimite, fn.getMonth(), fn.getDate());
   return new Date() >= fechaLimite;
 }
 
 function calcularGrupoFamiliar(numeroAfiliado) {
   if (!numeroAfiliado) return "";
-  const guionIndex = numeroAfiliado.indexOf("-");
-  const slashIndex = numeroAfiliado.indexOf("/", guionIndex);
+  const guionIndex = numeroAfiliado.indexOf("-"); // primer guion
+  const slashIndex = numeroAfiliado.indexOf("/"); // la barra
   if (guionIndex === -1 || slashIndex === -1) return numeroAfiliado;
-  return numeroAfiliado.substring(guionIndex + 1, slashIndex);
+  return numeroAfiliado.substring(guionIndex + 1, slashIndex); // toma todo lo que está entre guion y barra
 }
+
 
 function mostrarEstado(activo) {
   const estadoSpan = document.getElementById("estadoAfiliado");
@@ -70,9 +65,16 @@ function mostrarEstado(activo) {
 async function cargarAfiliado() {
   const { data, error } = await supabase
     .from("afiliados")
-    .select("*")
+    .select(`
+      *,
+      parentesco_id (nombre),
+      plan_id (nombre),
+      categoria_id (nombre),
+      localidad_id (nombre)
+    `)
     .eq("id", afiliadoId)
     .single();
+
 
   if (error || !data) {
     Swal.fire("Error", "No se pudo cargar el afiliado", "error");
@@ -90,94 +92,130 @@ async function cargarAfiliado() {
    RENDER FICHA
 ===================== */
 function renderFicha() {
+  // Desactivar modo edición
   modoEdicion = false;
+
+  // Restaurar todos los campos a spans
   restaurarCampos();
 
-  document.getElementById("nombreCompleto").textContent =
-    `${afiliado.nombre} ${afiliado.apellido}`;
+  // Nombre completo
+  document.getElementById("nombreCompleto").textContent = `${afiliado.nombre} ${afiliado.apellido}`;
 
-  function formatearFecha(fecha) {
-    if (!fecha) return "-";
-    const [yyyy, mm, dd] = fecha.split("-");
-    return `${dd}/${mm}/${yyyy}`;
+  document.getElementById("grupoFamiliarReal").textContent = afiliado.grupo_familiar_real || "-";
+
+  // Fecha y edad
+  const fechaText = afiliado.fechaNacimiento
+    ? `${afiliado.fechaNacimiento.split("-")[2]}/${afiliado.fechaNacimiento.split("-")[1]}/${afiliado.fechaNacimiento.split("-")[0]}`
+    : "-";
+  document.getElementById("fechaNacimiento").textContent = fechaText;
+  document.getElementById("edad").textContent = calcularEdad(afiliado.fechaNacimiento) + " años";
+
+// Campos básicos con mapping entre span ID y columna real
+const campos = {
+  telefono: "telefono",
+  numeroAfiliado: "numero_afiliado",
+  grupoFamiliar: "grupo_familiar_codigo",
+  dni: "dni",
+  sexo: "sexo",
+  parentesco: "parentesco_id",
+  plan: "plan_id",
+  categoria: "categoria_id",
+  localidad: "localidad_id"
+};
+
+for (const [idSpan, columna] of Object.entries(campos)) {
+  const span = document.getElementById(idSpan);
+  if (!span) continue;
+
+  if (columna.endsWith("_id")) {
+    // Relaciones: mostrar el nombre
+    span.textContent = afiliado[columna]?.nombre || "-";
+  } else {
+    // Campos directos
+    span.textContent = afiliado[columna] || "-";
   }
+}
 
-  document.getElementById("fechaNacimiento").textContent =
-    formatearFecha(afiliado.fecha_nacimiento);
+// Mostrar grupo familiar real
+const grupoRealSpan = document.getElementById("grupoFamiliarReal");
+if (grupoRealSpan) {
+  grupoRealSpan.textContent = afiliado.grupo_familiar_real || "-";
+}
 
-  const edad = calcularEdad(afiliado.fecha_nacimiento);
-  document.getElementById("edad").textContent =
-    edad !== null ? `${edad} años` : "-";
+for (const [spanId, col] of Object.entries(campos)) {
+  const span = document.getElementById(spanId);
+  if (!span) continue;
 
-  document.getElementById("telefono").textContent = afiliado.telefono || "-";
-  document.getElementById("numeroAfiliado").textContent = afiliado.numero_afiliado || "-";
-  document.getElementById("grupoFamiliar").textContent = afiliado.grupo_familiar_codigo || "-";
-  document.getElementById("dni").textContent = afiliado.dni || "-";
-  document.getElementById("parentesco").textContent = afiliado.parentesco || "-";
-  document.getElementById("sexo").textContent = afiliado.sexo || "-";
-  document.getElementById("plan").textContent = afiliado.plan || "-";
-  document.getElementById("categoria").textContent = afiliado.categoria || "-";
-  document.getElementById("localidad").textContent = afiliado.localidad || "-";
+  if (col.endsWith("_id")) {
+    span.textContent = afiliado[col]?.nombre || "-";
+  } else {
+    span.textContent = afiliado[col] || "-";
+  }
+}
+
+  // Discapacidad
   document.getElementById("discapacidad").textContent = afiliado.discapacidad ? "Sí" : "No";
-
   const nivelField = document.getElementById("nivelDiscapacidadField");
-  if (afiliado.discapacidad) {
+  if(afiliado.discapacidad) {
     nivelField.style.display = "block";
     document.getElementById("nivelDiscapacidad").textContent = afiliado.nivel_discapacidad || "-";
   } else {
     nivelField.style.display = "none";
   }
 
+  // Estudios
   const estudiosField = document.getElementById("estudiosField");
-  const cumplio21 = pasoEdadLimite(afiliado.fecha_nacimiento, 21); // CAMBIO
-  const cumplio26 = pasoEdadLimite(afiliado.fecha_nacimiento, 26);
-
-  if (afiliado.parentesco === "Hijos" && cumplio21 && !cumplio26) { // CAMBIO
+  const estudiosSpan = document.getElementById("estudios");
+  const parentescoNombre = afiliado.parentesco_id?.nombre || "";
+  const cumplio21 = pasoEdadLimite(afiliado.fechaNacimiento, 21);
+  const cumplio26 = pasoEdadLimite(afiliado.fechaNacimiento, 26);
+  if(parentescoNombre === "Hijos" && cumplio21 && !cumplio26){
     estudiosField.style.display = "block";
-    document.getElementById("estudios").textContent = afiliado.estudios || "-";
+    estudiosSpan.textContent = afiliado.estudios || "No seleccionado";
   } else {
     estudiosField.style.display = "none";
+    estudiosSpan.textContent = "-";
   }
 
+  // Adjuntos
+  const adjEstudiosField = document.getElementById("adjuntoEstudiosField");
+  const adjEstudiosContenido = document.getElementById("adjuntoEstudiosContenido");
+  if(parentescoNombre === "Hijos" && cumplio21 && !cumplio26){
+    adjEstudiosField.style.display = "block";
+    adjEstudiosContenido.innerHTML = afiliado.adjuntoEstudios
+      ? `<a href="${afiliado.adjuntoEstudios}" target="_blank">📎 Ver adjunto</a>`
+      : "No hay adjunto cargado";
+  } else {
+    adjEstudiosField.style.display = "none";
+    adjEstudiosContenido.innerHTML = "";
+  }
+
+  const adjDispField = document.getElementById("adjuntoDiscapacidadField");
+  const adjDispContenido = document.getElementById("adjuntoDiscapacidadContenido");
+  if(afiliado.discapacidad){
+    adjDispField.style.display = "block";
+    adjDispContenido.innerHTML = afiliado.adjuntoDiscapacidad
+      ? `<a href="${afiliado.adjuntoDiscapacidad}" target="_blank">📎 Ver adjunto</a>`
+      : "No hay adjunto cargado";
+  } else {
+    adjDispField.style.display = "none";
+    adjDispContenido.innerHTML = "";
+  }
+
+  // Estado
   mostrarEstado(afiliado.activo);
+
+  // Botones
   toggleBotones(false);
   document.getElementById("btnEditar").style.display = afiliado.activo ? "inline-block" : "none";
   document.getElementById("btnBaja").style.display = afiliado.activo ? "inline-block" : "none";
   document.getElementById("btnReactivar").style.display = afiliado.activo ? "none" : "inline-block";
-
-    /* =====================
-      ADJUNTO ESTUDIOS - VISTA
-    ===================== */
-    const adjuntoField = document.getElementById("adjuntoEstudiosField");
-    const adjuntoContenido = document.getElementById("adjuntoContenido");
-
-  const mostrarAdjunto =
-    afiliado.parentesco === "Hijos" &&
-    pasoEdadLimite(afiliado.fecha_nacimiento, 21) &&
-    !pasoEdadLimite(afiliado.fecha_nacimiento, 26);
-
-    if (mostrarAdjunto) {
-      adjuntoField.style.display = "block";
-
-      if (afiliado.adjunto_alumno) {
-        adjuntoContenido.innerHTML = `
-          <a href="${afiliado.adjunto_alumno}" target="_blank">
-            📎 Ver adjunto
-          </a>
-        `;
-      } else {
-        adjuntoContenido.textContent = "No hay adjunto cargado";
-      }
-    } else {
-      adjuntoField.style.display = "none";
-    }
 }
 
 /* =====================
    ACTUALIZAR EDAD / ESTUDIOS
 ===================== */
 function actualizarEdadYEstudios() {
-
   if (!modoEdicion) return;
 
   const fechaInput = document.getElementById("fechaNacimiento");
@@ -185,18 +223,12 @@ function actualizarEdadYEstudios() {
   const estudiosField = document.getElementById("estudiosField");
 
   const edad = fechaInput.value ? calcularEdad(fechaInput.value) : null;
-  document.getElementById("edad").textContent =
-    edad !== null ? `${edad} años` : "-";
+  document.getElementById("edad").textContent = edad !== null ? `${edad} años` : "-";
 
-  const cumplio21 = fechaInput.value
-    ? pasoEdadLimite(fechaInput.value, 21)
-    : false; // CAMBIO
+  const cumplio21 = fechaInput.value ? pasoEdadLimite(fechaInput.value, 21) : false;
+  const cumplio26 = fechaInput.value ? pasoEdadLimite(fechaInput.value, 26) : true;
 
-  const cumplio26 = fechaInput.value
-    ? pasoEdadLimite(fechaInput.value, 26)
-    : true;
-
-  if (parentescoSelect.value === "Hijos" && cumplio21 && !cumplio26) { // CAMBIO
+  if (parentescoSelect.value === "Hijos" && cumplio21 && !cumplio26) {
     estudiosField.style.display = "block";
     convertirEstudiosASelect();
   } else {
@@ -207,57 +239,92 @@ function actualizarEdadYEstudios() {
 function actualizarAdjuntoEdicion() {
   if (!modoEdicion) return;
 
-  const adjuntoField = document.getElementById("adjuntoEstudiosField");
-  const adjuntoContenido = document.getElementById("adjuntoContenido");
-
-  const parentesco = document.getElementById("parentesco")?.value;
   const fechaNac = document.getElementById("fechaNacimiento")?.value;
+  const parentesco = document.getElementById("parentesco")?.value;
+  const discapacidad = document.getElementById("discapacidad")?.checked;
 
-  if (
-    parentesco === "Hijos" &&
-    fechaNac &&
-    pasoEdadLimite(fechaNac, 21) &&
-    !pasoEdadLimite(fechaNac, 26)
-  ) {
-    adjuntoField.style.display = "block";
-
-    adjuntoContenido.innerHTML = `
-      ${afiliado.adjunto_alumno
-        ? `<a href="${afiliado.adjunto_alumno}" target="_blank">
-            📎 Adjunto actual
-          </a><br>`
-        : ""
-      }
-      <input type="file" id="adjuntoAlumno" accept=".pdf,.jpg,.png" />
-    `;
+  // Hijos (21-26)
+  const adjEstudiosField = document.getElementById("adjuntoEstudiosField");
+  const adjEstudiosContenido = document.getElementById("adjuntoEstudiosContenido");
+  if (parentesco === "Hijos" && fechaNac && pasoEdadLimite(fechaNac, 21) && !pasoEdadLimite(fechaNac, 26)) {
+    adjEstudiosField.style.display = "block";
+    adjEstudiosContenido.innerHTML = afiliado.adjuntoEstudios
+      ? `<a href="${afiliado.adjuntoEstudios}" target="_blank">📎 Adjunto actual</a><br>
+         <input type="file" id="adjuntoEstudiosInput" accept=".pdf,.jpg,.png" />`
+      : `<input type="file" id="adjuntoEstudiosInput" accept=".pdf,.jpg,.png" />`;
   } else {
-    adjuntoField.style.display = "none";
-    adjuntoContenido.innerHTML = "";
+    adjEstudiosField.style.display = "none";
+    adjEstudiosContenido.innerHTML = "";
+  }
+
+  // Discapacidad
+  const adjDispField = document.getElementById("adjuntoDiscapacidadField");
+  const adjDispContenido = document.getElementById("adjuntoDiscapacidadContenido");
+  if (discapacidad) {
+    adjDispField.style.display = "block";
+    adjDispContenido.innerHTML = afiliado.adjuntoDiscapacidad
+      ? `<a href="${afiliado.adjuntoDiscapacidad}" target="_blank">📎 Adjunto actual</a><br>
+         <input type="file" id="adjuntoDiscapacidadInput" accept=".pdf,.jpg,.png" />`
+      : `<input type="file" id="adjuntoDiscapacidadInput" accept=".pdf,.jpg,.png" />`;
+  } else {
+    adjDispField.style.display = "none";
+    adjDispContenido.innerHTML = "";
   }
 }
 
 /* =====================
    MODO EDICIÓN
 ===================== */
-function entrarModoEdicion() {
+async function obtenerOpciones() {
+  // Obtener todas las opciones de la DB
+  const { data: planes } = await supabase.from("planes").select("nombre");
+  const { data: categorias } = await supabase.from("categorias").select("nombre");
+  const { data: parentescos } = await supabase.from("parentescos").select("nombre");
+  const { data: localidades } = await supabase.from("localidades").select("nombre");
+
+  return {
+    planes: planes?.map(p => p.nombre) || [],
+    categorias: categorias?.map(c => c.nombre) || [],
+    parentescos: parentescos?.map(p => p.nombre) || [],
+    localidades: localidades?.map(l => l.nombre) || []
+  };
+}
+
+/* Formato YYYY-MM-DD para inputs de tipo date */
+function formatoInputDate(fecha) {
+  if (!fecha) return "";
+  const d = new Date(fecha);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+async function entrarModoEdicion() {
   if (!afiliado.activo) return;
   modoEdicion = true;
 
+  const opciones = await obtenerOpciones();
+
+  // Valores actuales de afiliado como strings
+  const parentescoNombre = afiliado.parentesco_id?.nombre || "";
+  const planNombre = afiliado.plan_id?.nombre || "";
+  const categoriaNombre = afiliado.categoria_id?.nombre || "";
+  const localidadNombre = afiliado.localidad_id?.nombre || "";
+
   reemplazarPorInput("telefono", afiliado.telefono);
-  reemplazarPorInput("fechaNacimiento", afiliado.fecha_nacimiento, "date");
+  reemplazarPorInput("fechaNacimiento", formatoInputDate(afiliado.fechaNacimiento), "date");
   reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
   reemplazarPorInput("dni", afiliado.dni);
-
-  reemplazarPorSelect("parentesco", ["Titular","Conyuge","Concubino/a","Hijos","Menor B/ guarda"], afiliado.parentesco);
+  reemplazarPorInput("grupoFamiliarReal", afiliado.grupo_familiar_real);
+  reemplazarPorSelect("parentesco", opciones.parentescos, parentescoNombre);
   reemplazarPorSelect("sexo", ["F","M"], afiliado.sexo);
-  reemplazarPorSelect("plan", ["Adherentes","Aport. Sol","Monotrib.","Pasiv Tram","Plan B-ESP","Plan joven","PMO"], afiliado.plan);
-  reemplazarPorSelect("categoria", ["Adherentes","Jubilado ANSES","Jubilado conyuge AF. vivo","Jubilado tramite","Monotributista","Obligatorios","Opcion c/ convenio","Opcion s/ convenio","Pensionado ANSES reparto"], afiliado.categoria);
-  reemplazarPorSelect("localidad", ["Espigas","Hinojo","Olavarria","Sierra Chica","Sierras Bayas"], afiliado.localidad);
+  reemplazarPorSelect("plan", opciones.planes, planNombre);
+  reemplazarPorSelect("categoria", opciones.categorias, categoriaNombre);
+  reemplazarPorSelect("localidad", opciones.localidades, localidadNombre);
 
-  // Checkbox discapacidad
   reemplazarPorCheckbox("discapacidad", afiliado.discapacidad);
 
-  // Mostrar nivel de discapacidad solo si checked
   const nivelField = document.getElementById("nivelDiscapacidadField");
   const dispCheckbox = document.getElementById("discapacidad");
   if (afiliado.discapacidad) {
@@ -267,15 +334,16 @@ function entrarModoEdicion() {
     nivelField.style.display = "none";
   }
 
-  // Listener para mostrar/ocultar nivel de discapacidad dinámicamente
-  dispCheckbox.addEventListener("change", () => {
-    if (dispCheckbox.checked) {
-      nivelField.style.display = "block";
-      convertirNivelDiscapacidadASelect();
-    } else {
-      nivelField.style.display = "none";
-    }
-  });
+dispCheckbox.addEventListener("change", () => {
+  const nivelField = document.getElementById("nivelDiscapacidadField");
+  if (dispCheckbox.checked) {
+    nivelField.style.display = "block";
+    convertirNivelDiscapacidadASelect();
+  } else {
+    nivelField.style.display = "none";
+  }
+  actualizarAdjuntoEdicion();
+});
 
   const fechaInput = document.getElementById("fechaNacimiento");
   const parentescoSelect = document.getElementById("parentesco");
@@ -285,55 +353,9 @@ function entrarModoEdicion() {
   fechaInput.addEventListener("input", actualizarAdjuntoEdicion);
   parentescoSelect.addEventListener("change", actualizarAdjuntoEdicion);
 
-
   actualizarEdadYEstudios();
   toggleBotones(true);
-
-    /* =====================
-     ADJUNTO ESTUDIOS - EDICIÓN
-  ===================== */
-  const adjuntoField = document.getElementById("adjuntoEstudiosField");
-  const adjuntoContenido = document.getElementById("adjuntoContenido");
-
-  const fechaNac = document.getElementById("fechaNacimiento").value;
-
-  if (
-    document.getElementById("parentesco").value === "Hijos" &&
-    pasoEdadLimite(fechaNac, 21) &&
-    !pasoEdadLimite(fechaNac, 26)
-  ) {
-
-    adjuntoField.style.display = "block";
-
-    adjuntoContenido.innerHTML = `
-      ${afiliado.adjunto_alumno
-        ? `<a href="${afiliado.adjunto_alumno}" target="_blank">
-            📎 Adjunto actual
-          </a><br>`
-        : ""
-      }
-      <input type="file" id="adjuntoAlumno" accept=".pdf,.jpg,.png" />
-    `;
-  } else {
-    adjuntoField.style.display = "none";
-  }
-
   actualizarAdjuntoEdicion();
-}
-
-function convertirNivelDiscapacidadASelect() {
-  const span = document.getElementById("nivelDiscapacidad");
-  if (!span || span.tagName === "SELECT") return;
-  const select = document.createElement("select");
-  select.id = "nivelDiscapacidad";
-  ["Permanente","Temporal"].forEach(op => {
-    const o = document.createElement("option");
-    o.value = op;
-    o.textContent = op;
-    if (afiliado.nivel_discapacidad === op) o.selected = true;
-    select.appendChild(o);
-  });
-  span.replaceWith(select);
 }
 
 /* =====================
@@ -374,26 +396,38 @@ function reemplazarPorCheckbox(id, valorActual) {
   span.replaceWith(input);
 }
 
+function convertirNivelDiscapacidadASelect() {
+  const span = document.getElementById("nivelDiscapacidad");
+  if (!span || span.tagName === "SELECT") return;
+  const select = document.createElement("select");
+  select.id = "nivelDiscapacidad";
+  ["Permanente","Temporal"].forEach(op => {
+    const o = document.createElement("option");
+    o.value = op;
+    o.textContent = op;
+    if (afiliado.nivel_discapacidad === op) o.selected = true;
+    select.appendChild(o);
+  });
+  span.replaceWith(select);
+}
+
 function convertirEstudiosASelect() {
   const actual = document.getElementById("estudios");
-  if (!actual) return;
-  if (actual.tagName === "SELECT") return;
-
+  if (!actual || actual.tagName === "SELECT") return;
   const select = document.createElement("select");
   select.id = "estudios";
-  ["Posgrado", "Tercerio", "Universitario"].forEach(op => {
+  ["Posgrado","Terciario","Universitario"].forEach(op => {
     const o = document.createElement("option");
     o.value = op;
     o.textContent = op;
     if (afiliado.estudios === op) o.selected = true;
     select.appendChild(o);
   });
-
   actual.replaceWith(select);
 }
 
 function restaurarCampos() {
-  ["telefono", "fechaNacimiento", "numeroAfiliado", "dni"].forEach(id => {
+  ["telefono","fechaNacimiento","numeroAfiliado","dni"].forEach(id => {
     const el = document.getElementById(id);
     if (el && el.tagName === "INPUT") {
       const span = document.createElement("span");
@@ -403,14 +437,22 @@ function restaurarCampos() {
     }
   });
 
+  const elGrupoReal = document.getElementById("grupoFamiliarReal");
+if (elGrupoReal && elGrupoReal.tagName === "INPUT") {
+  const span = document.createElement("span");
+  span.id = "grupoFamiliarReal";
+  span.textContent = afiliado.grupo_familiar_real || "-";
+  elGrupoReal.replaceWith(span);
+}
+
   ["parentesco","sexo","plan","categoria","localidad","discapacidad","nivelDiscapacidad"].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     if (el.tagName === "SELECT" || el.tagName === "INPUT") {
       const span = document.createElement("span");
       span.id = id;
-      if(id === "discapacidad") span.textContent = afiliado.discapacidad ? "Sí" : "No";
-      else if(id === "nivelDiscapacidad") span.textContent = afiliado.nivel_discapacidad || "-";
+      if(id==="discapacidad") span.textContent = afiliado.discapacidad ? "Sí" : "No";
+      else if(id==="nivelDiscapacidad") span.textContent = afiliado.nivel_discapacidad || "-";
       else span.textContent = afiliado[id] || "-";
       el.replaceWith(span);
     }
@@ -434,110 +476,124 @@ function toggleBotones(editando) {
 /* =====================
    GUARDAR CAMBIOS
 ===================== */
+/* =====================
+   GUARDAR CAMBIOS
+===================== */
 async function guardarCambios() {
   const telefono = document.getElementById("telefono").value || null;
   const fecha_nacimiento = document.getElementById("fechaNacimiento").value || null;
   const numero_afiliado = document.getElementById("numeroAfiliado").value;
   const dni = document.getElementById("dni").value;
-  const parentesco = document.getElementById("parentesco")?.value || null;
   const sexo = document.getElementById("sexo")?.value || null;
-  const plan = document.getElementById("plan")?.value || null;
-  const categoria = document.getElementById("categoria")?.value || null;
-  const localidad = document.getElementById("localidad")?.value || null;
+  const planNombre = document.getElementById("plan")?.value || null;
+  const categoriaNombre = document.getElementById("categoria")?.value || null;
+  const localidadNombre = document.getElementById("localidad")?.value || null;
   const discapacidad = document.getElementById("discapacidad")?.checked || false;
   const nivel_discapacidad = (discapacidad && document.getElementById("nivelDiscapacidad")?.value) || null;
+  const parentescoNombre = document.getElementById("parentesco")?.value || null;
+  const grupo_familiar_real = document.getElementById("grupoFamiliarReal")?.value || null;
 
-  if (parentesco === "Hijos" && fecha_nacimiento) {
-  const cumplio21 = pasoEdadLimite(fecha_nacimiento, 21);
-  const cumplio26 = pasoEdadLimite(fecha_nacimiento, 26);
+  // IDs reales de relaciones
+  const { data: parent } = await supabase.from("parentescos").select("id").eq("nombre", parentescoNombre).single();
+  const { data: planData } = await supabase.from("planes").select("id").eq("nombre", planNombre).single();
+  const { data: categoriaData } = await supabase.from("categorias").select("id").eq("nombre", categoriaNombre).single();
+  const { data: localidadData } = await supabase.from("localidades").select("id").eq("nombre", localidadNombre).single();
 
-  const estudiosEl = document.getElementById("estudios");
-  const estudios = estudiosEl?.value || null;
+  // =========================
+  // Validaciones de edad y adjuntos
+  // =========================
+  const adjEstudiosInput = document.getElementById("adjuntoEstudiosInput");
+  const adjDispInput = document.getElementById("adjuntoDiscapacidadInput");
 
-  if (!estudios && cumplio21) {
-    Swal.fire(
-      "No permitido",
-      "Los hijos pueden afiliarse hasta el día que cumplen 21 años",
-      "error"
-    );
-    return;
+  // Hijos 21-26
+  const esHijo21a26 = parentescoNombre === "Hijos" && fecha_nacimiento && pasoEdadLimite(fecha_nacimiento, 21) && !pasoEdadLimite(fecha_nacimiento, 26);
+
+  // Capturar el valor de estudios si corresponde
+  let estudios = null;
+  if (esHijo21a26) {
+    const estudiosSelect = document.getElementById("estudios");
+    if (estudiosSelect) estudios = estudiosSelect.value || null;
   }
 
-  if (estudios && cumplio26) {
-    Swal.fire(
-      "No permitido",
-      "Los hijos que estudian pueden afiliarse hasta el día que cumplen 26 años",
-      "error"
-    );
-    return;
-  }
-}
-
-  /* =====================
-     ADJUNTO ESTUDIOS
-  ===================== */
-  let adjuntoAlumnoUrl = afiliado.adjunto_alumno;
-
-  const fechaNac = fecha_nacimiento;
-  const correspondeAdjunto =
-    parentesco === "Hijos" &&
-    fechaNac &&
-    pasoEdadLimite(fechaNac, 21) &&
-    !pasoEdadLimite(fechaNac, 26);
-
-  // Si ya NO corresponde, lo limpiamos
-  if (!correspondeAdjunto) {
-    adjuntoAlumnoUrl = null;
+  // Validación y subida de adjunto estudios
+  let adjuntoEstudiosUrl = afiliado.adjuntoEstudios;
+  if (esHijo21a26) {
+    if (!adjuntoEstudiosUrl && (!adjEstudiosInput || adjEstudiosInput.files.length === 0)) {
+      Swal.fire("Adjunto requerido", "Debes cargar el certificado de alumno regular para hijos entre 21 y 26 años.", "error");
+      return;
+    }
+    if (adjEstudiosInput && adjEstudiosInput.files.length > 0) {
+      const file = adjEstudiosInput.files[0];
+      adjuntoEstudiosUrl = await subirArchivoCloudinary(file);
+    }
+  } else {
+    adjuntoEstudiosUrl = null;
   }
 
-  // Si corresponde y subió uno nuevo, lo reemplazamos
-  const adjuntoInput = document.getElementById("adjuntoAlumno");
-  if (correspondeAdjunto && adjuntoInput && adjuntoInput.files.length > 0) {
-    const file = adjuntoInput.files[0];
-    adjuntoAlumnoUrl = await subirArchivoCloudinary(file);
+  // Validación y subida de adjunto discapacidad
+  let adjuntoDiscapacidadUrl = afiliado.adjuntoDiscapacidad;
+  if (discapacidad) {
+    if (!adjuntoDiscapacidadUrl && (!adjDispInput || adjDispInput.files.length === 0)) {
+      Swal.fire("Adjunto requerido", "Debes cargar el comprobante de discapacidad.", "error");
+      return;
+    }
+    if (adjDispInput && adjDispInput.files.length > 0) {
+      const file = adjDispInput.files[0];
+      adjuntoDiscapacidadUrl = await subirArchivoCloudinary(file);
+    }
+  } else {
+    adjuntoDiscapacidadUrl = null;
   }
 
-
+  // =========================
+  // Payload con IDs y campos
+  // =========================
   const payload = {
     telefono,
-    fecha_nacimiento,
-    numero_afiliado,
+    fechaNacimiento: fecha_nacimiento,
     dni,
-    parentesco,
+    numero_afiliado,
+    parentesco_id: parent?.id || null,
+    plan_id: planData?.id || null,
+    categoria_id: categoriaData?.id || null,
+    localidad_id: localidadData?.id || null,
     sexo,
-    plan,
-    categoria,
-    localidad,
+    grupo_familiar_real,
     discapacidad,
     nivel_discapacidad,
     grupo_familiar_codigo: calcularGrupoFamiliar(numero_afiliado),
-    adjunto_alumno: adjuntoAlumnoUrl
+    estudios,
+    adjuntoEstudios: adjuntoEstudiosUrl,
+    adjuntoDiscapacidad: adjuntoDiscapacidadUrl
   };
 
-  const estudiosEl = document.getElementById("estudios");
-  if (estudiosEl && estudiosEl.tagName === "SELECT") payload.estudios = estudiosEl.value;
-
-  const { error } = await supabase.from("afiliados").update(payload).eq("id", afiliado.id);
+  const { error } = await supabase.from("afiliados").update(payload).eq("id", afiliadoId);
 
   if (error) {
-    Swal.fire("Error", error.message, "error");
+    Swal.fire("Error", "No se pudo guardar los cambios", "error");
+    console.error(error);
     return;
   }
 
-  Swal.fire("Guardado", "Cambios guardados", "success");
-  cargarAfiliado();
+  // =========================
+  // Actualizar la variable local y renderizar
+  // =========================
+  afiliado = {
+    ...afiliado,
+    ...payload,
+    parentesco_id: parent?.id ? { id: parent.id, nombre: parentescoNombre } : null,
+    plan_id: planData?.id ? { id: planData.id, nombre: planNombre } : null,
+    categoria_id: categoriaData?.id ? { id: categoriaData.id, nombre: categoriaNombre } : null,
+    localidad_id: localidadData?.id ? { id: localidadData.id, nombre: localidadNombre } : null
+  };
+
+  Swal.fire("Guardado", "Cambios guardados correctamente", "success");
+  renderFicha(); // Refresca la ficha con los datos actualizados
+  cargarGrupoFamiliar();
 }
 
 /* =====================
-   CANCELAR EDICIÓN
-===================== */
-function cancelarEdicion() {
-  modoEdicion = false;
-  cargarAfiliado();
-}
-
-/* =====================
-   BAJA / REACTIVAR / ELIMINAR
+   DAR DE BAJA / REACTIVAR
 ===================== */
 async function darDeBaja() {
   const res = await Swal.fire({
@@ -549,73 +605,75 @@ async function darDeBaja() {
   });
   if (!res.isConfirmed) return;
 
-  await supabase.from("afiliados").update({ activo: false }).eq("id", afiliado.id);
+  await supabase.from("afiliados").update({ activo: false }).eq("id", afiliadoId);
   cargarAfiliado();
 }
 
-async function reactivar() {
-  const res = await Swal.fire({
-    title: "¿Reactivar afiliado?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Reactivar"
-  });
-  if (!res.isConfirmed) return;
-
-  await supabase.from("afiliados").update({ activo: true }).eq("id", afiliado.id);
+async function reactivarAfiliado() {
+  await supabase.from("afiliados").update({ activo: true }).eq("id", afiliadoId);
   cargarAfiliado();
-}
-
-async function eliminarDefinitivo() {
-  const res = await Swal.fire({
-    title: "ELIMINAR DEFINITIVAMENTE",
-    text: "Esta acción no se puede deshacer",
-    icon: "error",
-    showCancelButton: true,
-    confirmButtonText: "Eliminar"
-  });
-  if (!res.isConfirmed) return;
-
-  await supabase.from("afiliados").delete().eq("id", afiliado.id);
-  window.location.href = "/pages/padron.html";
 }
 
 /* =====================
-   GRUPO FAMILIAR
+   CARGAR GRUPO FAMILIAR
 ===================== */
 async function cargarGrupoFamiliar() {
-  if (!afiliado.grupo_familiar_codigo) return;
+  if (!afiliado.grupo_familiar_codigo && !afiliado.grupo_familiar_real) return;
 
-  const { data } = await supabase
-    .from("afiliados")
-    .select("id, nombre, apellido, dni, numero_afiliado, parentesco, activo")
-    .eq("grupo_familiar_codigo", afiliado.grupo_familiar_codigo)
-    .order("parentesco");
+  // ======== CONSULTA ========
+ let query = supabase
+  .from("afiliados")
+  .select(`
+    id, nombre, apellido, dni, numero_afiliado, activo,
+    parentesco_id (nombre),
+    grupo_familiar_real,
+    grupo_familiar_codigo
+  `)
+  .order("parentesco_id", { ascending: true });
+
+if (afiliado.grupo_familiar_real) {
+  // Traer todos los que tienen su grupo_real o su grupo_codigo
+  query = query.or(
+    `grupo_familiar_real.eq.${afiliado.grupo_familiar_real},grupo_familiar_codigo.eq.${afiliado.grupo_familiar_codigo}`
+  );
+} else {
+  // Solo tiene grupo_familiar_codigo
+  query = query.eq("grupo_familiar_codigo", afiliado.grupo_familiar_codigo);
+}
+
+const { data: familiares, error } = await query;
+
+  if (error) {
+    console.error("Error cargando grupo familiar:", error);
+    return;
+  }
 
   const tbody = document.querySelector("#tablaGrupoFamiliar tbody");
   tbody.innerHTML = "";
 
-  if (!data || data.length === 0) return;
+  if (!familiares || familiares.length === 0) return;
 
-  data.forEach(a => {
+  familiares.forEach(f => {
     const tr = document.createElement("tr");
     tr.style.cursor = "pointer";
 
-    if (a.id === afiliado.id) {
+    if (f.id === afiliado.id) {
       tr.style.background = "#e0f2fe";
       tr.style.fontWeight = "600";
     }
 
     tr.innerHTML = `
-      <td>${a.nombre} ${a.apellido}</td>
-      <td>${a.dni}</td>
-      <td>${a.numero_afiliado}</td>
-      <td>${a.parentesco}</td>
-      <td>${a.activo ? "Activo" : "Dado de baja"}</td>
+      <td>${f.nombre} ${f.apellido}</td>
+      <td>${f.dni}</td>
+      <td>${f.numero_afiliado}</td>
+      <td>${f.parentesco_id?.nombre || "-"}</td>
+      <td>${f.grupo_familiar_codigo || "-"}</td>
+      <td>${f.grupo_familiar_real || "-"}</td>
+      <td>${f.activo ? "Activo" : "Dado de baja"}</td>
     `;
 
     tr.onclick = () => {
-      window.location.href = `/pages/afiliado.html?id=${a.id}`;
+      window.location.href = `/pages/afiliado.html?id=${f.id}`;
     };
 
     tbody.appendChild(tr);
@@ -625,35 +683,21 @@ async function cargarGrupoFamiliar() {
 /* =====================
    EVENTOS
 ===================== */
-document.getElementById("btnEditar").onclick = entrarModoEdicion;
-document.getElementById("btnGuardar").onclick = guardarCambios;
-document.getElementById("btnCancelar").onclick = cancelarEdicion;
-document.getElementById("btnBaja").onclick = darDeBaja;
-document.getElementById("btnEliminar").onclick = eliminarDefinitivo;
-document.getElementById("btnReactivar").onclick = reactivar;
+document.getElementById("btnEditar").addEventListener("click", entrarModoEdicion);
+document.getElementById("btnCancelar").addEventListener("click", renderFicha);
+document.getElementById("btnGuardar").addEventListener("click", guardarCambios);
+document.getElementById("btnBaja").addEventListener("click", darDeBaja);
+document.getElementById("btnReactivar").addEventListener("click", reactivarAfiliado);
+document.getElementById("btnVolver").addEventListener("click", () => window.history.back());
 
-/* =====================
-   BOTÓN VOLVER AL BUSCADOR
-===================== */
-document.getElementById("btnVolver").onclick = () => {
-  window.location.href = "/pages/padron.html";
-};
-
-/* =====================
-   CERRAR MODO EDICIÓN CON ESCAPE
-===================== */
-document.addEventListener("keydown", (e) => {
-  if (modoEdicion && e.key === "Escape") cancelarEdicion();
+document.getElementById("btnFichaMedica")?.addEventListener("click", () => {
+  if (!afiliado?.id) return;
+  window.location.href = `/pages/fichaMedica.html?id=${afiliado.id}`;
 });
 
-/* ================= Botón Ficha Médica ================= */
-document.getElementById("btnFichaMedica").onclick = () => {
-  window.location.href = `/pages/fichaMedica.html?id=${afiliadoId}`;
-};
-  
-await cargarHeader(); 
 
 /* =====================
-   INIT
+   INICIO
 ===================== */
-cargarAfiliado();
+await cargarHeader();
+await cargarAfiliado();
