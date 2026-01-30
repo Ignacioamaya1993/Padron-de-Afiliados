@@ -19,11 +19,13 @@ function calcularEdad(fechaNacimiento) {
   return edad;
 }
 
-function obtenerAlertaJubilado(categoriaNombre, fechaUltimoPago) {
+function obtenerAlertaJubilado(categoriaNombre, fechaUltimoPago, fechaNacimiento) {
   if (
     (categoriaNombre === "Jubilado ANSES" ||
      categoriaNombre === "Jubilado tramite") &&
-    fechaUltimoPago
+    fechaUltimoPago &&
+    fechaNacimiento &&
+    calcularEdad(fechaNacimiento) < 80
   ) {
     const hoy = new Date();
     const f = new Date(fechaUltimoPago);
