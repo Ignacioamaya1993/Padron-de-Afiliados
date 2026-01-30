@@ -67,6 +67,23 @@ function mostrarEstado(activo) {
   }
 }
 
+function diasDesde(fecha) {
+  if (!fecha) return null;
+  const hoy = new Date();
+  const f = new Date(fecha);
+  const diff = hoy - f;
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+function esCategoriaJubilado(nombre) {
+  return nombre === "Jubilado ANSES" || nombre === "Jubilado tramite";
+}
+
+function tieneMenosDe80(fechaNacimiento) {
+  if (!fechaNacimiento) return false;
+  return calcularEdad(fechaNacimiento) < 80;
+}
+
 /* =====================
    CARGAR AFILIADO
 ===================== */
@@ -145,6 +162,16 @@ for (const [idSpan, columna] of Object.entries(campos)) {
   }
 }
 
+const pagoInput = document.getElementById("fechaUltimoPago");
+if (pagoInput && pagoInput.tagName === "INPUT") {
+  const span = document.createElement("span");
+  span.id = "fechaUltimoPago";
+  span.textContent = afiliado.fecha_ultimo_pago_cuota
+    ? afiliado.fecha_ultimo_pago_cuota.split("-").reverse().join("/")
+    : "-";
+  pagoInput.replaceWith(span);
+}
+
 // Mostrar grupo sanguíneo
 const grupoSanguineoSpan = document.getElementById("grupoSanguineo");
 grupoSanguineoSpan.textContent = afiliado.grupo_sanguineo_id?.nombre || "-";
@@ -217,6 +244,34 @@ for (const [spanId, col] of Object.entries(campos)) {
 
   // Estado
   mostrarEstado(afiliado.activo);
+
+  const categoriaNombre = afiliado.categoria_id?.nombre || "";
+const pagoField = document.getElementById("fechaUltimoPagoField");
+const pagoSpan = document.getElementById("fechaUltimoPago");
+const alerta = document.getElementById("alertaDeudor");
+
+const esJubilado = esCategoriaJubilado(categoriaNombre);
+const pagaCuota = esJubilado && tieneMenosDe80(afiliado.fechaNacimiento);
+
+if (pagaCuota) {
+  pagoField.style.display = "block";
+
+  if (afiliado.fecha_ultimo_pago_cuota) {
+    pagoSpan.textContent = afiliado.fecha_ultimo_pago_cuota
+      .split("-")
+      .reverse()
+      .join("/");
+
+    const dias = diasDesde(afiliado.fecha_ultimo_pago_cuota);
+    alerta.style.display = dias > 40 ? "block" : "none";
+  } else {
+    pagoSpan.textContent = "-";
+    alerta.style.display = "none";
+  }
+} else {
+  pagoField.style.display = "none";
+  alerta.style.display = "none";
+}
 
   // Botones
   toggleBotones(false);
@@ -338,8 +393,13 @@ async function entrarModoEdicion() {
   reemplazarPorSelect("categoria", opciones.categorias, categoriaNombre);
   reemplazarPorSelect("localidad", opciones.localidades, localidadNombre);
   reemplazarPorSelect("grupoSanguineo", opcionesGrupoSanguineo, afiliado.grupo_sanguineo_id?.nombre);
-
   reemplazarPorCheckbox("discapacidad", afiliado.discapacidad);
+
+  const categoriaSelect = document.getElementById("categoria");
+  categoriaSelect.addEventListener("change", actualizarCampoPago);
+  
+
+  actualizarCampoPago();
 
   const nivelField = document.getElementById("nivelDiscapacidadField");
   const dispCheckbox = document.getElementById("discapacidad");
@@ -350,7 +410,7 @@ async function entrarModoEdicion() {
     nivelField.style.display = "none";
   }
 
-dispCheckbox.addEventListener("change", () => {
+  dispCheckbox.addEventListener("change", () => {
   const nivelField = document.getElementById("nivelDiscapacidadField");
   if (dispCheckbox.checked) {
     nivelField.style.display = "block";
@@ -358,12 +418,16 @@ dispCheckbox.addEventListener("change", () => {
   } else {
     nivelField.style.display = "none";
   }
+
   actualizarAdjuntoEdicion();
+  actualizarCampoPago();
 });
 
   const fechaInput = document.getElementById("fechaNacimiento");
   const parentescoSelect = document.getElementById("parentesco");
+  
 
+  fechaInput.addEventListener("input", actualizarCampoPago);
   fechaInput.addEventListener("input", actualizarEdadYEstudios);
   parentescoSelect.addEventListener("change", actualizarEdadYEstudios);
   fechaInput.addEventListener("input", actualizarAdjuntoEdicion);
@@ -385,6 +449,35 @@ function reemplazarPorInput(id, valor, tipo = "text") {
   input.id = id;
   input.value = valor || "";
   span.replaceWith(input);
+}
+
+function actualizarCampoPago() {
+  const categoria = document.getElementById("categoria")?.value;
+  const field = document.getElementById("fechaUltimoPagoField");
+  const span = document.getElementById("fechaUltimoPago");
+
+  const fechaNac = document.getElementById("fechaNacimiento")?.value;
+  const pagaCuota =
+    esCategoriaJubilado(categoria) &&
+    fechaNac &&
+    calcularEdad(fechaNac) < 80;
+
+  if (!pagaCuota) {
+    field.style.display = "none";
+    const input = document.getElementById("fechaUltimoPago");
+    if (input) input.value = "";
+    return;
+  }
+
+  field.style.display = "block";
+
+  if (span && span.tagName === "SPAN") {
+    const input = document.createElement("input");
+    input.type = "date";
+    input.id = "fechaUltimoPago";
+    input.value = formatoInputDate(afiliado.fecha_ultimo_pago_cuota);
+    span.replaceWith(input);
+  }
 }
 
 function reemplazarPorSelect(id, opciones, valorActual) {
@@ -493,9 +586,6 @@ function toggleBotones(editando) {
 /* =====================
    GUARDAR CAMBIOS
 ===================== */
-/* =====================
-   GUARDAR CAMBIOS
-===================== */
 async function guardarCambios() {
   const telefono = document.getElementById("telefono").value || null;
   const fecha_nacimiento = document.getElementById("fechaNacimiento").value || null;
@@ -510,6 +600,7 @@ async function guardarCambios() {
   const parentescoNombre = document.getElementById("parentesco")?.value || null;
   const grupo_familiar_real = document.getElementById("grupoFamiliarReal")?.value || null;
   const grupoSanguineoNombre = document.getElementById("grupoSanguineo")?.value || null;
+  const fecha_ultimo_pago_cuota = document.getElementById("fechaUltimoPago")?.value || null;
 
   // IDs reales de relaciones
   const { data: parent } = await supabase.from("parentescos").select("id").eq("nombre", parentescoNombre).single();
@@ -600,7 +691,8 @@ if (
     estudios,
     adjuntoEstudios: adjuntoEstudiosUrl,
     adjuntoDiscapacidad: adjuntoDiscapacidadUrl,
-    grupo_sanguineo_id: gsData?.id || null
+    grupo_sanguineo_id: gsData?.id || null,
+    fecha_ultimo_pago_cuota
   };
 
   const { error } = await supabase.from("afiliados").update(payload).eq("id", afiliadoId);

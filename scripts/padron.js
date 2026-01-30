@@ -19,6 +19,23 @@ function calcularEdad(fechaNacimiento) {
   return edad;
 }
 
+function obtenerAlertaJubilado(categoriaNombre, fechaUltimoPago) {
+  if (
+    (categoriaNombre === "Jubilado ANSES" ||
+     categoriaNombre === "Jubilado tramite") &&
+    fechaUltimoPago
+  ) {
+    const hoy = new Date();
+    const f = new Date(fechaUltimoPago);
+    const dias = Math.floor((hoy - f) / (1000 * 60 * 60 * 24));
+
+    if (dias > 40) {
+      return "⚠ Jubilado con más de 40 días sin pago de cuota social";
+    }
+  }
+  return null;
+}
+
 function mesesHastaCumple(fechaNacimiento, edadObjetivo) {
   const hoy = new Date();
   const fn = new Date(fechaNacimiento);
@@ -232,9 +249,21 @@ async function buscarAfiliados(texto) {
   try {
     const { data: afiliados, error } = await supabase
       .from("afiliados")
-      .select(`
-        id,nombre,apellido,dni,numero_afiliado,parentesco_id,fechaNacimiento,estudios,activo,grupo_familiar_codigo
-      `)
+.select(`
+  id,
+  nombre,
+  apellido,
+  dni,
+  numero_afiliado,
+  parentesco_id,
+  fechaNacimiento,
+  estudios,
+  activo,
+  grupo_familiar_codigo,
+  fecha_ultimo_pago_cuota,
+  categoria_id (nombre)
+`)
+
       .or(`nombre.ilike.%${texto}%,apellido.ilike.%${texto}%,dni.ilike.%${texto}%,numero_afiliado.ilike.%${texto}%`)
       .limit(20);
     if (error) throw error;
@@ -260,6 +289,7 @@ async function buscarAfiliados(texto) {
     afiliados.forEach(a => {
       const textoParentesco = a.numero_afiliado.endsWith("/00") ? "Titular" : (dicParentescos[a.parentesco_id] || "N/A");
       const alerta = obtenerAlertaHijo(a.fechaNacimiento, textoParentesco, a.estudios);
+      const alertaJubilado = obtenerAlertaJubilado(a.categoria_id?.nombre, a.fecha_ultimo_pago_cuota);
       const edad = a.fechaNacimiento ? calcularEdad(a.fechaNacimiento) : "";
       const estado = a.activo
         ? `<span style="color:#16a34a;font-weight:600">🟢 Activo</span>`
@@ -272,6 +302,7 @@ async function buscarAfiliados(texto) {
         DNI: ${a.dni || "-"} ${edad !== "" ? `| Edad: ${edad}` : ""}<br>
         Afiliado: ${a.numero_afiliado} | ${textoParentesco}
         ${alerta ? `<div class="alerta-edad">${alerta}</div>` : ""}
+        ${alertaJubilado ? `<div class="alerta-edad">${alertaJubilado}</div>` : ""}
       `;
       div.onclick = () => location.href = `/pages/afiliado.html?id=${a.id}`;
       resultadosDiv.appendChild(div);
