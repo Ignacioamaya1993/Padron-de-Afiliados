@@ -22,7 +22,7 @@ function calcularEdad(fechaNacimiento) {
 function obtenerAlertaJubilado(categoriaNombre, fechaUltimoPago, fechaNacimiento) {
   if (
     (categoriaNombre === "Jubilado ANSES" ||
-     categoriaNombre === "Jubilado tramite") &&
+     categoriaNombre === "Pensionado ANSES reparto") &&
     fechaUltimoPago &&
     fechaNacimiento &&
     calcularEdad(fechaNacimiento) < 80
@@ -186,6 +186,24 @@ function actualizarEdadYAdjunto() {
     adjuntoDiscapacidadInput.value = "";
   }
 }
+
+const categoriaSelect = f.querySelector('[name="categoria_id"]');
+const planMaternoFields = document.getElementById("planMaternoFields");
+
+function actualizarPlanMaterno() {
+  const selectedText =
+    categoriaSelect.options[categoriaSelect.selectedIndex]?.text;
+
+  if (selectedText === "Plan Materno") {
+    planMaternoFields.style.display = "flex";
+  } else {
+    planMaternoFields.style.display = "none";
+    f.plan_materno_desde.value = "";
+    f.plan_materno_hasta.value = "";
+  }
+}
+
+categoriaSelect.addEventListener("change", actualizarPlanMaterno);
 
 fechaNacimientoInput?.addEventListener("input", actualizarEdadYAdjunto);
 parentescoSelect?.addEventListener("change", actualizarEdadYAdjunto);
@@ -401,6 +419,48 @@ f.addEventListener("submit", async e => {
       btn.disabled = false; btn.textContent = "Guardar"; return;
     }
 
+    // Validación discapacidad
+if (discapacidadCheckbox.checked && !adjuntoDiscapacidadInput?.files[0]) {
+  Swal.fire(
+    "Requerido",
+    "Debe adjuntar constancia de discapacidad (CUD)",
+    "warning"
+  );
+  btn.disabled = false;
+  btn.textContent = "Guardar";
+  return;
+}
+
+/* =====================
+   VALIDACIÓN PLAN MATERNO
+===================== */
+const categoriaText =
+  categoriaSelect.options[categoriaSelect.selectedIndex]?.text;
+
+if (categoriaText === "Plan Materno") {
+  if (!data.plan_materno_desde || !data.plan_materno_hasta) {
+    Swal.fire(
+      "Datos incompletos",
+      "Debe indicar desde y hasta para el Plan Materno",
+      "warning"
+    );
+    btn.disabled = false;
+    btn.textContent = "Guardar";
+    return;
+  }
+
+  if (data.plan_materno_desde > data.plan_materno_hasta) {
+    Swal.fire(
+      "Fechas inválidas",
+      "La fecha 'desde' no puede ser posterior a la fecha 'hasta'",
+      "error"
+    );
+    btn.disabled = false;
+    btn.textContent = "Guardar";
+    return;
+  }
+}
+
     const adjuntoEstudios = f.adjuntoEstudios?.files[0]
       ? await subirArchivoCloudinary(f.adjuntoEstudios.files[0]) : null;
     const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
@@ -429,13 +489,17 @@ f.addEventListener("submit", async e => {
       adjuntoEstudios,
       adjuntoDiscapacidad,
       edad: edadInput.value || null,
-      created_by: user.user.id
+      created_by: user.user.id,
+      plan_materno_desde: data.plan_materno_desde || null,
+      plan_materno_hasta: data.plan_materno_hasta || null,  
     });
+    
     if (error) throw error;
 
     Swal.fire("Guardado", "Afiliado agregado correctamente", "success");
     f.reset();
     actualizarEdadYAdjunto();
+    actualizarPlanMaterno();
 
   } catch (err) {
     console.error(err);

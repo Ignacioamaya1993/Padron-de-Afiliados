@@ -16,6 +16,12 @@ if (!afiliadoId) {
 let afiliado = null;
 let modoEdicion = false;
 
+const desde = document.getElementById("planMaternoDesde");
+const hasta = document.getElementById("planMaternoHasta");
+
+if (desde && desde.tagName === "INPUT") desde.disabled = true;
+if (hasta && hasta.tagName === "INPUT") hasta.disabled = true;
+
 /* =====================
    HELPERS
 ===================== */
@@ -76,7 +82,7 @@ function diasDesde(fecha) {
 }
 
 function esCategoriaJubilado(nombre) {
-  return nombre === "Jubilado ANSES" || nombre === "Jubilado tramite";
+  return nombre === "Jubilado ANSES" || nombre === "Pensionado ANSES reparto";
 }
 
 function tieneMenosDe80(fechaNacimiento) {
@@ -245,7 +251,35 @@ for (const [spanId, col] of Object.entries(campos)) {
   // Estado
   mostrarEstado(afiliado.activo);
 
-  const categoriaNombre = afiliado.categoria_id?.nombre || "";
+  // =========================
+// PLAN MATERNO (vista)
+// =========================
+const categoriaNombre = afiliado.categoria_id?.nombre || "";
+
+const planMaternoDesde = afiliado.plan_materno_desde;
+const planMaternoHasta = afiliado.plan_materno_hasta;
+
+const mostrarPlanMaterno =
+  categoriaNombre === "Plan Materno" ||
+  (planMaternoHasta && new Date(planMaternoHasta) >= new Date());
+
+const desdeField = document.getElementById("planMaternoDesdeField");
+const hastaField = document.getElementById("planMaternoHastaField");
+
+if (mostrarPlanMaterno) {
+  desdeField.style.display = "block";
+  hastaField.style.display = "block";
+
+  document.getElementById("planMaternoDesde").textContent =
+    planMaternoDesde ? planMaternoDesde.split("-").reverse().join("/") : "-";
+
+  document.getElementById("planMaternoHasta").textContent =
+    planMaternoHasta ? planMaternoHasta.split("-").reverse().join("/") : "-";
+} else {
+  desdeField.style.display = "none";
+  hastaField.style.display = "none";
+}
+
 const pagoField = document.getElementById("fechaUltimoPagoField");
 const pagoSpan = document.getElementById("fechaUltimoPago");
 const alerta = document.getElementById("alertaDeudor");
@@ -358,14 +392,9 @@ async function obtenerOpciones() {
   };
 }
 
-/* Formato YYYY-MM-DD para inputs de tipo date */
 function formatoInputDate(fecha) {
   if (!fecha) return "";
-  const d = new Date(fecha);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
+  return fecha.split("T")[0]; // YYYY-MM-DD exacto, sin timezone
 }
 
 async function entrarModoEdicion() {
@@ -394,11 +423,24 @@ async function entrarModoEdicion() {
   reemplazarPorSelect("localidad", opciones.localidades, localidadNombre);
   reemplazarPorSelect("grupoSanguineo", opcionesGrupoSanguineo, afiliado.grupo_sanguineo_id?.nombre);
   reemplazarPorCheckbox("discapacidad", afiliado.discapacidad);
+  reemplazarPorInput("planMaternoDesde", formatoInputDate(afiliado.plan_materno_desde), "date");
+  reemplazarPorInput( "planMaternoHasta", formatoInputDate(afiliado.plan_materno_hasta), "date");
 
   const categoriaSelect = document.getElementById("categoria");
   categoriaSelect.addEventListener("change", actualizarCampoPago);
-  
 
+    categoriaSelect.addEventListener("change", () => {
+      actualizarPlanMaternoEdicion();
+    });
+
+    const planMaternoHastaInput = document.getElementById("planMaternoHasta");
+    if (planMaternoHastaInput) {
+      planMaternoHastaInput.addEventListener(
+        "change",
+        controlarVencimientoPlanMaterno
+      );
+    }
+  
   actualizarCampoPago();
 
   const nivelField = document.getElementById("nivelDiscapacidadField");
@@ -421,17 +463,20 @@ async function entrarModoEdicion() {
 
   actualizarAdjuntoEdicion();
   actualizarCampoPago();
+  actualizarPlanMaternoEdicion();
 });
 
   const fechaInput = document.getElementById("fechaNacimiento");
-  const parentescoSelect = document.getElementById("parentesco");
-  
+  const parentescoSelect = document.getElementById("parentesco");  
 
   fechaInput.addEventListener("input", actualizarCampoPago);
   fechaInput.addEventListener("input", actualizarEdadYEstudios);
   parentescoSelect.addEventListener("change", actualizarEdadYEstudios);
   fechaInput.addEventListener("input", actualizarAdjuntoEdicion);
   parentescoSelect.addEventListener("change", actualizarAdjuntoEdicion);
+  document.getElementById("planMaternoHasta") ?.addEventListener("change", controlarVencimientoPlanMaterno);
+  document.getElementById("planMaternoDesde").disabled = false;
+  document.getElementById("planMaternoHasta").disabled = false;
 
   actualizarEdadYEstudios();
   toggleBotones(true);
@@ -449,6 +494,57 @@ function reemplazarPorInput(id, valor, tipo = "text") {
   input.id = id;
   input.value = valor || "";
   span.replaceWith(input);
+}
+
+function controlarVencimientoPlanMaterno() {
+  if (!modoEdicion) return;
+
+  const hastaInput = document.getElementById("planMaternoHasta");
+  const categoriaSelect = document.getElementById("categoria");
+
+  if (!hastaInput || !categoriaSelect) return;
+
+  if (!hastaInput.value) return;
+
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const fechaHasta = new Date(hastaInput.value);
+  fechaHasta.setHours(0, 0, 0, 0);
+
+  // Si venció y sigue en Plan Materno → cambia solo
+  if (fechaHasta < hoy && categoriaSelect.value === "Plan Materno") {
+    categoriaSelect.value = "Obligatorios";
+    categoriaSelect.dispatchEvent(new Event("change"));
+  }
+}
+
+function actualizarPlanMaternoEdicion() {
+  if (!modoEdicion) return;
+
+  const categoriaSelect = document.getElementById("categoria");
+  const desdeField = document.getElementById("planMaternoDesdeField");
+  const hastaField = document.getElementById("planMaternoHastaField");
+
+  if (!categoriaSelect || !desdeField || !hastaField) return;
+
+  const esPlanMaterno = categoriaSelect.value === "Plan Materno";
+
+  desdeField.style.display = esPlanMaterno ? "block" : "none";
+  hastaField.style.display = esPlanMaterno ? "block" : "none";
+
+  // si vuelve a Plan Materno, no lo dejes vacío
+  if (esPlanMaterno) {
+    const desde = document.getElementById("planMaternoDesde");
+    const hasta = document.getElementById("planMaternoHasta");
+
+    if (desde && !desde.value) {
+      desde.value = formatoInputDate(afiliado.plan_materno_desde);
+    }
+    if (hasta && !hasta.value) {
+      hasta.value = formatoInputDate(afiliado.plan_materno_hasta);
+    }
+  }
 }
 
 function actualizarCampoPago() {
@@ -575,6 +671,26 @@ if (elGrupoReal && (elGrupoReal.tagName === "INPUT" || elGrupoReal.tagName === "
     span.textContent = afiliado.estudios || "-";
     est.replaceWith(span);
   }
+
+  ["planMaternoDesde", "planMaternoHasta"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el && el.tagName === "INPUT") {
+    const span = document.createElement("span");
+    span.id = id;
+
+    const valor =
+      id === "planMaternoDesde"
+        ? afiliado.plan_materno_desde
+        : afiliado.plan_materno_hasta;
+
+    span.textContent = valor
+      ? valor.split("-").reverse().join("/")
+      : "-";
+
+    el.replaceWith(span);
+  }
+});
+
 }
 
 function toggleBotones(editando) {
@@ -601,6 +717,8 @@ async function guardarCambios() {
   const grupo_familiar_real = document.getElementById("grupoFamiliarReal")?.value || null;
   const grupoSanguineoNombre = document.getElementById("grupoSanguineo")?.value || null;
   const fecha_ultimo_pago_cuota = document.getElementById("fechaUltimoPago")?.value || null;
+  const plan_materno_desde = document.getElementById("planMaternoDesde")?.value || null;
+  const plan_materno_hasta = document.getElementById("planMaternoHasta")?.value || null;
 
   // IDs reales de relaciones
   const { data: parent } = await supabase.from("parentescos").select("id").eq("nombre", parentescoNombre).single();
@@ -692,7 +810,9 @@ if (
     adjuntoEstudios: adjuntoEstudiosUrl,
     adjuntoDiscapacidad: adjuntoDiscapacidadUrl,
     grupo_sanguineo_id: gsData?.id || null,
-    fecha_ultimo_pago_cuota
+    fecha_ultimo_pago_cuota,
+    plan_materno_desde,
+    plan_materno_hasta
   };
 
   const { error } = await supabase.from("afiliados").update(payload).eq("id", afiliadoId);
@@ -817,13 +937,14 @@ document.getElementById("btnCancelar").addEventListener("click", renderFicha);
 document.getElementById("btnGuardar").addEventListener("click", guardarCambios);
 document.getElementById("btnBaja").addEventListener("click", darDeBaja);
 document.getElementById("btnReactivar").addEventListener("click", reactivarAfiliado);
-document.getElementById("btnVolver").addEventListener("click", () => window.history.back());
+document.getElementById("btnVolver").addEventListener("click", () => {
+  window.location.href = "/pages/padron.html";
+});
 
 document.getElementById("btnFichaMedica")?.addEventListener("click", () => {
   if (!afiliado?.id) return;
   window.location.href = `/pages/fichaMedica.html?id=${afiliado.id}`;
 });
-
 
 /* =====================
    INICIO

@@ -148,6 +148,32 @@ body {
   color: #666;
 }
 
+.fila-plan-categoria {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+/* Campos plan materno ocultos por defecto */
+.plan-materno-field {
+  display: none;
+}
+
+/* ESTADO PLAN MATERNO ACTIVO */
+.fila-plan-categoria.plan-materno-activo {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+/* Cuando está activo, mostrar fechas */
+.fila-plan-categoria.plan-materno-activo .plan-materno-field {
+  display: block;
+}
+
+/* Localidad baja a la fila de abajo */
+.fila-plan-categoria.plan-materno-activo #localidadSelect {
+  grid-column: 1 / span 2;
+}
+
 /* =========================
    CHECKBOX DISCAPACIDAD
 ========================= */
