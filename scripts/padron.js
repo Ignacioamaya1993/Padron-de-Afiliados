@@ -461,10 +461,16 @@ if (categoriaText === "Plan Materno") {
   }
 }
 
-    const adjuntoEstudios = f.adjuntoEstudios?.files[0]
-      ? await subirArchivoCloudinary(f.adjuntoEstudios.files[0]) : null;
-    const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
-      ? await subirArchivoCloudinary(adjuntoDiscapacidadInput.files[0]) : null;
+const carpetaAfiliado = data.numero_afiliado;
+
+const adjuntoEstudios = f.adjuntoEstudios?.files[0]
+  ? await subirArchivoCloudinary(f.adjuntoEstudios.files[0], carpetaAfiliado)
+  : null;
+
+const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
+  ? await subirArchivoCloudinary(adjuntoDiscapacidadInput.files[0], carpetaAfiliado)
+  : null;
+
 
     const { data: user } = await supabase.auth.getUser();
 

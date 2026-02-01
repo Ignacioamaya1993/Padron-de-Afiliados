@@ -3,6 +3,44 @@ import { supabase } from "./supabase.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
 /* =====================
+   AVISO IMPORTANTE SOBRE PLAN MATERNO
+=====================
+
+El cambio automático de categoría de "Plan Materno" a "Obligatorios" se realiza
+directamente desde Supabase, no desde esta interfaz de JavaScript.
+
+- Función SQL que realiza el cambio automático: 
+  -> vencer_planes_maternos()
+     Esta función revisa las fechas de plan_materno_hasta y actualiza la categoria_id
+     cuando el plan materno vence.
+
+- Trigger asociado:
+  -> historial_cambios_plan_materno
+     Se dispara después de cada update sobre afiliados o afiliado_plan_materno
+     y registra en la tabla afiliado_plan_materno_historial todos los cambios
+     de fechas y categoría, junto con quién hizo el cambio y cuándo.
+
+- Historial de cambios:
+  -> Tabla: afiliado_plan_materno_historial
+     Guarda:
+       * plan_materno_desde_anterior / plan_materno_desde_nueva
+       * plan_materno_hasta_anterior / plan_materno_hasta_nueva
+       * categoria_anterior / categoria_nueva
+       * motivo del cambio
+       * cambiado_por (usuario)
+       * cambiado_en (timestamp)
+
+Para consultar manualmente o revisar registros:
+1. En Supabase, ir a **SQL Editor**
+2. Para ver el historial:
+   SELECT * FROM afiliado_plan_materno_historial ORDER BY cambiado_en DESC;
+3. Para revisar la función automática:
+   DATABASE -> Functions -> vencer_planes_maternos
+
+===================== */
+
+
+/* =====================
    PARAMS
 ===================== */
 const params = new URLSearchParams(window.location.search);
@@ -752,7 +790,7 @@ async function guardarCambios() {
     }
     if (adjEstudiosInput && adjEstudiosInput.files.length > 0) {
       const file = adjEstudiosInput.files[0];
-      adjuntoEstudiosUrl = await subirArchivoCloudinary(file);
+      adjuntoEstudiosUrl = await subirArchivoCloudinary(file, numero_afiliado);
     }
   } else {
     adjuntoEstudiosUrl = null;
@@ -767,7 +805,7 @@ async function guardarCambios() {
     }
     if (adjDispInput && adjDispInput.files.length > 0) {
       const file = adjDispInput.files[0];
-      adjuntoDiscapacidadUrl = await subirArchivoCloudinary(file);
+      adjuntoDiscapacidadUrl = await subirArchivoCloudinary(file, numero_afiliado);
     }
   } else {
     adjuntoDiscapacidadUrl = null;
