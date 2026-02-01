@@ -309,7 +309,7 @@ async function buscarAfiliados(texto) {
     afiliados.forEach(a => {
       const textoParentesco = a.numero_afiliado.endsWith("/00") ? "Titular" : (dicParentescos[a.parentesco_id] || "N/A");
       const alerta = obtenerAlertaHijo(a.fechaNacimiento, textoParentesco, a.estudios);
-      const alertaJubilado = obtenerAlertaJubilado(a.categoria_id?.nombre, a.fecha_ultimo_pago_cuota);
+      const alertaJubilado = obtenerAlertaJubilado(a.categoria_id?.nombre, a.fecha_ultimo_pago_cuota, a.fechaNacimiento);      
       const edad = a.fechaNacimiento ? calcularEdad(a.fechaNacimiento) : "";
       const estado = a.activo
         ? `<span style="color:#16a34a;font-weight:600">🟢 Activo</span>`
@@ -498,6 +498,7 @@ const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
       created_by: user.user.id,
       plan_materno_desde: data.plan_materno_desde || null,
       plan_materno_hasta: data.plan_materno_hasta || null,  
+      cbu_cvu: data.cbu_cvu || null,
     });
     
     if (error) throw error;

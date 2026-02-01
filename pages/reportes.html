@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reportes</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="../assets/images/Solo_logo.png">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../styles/header.css" />
+  <link rel="stylesheet" href="../styles/reportes.css" />
+
+  <!-- SweetAlert -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <!-- HEADER COMÚN -->
+  <div id="header-container"></div>
+
+  <main class="reportes-container">
+
+    <h1>Reportes</h1>
+    <p class="subtitle">Reporte general del padrón de afiliados</p>
+
+    <section class="reportes-grid">
+
+      <div class="reporte-card" data-reporte="afiliados">
+        <h3>Afiliados</h3>
+        <p>Listado completo de todos los afiliados</p>
+        <button type="button">Ver reporte</button>
+      </div>
+
+    </section>
+
+    <section id="reporteResultado" class="reporte-resultado hidden">
+      <h2 id="reporteTitulo">Afiliados</h2>
+
+      <div class="reporte-actions">
+        <button id="exportExcel" type="button">Exportar Excel</button>
+        <button id="exportPdf" type="button">Exportar PDF</button>
+      </div>
+
+      <div class="tabla-container">
+        <table id="tablaReporte">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SheetJS (Excel) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+  <!-- jsPDF -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<!-- AutoTable (tablas en PDF) -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.29/dist/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- JS -->
+  <script type="module" src="../scripts/reportes.js"></script>
+
+</body>
+</html>

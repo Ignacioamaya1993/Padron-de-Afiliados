@@ -187,6 +187,7 @@ const campos = {
   grupoFamiliar: "grupo_familiar_codigo",
   dni: "dni",
   sexo: "sexo",
+  cbuCvu: "cbu_cvu",
   parentesco: "parentesco_id",
   plan: "plan_id",
   categoria: "categoria_id",
@@ -463,6 +464,7 @@ async function entrarModoEdicion() {
   reemplazarPorCheckbox("discapacidad", afiliado.discapacidad);
   reemplazarPorInput("planMaternoDesde", formatoInputDate(afiliado.plan_materno_desde), "date");
   reemplazarPorInput( "planMaternoHasta", formatoInputDate(afiliado.plan_materno_hasta), "date");
+  reemplazarPorInput("cbuCvu", afiliado.cbu_cvu);
 
   const categoriaSelect = document.getElementById("categoria");
   categoriaSelect.addEventListener("change", actualizarCampoPago);
@@ -670,7 +672,7 @@ function convertirEstudiosASelect() {
 }
 
 function restaurarCampos() {
-  ["telefono","fechaNacimiento","numeroAfiliado","dni"].forEach(id => {
+  ["telefono","fechaNacimiento","numeroAfiliado","dni","cbuCvu"].forEach(id => {
     const el = document.getElementById(id);
     if (el && el.tagName === "INPUT") {
       const span = document.createElement("span");
@@ -757,6 +759,7 @@ async function guardarCambios() {
   const fecha_ultimo_pago_cuota = document.getElementById("fechaUltimoPago")?.value || null;
   const plan_materno_desde = document.getElementById("planMaternoDesde")?.value || null;
   const plan_materno_hasta = document.getElementById("planMaternoHasta")?.value || null;
+  const cbu_cvu = document.getElementById("cbuCvu")?.value || null;
 
   // IDs reales de relaciones
   const { data: parent } = await supabase.from("parentescos").select("id").eq("nombre", parentescoNombre).single();
@@ -850,7 +853,8 @@ if (
     grupo_sanguineo_id: gsData?.id || null,
     fecha_ultimo_pago_cuota,
     plan_materno_desde,
-    plan_materno_hasta
+    plan_materno_hasta,
+    cbu_cvu
   };
 
   const { error } = await supabase.from("afiliados").update(payload).eq("id", afiliadoId);
@@ -983,6 +987,37 @@ document.getElementById("btnFichaMedica")?.addEventListener("click", () => {
   if (!afiliado?.id) return;
   window.location.href = `/pages/fichaMedica.html?id=${afiliado.id}`;
 });
+
+
+// =====================
+// ELIMINAR DEFINITIVO
+// =====================
+async function eliminarAfiliado() {
+  const res = await Swal.fire({
+    title: "¿Eliminar afiliado definitivamente?",
+    text: "Esta acción no se puede deshacer.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Eliminar",
+    cancelButtonText: "Cancelar"
+  });
+
+  if (!res.isConfirmed) return;
+
+  const { error } = await supabase.from("afiliados").delete().eq("id", afiliadoId);
+
+  if (error) {
+    Swal.fire("Error", "No se pudo eliminar el afiliado", "error");
+    console.error(error);
+    return;
+  }
+
+  Swal.fire("Eliminado", "El afiliado ha sido eliminado correctamente", "success").then(() => {
+    window.location.href = "/pages/padron.html";
+  });
+}
+
+document.getElementById("btnEliminar").addEventListener("click", eliminarAfiliado);
 
 /* =====================
    INICIO

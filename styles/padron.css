@@ -345,3 +345,13 @@ body {
     flex: 0 0 auto;
   }
 }
+
+@media (max-width: 599px) {
+  #planMaternoFields {
+    grid-template-columns: 1fr; /* apilar verticalmente */
+  }
+
+  #planMaternoFields .floating-field input {
+    width: 100%;
+  }
+}

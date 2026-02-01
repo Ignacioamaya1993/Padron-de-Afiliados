@@ -54,6 +54,25 @@ body {
   cursor: pointer;
 }
 
+#adjuntoDiscapacidadField{
+  grid-column: 1 / -4; /* ocupa todo el ancho del form */
+}
+
+#adjuntoDiscapacidadField label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+  color: #f59e0b; /* mismo color que estudios */
+}
+
+#adjuntoDiscapacidadField input[type="file"] {
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  background: #fff7ed;
+  padding: 0.4rem;
+  cursor: pointer;
+}
+
 /* =====================
    FICHA AFILIADO
 ===================== */
@@ -334,6 +353,26 @@ background: #ffffff;
     .ficha-afiliado {
     padding: 1rem;
     margin-top: 0.5rem;
+  }
+
+    /* Apilar campos plan materno en tablets/móviles */
+  #planMaternoDesdeField,
+  #planMaternoHastaField {
+    width: 100%;
+  }
+
+  .grupo-familiar {
+    overflow-x: auto; /* permite scroll horizontal */
+  }
+
+  #tablaGrupoFamiliar {
+    min-width: 700px; /* mínimo ancho para que no se comprima demasiado */
+    display: table;
+  }
+
+  #tablaGrupoFamiliar th,
+  #tablaGrupoFamiliar td {
+    white-space: nowrap; /* evita que se corten los textos */
   }
 
   /* Botón volver deja de flotar */

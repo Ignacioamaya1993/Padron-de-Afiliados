@@ -1,0 +1,112 @@
+/* RESET BÁSICO */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f5f7fa;
+  color: #222;
+  min-height: 100vh;
+}
+
+.reportes-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 1.5rem;
+  color: #111827;
+}
+
+.reportes-container h1 {
+  font-size: 1.6rem;
+  margin-bottom: 0.3rem;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.reportes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.reporte-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 1.2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.reporte-card h3 {
+  margin-bottom: 0.4rem;
+}
+
+.reporte-card p {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.reporte-card button {
+  align-self: flex-start;
+  background: #1e293b;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reporte-card button:hover {
+  background: #0f172a;
+}
+
+.reporte-resultado {
+  margin-top: 2rem;
+}
+
+.reporte-resultado.hidden {
+  display: none;
+}
+
+.reporte-actions {
+  margin: 0.8rem 0;
+  display: flex;
+  gap: 0.6rem;
+}
+
+.reporte-actions button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tabla-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f1f5f9;
+}
+
+th, td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.85rem;
+}
