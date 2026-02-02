@@ -2,12 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Padron de Afiliados Luz y Fuerza</title>
+  <title>Padrón de Afiliados Luz y Fuerza</title>
   <link rel="icon" type="image/png" href="assets/images/Solo_logo.png">
+  <link rel="stylesheet" href="./styles/index.css">
 </head>
 <body>
 
-  <p>Verificando sesión...</p>
+  <div class="verificando-container">
+    <img src="assets/images/Solo_logo.png" alt="Logo" class="logo">
+    <div class="loader"></div>
+    <p>Verificando sesión...</p>
+  </div>
 
   <script type="module">
     import { authObserver } from "./scripts/auth.js";

@@ -131,3 +131,8 @@ async function exportarAfiliadosPDF() {
     Swal.fire("Error", "No se pudo exportar el PDF", "error");
   }
 }
+
+//Boton volver al padrón
+document.getElementById("btnVolver").addEventListener("click", () => {
+  window.location.href = "/pages/padron.html";
+});
