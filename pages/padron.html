@@ -61,6 +61,13 @@
       </div>
 
       <input
+        type="email"
+        name="email"
+        placeholder="Correo electrónico"
+        autocomplete="email"
+      />
+
+      <input
         type="text"
         name="numero_afiliado"
         placeholder="Número de Afiliado (ej: 19-00639-4/00)"
@@ -76,16 +83,14 @@
         type="text"
         name="grupo_familiar_real"
         placeholder="Grupo Familiar Real (ej: FAM-OLAV-001)"
-        required
       />
 
       <input
         type="text"
         name="cbu_cvu"
-        placeholder="CBU / CVU (22 dígitos)"
+        placeholder="CBU / CVU / Alias"
         inputmode="numeric"
         maxlength="22"
-        required
       />
 
       <!-- 🔹 PARENTESCO -->
@@ -102,18 +107,18 @@
 
         <!-- 🔹 GRUPO SANGUÍNEO (opcional) -->
   <div class="floating-field">
-    <select name="grupo_sanguineo_id" id="grupoSanguineoSelect">
+    <select name="grupo_sanguineo_id" id="grupoSanguineoSelect" required>
       <option value="">Grupo sanguíneo</option>
     </select>
   </div>
 
       <!-- 🔹 PLAN -->
-      <select name="plan_id" id="planSelect">
+      <select name="plan_id" id="planSelect" required>
         <option value="">Plan</option>
       </select>
 
       <!-- 🔹 CATEGORÍA -->
-      <select name="categoria_id" id="categoriaSelect">
+      <select name="categoria_id" id="categoriaSelect" required>
         <option value="">Categoría</option>
       </select>
 
@@ -139,7 +144,7 @@
   </div>
 
       <!-- 🔹 LOCALIDAD -->
-      <select name="localidad_id" id="localidadSelect">
+      <select name="localidad_id" id="localidadSelect" required>
         <option value="">Localidad</option>
       </select>
 
@@ -164,9 +169,10 @@
       <div id="estudiosField" style="display:none;">
         <select name="estudios">
           <option value="">Nivel de estudios</option>
-          <option value="Terciario">Terciario</option>
-          <option value="Universitario">Universitario</option>
+          <option value="Grado">Grado</option>
           <option value="Posgrado">Posgrado</option>
+          <option value="Universitario">Universitario</option>
+          <option value="Terciario">Terciario</option>
         </select>
       </div>
 
