@@ -9,6 +9,11 @@ let buscando = false;
 /* =====================
    HELPERS
 ===================== */
+
+/*
+  Calcula la edad en años a partir de una fecha de nacimiento.
+  Tiene en cuenta si ya cumplió años este año o no.
+*/
 function calcularEdad(fechaNacimiento) {
   if (!fechaNacimiento) return null;
   const hoy = new Date();
@@ -19,6 +24,11 @@ function calcularEdad(fechaNacimiento) {
   return edad;
 }
 
+
+/*
+  Genera una alerta para jubilados/pensionados ANSES
+  si hace más de 40 días que no pagan y son menores de 80 años
+*/
 function obtenerAlertaJubilado(categoriaNombre, fechaUltimoPago, fechaNacimiento) {
   if (
     (categoriaNombre === "Jubilado ANSES" ||
@@ -38,6 +48,10 @@ function obtenerAlertaJubilado(categoriaNombre, fechaUltimoPago, fechaNacimiento
   return null;
 }
 
+/*
+  Calcula cuántos meses faltan para que una persona
+  llegue a una edad específica (21, 26, 18, etc.)
+*/
 function mesesHastaCumple(fechaNacimiento, edadObjetivo) {
   const hoy = new Date();
   const fn = new Date(fechaNacimiento);
@@ -46,6 +60,9 @@ function mesesHastaCumple(fechaNacimiento, edadObjetivo) {
   return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30));
 }
 
+/*
+  Devuelve true si la persona ya superó una edad límite
+*/
 function pasoEdadLimite(fechaNacimiento, edadLimite) {
   if (!fechaNacimiento) return true;
   const fn = new Date(fechaNacimiento);
@@ -53,6 +70,10 @@ function pasoEdadLimite(fechaNacimiento, edadLimite) {
   return new Date() >= fechaLimite;
 }
 
+/*
+  Genera alertas para hijos o menores bajo guarda
+  cuando están cerca de perder cobertura por edad
+*/
 function obtenerAlertaHijo(fechaNacimiento, parentesco, estudios) {
   if (!fechaNacimiento) return null;
 
@@ -89,6 +110,10 @@ function obtenerAlertaHijo(fechaNacimiento, parentesco, estudios) {
 /* =====================
    ELEMENTOS FORMULARIO
 ===================== */
+
+/*
+  Referencias a todos los inputs y secciones del formulario
+*/
 const f = document.getElementById("PadronForm");
 
 const parentescoSelect = f.querySelector('[name="parentesco_id"]');
@@ -107,6 +132,11 @@ const adjuntoEstudiosField = document.getElementById("adjuntoEstudiosField");
 /* =====================
    CATÁLOGOS
 ===================== */
+
+/*
+  Carga opciones de una tabla (planes, categorías, etc.)
+  dentro de un select HTML
+*/
 async function cargarSelect(tabla, select) {
   if (!select) return;
   const { data, error } = await supabase.from(tabla).select("id, nombre").order("nombre");
@@ -122,8 +152,15 @@ async function cargarSelect(tabla, select) {
   });
 }
 
+/*
+  Diccionario id → nombre de parentescos
+  Se usa en validaciones y alertas
+*/
 let dicParentescos = {};
 
+/*
+  Carga todos los catálogos necesarios al iniciar la pantalla
+*/
 async function cargarCatalogos() {
   const { data, error } = await supabase.from("parentescos").select("id,nombre").order("nombre");
   if (!error && data) {
@@ -143,6 +180,10 @@ async function cargarCatalogos() {
 
 await cargarCatalogos();
 
+/*
+  Determina si un hijo está en el rango 21–26
+  donde puede seguir cubierto solo si estudia
+*/
 function dentroRangoEstudio(fechaNacimiento) {
   if (!fechaNacimiento) return false;
   const fn = new Date(fechaNacimiento);
@@ -155,6 +196,14 @@ function dentroRangoEstudio(fechaNacimiento) {
 /* =====================
    EDAD / ESTUDIOS / ADJUNTOS
 ===================== */
+
+/*
+  Actualiza:
+  - Edad calculada
+  - Mostrar/ocultar estudios
+  - Mostrar/ocultar adjuntos
+  - Mostrar/ocultar discapacidad
+*/
 function actualizarEdadYAdjunto() {
   const fechaNacimiento = fechaNacimientoInput.value;
   const parentescoId = parentescoSelect.value;
@@ -176,7 +225,7 @@ function actualizarEdadYAdjunto() {
     adjuntoEstudiosField.style.display = "none";
   }
 
-  // Discapacidad
+  // Manejo de discapacidad
   if (discapacidadCheckbox.checked && nivelDiscapacidadSelect.value) {
     adjuntoDiscapacidadField.style.display = "block";
     adjuntoDiscapacidadInput.required = true;
@@ -187,6 +236,13 @@ function actualizarEdadYAdjunto() {
   }
 }
 
+/* =====================
+   PLAN MATERNO
+===================== */
+/*
+  Muestra campos adicionales solo si la categoría
+  seleccionada es "Plan Materno"
+*/
 const categoriaSelect = f.querySelector('[name="categoria_id"]');
 const planMaternoFields = document.getElementById("planMaternoFields");
 
@@ -204,7 +260,6 @@ function actualizarPlanMaterno() {
 }
 
 categoriaSelect.addEventListener("change", actualizarPlanMaterno);
-
 fechaNacimientoInput?.addEventListener("input", actualizarEdadYAdjunto);
 parentescoSelect?.addEventListener("change", actualizarEdadYAdjunto);
 estudiosSelect?.addEventListener("change", actualizarEdadYAdjunto);
@@ -214,14 +269,27 @@ nivelDiscapacidadSelect?.addEventListener("change", actualizarEdadYAdjunto);
 /* =====================
    TITULAR DE GRUPO
 ===================== */
+
+/*
+  Determina si un número de afiliado corresponde al titular del grupo
+  Convención: los titulares terminan en "/00"
+*/
 const numeroAfiliadoInput = f.querySelector('[name="numero_afiliado"]');
 const titularGrupoInput = document.getElementById("titularGrupo");
 const titularGrupoWrapper = document.getElementById("titularGrupoWrapper");
 
+/*
+  Determina si un número de afiliado corresponde al titular del grupo
+  Convención: los titulares terminan en "/00"
+*/
 function esTitular(numero) {
   return numero.endsWith("/00");
 }
 
+/*
+  Busca en la base de datos al titular del grupo familiar
+  usando el código de grupo_familiar_codigo
+*/
 async function obtenerTitularGrupo(codigo) {
   const { data } = await supabase
     .from("afiliados")
@@ -232,13 +300,21 @@ async function obtenerTitularGrupo(codigo) {
   return data ? `${data.nombre} ${data.apellido}` : null;
 }
 
+/*
+  Al escribir el número de afiliado:
+  - Si es titular → no hace nada
+  - Si es adherente → busca y muestra el titular del grupo
+*/
 numeroAfiliadoInput.addEventListener("input", async () => {
   titularGrupoWrapper.style.display = "none";
   titularGrupoInput.value = "";
   const val = numeroAfiliadoInput.value.trim();
   if (!val || esTitular(val)) return;
+
+    // Extrae el código del grupo familiar del formato XX-XXXXX-X/YY
   const match = val.match(/^[^-]+-([^/]+)\//);
   if (!match) return;
+
   const titular = await obtenerTitularGrupo(match[1]);
   if (titular) {
     titularGrupoInput.value = titular;
@@ -249,12 +325,23 @@ numeroAfiliadoInput.addEventListener("input", async () => {
 /* =====================
    BUSCADOR
 ===================== */
+/*
+  Buscador en vivo de afiliados:
+  - Usa debounce para no saturar la base
+  - Busca por nombre, apellido, DNI o número de afiliado
+  - Muestra alertas de edad y jubilados
+*/
 const searchInput = document.getElementById("searchInput");
 const resultadosDiv = document.createElement("div");
 resultadosDiv.className = "resultados-busqueda";
 searchInput.after(resultadosDiv);
 
 let debounce;
+
+/*
+  Escucha escritura en el input de búsqueda
+  Ejecuta la búsqueda recién después de 300ms sin teclear
+*/
 searchInput.addEventListener("input", e => {
   clearTimeout(debounce);
   resultadosDiv.innerHTML = "";
@@ -263,6 +350,14 @@ searchInput.addEventListener("input", e => {
   debounce = setTimeout(() => buscarAfiliados(texto), 300);
 });
 
+/*
+  Consulta afiliados en Supabase y renderiza los resultados
+  Incluye:
+  - Estado activo/baja
+  - Edad
+  - Alertas por edad límite
+  - Alertas por jubilación impaga
+*/
 async function buscarAfiliados(texto) {
   if (buscando) return;
   buscando = true;
@@ -294,6 +389,10 @@ async function buscarAfiliados(texto) {
       return;
     }
 
+      /*
+      Obtiene los titulares de cada grupo familiar
+      para poder mostrar relaciones correctamente
+    */
     const grupos = [...new Set(afiliados.map(a => a.grupo_familiar_codigo))];
     const { data: titulares } = await supabase
       .from("afiliados")
@@ -306,6 +405,13 @@ async function buscarAfiliados(texto) {
       dicTitulares[t.grupo_familiar_codigo] = `${t.nombre} ${t.apellido}`;
     });
 
+        /*
+      Renderiza cada resultado con:
+      - Datos básicos
+      - Estado
+      - Alertas de negocio
+      - Link a ficha del afiliado
+    */
     afiliados.forEach(a => {
       const textoParentesco = a.numero_afiliado.endsWith("/00") ? "Titular" : (dicParentescos[a.parentesco_id] || "N/A");
       const alerta = obtenerAlertaHijo(a.fechaNacimiento, textoParentesco, a.estudios);
@@ -338,24 +444,45 @@ async function buscarAfiliados(texto) {
 /* =====================
    NUEVO AFILIADO
 ===================== */
+/*
+  Maneja el alta de un afiliado:
+  - Validaciones de negocio
+  - Validaciones de duplicados
+  - Subida de adjuntos
+  - Inserción en Supabase
+*/
 f.addEventListener("submit", async e => {
   e.preventDefault();
+
   const btn = f.querySelector('[type="submit"]');
   btn.disabled = true;
   btn.textContent = "Guardando...";
 
   try {
+       /*
+      Obtiene todos los datos del formulario
+      como objeto plano
+    */
     const data = Object.fromEntries(new FormData(f).entries());
+
+        /*
+      Validación de campos obligatorios
+    */
     if (!data.nombre || !data.apellido || !data.dni || !data.numero_afiliado || !data.parentesco_id || !data.sexo) {
       Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
       btn.disabled = false; btn.textContent = "Guardar"; return;
     }
 
+        /*
+      Validación de formato de número de afiliado
+    */
     const match = data.numero_afiliado.match(/^[^-]+-([^/]+)\//);
     if (!match) { Swal.fire("Formato incorrecto", "Formato esperado: 19-00639-4/00", "error"); btn.disabled = false; btn.textContent = "Guardar"; return; }
 
-          // Validación de duplicados
-      const { data: dniExistente } = await supabase
+    /*
+      Validación de duplicados por DNI y número de afiliado
+    */
+    const { data: dniExistente } = await supabase
         .from("afiliados")
         .select("id")
         .eq("dni", data.dni);
@@ -379,9 +506,13 @@ f.addEventListener("submit", async e => {
         return;
       }
 
-          // =====================
-        // Validación Menor b/ guarda (hasta 18 años exactos)
-        // =====================
+    /*
+      Validaciones de reglas de negocio:
+      - Menor bajo guarda
+      - Hijos
+      - Discapacidad
+      - Plan Materno
+    */
     if (
       dicParentescos[data.parentesco_id] === "Menor B/ guarda" &&
       fechaNacimientoInput.value
@@ -411,12 +542,6 @@ f.addEventListener("submit", async e => {
         Swal.fire("Requerido", "Debe adjuntar constancia de alumno regular", "warning");
         btn.disabled = false; btn.textContent = "Guardar"; return;
       }
-    }
-
-    // Validación discapacidad
-    if (discapacidadCheckbox.checked && !adjuntoDiscapacidadInput?.files[0]) {
-      Swal.fire("Requerido", "Debe adjuntar constancia de discapacidad (CUD)", "warning");
-      btn.disabled = false; btn.textContent = "Guardar"; return;
     }
 
     // Validación discapacidad

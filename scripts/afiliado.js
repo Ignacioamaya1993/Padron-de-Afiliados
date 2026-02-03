@@ -7,7 +7,7 @@ import { subirArchivoCloudinary } from "./cloudinary.js";
 =====================
 
 El cambio automático de categoría de "Plan Materno" a "Obligatorios" se realiza
-directamente desde Supabase, no desde esta interfaz de JavaScript.
+directamente desde Supabase, no desde este javaScript.
 
 - Función SQL que realiza el cambio automático: 
   -> vencer_planes_maternos()
