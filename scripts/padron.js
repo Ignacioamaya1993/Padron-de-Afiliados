@@ -120,7 +120,7 @@ const parentescoSelect = f.querySelector('[name="parentesco_id"]');
 const fechaNacimientoInput = f.querySelector('[name="fechaNacimiento"]');
 const estudiosField = document.getElementById("estudiosField");
 const estudiosSelect = f.querySelector('[name="estudios"]');
-const edadInput = f.querySelector('[name="edad"]');
+const edadInput = document.getElementById("edad");
 const grupoSanguineoSelect = f.querySelector('[name="grupo_sanguineo_id"]');
 const discapacidadCheckbox = document.getElementById("discapacidad");
 const nivelDiscapacidadSelect = f.querySelector('[name="nivelDiscapacidad"]');
@@ -619,7 +619,6 @@ const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
       estudios: estudiosSelect.value || null,
       adjuntoEstudios,
       adjuntoDiscapacidad,
-      edad: edadInput.value || null,
       created_by: user.user.id,
       plan_materno_desde: data.plan_materno_desde || null,
       plan_materno_hasta: data.plan_materno_hasta || null,  
