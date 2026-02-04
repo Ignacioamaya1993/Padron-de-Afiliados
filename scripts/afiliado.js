@@ -199,6 +199,7 @@ const campos = {
   numeroAfiliado: "numero_afiliado",
   grupoFamiliar: "grupo_familiar_codigo",
   dni: "dni",
+  cuil: "cuil",
   sexo: "sexo",
   cbuCvu: "cbu_cvu",
   parentesco: "parentesco_id",
@@ -480,6 +481,7 @@ async function entrarModoEdicion() {
   reemplazarPorInput("fechaNacimiento", formatoInputDate(afiliado.fechaNacimiento), "date");
   reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
   reemplazarPorInput("dni", afiliado.dni);
+  reemplazarPorInput("cuil", afiliado.cuil);
   reemplazarPorInput("mail", afiliado.mail, "email");
   reemplazarPorInput("grupoFamiliarReal", afiliado.grupo_familiar_real);
   reemplazarPorSelect("parentesco", opciones.parentescos, parentescoNombre);
@@ -699,7 +701,7 @@ function convertirEstudiosASelect() {
 }
 
 function restaurarCampos() {
-  ["telefono","mail","fechaNacimiento","numeroAfiliado","dni","cbuCvu"].forEach(id => {
+["telefono","mail","fechaNacimiento","numeroAfiliado","dni","cuil","cbuCvu"].forEach(id => {
     const el = document.getElementById(id);
     if (el && el.tagName === "INPUT") {
       const span = document.createElement("span");
@@ -774,6 +776,7 @@ async function guardarCambios() {
   const fecha_nacimiento = document.getElementById("fechaNacimiento").value || null;
   const numero_afiliado = document.getElementById("numeroAfiliado").value;
   const dni = document.getElementById("dni").value;
+  const cuil = document.getElementById("cuil")?.value || null;
   const mail = document.getElementById("mail")?.value || null;
   const sexo = document.getElementById("sexo")?.value || null;
   const planNombre = document.getElementById("plan")?.value || null;
@@ -865,6 +868,7 @@ if (
     telefono,
     fechaNacimiento: fecha_nacimiento,
     dni,
+    cuil,
     mail,
     numero_afiliado,
     parentesco_id: parent?.id || null,

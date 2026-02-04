@@ -468,10 +468,38 @@ f.addEventListener("submit", async e => {
         /*
       Validación de campos obligatorios
     */
-    if (!data.nombre || !data.apellido || !data.dni || !data.numero_afiliado || !data.parentesco_id || !data.sexo) {
-      Swal.fire("Atención", "Completá todos los campos obligatorios", "warning");
-      btn.disabled = false; btn.textContent = "Guardar"; return;
-    }
+      if (
+        !data.nombre ||
+        !data.apellido ||
+        !data.dni ||
+        !data.cuil ||          
+        !data.numero_afiliado ||
+        !data.parentesco_id ||
+        !data.sexo
+      ) {
+        Swal.fire(
+          "Atención",
+          "Completá todos los campos obligatorios",
+          "warning"
+        );
+        btn.disabled = false;
+        btn.textContent = "Guardar";
+        return;
+      }
+
+      //validacion Formato CUIL
+  const cuilRegex = /^\d{2}-\d{8}-\d{1}$/;
+
+  if (!cuilRegex.test(data.cuil)) {
+    Swal.fire(
+      "CUIL inválido",
+      "Formato esperado: 20-12345678-3",
+      "error"
+    );
+    btn.disabled = false;
+    btn.textContent = "Guardar";
+    return;
+}
 
         /*
       Validación de formato de número de afiliado
@@ -505,6 +533,23 @@ f.addEventListener("submit", async e => {
         btn.textContent = "Guardar";
         return;
       }
+
+      //Validacion CUIL Duplicado
+          const { data: cuilExistente } = await supabase
+      .from("afiliados")
+      .select("id")
+      .eq("cuil", data.cuil);
+
+    if (cuilExistente.length) {
+      Swal.fire(
+        "Error",
+        "Ya existe un afiliado con ese CUIL",
+        "error"
+      );
+      btn.disabled = false;
+      btn.textContent = "Guardar";
+      return;
+    }
 
     /*
       Validaciones de reglas de negocio:
@@ -625,6 +670,7 @@ const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
       plan_materno_hasta: data.plan_materno_hasta || null,  
       cbu_cvu: data.cbu_cvu || null,
       mail: data.mail?.trim().toLowerCase() || null,
+      cuil: data.cuil,
     });
     
     if (error) throw error;

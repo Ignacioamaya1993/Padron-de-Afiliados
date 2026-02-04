@@ -48,6 +48,18 @@
       <input type="text" name="nombre" placeholder="Nombre" required />
       <input type="text" name="apellido" placeholder="Apellido" required />
       <input type="text" name="dni" placeholder="DNI" required />
+      <input type="text" name="dni" placeholder="DNI" required />
+
+      <input
+        type="text"
+        name="cuil"
+        placeholder="CUIL (ej: 20-12345678-3)"
+        inputmode="numeric"
+        pattern="\d{2}-\d{8}-\d{1}"
+        title="Formato válido: 20-12345678-3"
+        required
+      />
+
       <input type="text" name="telefono" placeholder="Teléfono" />
 
       <div class="floating-field">
@@ -98,7 +110,7 @@
         <option value="">Parentesco</option>
       </select>
 
-      <!-- 🔹 SEXO (se mantiene hardcodeado) -->
+      <!-- 🔹 SEXO  -->
       <select name="sexo" required>
         <option value="">Sexo</option>
         <option value="F">F</option>
