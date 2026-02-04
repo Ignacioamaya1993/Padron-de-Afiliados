@@ -63,6 +63,19 @@ if (hasta && hasta.tagName === "INPUT") hasta.disabled = true;
 /* =====================
    HELPERS
 ===================== */
+
+function normalizarTelefonoWA(tel) {
+  if (!tel) return null;
+  // deja solo números
+  const limpio = tel.replace(/\D/g, "");
+
+  // si ya tiene 54, lo dejamos
+  if (limpio.startsWith("54")) return limpio;
+
+  // si no, asumimos Argentina
+  return "54" + limpio;
+}
+
 function calcularEdad(fecha) {
   if (!fecha) return null;
   const hoy = new Date();
@@ -191,18 +204,42 @@ const campos = {
   parentesco: "parentesco_id",
   plan: "plan_id",
   categoria: "categoria_id",
-  localidad: "localidad_id"
+  localidad: "localidad_id",
+  mail: "mail",
 };
 
 for (const [idSpan, columna] of Object.entries(campos)) {
   const span = document.getElementById(idSpan);
   if (!span) continue;
 
+  // TELÉFONO CON LINK A WHATSAPP
+  if (idSpan === "telefono" && afiliado.telefono) {
+    const telNormalizado = normalizarTelefonoWA(afiliado.telefono);
+
+    span.innerHTML = `
+      <a href="https://wa.me/${telNormalizado}" 
+         target="_blank"
+         style="color:#16a34a; font-weight:600; text-decoration:none">
+        📱 ${afiliado.telefono}
+      </a>
+    `;
+    continue;
+  }
+
+// MAIL CON LINK MAILTO
+if (idSpan === "mail" && afiliado.mail) {
+  span.innerHTML = `
+    <a href="mailto:${afiliado.mail}"
+       style="color:#2563eb; text-decoration:none; font-weight:500">
+      ${afiliado.mail}
+    </a>
+  `;
+  continue;
+}
+
   if (columna.endsWith("_id")) {
-    // Relaciones: mostrar el nombre
     span.textContent = afiliado[columna]?.nombre || "-";
   } else {
-    // Campos directos
     span.textContent = afiliado[columna] || "-";
   }
 }
@@ -225,17 +262,6 @@ grupoSanguineoSpan.textContent = afiliado.grupo_sanguineo_id?.nombre || "-";
 const grupoRealSpan = document.getElementById("grupoFamiliarReal");
 if (grupoRealSpan) {
   grupoRealSpan.textContent = afiliado.grupo_familiar_real || "-";
-}
-
-for (const [spanId, col] of Object.entries(campos)) {
-  const span = document.getElementById(spanId);
-  if (!span) continue;
-
-  if (col.endsWith("_id")) {
-    span.textContent = afiliado[col]?.nombre || "-";
-  } else {
-    span.textContent = afiliado[col] || "-";
-  }
 }
 
   // Discapacidad
@@ -454,6 +480,7 @@ async function entrarModoEdicion() {
   reemplazarPorInput("fechaNacimiento", formatoInputDate(afiliado.fechaNacimiento), "date");
   reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
   reemplazarPorInput("dni", afiliado.dni);
+  reemplazarPorInput("mail", afiliado.mail, "email");
   reemplazarPorInput("grupoFamiliarReal", afiliado.grupo_familiar_real);
   reemplazarPorSelect("parentesco", opciones.parentescos, parentescoNombre);
   reemplazarPorSelect("sexo", ["F","M"], afiliado.sexo);
@@ -661,7 +688,7 @@ function convertirEstudiosASelect() {
   if (!actual || actual.tagName === "SELECT") return;
   const select = document.createElement("select");
   select.id = "estudios";
-  ["Posgrado","Terciario","Universitario"].forEach(op => {
+  ["Grado", "Posgrado", "Terciario", "Universitario"].forEach(op => {
     const o = document.createElement("option");
     o.value = op;
     o.textContent = op;
@@ -672,7 +699,7 @@ function convertirEstudiosASelect() {
 }
 
 function restaurarCampos() {
-  ["telefono","fechaNacimiento","numeroAfiliado","dni","cbuCvu"].forEach(id => {
+  ["telefono","mail","fechaNacimiento","numeroAfiliado","dni","cbuCvu"].forEach(id => {
     const el = document.getElementById(id);
     if (el && el.tagName === "INPUT") {
       const span = document.createElement("span");
@@ -747,6 +774,7 @@ async function guardarCambios() {
   const fecha_nacimiento = document.getElementById("fechaNacimiento").value || null;
   const numero_afiliado = document.getElementById("numeroAfiliado").value;
   const dni = document.getElementById("dni").value;
+  const mail = document.getElementById("mail")?.value || null;
   const sexo = document.getElementById("sexo")?.value || null;
   const planNombre = document.getElementById("plan")?.value || null;
   const categoriaNombre = document.getElementById("categoria")?.value || null;
@@ -837,6 +865,7 @@ if (
     telefono,
     fechaNacimiento: fecha_nacimiento,
     dni,
+    mail,
     numero_afiliado,
     parentesco_id: parent?.id || null,
     plan_id: planData?.id || null,

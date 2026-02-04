@@ -623,6 +623,7 @@ const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
       plan_materno_desde: data.plan_materno_desde || null,
       plan_materno_hasta: data.plan_materno_hasta || null,  
       cbu_cvu: data.cbu_cvu || null,
+      mail: data.mail?.trim().toLowerCase() || null,
     });
     
     if (error) throw error;
