@@ -191,7 +191,7 @@ function renderFicha() {
     ? `${afiliado.fechaNacimiento.split("-")[2]}/${afiliado.fechaNacimiento.split("-")[1]}/${afiliado.fechaNacimiento.split("-")[0]}`
     : "-";
   document.getElementById("fechaNacimiento").textContent = fechaText;
-  document.getElementById("edad").textContent = calcularEdad(afiliado.fechaNacimiento) + " años";
+  document.getElementById("edadVista").textContent = afiliado.fechaNacimiento? calcularEdad(afiliado.fechaNacimiento) + " años" : "-";
 
 // Campos básicos con mapping entre span ID y columna real
 const campos = {
@@ -391,7 +391,7 @@ function actualizarEdadYEstudios() {
   const estudiosField = document.getElementById("estudiosField");
 
   const edad = fechaInput.value ? calcularEdad(fechaInput.value) : null;
-  document.getElementById("edad").textContent = edad !== null ? `${edad} años` : "-";
+  document.getElementById("edadVista").textContent = edad !== null ? `${edad} años` : "-";
 
   const cumplio21 = fechaInput.value ? pasoEdadLimite(fechaInput.value, 21) : false;
   const cumplio26 = fechaInput.value ? pasoEdadLimite(fechaInput.value, 26) : true;
