@@ -6,7 +6,7 @@ export async function subirArchivoCloudinary(file, carpeta = "") {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", "lyfolavarria"); // preset unsigned
-  formData.append("resource_type", "auto"); // permite imágenes y pdfs
+  formData.append("resource_type", "raw");
 
   // 🔹 Si se pasa carpeta, se le indica a Cloudinary que suba ahí
   if (carpeta) {
