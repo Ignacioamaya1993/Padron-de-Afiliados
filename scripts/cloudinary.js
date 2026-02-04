@@ -2,18 +2,22 @@
 export async function subirArchivoCloudinary(file, carpeta = "") {
   if (!file) throw new Error("No se seleccionó ningún archivo");
 
-  const url = `https://api.cloudinary.com/v1_1/daegaptwk/upload`;
+  const esPdf = file.type === "application/pdf";
+
+  const resourceType = esPdf ? "raw" : "image";
+  const endpoint = esPdf
+    ? "https://api.cloudinary.com/v1_1/daegaptwk/raw/upload"
+    : "https://api.cloudinary.com/v1_1/daegaptwk/image/upload";
+
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "lyfolavarria"); // preset unsigned
-  formData.append("resource_type", "raw");
+  formData.append("upload_preset", "lyfolavarria");
 
-  // 🔹 Si se pasa carpeta, se le indica a Cloudinary que suba ahí
   if (carpeta) {
-    formData.append("folder", carpeta); // ej: "19-00639-4/00"
+    formData.append("folder", carpeta);
   }
 
-  const res = await fetch(url, {
+  const res = await fetch(endpoint, {
     method: "POST",
     body: formData
   });
