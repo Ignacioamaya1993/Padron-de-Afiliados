@@ -723,7 +723,9 @@ const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
 
     const { data: user } = await supabase.auth.getUser();
 
-    const { error } = await supabase.from("afiliados").insert({
+    const { data: nuevoAfiliado, error } = await supabase
+    .from("afiliados")
+    .insert({
     nombre: data.nombre,
     apellido: data.apellido,
     dni: data.dni,
@@ -741,15 +743,8 @@ const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
     discapacidad: discapacidadCheckbox.checked,
     nivel_discapacidad: nivelDiscapacidadSelect.value || null,
 
-    cud_emision: data.cud_emision || null,
-    cud_vencimiento: cudPermanenteCheckbox.checked
-      ? null
-      : (data.cud_vencimiento || null),
-    cud_sin_vencimiento: cudPermanenteCheckbox.checked,
-
     estudios: estudiosSelect.value || null,
     adjuntoEstudios,
-    adjuntoDiscapacidad,
 
     plan_materno_desde: data.plan_materno_desde || null,
     plan_materno_hasta: data.plan_materno_hasta || null,
@@ -758,8 +753,28 @@ const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
     mail: data.mail?.trim().toLowerCase() || null,
     cuil: data.cuil,
     created_by: user.user.id,
-  });
+}).select().maybeSingle();
 
+if (error) {
+  console.error("Error al insertar afiliado:", error);
+  Swal.fire("Error", "No se pudo guardar el afiliado", "error");
+  return; // 🔹 evitar usar nuevoAfiliado si hay error
+}
+
+  if (discapacidadCheckbox.checked && adjuntoDiscapacidad) {
+  const { error: errorCUD } = await supabase
+    .from("cud_documentos")
+    .insert({
+      afiliado_id: nuevoAfiliado.id,
+      tipo: "Ver adjunto",
+      archivo_url: adjuntoDiscapacidad,
+      fecha_emision: data.cud_emision || null,
+      fecha_vencimiento: cudPermanenteCheckbox.checked ? null : data.cud_vencimiento || null,
+      sin_vencimiento: cudPermanenteCheckbox.checked,
+      created_at: new Date().toISOString(),
+    });
+  if (errorCUD) throw errorCUD;
+}
     
     if (error) throw error;
 

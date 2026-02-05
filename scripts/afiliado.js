@@ -39,7 +39,6 @@ Para consultar manualmente o revisar registros:
 
 ===================== */
 
-
 /* =====================
    PARAMS
 ===================== */
@@ -53,6 +52,7 @@ if (!afiliadoId) {
 
 let afiliado = null;
 let modoEdicion = false;
+let cud_documentos = [];
 
 const desde = document.getElementById("planMaternoDesde");
 const hasta = document.getElementById("planMaternoHasta");
@@ -77,9 +77,9 @@ function activarCamposCudEdicion() {
     vencField.style.display = "block";
     sinVencField.style.display = "block"; // <-- siempre visible en edición
 
-    reemplazarPorInput("cudEmision", formatoInputDate(afiliado.cud_emision), "date");
-    reemplazarPorInput("cudVencimiento", afiliado.cud_sin_vencimiento ? "" : formatoInputDate(afiliado.cud_vencimiento), "date");
-    reemplazarPorCheckbox("cudSinVencimiento", afiliado.cud_sin_vencimiento);
+    reemplazarPorInput("cudEmision", formatoInputDate(cud_documentos.fecha_emision), "date");
+    reemplazarPorInput("cudVencimiento", cud_documentos.sin_vencimiento ? "" : formatoInputDate(cud_documentos.fecha_vencimiento), "date");
+    reemplazarPorCheckbox("cudSinVencimiento", cud_documentos.sin_vencimiento);
 
     // Lógica checkbox
     const sinVenc = document.getElementById("cudSinVencimiento");
@@ -94,19 +94,6 @@ function activarCamposCudEdicion() {
             venc.disabled = false;
         }
     });
-}
-
-function sincronizarCudVencimiento() {
-  const sinVenc = document.getElementById("cudSinVencimiento");
-  const venc = document.getElementById("cudVencimiento");
-  if (!sinVenc || !venc) return;
-
-  if (sinVenc.checked) {
-    venc.value = "";
-    venc.disabled = true;
-  } else {
-    venc.disabled = false;
-  }
 }
 
 function normalizarTelefonoWA(tel) {
@@ -192,17 +179,9 @@ function tieneMenosDe80(fechaNacimiento) {
 async function cargarAfiliado() {
   const { data, error } = await supabase
     .from("afiliados")
-    .select(`
-      *,
-      parentesco_id (nombre),
-      plan_id (nombre),
-      categoria_id (nombre),
-      localidad_id (nombre),
-      grupo_sanguineo_id (nombre)
-    `)
+    .select(`*, parentesco_id (nombre), plan_id (nombre), categoria_id (nombre), localidad_id (nombre), grupo_sanguineo_id (nombre)`)
     .eq("id", afiliadoId)
     .single();
-
 
   if (error || !data) {
     Swal.fire("Error", "No se pudo cargar el afiliado", "error");
@@ -212,14 +191,27 @@ async function cargarAfiliado() {
   afiliado = data;
   afiliado.grupo_familiar_codigo = calcularGrupoFamiliar(afiliado.numero_afiliado);
 
-  renderFicha();
+  // TRAER CUD DOCUMENTOS
+  let cud_documentos = [];
+  if (afiliado.discapacidad) {
+    const { data: cudData, error: cudError } = await supabase
+      .from("cud_documentos")
+      .select("*")
+      .eq("afiliado_id", afiliado.id)
+      .order("created_at", { ascending: true });
+
+    if (cudError) console.error("Error cargando CUD:", cudError);
+    else cud_documentos = cudData;
+  }
+
+  renderFicha(cud_documentos); // PASAMOS LA DATA A LA FUNCIÓN
   cargarGrupoFamiliar();
 }
 
 /* =====================
    RENDER FICHA
 ===================== */
-async function renderFicha() {
+async function renderFicha(cud_documentos = []) {
   // Desactivar modo edición
   modoEdicion = false;
 
@@ -321,9 +313,6 @@ if (grupoRealSpan) {
   }
 
 // =========================
-// CUD Fechas
-// =========================
-// =========================
 // CUD Fechas (modo vista)
 // =========================
 const cudEmisionField = document.getElementById("cudEmisionField");
@@ -337,15 +326,15 @@ if (afiliado.discapacidad) {
   cudEmisionField.style.display = "block";
   cudVencimientoField.style.display = "block";
 
-  cudEmisionSpan.textContent = afiliado.cud_emision
-    ? afiliado.cud_emision.split("-").reverse().join("/")
-    : "-";
+ const ultimoCud = cud_documentos.length ? cud_documentos[cud_documentos.length - 1] : null;
 
-  cudVencimientoSpan.textContent = afiliado.cud_sin_vencimiento
-    ? "Sin vencimiento"
-    : afiliado.cud_vencimiento
-      ? afiliado.cud_vencimiento.split("-").reverse().join("/")
-      : "-";
+cudEmisionSpan.textContent = ultimoCud?.fecha_emision
+  ? ultimoCud.fecha_emision.split("-").reverse().join("/")
+  : "-";
+
+cudVencimientoSpan.textContent = ultimoCud
+  ? (ultimoCud.sin_vencimiento ? "Sin vencimiento" : ultimoCud.fecha_vencimiento?.split("-").reverse().join("/"))
+  : "-";
 
   // Ocultar checkbox en modo vista
   cudSinVencField.style.display = "none";
@@ -388,7 +377,7 @@ const adjDispContenido = document.getElementById("adjuntoDiscapacidadContenido")
 if (afiliado.discapacidad) {
   adjDispField.style.display = "block";
 
-  const { data: cudDocs, error } = await supabase
+  const { data: cud_documentos, error } = await supabase
     .from("cud_documentos")
     .select("*")
     .eq("afiliado_id", afiliado.id)
@@ -396,10 +385,8 @@ if (afiliado.discapacidad) {
 
   if (error) {
     console.error("Error cargando CUD:", error);
-    adjDispContenido.textContent = "Error al cargar documentos CUD";
-  } else {
-    adjDispContenido.innerHTML = cudDocs && cudDocs.length
-      ? cudDocs.map(d => `
+    adjDispContenido.innerHTML = cud_documentos && cud_documentos.length
+      ? cud_documentos.map(d => `
           <div style="margin-bottom:4px">
             📎 <a href="${d.archivo_url}" target="_blank">
               ${d.tipo === "original" ? "CUD original" : "Extensión"}
@@ -483,6 +470,8 @@ if (pagaCuota) {
   document.getElementById("btnEditar").style.display = afiliado.activo ? "inline-block" : "none";
   document.getElementById("btnBaja").style.display = afiliado.activo ? "inline-block" : "none";
   document.getElementById("btnReactivar").style.display = afiliado.activo ? "none" : "inline-block";
+
+  renderAdjuntosDiscapacidad();
 }
 
 /* =====================
@@ -579,9 +568,11 @@ async function entrarModoEdicion() {
   const planNombre = afiliado.plan_id?.nombre || "";
   const categoriaNombre = afiliado.categoria_id?.nombre || "";
   const localidadNombre = afiliado.localidad_id?.nombre || "";
-  const { data: gruposSanguineos } = await supabase.from("grupo_sanguineo").select("nombre");
-  const opcionesGrupoSanguineo = gruposSanguineos?.map(g => g.nombre) || [];  
 
+  const { data: gruposSanguineos } = await supabase.from("grupo_sanguineo").select("nombre");
+  const opcionesGrupoSanguineo = gruposSanguineos?.map(g => g.nombre) || [];
+
+  // ------------------ REEMPLAZO DE CAMPOS ------------------
   reemplazarPorInput("telefono", afiliado.telefono);
   reemplazarPorInput("fechaNacimiento", formatoInputDate(afiliado.fechaNacimiento), "date");
   reemplazarPorInput("numeroAfiliado", afiliado.numero_afiliado);
@@ -590,91 +581,91 @@ async function entrarModoEdicion() {
   reemplazarPorInput("mail", afiliado.mail, "email");
   reemplazarPorInput("grupoFamiliarReal", afiliado.grupo_familiar_real);
   reemplazarPorSelect("parentesco", opciones.parentescos, parentescoNombre);
-  reemplazarPorSelect("sexo", ["F","M"], afiliado.sexo);
+  reemplazarPorSelect("sexo", ["F", "M"], afiliado.sexo);
   reemplazarPorSelect("plan", opciones.planes, planNombre);
   reemplazarPorSelect("categoria", opciones.categorias, categoriaNombre);
   reemplazarPorSelect("localidad", opciones.localidades, localidadNombre);
   reemplazarPorSelect("grupoSanguineo", opcionesGrupoSanguineo, afiliado.grupo_sanguineo_id?.nombre);
   reemplazarPorCheckbox("discapacidad", afiliado.discapacidad);
   reemplazarPorInput("planMaternoDesde", formatoInputDate(afiliado.plan_materno_desde), "date");
-  reemplazarPorInput( "planMaternoHasta", formatoInputDate(afiliado.plan_materno_hasta), "date");
+  reemplazarPorInput("planMaternoHasta", formatoInputDate(afiliado.plan_materno_hasta), "date");
   reemplazarPorInput("cbuCvu", afiliado.cbu_cvu);
 
+  // ------------------ ELEMENTOS ------------------
   const categoriaSelect = document.getElementById("categoria");
-  categoriaSelect.addEventListener("change", actualizarCampoPago);
-
-    categoriaSelect.addEventListener("change", () => {
-      actualizarPlanMaternoEdicion();
-    });
-
-    const planMaternoHastaInput = document.getElementById("planMaternoHasta");
-    if (planMaternoHastaInput) {
-      planMaternoHastaInput.addEventListener(
-        "change",
-        controlarVencimientoPlanMaterno
-      );
-    }
-  
-  actualizarCampoPago();
-
-  const nivelField = document.getElementById("nivelDiscapacidadField");
+  const planMaternoHastaInput = document.getElementById("planMaternoHasta");
+  const planMaternoDesdeInput = document.getElementById("planMaternoDesde");
+  const fechaInput = document.getElementById("fechaNacimiento");
+  const parentescoSelect = document.getElementById("parentesco");
   const dispCheckbox = document.getElementById("discapacidad");
-    dispCheckbox.addEventListener("change", () => {
+  const nivelField = document.getElementById("nivelDiscapacidadField");
+
+  planMaternoDesdeInput.disabled = false;
+  planMaternoHastaInput.disabled = false;
+
+  // ------------------ FUNCIONES CALLBACK ------------------
+  function manejarCambioDiscapacidad() {
+    if (dispCheckbox.checked) {
+      nivelField.style.display = "block";
+      convertirNivelDiscapacidadASelect();
+      activarCamposCudEdicion();
+    } else {
+      nivelField.style.display = "none";
+      document.getElementById("cudEmisionField").style.display = "none";
+      document.getElementById("cudVencimientoField").style.display = "none";
+      document.getElementById("cudSinVencimientoField").style.display = "none";
+    }
+    actualizarAdjuntoEdicion();
+    actualizarCampoPago();
+    actualizarPlanMaternoEdicion();
     renderAdjuntosDiscapacidad();
-  });
-
-if (afiliado.discapacidad) {
-  // Mostrar nivel de discapacidad y convertir a select
-  nivelField.style.display = "block";
-  reemplazarPorSelect(
-    "nivelDiscapacidad",
-    ["Permanente", "Temporal"],
-    afiliado.nivel_discapacidad
-  );
-
-  // Activar campos CUD (incluye sin vencimiento)
-  activarCamposCudEdicion();
-
-} else {
-    nivelField.style.display = "none";
   }
 
-dispCheckbox.addEventListener("change", () => {
-  const nivelField = document.getElementById("nivelDiscapacidadField");
+  function manejarCambioCategoria() {
+    actualizarCampoPago();
+    actualizarPlanMaternoEdicion();
+  }
 
-  if (dispCheckbox.checked) {
+  function manejarCambioFechaOParentesco() {
+    actualizarEdadYEstudios();
+    actualizarAdjuntoEdicion();
+    actualizarCampoPago();
+  }
+
+  function manejarCambioPlanMaternoHasta() {
+    controlarVencimientoPlanMaterno();
+  }
+
+  // ------------------ REMOVER LISTENERS EXISTENTES Y AGREGAR NUEVOS ------------------
+  dispCheckbox.removeEventListener("change", manejarCambioDiscapacidad);
+  dispCheckbox.addEventListener("change", manejarCambioDiscapacidad);
+
+  categoriaSelect.removeEventListener("change", manejarCambioCategoria);
+  categoriaSelect.addEventListener("change", manejarCambioCategoria);
+
+  fechaInput.removeEventListener("input", manejarCambioFechaOParentesco);
+  fechaInput.addEventListener("input", manejarCambioFechaOParentesco);
+
+  parentescoSelect.removeEventListener("change", manejarCambioFechaOParentesco);
+  parentescoSelect.addEventListener("change", manejarCambioFechaOParentesco);
+
+  planMaternoHastaInput?.removeEventListener("change", manejarCambioPlanMaternoHasta);
+  planMaternoHastaInput?.addEventListener("change", manejarCambioPlanMaternoHasta);
+
+  // ------------------ INICIALIZAR CAMPOS SEGÚN DISCAPACIDAD ------------------
+  if (afiliado.discapacidad) {
     nivelField.style.display = "block";
-    convertirNivelDiscapacidadASelect();
+    reemplazarPorSelect("nivelDiscapacidad", ["Permanente", "Temporal"], afiliado.nivel_discapacidad);
     activarCamposCudEdicion();
   } else {
     nivelField.style.display = "none";
-
-    document.getElementById("cudEmisionField").style.display = "none";
-    document.getElementById("cudVencimientoField").style.display = "none";
-    document.getElementById("cudSinVencimientoField").style.display = "none";
   }
 
-  actualizarAdjuntoEdicion();
+  // ------------------ ACTUALIZAR CAMPOS INICIALES ------------------
   actualizarCampoPago();
-  actualizarPlanMaternoEdicion();
-  renderAdjuntosDiscapacidad();
-});
-
-  const fechaInput = document.getElementById("fechaNacimiento");
-  const parentescoSelect = document.getElementById("parentesco");  
-
-  fechaInput.addEventListener("input", actualizarCampoPago);
-  fechaInput.addEventListener("input", actualizarEdadYEstudios);
-  parentescoSelect.addEventListener("change", actualizarEdadYEstudios);
-  fechaInput.addEventListener("input", actualizarAdjuntoEdicion);
-  parentescoSelect.addEventListener("change", actualizarAdjuntoEdicion);
-  document.getElementById("planMaternoHasta") ?.addEventListener("change", controlarVencimientoPlanMaterno);
-  document.getElementById("planMaternoDesde").disabled = false;
-  document.getElementById("planMaternoHasta").disabled = false;
-
   actualizarEdadYEstudios();
-  toggleBotones(true);
   actualizarAdjuntoEdicion();
+  toggleBotones(true);
 }
 
 /* =====================
@@ -693,6 +684,11 @@ function reemplazarPorInput(id, valor, tipo = "text") {
 async function renderAdjuntosDiscapacidad() {
   const docsList = document.getElementById("adjDispDocsList");
   const inputsDiv = document.getElementById("adjDispInputs");
+
+  if (!docsList || !inputsDiv) {
+    console.warn("Render CUD: elementos no encontrados en el DOM");
+    return;
+  }
 
   if (!afiliado.discapacidad) {
     docsList.innerHTML = "";
@@ -716,67 +712,30 @@ async function renderAdjuntosDiscapacidad() {
   docsList.innerHTML = cudDocs && cudDocs.length
     ? cudDocs.map(d => `
         <div style="margin-bottom:4px">
-          📎 <a href="${d.archivo_url}" target="_blank">Ver adjunto</a>
+          📎 <a href="${d.archivo_url}" target="_blank">${d.tipo === "original" ? "CUD original" : "Extensión"}</a>
         </div>
       `).join("")
     : "<span style='opacity:.7'>No hay documentos CUD cargados</span>";
 
-  // Mostrar botón + solo si está en edición
-  inputsDiv.innerHTML = "";
-  if (modoEdicion) {
-    const btnAgregar = document.createElement("button");
-    btnAgregar.type = "button";
-    btnAgregar.className = "btn-secondary";
-    btnAgregar.textContent = "➕ Agregar extensión CUD";
-    btnAgregar.addEventListener("click", () => {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = ".pdf,.jpg,.png";
-      input.className = "adjCudInput";
-      inputsDiv.appendChild(input);
-    });
-    inputsDiv.appendChild(btnAgregar);
-  }
+    inputsDiv.innerHTML = "";
+    if (modoEdicion) {
+      const btnAgregar = document.createElement("button");
+      btnAgregar.type = "button";
+      btnAgregar.className = "btn-secondary";
+      btnAgregar.textContent = "➕ Agregar extensión CUD";
+
+      btnAgregar.addEventListener("click", () => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".pdf,.jpg,.png";
+        input.className = "adjCudInput";
+        inputsDiv.appendChild(input);
+      });
+
+      inputsDiv.appendChild(btnAgregar);
+    }
+
 }
-
-async function subirAdjuntosCUD() {
-  const inputsDiv = document.getElementById("adjDispInputs");
-  if (!inputsDiv) return; // evitar null
-
-  const inputs = document.querySelectorAll(".adjCudInput");
-  for (const input of inputs) {
-    if (input.files.length === 0) continue;
-    const file = input.files[0];
-    const uploadResult = await subirArchivoCloudinary(file, afiliado.numero_afiliado);
-    const url = uploadResult?.secure_url;
-    if (!url) continue;
-
-    await supabase.from("cud_documentos").insert({
-      afiliado_id: afiliado.id,
-      archivo_url: url,
-      tipo: "Ver adjunto",
-      fecha_emision: document.getElementById("cudEmision")?.value || null,
-      fecha_vencimiento: document.getElementById("cudVencimiento")?.value || null
-    });
-
-  // Limpiar inputs después de subir
-  inputsDiv.innerHTML = "";
-  renderAdjuntosDiscapacidad();
-}
-
-
-  // Limpiar inputs después de subir
-  document.getElementById("adjDispInputs").innerHTML = "";
-  renderAdjuntosDiscapacidad();
-}
-
-document.getElementById("btnGuardar").addEventListener("click", async () => {
-  // Primero subimos todos los archivos CUD
-  await subirAdjuntosCUD();
-
-  // Después podés llamar a la función que guarda el resto de los datos del afiliado
-  await guardarCambios(); // Esta es tu función existente para guardar datos
-});
 
 function controlarVencimientoPlanMaterno() {
   if (!modoEdicion) return;
@@ -932,10 +891,10 @@ function restaurarCampos() {
 
     const valor =
       id === "cudEmision"
-        ? afiliado.cud_emision
-        : afiliado.cud_sin_vencimiento
+        ? cud_documentos.fecha_emision
+        : cud_documentos.sin_vencimiento
           ? "Sin vencimiento"
-          : afiliado.cud_vencimiento;
+          : cud_documentos.fecha_vencimiento;
 
     span.textContent = valor
       ? valor.split?.("-").reverse().join("/") || valor
@@ -949,7 +908,7 @@ const sinV = document.getElementById("cudSinVencimiento");
 if (sinV && sinV.tagName === "INPUT") {
   const span = document.createElement("span");
   span.id = "cudSinVencimiento";
-  span.textContent = afiliado.cud_sin_vencimiento ? "Sí" : "No";
+  span.textContent = cud_documentos.sin_vencimiento ? "Sí" : "No";
   sinV.replaceWith(span);
 }
 
@@ -1034,12 +993,9 @@ async function guardarCambios() {
   const plan_materno_desde = document.getElementById("planMaternoDesde")?.value || null;
   const plan_materno_hasta = document.getElementById("planMaternoHasta")?.value || null;
   const cbu_cvu = document.getElementById("cbuCvu")?.value || null;
-  const cud_emision = document.getElementById("cudEmision")?.value || null;
-  const cud_sin_vencimiento = document.getElementById("cudSinVencimiento")?.checked || false;
-  const cud_vencimiento = cud_sin_vencimiento
-    ? null
-    : document.getElementById("cudVencimiento")?.value || null;
-
+  const fecha_emision = document.getElementById("cudEmision")?.value || null;
+  const fecha_vencimiento = document.getElementById("cudVencimiento")?.value || null;
+  const sin_vencimiento = document.getElementById("cudSinVencimiento")?.checked || false;
 
   // IDs reales de relaciones
   const { data: parent } = await supabase.from("parentescos").select("id").eq("nombre", parentescoNombre).single();
@@ -1084,13 +1040,13 @@ if (adjDispInput && adjDispInput.files.length > 0) {
   const file = adjDispInput.files[0];
   const url = await subirArchivoCloudinary(file, numero_afiliado);
 
-  const { error } = await supabase.from("cud_documentos").insert({
+  const { data, error } = await supabase.from("cud_documentos").insert({
     afiliado_id: afiliadoId,
     archivo_url: url,
     tipo: "Ver adjunto",
-    fecha_emision: cud_emision,
-    fecha_vencimiento: cud_sin_vencimiento ? null : cud_vencimiento
-  });
+    fecha_emision: fecha_emision,
+    fecha_vencimiento: sin_vencimiento ? null : fecha_vencimiento
+  }).select().single();
 
   if (error) {
     Swal.fire("Error", "No se pudo guardar el documento CUD", "error");
@@ -1098,8 +1054,13 @@ if (adjDispInput && adjDispInput.files.length > 0) {
     return;
   }
 
-  // Actualizamos la variable local
-  if (!afiliado.adjuntoDiscapacidad) afiliado.adjuntoDiscapacidad = url;
+  // Actualizamos local
+  cud_documentos.push(data);
+  afiliado.adjuntoDiscapacidad = url;
+  if (modoEdicion) {
+    activarCamposCudEdicion();
+    renderAdjuntosDiscapacidad();
+}
 }
 
   // =========================
@@ -1143,10 +1104,7 @@ if (
     fecha_ultimo_pago_cuota,
     plan_materno_desde,
     plan_materno_hasta,
-    cbu_cvu,
-    cud_emision,
-    cud_vencimiento,
-    cud_sin_vencimiento,
+    cbu_cvu
   };
 
   const { error } = await supabase.from("afiliados").update(payload).eq("id", afiliadoId);
