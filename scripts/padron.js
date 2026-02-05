@@ -5,6 +5,7 @@ import { subirArchivoCloudinary } from "./cloudinary.js";
 await cargarHeader();
 
 let buscando = false;
+let searchToken = 0;
 
 /* =====================
    HELPERS
@@ -126,7 +127,9 @@ const discapacidadCheckbox = document.getElementById("discapacidad");
 const nivelDiscapacidadSelect = f.querySelector('[name="nivelDiscapacidad"]');
 const adjuntoDiscapacidadField = document.getElementById("adjuntoDiscapacidadField");
 const adjuntoDiscapacidadInput = f.querySelector('[name="adjuntoDiscapacidad"]');
-
+const fechasDiscapacidadDiv = document.getElementById("fechasDiscapacidad");
+const cudPermanenteCheckbox = document.getElementById("cudPermanente");
+const cudVencimientoInput = f.querySelector('[name="cud_vencimiento"]');
 const adjuntoEstudiosField = document.getElementById("adjuntoEstudiosField");
 
 /* =====================
@@ -226,14 +229,29 @@ function actualizarEdadYAdjunto() {
   }
 
   // Manejo de discapacidad
-  if (discapacidadCheckbox.checked && nivelDiscapacidadSelect.value) {
-    adjuntoDiscapacidadField.style.display = "block";
-    adjuntoDiscapacidadInput.required = true;
-  } else {
-    adjuntoDiscapacidadField.style.display = "none";
-    adjuntoDiscapacidadInput.required = false;
-    adjuntoDiscapacidadInput.value = "";
-  }
+    if (discapacidadCheckbox.checked && nivelDiscapacidadSelect.value) {
+      adjuntoDiscapacidadField.style.display = "block";
+      fechasDiscapacidadDiv.style.display = "flex";
+      adjuntoDiscapacidadInput.required = true;
+
+      // Si es permanente y tilda "sin vencimiento"
+      if (nivelDiscapacidadSelect.value === "Permanente" && cudPermanenteCheckbox.checked) {
+        cudVencimientoInput.value = "";
+        cudVencimientoInput.disabled = true;
+        cudVencimientoInput.required = false;
+      } else {
+        cudVencimientoInput.disabled = false;
+        cudVencimientoInput.required = true;
+      }
+
+    } else {
+      adjuntoDiscapacidadField.style.display = "none";
+      fechasDiscapacidadDiv.style.display = "none";
+      adjuntoDiscapacidadInput.required = false;
+
+      cudVencimientoInput.disabled = false;
+      cudPermanenteCheckbox.checked = false;
+    }
 }
 
 /* =====================
@@ -265,6 +283,7 @@ parentescoSelect?.addEventListener("change", actualizarEdadYAdjunto);
 estudiosSelect?.addEventListener("change", actualizarEdadYAdjunto);
 discapacidadCheckbox?.addEventListener("change", actualizarEdadYAdjunto);
 nivelDiscapacidadSelect?.addEventListener("change", actualizarEdadYAdjunto);
+cudPermanenteCheckbox.addEventListener("change", actualizarEdadYAdjunto);
 
 /* =====================
    TITULAR DE GRUPO
@@ -344,10 +363,19 @@ let debounce;
 */
 searchInput.addEventListener("input", e => {
   clearTimeout(debounce);
+
+  const texto = e.target.value
+    .trim()
+    .replace(/\s+/g, " ");
+
   resultadosDiv.innerHTML = "";
-  const texto = e.target.value.trim();
-  if (texto.length < 3) return;
-  debounce = setTimeout(() => buscarAfiliados(texto), 300);
+
+  if (texto.length < 3) {
+    searchToken++; // invalida búsquedas anteriores
+    return;
+  }
+
+  debounce = setTimeout(() => buscarAfiliados(texto, ++searchToken), 300);
 });
 
 /*
@@ -358,30 +386,42 @@ searchInput.addEventListener("input", e => {
   - Alertas por edad límite
   - Alertas por jubilación impaga
 */
-async function buscarAfiliados(texto) {
+async function buscarAfiliados(texto, token) {
   if (buscando) return;
   buscando = true;
-  try {
-    const { data: afiliados, error } = await supabase
-      .from("afiliados")
-.select(`
-  id,
-  nombre,
-  apellido,
-  dni,
-  numero_afiliado,
-  parentesco_id,
-  fechaNacimiento,
-  estudios,
-  activo,
-  grupo_familiar_codigo,
-  fecha_ultimo_pago_cuota,
-  categoria_id (nombre)
-`)
 
-      .or(`nombre.ilike.%${texto}%,apellido.ilike.%${texto}%,dni.ilike.%${texto}%,numero_afiliado.ilike.%${texto}%`)
-      .limit(20);
+  try {
+    const palabras = texto.split(" ");
+
+    let query = supabase
+      .from("afiliados")
+      .select(`
+        id,
+        nombre,
+        apellido,
+        nombre_completo,
+        dni,
+        numero_afiliado,
+        parentesco_id,
+        fechaNacimiento,
+        estudios,
+        activo,
+        grupo_familiar_codigo,
+        fecha_ultimo_pago_cuota,
+        categoria_id (nombre)
+      `);
+
+    palabras.forEach(p => {
+      query = query.or(
+        `nombre_completo.ilike.%${p}%,dni.ilike.%${p}%,numero_afiliado.ilike.%${p}%`
+      );
+    });
+
+    const { data: afiliados, error } = await query.limit(20);
     if (error) throw error;
+
+    // 👇 si ya hubo otra búsqueda, ignoro esta
+    if (token !== searchToken) return;
 
     resultadosDiv.innerHTML = "";
     if (!afiliados.length) {
@@ -464,6 +504,45 @@ f.addEventListener("submit", async e => {
       como objeto plano
     */
     const data = Object.fromEntries(new FormData(f).entries());
+
+        // 🔹 VALIDACIÓN DISCAPACIDAD
+    if (discapacidadCheckbox.checked) {
+      if (!data.cud_emision) {
+        Swal.fire(
+          "Requerido",
+          "Debe indicar la fecha de emisión del CUD",
+          "warning"
+        );
+        btn.disabled = false;
+        btn.textContent = "Guardar";
+        return;
+      }
+
+      if (
+        nivelDiscapacidadSelect.value === "Temporal" &&
+        cudPermanenteCheckbox.checked
+      ) {
+        Swal.fire(
+          "Datos inválidos",
+          "Una discapacidad temporal no puede ser sin vencimiento",
+          "error"
+        );
+        btn.disabled = false;
+        btn.textContent = "Guardar";
+        return;
+      }
+
+      if (!cudPermanenteCheckbox.checked && !data.cud_vencimiento) {
+        Swal.fire(
+          "Requerido",
+          "Debe indicar la fecha de vencimiento del CUD",
+          "warning"
+        );
+        btn.disabled = false;
+        btn.textContent = "Guardar";
+        return;
+      }
+}
 
         /*
       Validación de campos obligatorios
@@ -645,32 +724,42 @@ const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
     const { data: user } = await supabase.auth.getUser();
 
     const { error } = await supabase.from("afiliados").insert({
-      nombre: data.nombre,
-      apellido: data.apellido,
-      dni: data.dni,
-      telefono: data.telefono || null,
-      fechaNacimiento: fechaNacimientoInput.value || null,
-      numero_afiliado: data.numero_afiliado,
-      grupo_familiar_codigo: match[1],
-      parentesco_id: data.parentesco_id,
-      sexo: data.sexo,
-      grupo_familiar_real: data.grupo_familiar_real || null,
-      plan_id: data.plan_id || null,
-      categoria_id: data.categoria_id || null,
-      localidad_id: data.localidad_id || null,
-      grupo_sanguineo_id: data.grupo_sanguineo_id || null,
-      discapacidad: discapacidadCheckbox.checked,
-      nivel_discapacidad: nivelDiscapacidadSelect.value || null,
-      estudios: estudiosSelect.value || null,
-      adjuntoEstudios,
-      adjuntoDiscapacidad,
-      created_by: user.user.id,
-      plan_materno_desde: data.plan_materno_desde || null,
-      plan_materno_hasta: data.plan_materno_hasta || null,  
-      cbu_cvu: data.cbu_cvu || null,
-      mail: data.mail?.trim().toLowerCase() || null,
-      cuil: data.cuil,
-    });
+    nombre: data.nombre,
+    apellido: data.apellido,
+    dni: data.dni,
+    telefono: data.telefono || null,
+    fechaNacimiento: fechaNacimientoInput.value || null,
+    numero_afiliado: data.numero_afiliado,
+    grupo_familiar_codigo: match[1],
+    parentesco_id: data.parentesco_id,
+    sexo: data.sexo,
+    plan_id: data.plan_id || null,
+    categoria_id: data.categoria_id || null,
+    localidad_id: data.localidad_id || null,
+    grupo_sanguineo_id: data.grupo_sanguineo_id || null,
+
+    discapacidad: discapacidadCheckbox.checked,
+    nivel_discapacidad: nivelDiscapacidadSelect.value || null,
+
+    cud_emision: data.cud_emision || null,
+    cud_vencimiento: cudPermanenteCheckbox.checked
+      ? null
+      : (data.cud_vencimiento || null),
+    cud_sin_vencimiento: cudPermanenteCheckbox.checked,
+
+    estudios: estudiosSelect.value || null,
+    adjuntoEstudios,
+    adjuntoDiscapacidad,
+
+    plan_materno_desde: data.plan_materno_desde || null,
+    plan_materno_hasta: data.plan_materno_hasta || null,
+
+    cbu_cvu: data.cbu_cvu || null,
+    mail: data.mail?.trim().toLowerCase() || null,
+    cuil: data.cuil,
+    created_by: user.user.id,
+  });
+
     
     if (error) throw error;
 

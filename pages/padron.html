@@ -139,7 +139,7 @@
       </select>
 
   <!-- 🔹 plan materno fecha desde y hasta-->
-  <div id="planMaternoFields" style="display:none; gap:8px;">
+  <div id="planMaternoFields" style="display:none; gap:1px;">
     <div class="floating-field">
       <input
         type="date"
@@ -175,6 +175,23 @@
         <option value="Permanente">Permanente</option>
         <option value="Temporal">Temporal</option>
       </select>
+
+          <div id="fechasDiscapacidad" style="display:none;">
+      <div class="floating-field">
+        <input type="date" name="cud_emision">
+        <label>Fecha emisión CUD</label>
+      </div>
+
+      <div class="floating-field">
+        <input type="date" name="cud_vencimiento">
+        <label>Fecha vencimiento CUD</label>
+      </div>
+
+      <div class="checkbox-field">
+        <input type="checkbox" id="cudPermanente">
+        <label for="cudPermanente">CUD sin vencimiento</label>
+      </div>
+    </div>
 
       <div id="adjuntoDiscapacidadField" style="display:none;">
         <label>Adjuntar certificado de discapacidad (CUD)</label>

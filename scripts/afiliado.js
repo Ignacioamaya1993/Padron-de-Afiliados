@@ -64,6 +64,51 @@ if (hasta && hasta.tagName === "INPUT") hasta.disabled = true;
    HELPERS
 ===================== */
 
+// =====================
+// CUD – helpers edición
+// =====================
+
+function activarCamposCudEdicion() {
+    const emisionField = document.getElementById("cudEmisionField");
+    const vencField = document.getElementById("cudVencimientoField");
+    const sinVencField = document.getElementById("cudSinVencimientoField");
+
+    emisionField.style.display = "block";
+    vencField.style.display = "block";
+    sinVencField.style.display = "block"; // <-- siempre visible en edición
+
+    reemplazarPorInput("cudEmision", formatoInputDate(afiliado.cud_emision), "date");
+    reemplazarPorInput("cudVencimiento", afiliado.cud_sin_vencimiento ? "" : formatoInputDate(afiliado.cud_vencimiento), "date");
+    reemplazarPorCheckbox("cudSinVencimiento", afiliado.cud_sin_vencimiento);
+
+    // Lógica checkbox
+    const sinVenc = document.getElementById("cudSinVencimiento");
+    const venc = document.getElementById("cudVencimiento");
+    venc.disabled = sinVenc.checked;
+
+    sinVenc.addEventListener("change", () => {
+        if (sinVenc.checked) {
+            venc.value = "";
+            venc.disabled = true;
+        } else {
+            venc.disabled = false;
+        }
+    });
+}
+
+function sincronizarCudVencimiento() {
+  const sinVenc = document.getElementById("cudSinVencimiento");
+  const venc = document.getElementById("cudVencimiento");
+  if (!sinVenc || !venc) return;
+
+  if (sinVenc.checked) {
+    venc.value = "";
+    venc.disabled = true;
+  } else {
+    venc.disabled = false;
+  }
+}
+
 function normalizarTelefonoWA(tel) {
   if (!tel) return null;
   // deja solo números
@@ -174,7 +219,7 @@ async function cargarAfiliado() {
 /* =====================
    RENDER FICHA
 ===================== */
-function renderFicha() {
+async function renderFicha() {
   // Desactivar modo edición
   modoEdicion = false;
 
@@ -275,6 +320,41 @@ if (grupoRealSpan) {
     nivelField.style.display = "none";
   }
 
+// =========================
+// CUD Fechas
+// =========================
+// =========================
+// CUD Fechas (modo vista)
+// =========================
+const cudEmisionField = document.getElementById("cudEmisionField");
+const cudVencimientoField = document.getElementById("cudVencimientoField");
+const cudSinVencField = document.getElementById("cudSinVencimientoField"); // NO se mostrará
+
+const cudEmisionSpan = document.getElementById("cudEmision");
+const cudVencimientoSpan = document.getElementById("cudVencimiento");
+
+if (afiliado.discapacidad) {
+  cudEmisionField.style.display = "block";
+  cudVencimientoField.style.display = "block";
+
+  cudEmisionSpan.textContent = afiliado.cud_emision
+    ? afiliado.cud_emision.split("-").reverse().join("/")
+    : "-";
+
+  cudVencimientoSpan.textContent = afiliado.cud_sin_vencimiento
+    ? "Sin vencimiento"
+    : afiliado.cud_vencimiento
+      ? afiliado.cud_vencimiento.split("-").reverse().join("/")
+      : "-";
+
+  // Ocultar checkbox en modo vista
+  cudSinVencField.style.display = "none";
+} else {
+  cudEmisionField.style.display = "none";
+  cudVencimientoField.style.display = "none";
+  cudSinVencField.style.display = "none";
+}
+
   // Estudios
   const estudiosField = document.getElementById("estudiosField");
   const estudiosSpan = document.getElementById("estudios");
@@ -302,17 +382,42 @@ if (grupoRealSpan) {
     adjEstudiosContenido.innerHTML = "";
   }
 
-  const adjDispField = document.getElementById("adjuntoDiscapacidadField");
-  const adjDispContenido = document.getElementById("adjuntoDiscapacidadContenido");
-  if(afiliado.discapacidad){
-    adjDispField.style.display = "block";
-    adjDispContenido.innerHTML = afiliado.adjuntoDiscapacidad
-      ? `<a href="${afiliado.adjuntoDiscapacidad}" target="_blank">📎 Ver adjunto</a>`
-      : "No hay adjunto cargado";
+const adjDispField = document.getElementById("adjuntoDiscapacidadField");
+const adjDispContenido = document.getElementById("adjuntoDiscapacidadContenido");
+
+if (afiliado.discapacidad) {
+  adjDispField.style.display = "block";
+
+  const { data: cudDocs, error } = await supabase
+    .from("cud_documentos")
+    .select("*")
+    .eq("afiliado_id", afiliado.id)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Error cargando CUD:", error);
+    adjDispContenido.textContent = "Error al cargar documentos CUD";
   } else {
-    adjDispField.style.display = "none";
-    adjDispContenido.innerHTML = "";
+    adjDispContenido.innerHTML = cudDocs && cudDocs.length
+      ? cudDocs.map(d => `
+          <div style="margin-bottom:4px">
+            📎 <a href="${d.archivo_url}" target="_blank">
+              ${d.tipo === "original" ? "CUD original" : "Extensión"}
+            </a>
+          </div>
+        `).join("")
+      : "<span style='opacity:.7'>No hay documentos CUD cargados</span>";
   }
+
+  // Opcional: botón + solo si está en edición
+  if (modoEdicion) {
+    adjDispContenido.innerHTML += `<input type="file" id="adjuntoDiscapacidadInput" accept=".pdf,.jpg,.png" />`;
+  }
+
+} else {
+  adjDispField.style.display = "none";
+  adjDispContenido.innerHTML = "";
+}
 
   // Estado
   mostrarEstado(afiliado.activo);
@@ -514,25 +619,45 @@ async function entrarModoEdicion() {
 
   const nivelField = document.getElementById("nivelDiscapacidadField");
   const dispCheckbox = document.getElementById("discapacidad");
-  if (afiliado.discapacidad) {
-    nivelField.style.display = "block";
-    reemplazarPorSelect("nivelDiscapacidad", ["Permanente","Temporal"], afiliado.nivel_discapacidad);
-  } else {
+    dispCheckbox.addEventListener("change", () => {
+    renderAdjuntosDiscapacidad();
+  });
+
+if (afiliado.discapacidad) {
+  // Mostrar nivel de discapacidad y convertir a select
+  nivelField.style.display = "block";
+  reemplazarPorSelect(
+    "nivelDiscapacidad",
+    ["Permanente", "Temporal"],
+    afiliado.nivel_discapacidad
+  );
+
+  // Activar campos CUD (incluye sin vencimiento)
+  activarCamposCudEdicion();
+
+} else {
     nivelField.style.display = "none";
   }
 
-  dispCheckbox.addEventListener("change", () => {
+dispCheckbox.addEventListener("change", () => {
   const nivelField = document.getElementById("nivelDiscapacidadField");
+
   if (dispCheckbox.checked) {
     nivelField.style.display = "block";
     convertirNivelDiscapacidadASelect();
+    activarCamposCudEdicion();
   } else {
     nivelField.style.display = "none";
+
+    document.getElementById("cudEmisionField").style.display = "none";
+    document.getElementById("cudVencimientoField").style.display = "none";
+    document.getElementById("cudSinVencimientoField").style.display = "none";
   }
 
   actualizarAdjuntoEdicion();
   actualizarCampoPago();
   actualizarPlanMaternoEdicion();
+  renderAdjuntosDiscapacidad();
 });
 
   const fechaInput = document.getElementById("fechaNacimiento");
@@ -564,6 +689,94 @@ function reemplazarPorInput(id, valor, tipo = "text") {
   input.value = valor || "";
   span.replaceWith(input);
 }
+
+async function renderAdjuntosDiscapacidad() {
+  const docsList = document.getElementById("adjDispDocsList");
+  const inputsDiv = document.getElementById("adjDispInputs");
+
+  if (!afiliado.discapacidad) {
+    docsList.innerHTML = "";
+    inputsDiv.innerHTML = "";
+    return;
+  }
+
+  // Traer documentos desde Supabase
+  const { data: cudDocs, error } = await supabase
+    .from("cud_documentos")
+    .select("*")
+    .eq("afiliado_id", afiliado.id)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Error cargando CUD:", error);
+    docsList.textContent = "Error al cargar documentos CUD";
+    return;
+  }
+
+  docsList.innerHTML = cudDocs && cudDocs.length
+    ? cudDocs.map(d => `
+        <div style="margin-bottom:4px">
+          📎 <a href="${d.archivo_url}" target="_blank">Ver adjunto</a>
+        </div>
+      `).join("")
+    : "<span style='opacity:.7'>No hay documentos CUD cargados</span>";
+
+  // Mostrar botón + solo si está en edición
+  inputsDiv.innerHTML = "";
+  if (modoEdicion) {
+    const btnAgregar = document.createElement("button");
+    btnAgregar.type = "button";
+    btnAgregar.className = "btn-secondary";
+    btnAgregar.textContent = "➕ Agregar extensión CUD";
+    btnAgregar.addEventListener("click", () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".pdf,.jpg,.png";
+      input.className = "adjCudInput";
+      inputsDiv.appendChild(input);
+    });
+    inputsDiv.appendChild(btnAgregar);
+  }
+}
+
+async function subirAdjuntosCUD() {
+  const inputsDiv = document.getElementById("adjDispInputs");
+  if (!inputsDiv) return; // evitar null
+
+  const inputs = document.querySelectorAll(".adjCudInput");
+  for (const input of inputs) {
+    if (input.files.length === 0) continue;
+    const file = input.files[0];
+    const uploadResult = await subirArchivoCloudinary(file, afiliado.numero_afiliado);
+    const url = uploadResult?.secure_url;
+    if (!url) continue;
+
+    await supabase.from("cud_documentos").insert({
+      afiliado_id: afiliado.id,
+      archivo_url: url,
+      tipo: "Ver adjunto",
+      fecha_emision: document.getElementById("cudEmision")?.value || null,
+      fecha_vencimiento: document.getElementById("cudVencimiento")?.value || null
+    });
+
+  // Limpiar inputs después de subir
+  inputsDiv.innerHTML = "";
+  renderAdjuntosDiscapacidad();
+}
+
+
+  // Limpiar inputs después de subir
+  document.getElementById("adjDispInputs").innerHTML = "";
+  renderAdjuntosDiscapacidad();
+}
+
+document.getElementById("btnGuardar").addEventListener("click", async () => {
+  // Primero subimos todos los archivos CUD
+  await subirAdjuntosCUD();
+
+  // Después podés llamar a la función que guarda el resto de los datos del afiliado
+  await guardarCambios(); // Esta es tu función existente para guardar datos
+});
 
 function controlarVencimientoPlanMaterno() {
   if (!modoEdicion) return;
@@ -711,6 +924,36 @@ function restaurarCampos() {
     }
   });
 
+  ["cudEmision", "cudVencimiento"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el && el.tagName === "INPUT") {
+    const span = document.createElement("span");
+    span.id = id;
+
+    const valor =
+      id === "cudEmision"
+        ? afiliado.cud_emision
+        : afiliado.cud_sin_vencimiento
+          ? "Sin vencimiento"
+          : afiliado.cud_vencimiento;
+
+    span.textContent = valor
+      ? valor.split?.("-").reverse().join("/") || valor
+      : "-";
+
+    el.replaceWith(span);
+  }
+});
+
+const sinV = document.getElementById("cudSinVencimiento");
+if (sinV && sinV.tagName === "INPUT") {
+  const span = document.createElement("span");
+  span.id = "cudSinVencimiento";
+  span.textContent = afiliado.cud_sin_vencimiento ? "Sí" : "No";
+  sinV.replaceWith(span);
+}
+
+
 const elGrupoReal = document.getElementById("grupoFamiliarReal");
 if (elGrupoReal && (elGrupoReal.tagName === "INPUT" || elGrupoReal.tagName === "SELECT")) {
   const span = document.createElement("span");
@@ -791,6 +1034,12 @@ async function guardarCambios() {
   const plan_materno_desde = document.getElementById("planMaternoDesde")?.value || null;
   const plan_materno_hasta = document.getElementById("planMaternoHasta")?.value || null;
   const cbu_cvu = document.getElementById("cbuCvu")?.value || null;
+  const cud_emision = document.getElementById("cudEmision")?.value || null;
+  const cud_sin_vencimiento = document.getElementById("cudSinVencimiento")?.checked || false;
+  const cud_vencimiento = cud_sin_vencimiento
+    ? null
+    : document.getElementById("cudVencimiento")?.value || null;
+
 
   // IDs reales de relaciones
   const { data: parent } = await supabase.from("parentescos").select("id").eq("nombre", parentescoNombre).single();
@@ -831,19 +1080,27 @@ async function guardarCambios() {
   }
 
   // Validación y subida de adjunto discapacidad
-  let adjuntoDiscapacidadUrl = afiliado.adjuntoDiscapacidad;
-  if (discapacidad) {
-    if (!adjuntoDiscapacidadUrl && (!adjDispInput || adjDispInput.files.length === 0)) {
-      Swal.fire("Adjunto requerido", "Debes cargar el comprobante de discapacidad.", "error");
-      return;
-    }
-    if (adjDispInput && adjDispInput.files.length > 0) {
-      const file = adjDispInput.files[0];
-      adjuntoDiscapacidadUrl = await subirArchivoCloudinary(file, numero_afiliado);
-    }
-  } else {
-    adjuntoDiscapacidadUrl = null;
+if (adjDispInput && adjDispInput.files.length > 0) {
+  const file = adjDispInput.files[0];
+  const url = await subirArchivoCloudinary(file, numero_afiliado);
+
+  const { error } = await supabase.from("cud_documentos").insert({
+    afiliado_id: afiliadoId,
+    archivo_url: url,
+    tipo: "Ver adjunto",
+    fecha_emision: cud_emision,
+    fecha_vencimiento: cud_sin_vencimiento ? null : cud_vencimiento
+  });
+
+  if (error) {
+    Swal.fire("Error", "No se pudo guardar el documento CUD", "error");
+    console.error(error);
+    return;
   }
+
+  // Actualizamos la variable local
+  if (!afiliado.adjuntoDiscapacidad) afiliado.adjuntoDiscapacidad = url;
+}
 
   // =========================
 // Validación Menor B/ guarda (edición)
@@ -882,12 +1139,14 @@ if (
     grupo_familiar_codigo: calcularGrupoFamiliar(numero_afiliado),
     estudios,
     adjuntoEstudios: adjuntoEstudiosUrl,
-    adjuntoDiscapacidad: adjuntoDiscapacidadUrl,
     grupo_sanguineo_id: gsData?.id || null,
     fecha_ultimo_pago_cuota,
     plan_materno_desde,
     plan_materno_hasta,
-    cbu_cvu
+    cbu_cvu,
+    cud_emision,
+    cud_vencimiento,
+    cud_sin_vencimiento,
   };
 
   const { error } = await supabase.from("afiliados").update(payload).eq("id", afiliadoId);
@@ -1047,6 +1306,53 @@ async function eliminarAfiliado() {
 
   Swal.fire("Eliminado", "El afiliado ha sido eliminado correctamente", "success").then(() => {
     window.location.href = "/pages/padron.html";
+  });
+}
+
+const btnAgregarCud = document.getElementById("btnAgregarCud");
+if (btnAgregarCud) btnAgregarCud.style.display = "none";
+
+if (btnAgregarCud) {
+  btnAgregarCud.addEventListener("click", async () => {
+    const { value: file } = await Swal.fire({
+      title: "Agregar extensión CUD",
+      text: "Seleccioná el PDF de la extensión",
+      input: "file",
+      inputAttributes: {
+        accept: "application/pdf"
+      },
+      showCancelButton: true
+    });
+
+    if (!file) return;
+
+    // subir a cloudinary
+    const url = await subirArchivoCloudinary(file, "cud");
+
+    if (!url) {
+      Swal.fire("Error", "No se pudo subir el archivo", "error");
+      return;
+    }
+
+    // guardar en supabase
+    const { error } = await supabase
+      .from("cud_documentos")
+      .insert({
+        afiliado_id: afiliado.id,
+        archivo_url: url,
+        tipo: "📎 Ver adjunto"
+      });
+
+    if (error) {
+      console.error(error);
+      Swal.fire("Error", "No se pudo guardar el CUD", "error");
+      return;
+    }
+
+    Swal.fire("Listo", "Extensión CUD agregada", "success");
+
+    // refrescar vista
+    renderFicha();
   });
 }
 

@@ -326,6 +326,104 @@ background: #ffffff;
   cursor: pointer;
 }
 
+/* =====================
+   CUD – DOCUMENTOS
+===================== */
+
+/* =====================
+   ADJUNTO CUD – IGUAL A CONSTANCIA ALUMNO REGULAR
+===================== */
+
+#adjuntoDiscapacidadField {
+  grid-column: 1 / -4;
+  background: #f8fafc;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* Título igual a los demás campos */
+#adjuntoDiscapacidadField strong {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #475569;
+}
+
+/* Contenedor links */
+#adjuntoDiscapacidadContenido {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Links de adjuntos */
+#adjuntoDiscapacidadContenido a {
+  font-size: 0.88rem;
+  color: #1d4ed8;
+  text-decoration: none;
+}
+
+#adjuntoDiscapacidadContenido a:hover {
+  text-decoration: underline;
+}
+
+/* Input file igual al resto */
+#adjuntoDiscapacidadField input[type="file"] {
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    background: #fff7ed;
+    padding: 0.4rem;
+    cursor: pointer;
+}
+
+/* Botón agregar CUD igual estilo acción secundaria */
+#btnAgregarCud {
+  align-self: flex-start;
+  background: #e5e7eb;
+  color: #0f172a;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+
+#btnAgregarCud:hover {
+  background: #d1d5db;
+}
+
+/* =====================
+   CUD FECHAS
+===================== */
+
+#cudFechasField {
+  grid-column: span 2; /* ocupa 2 columnas como plan materno */
+}
+
+#cudFechasField label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #475569;
+  margin-bottom: 0.1rem;
+}
+
+.cud-fechas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.cud-fechas-grid span {
+  font-size: 0.9rem;
+}
+
 /* =========================
    TABLET ≤ 900px
 ========================= */
@@ -349,6 +447,27 @@ background: #ffffff;
    MOBILE ≤ 700px
 ========================= */
 @media (max-width: 700px) {
+
+    #cudFechasField {
+    grid-column: 1 / -1;
+  }
+
+  .cud-fechas-grid {
+    grid-template-columns: 1fr;
+  }
+
+    #adjuntoDiscapacidadField {
+    padding: 0.6rem;
+  }
+
+  #adjuntoDiscapacidadContenido a {
+    font-size: 0.8rem;
+  }
+
+  #btnAgregarCud {
+    width: 100%;
+    text-align: center;
+  }
 
     .ficha-afiliado {
     padding: 1rem;

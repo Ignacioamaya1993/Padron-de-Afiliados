@@ -161,7 +161,7 @@ body {
 
 /* ESTADO PLAN MATERNO ACTIVO */
 .fila-plan-categoria.plan-materno-activo {
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1.2fr 1.2fr 0.8fr 0.8fr;
 }
 
 /* Cuando está activo, mostrar fechas */
@@ -216,6 +216,40 @@ body {
   background: #fff7ed;
   padding: 0.4rem;
   cursor: pointer;
+}
+
+/* =========================
+   VIGENCIA CUD
+========================= */
+
+#fechasDiscapacidad {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 1rem;
+  align-items: end;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+}
+
+/* Labels flotantes más chicos */
+#fechasDiscapacidad .floating-field label {
+  font-size: 0.7rem;
+  color: #475569;
+}
+
+/* Cuando el CUD es permanente */
+#fechasDiscapacidad.cud-permanente {
+  grid-template-columns: 1fr;
+}
+
+#fechasDiscapacidad .checkbox-field {
+  align-items: center;
+  padding-bottom: 6px;
+  white-space: nowrap;
 }
 
 /* =========================
@@ -325,6 +359,10 @@ body {
   color: #dc2626;
   font-weight: 600;
   font-size: 0.9rem;
+}
+
+#fechasDiscapacidad {
+  grid-template-columns: 1fr;
 }
 
 /* =========================
