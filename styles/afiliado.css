@@ -425,6 +425,89 @@ background: #ffffff;
 }
 
 /* =========================
+   CONTENEDOR ITEM CUD
+========================= */
+.cud-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-bottom: 4px;
+  padding: 4px 6px;
+
+  background-color: #f9fafb;
+  border-radius: 6px;
+}
+
+/* =========================
+   BOTÓN ELIMINAR CUD (X)
+========================= */
+.btn-eliminar-cud {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 22px;
+  height: 22px;
+
+  margin-left: 6px;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  color: #991b1b;
+  background-color: #fee2e2;
+
+  border: 1px solid #fca5a5;
+  border-radius: 50%;
+
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-eliminar-cud:hover {
+  background-color: #fecaca;
+  color: #7f1d1d;
+}
+
+.btn-eliminar-cud:active {
+  transform: scale(0.9);
+}
+
+/* =========================
+   BOTÓN AGREGAR CUD (+)
+========================= */
+.btn-agregar-cud {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-top: 6px;
+  padding: 6px 10px;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  color: #065f46;
+  background-color: #ecfdf5;
+
+  border: 1px solid #34d399;
+  border-radius: 6px;
+
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-agregar-cud:hover {
+  background-color: #d1fae5;
+  border-color: #10b981;
+}
+
+.btn-agregar-cud:active {
+  transform: scale(0.97);
+}
+
+/* =========================
    TABLET ≤ 900px
 ========================= */
 @media (max-width: 900px) {
