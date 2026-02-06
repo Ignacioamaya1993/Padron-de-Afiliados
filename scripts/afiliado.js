@@ -64,6 +64,11 @@ if (hasta && hasta.tagName === "INPUT") hasta.disabled = true;
    HELPERS
 ===================== */
 
+function esTitular(numeroAfiliado) {
+  if (!numeroAfiliado) return false;
+  return numeroAfiliado.trim().endsWith("/00");
+}
+
 // =====================
 // CUD – helpers edición
 // =====================
@@ -183,11 +188,6 @@ function diasDesde(fecha) {
 
 function esCategoriaJubilado(nombre) {
   return nombre === "Jubilado ANSES" || nombre === "Pensionado ANSES reparto";
-}
-
-function tieneMenosDe80(fechaNacimiento) {
-  if (!fechaNacimiento) return false;
-  return calcularEdad(fechaNacimiento) < 80;
 }
 
 /* =====================
@@ -386,8 +386,7 @@ cudVencimientoSpan.textContent = ultimoCud
   } else {
     adjEstudiosField.style.display = "none";
     adjEstudiosContenido.innerHTML = "";
-  }
-  
+  }  
 
   // Estado
   mostrarEstado(afiliado.activo);
@@ -425,8 +424,31 @@ const pagoField = document.getElementById("fechaUltimoPagoField");
 const pagoSpan = document.getElementById("fechaUltimoPago");
 const alerta = document.getElementById("alertaDeudor");
 
-const esJubilado = esCategoriaJubilado(categoriaNombre);
-const pagaCuota = esJubilado && tieneMenosDe80(afiliado.fechaNacimiento);
+const categoriaElem = document.getElementById("categoria");
+const categoria = categoriaElem?.value ?? categoriaElem?.textContent;
+
+const fechaElem = document.getElementById("fechaNacimiento");
+const fechaNac = fechaElem?.value ?? fechaElem?.textContent;
+
+const numeroAfiliado = document.getElementById("numeroAfiliado")?.value ?? document.getElementById("numeroAfiliado")?.textContent;
+
+console.log("categoria:", categoria);
+console.log("fechaNac raw:", fechaNac);
+
+const edad = fechaNac ? calcularEdad(fechaNac) : null;
+console.log("edad calculada:", edad);
+
+console.log("esCategoriaJubilado(categoria):", esCategoriaJubilado(categoria));
+console.log("fechaNac && edad < 80:", fechaNac && edad < 80);
+console.log("esTitular(numeroAfiliado):", esTitular(numeroAfiliado));
+
+const pagaCuota =
+  esCategoriaJubilado(categoria) &&
+  edad !== null &&
+  edad < 80 &&
+  esTitular(numeroAfiliado);
+
+console.log("pagaCuota final:", pagaCuota);
 
 if (pagaCuota) {
   pagoField.style.display = "block";
