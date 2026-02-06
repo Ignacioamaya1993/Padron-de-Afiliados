@@ -878,29 +878,35 @@ function actualizarPlanMaternoEdicion() {
 function actualizarCampoPago() {
   const categoria = document.getElementById("categoria")?.value;
   const field = document.getElementById("fechaUltimoPagoField");
-  const span = document.getElementById("fechaUltimoPago");
-
+  const elem = document.getElementById("fechaUltimoPago");
   const fechaNac = document.getElementById("fechaNacimiento")?.value;
+
   const pagaCuota =
     esCategoriaJubilado(categoria) &&
     fechaNac &&
-    calcularEdad(fechaNac) < 80;
+    calcularEdad(fechaNac) < 80 &&
+    esTitular(document.getElementById("numeroAfiliado")?.value);
 
   if (!pagaCuota) {
     field.style.display = "none";
-    const input = document.getElementById("fechaUltimoPago");
-    if (input) input.value = "";
+    if (elem) elem.value = "";
     return;
   }
 
   field.style.display = "block";
 
-  if (span && span.tagName === "SPAN") {
-    const input = document.createElement("input");
-    input.type = "date";
-    input.id = "fechaUltimoPago";
-    input.value = formatoInputDate(afiliado.fecha_ultimo_pago_cuota);
-    span.replaceWith(input);
+  const valor = afiliado.fecha_ultimo_pago_cuota ? formatoInputDate(afiliado.fecha_ultimo_pago_cuota) : "";
+
+  if (elem) {
+    if (elem.tagName === "SPAN") {
+      const input = document.createElement("input");
+      input.type = "date";
+      input.id = "fechaUltimoPago";
+      input.value = valor;
+      elem.replaceWith(input);
+    } else if (elem.tagName === "INPUT") {
+      elem.value = valor;
+    }
   }
 }
 
@@ -1271,6 +1277,7 @@ if (discapacidad && cud_documentos.length > 0) {
 afiliado = {
   ...afiliado,
   ...payload,
+  fecha_ultimo_pago_cuota,
   parentesco_id: parent?.id ? { id: parent.id, nombre: parentescoNombre } : null,
   plan_id: planData?.id ? { id: planData.id, nombre: planNombre } : null,
   categoria_id: categoriaData?.id ? { id: categoriaData.id, nombre: categoriaNombre } : null,
