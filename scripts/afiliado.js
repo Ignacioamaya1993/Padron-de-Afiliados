@@ -424,31 +424,18 @@ const pagoField = document.getElementById("fechaUltimoPagoField");
 const pagoSpan = document.getElementById("fechaUltimoPago");
 const alerta = document.getElementById("alertaDeudor");
 
-const categoriaElem = document.getElementById("categoria");
-const categoria = categoriaElem?.value ?? categoriaElem?.textContent;
+const categoria = afiliado.categoria_id?.nombre || "";
+const numeroAfiliado = afiliado.numero_afiliado;
 
-const fechaElem = document.getElementById("fechaNacimiento");
-const fechaNac = fechaElem?.value ?? fechaElem?.textContent;
-
-const numeroAfiliado = document.getElementById("numeroAfiliado")?.value ?? document.getElementById("numeroAfiliado")?.textContent;
-
-console.log("categoria:", categoria);
-console.log("fechaNac raw:", fechaNac);
-
-const edad = fechaNac ? calcularEdad(fechaNac) : null;
-console.log("edad calculada:", edad);
-
-console.log("esCategoriaJubilado(categoria):", esCategoriaJubilado(categoria));
-console.log("fechaNac && edad < 80:", fechaNac && edad < 80);
-console.log("esTitular(numeroAfiliado):", esTitular(numeroAfiliado));
+const edad = afiliado.fechaNacimiento
+  ? calcularEdad(afiliado.fechaNacimiento)
+  : null;
 
 const pagaCuota =
   esCategoriaJubilado(categoria) &&
   edad !== null &&
   edad < 80 &&
   esTitular(numeroAfiliado);
-
-console.log("pagaCuota final:", pagaCuota);
 
 if (pagaCuota) {
   pagoField.style.display = "block";
@@ -576,7 +563,7 @@ async function entrarModoEdicion() {
   reemplazarPorSelect("plan", opciones.planes, planNombre);
   reemplazarPorSelect("categoria", opciones.categorias, categoriaNombre);
   reemplazarPorSelect("localidad", opciones.localidades, localidadNombre);
-  reemplazarPorSelect("grupoSanguineo", opcionesGrupoSanguineo, afiliado.grupo_sanguineo_id?.nombre);
+  reemplazarPorSelect("grupoSanguineo", opcionesGrupoSanguineo, afiliado.grupo_sanguineo_id?.nombre, true);
   reemplazarPorCheckbox("discapacidad", afiliado.discapacidad);
   reemplazarPorInput("planMaternoDesde", formatoInputDate(afiliado.plan_materno_desde), "date");
   reemplazarPorInput("planMaternoHasta", formatoInputDate(afiliado.plan_materno_hasta), "date");
@@ -910,11 +897,20 @@ function actualizarCampoPago() {
   }
 }
 
-function reemplazarPorSelect(id, opciones, valorActual) {
+function reemplazarPorSelect(id, opciones, valorActual, permitirVacio = false) {
   const span = document.getElementById(id);
   if (!span) return;
+
   const select = document.createElement("select");
   select.id = id;
+
+  if (permitirVacio) {
+    const empty = document.createElement("option");
+    empty.value = "";
+    empty.textContent = "— Seleccionar —";
+    select.appendChild(empty);
+  }
+
   opciones.forEach(op => {
     const o = document.createElement("option");
     o.value = op;
@@ -922,6 +918,7 @@ function reemplazarPorSelect(id, opciones, valorActual) {
     if (valorActual === op) o.selected = true;
     select.appendChild(o);
   });
+
   span.replaceWith(select);
 }
 
@@ -1099,7 +1096,7 @@ async function guardarCambios() {
   const nivel_discapacidad = (discapacidad && document.getElementById("nivelDiscapacidad")?.value) || null;
   const parentescoNombre = document.getElementById("parentesco")?.value || null;
   const grupo_familiar_real = document.getElementById("grupoFamiliarReal")?.value || null;
-  const grupoSanguineoNombre = document.getElementById("grupoSanguineo")?.value || null;
+  const grupoSanguineoNombre = document.getElementById("grupoSanguineo")?.value || null;  
   const fecha_ultimo_pago_cuota = document.getElementById("fechaUltimoPago")?.value || null;
   const plan_materno_desde = document.getElementById("planMaternoDesde")?.value || null;
   const plan_materno_hasta = document.getElementById("planMaternoHasta")?.value || null;
@@ -1145,6 +1142,18 @@ async function guardarCambios() {
   } else {
     adjuntoEstudiosUrl = null;
   }
+
+  let grupo_sanguineo_id = null;
+
+if (grupoSanguineoNombre) {
+  const { data: gsData } = await supabase
+    .from("grupo_sanguineo")
+    .select("id")
+    .eq("nombre", grupoSanguineoNombre)
+    .single();
+
+  grupo_sanguineo_id = gsData?.id || null;
+}
 
   // =========================
 // Validación Menor B/ guarda (edición)
@@ -1207,7 +1216,8 @@ if (plan_materno_desde && plan_materno_hasta) {
     fecha_ultimo_pago_cuota,
     plan_materno_desde,
     plan_materno_hasta,
-    cbu_cvu
+    cbu_cvu,
+    grupo_sanguineo_id
   };
 
   const { error } = await supabase.from("afiliados").update(payload).eq("id", afiliadoId);
