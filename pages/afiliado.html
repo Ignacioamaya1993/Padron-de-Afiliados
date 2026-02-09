@@ -24,121 +24,54 @@
   <main class="ficha-afiliado">
 
     <div class="ficha-header">
-      <button id="btnVolver" class="volver-btn">
-        ⬅️ Volver al buscador
-      </button>
-
+      <button id="btnVolver" class="volver-btn">⬅️ Volver al buscador</button>
       <h2 id="nombreCompleto">-</h2>
-
       <button id="btnFichaMedica" class="btn-primary">📋 Ficha Médica</button>
     </div>
 
     <div class="ficha-grid">
 
+      <div><strong>DNI</strong><span id="dni">-</span></div>
+      <div><strong>CUIL</strong><span id="cuil">-</span></div>
+      <div><strong>Fecha de nacimiento</strong><span id="fechaNacimiento">-</span></div>
+      <div><strong>Edad</strong><span id="edadVista">-</span></div>
+      <div><strong>Teléfono</strong><span id="telefono">-</span></div>
+      <div><strong>Correo electrónico</strong><span id="mail">-</span></div>
+      <div><strong>N° Afiliado</strong><span id="numeroAfiliado">-</span></div>
+      <div><strong>Grupo familiar</strong><span id="grupoFamiliar"></span></div>
+      <div><strong>Grupo familiar real</strong><span id="grupoFamiliarReal">-</span></div>
+      <div><strong>Parentesco</strong><span id="parentesco">-</span></div>
+
       <div>
-        <strong>DNI</strong>
-        <span id="dni">-</span>
+        <strong>CBU / CVU / Alias</strong>
+        <span id="cbuCvu">-</span>
       </div>
 
-      <div>
-        <strong>CUIL</strong>
-        <span id="cuil">-</span>
-      </div>
-
-      <div>
-        <strong>Fecha de nacimiento</strong>
-        <span id="fechaNacimiento">-</span>
-      </div>
-
-      <div>
-        <strong>Edad</strong>
-        <span id="edadVista">-</span>
-      </div>
-
-      <div>
-        <strong>Teléfono</strong>
-        <span id="telefono">-</span>
-      </div>
-
-      <div>
-        <strong>Correo electrónico</strong>
-        <span id="mail">-</span>
-      </div>
-
-      <div>
-        <strong>N° Afiliado</strong>
-        <span id="numeroAfiliado">-</span>
-      </div>
-
-      <div>
-        <strong>Grupo familiar</strong>
-        <span id="grupoFamiliar"></span>
-      </div>
-
-      <div>
-        <strong>Grupo familiar real</strong>
-        <span id="grupoFamiliarReal">-</span>
-      </div>
-
-      <div>
-        <strong>Parentesco</strong>
-        <span id="parentesco">-</span>
-      </div>
-
-          <div>
-      <strong>CBU / CVU / Alias</strong>
-      <span id="cbuCvu">-</span>
-    </div>
-
-      <div>
-        <strong>Sexo</strong>
-        <span id="sexo">-</span>
-      </div>
-
-      <div>
-        <strong>Grupo Sanguíneo</strong>
-        <span id="grupoSanguineo">-</span>
-    </div>
-
-      <div>
-        <strong>Plan</strong>
-        <span id="plan">-</span>
-      </div>
-
-      <div>
-        <strong>Categoria</strong>
-        <span id="categoria">-</span>
-      </div>
+      <div><strong>Sexo</strong><span id="sexo">-</span></div>
+      <div><strong>Grupo Sanguíneo</strong><span id="grupoSanguineo">-</span></div>
+      <div><strong>Plan</strong><span id="plan">-</span></div>
+      <div><strong>Categoria</strong><span id="categoria">-</span></div>
 
       <div id="planMaternoDesdeField" style="display:none;">
-      <strong>Plan materno desde</strong>
-      <br>
-      <span id="planMaternoDesde">-</span>
-    </div>
-
-    <div id="planMaternoHastaField" style="display:none;">
-      <strong>Plan materno hasta</strong>
-      <br>
-      <span id="planMaternoHasta">-</span>
-    </div>
-
-          <div id="fechaUltimoPagoField" style="display:none;">
-      <strong>Fecha último pago cuota social</strong>
-      <br><span id="fechaUltimoPago">-</span>
-      <div id="alertaDeudor" style="color:#dc2626; font-weight:600; display:none;">
-        ⚠️ Deudor cuota social
-      </div>
-    </div>
-
-      <div>
-        <strong>Localidad</strong>
-        <span id="localidad">-</span>
+        <strong>Plan materno desde</strong><br>
+        <span id="planMaternoDesde">-</span>
       </div>
 
-      <div>
-        <strong>Discapacidad</strong>
-        <span id="discapacidad">No</span>
+      <div id="planMaternoHastaField" style="display:none;">
+        <strong>Plan materno hasta</strong><br>
+        <span id="planMaternoHasta">-</span>
       </div>
+
+      <div id="fechaUltimoPagoField" style="display:none;">
+        <strong>Fecha último pago cuota social</strong><br>
+        <span id="fechaUltimoPago">-</span>
+        <div id="alertaDeudor" style="color:#dc2626; font-weight:600; display:none;">
+          ⚠️ Deudor cuota social
+        </div>
+      </div>
+
+      <div><strong>Localidad</strong><span id="localidad">-</span></div>
+      <div><strong>Discapacidad</strong><span id="discapacidad">No</span></div>
 
       <div id="nivelDiscapacidadField" style="display:none;">
         <strong>Nivel de discapacidad</strong>
@@ -146,15 +79,18 @@
       </div>
 
       <div id="cudEmisionField" style="display:none;">
-        <strong>CUD emisión</strong>
-        <br>
+        <strong>CUD emisión</strong><br>
         <span id="cudEmision">-</span>
       </div>
 
+      <!-- 🔽 ACÁ ESTÁ EL CAMBIO IMPORTANTE -->
       <div id="cudVencimientoField" style="display:none;">
-        <strong>CUD vencimiento</strong>
-        <br>
+        <strong>CUD vencimiento</strong><br>
         <span id="cudVencimiento">-</span>
+
+        <div id="alertaCud" style="display:none; color:#dc2626; font-weight:600;">
+          ⚠️ El CUD está próximo a vencer
+        </div>
       </div>
 
       <div id="cudSinVencimientoField" style="display:none;">
@@ -162,28 +98,24 @@
         <span id="cudSinVencimiento">-</span>
       </div>
 
-      <div>
-        <strong>Estado</strong>
-        <span id="estadoAfiliado">-</span>
-      </div>
+      <div><strong>Estado</strong><span id="estadoAfiliado">-</span></div>
 
       <div id="estudiosField" style="display:none;">
-        <strong>Estudios</strong>
-        <br><span id="estudios">-</span>
+        <strong>Estudios</strong><br>
+        <span id="estudios">-</span>
       </div>
 
-    <div id="adjuntoEstudiosField" style="display:none;">
-      <label>Constancia Alumno Regular</label>
-      <span id="adjuntoEstudiosContenido"></span>
+      <div id="adjuntoEstudiosField" style="display:none;">
+        <label>Constancia Alumno Regular</label>
+        <span id="adjuntoEstudiosContenido"></span>
+      </div>
+
+      <div id="adjuntoDiscapacidadField" style="display:none;">
+        <label>Constancia Discapacidad (CUD)</label><br>
+        <div id="adjuntoDiscapacidadContenido" class="adjuntos-lista"></div>
+      </div>
+
     </div>
-
-        <div id="adjuntoDiscapacidadField" style="display:none;">
-          <label>Constancia Discapacidad (CUD)</label>
-          <br>
-
-          <div id="adjuntoDiscapacidadContenido" class="adjuntos-lista"></div>
-        </div>
-        </div>
 
     <div class="acciones-ficha">
       <button id="btnEditar">✏️ Editar</button>
@@ -210,7 +142,6 @@
           <th>Estado</th>
         </tr>
       </thead>
-
       <tbody></tbody>
     </table>
   </section>

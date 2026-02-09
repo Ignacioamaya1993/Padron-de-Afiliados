@@ -64,6 +64,21 @@ if (hasta && hasta.tagName === "INPUT") hasta.disabled = true;
    HELPERS
 ===================== */
 
+function restarMeses(fecha, meses) {
+  const f = new Date(fecha);
+  const d = f.getDate();
+
+  f.setMonth(f.getMonth() - meses);
+
+  // Corrige desbordes (ej: 31 → febrero)
+  if (f.getDate() !== d) {
+    f.setDate(0);
+  }
+
+  f.setHours(0, 0, 0, 0);
+  return f;
+}
+
 function esTitular(numeroAfiliado) {
   if (!numeroAfiliado) return false;
   return numeroAfiliado.trim().endsWith("/00");
@@ -359,6 +374,42 @@ cudVencimientoSpan.textContent = ultimoCud
   cudEmisionField.style.display = "none";
   cudVencimientoField.style.display = "none";
   cudSinVencField.style.display = "none";
+}
+
+// =========================
+// ALERTA VENCIMIENTO CUD
+// =========================
+const alertaCud = document.getElementById("alertaCud");
+
+if (alertaCud) {
+  alertaCud.style.display = "none";
+  alertaCud.classList.remove("alerta-error");
+
+  if (afiliado.discapacidad && cud_documentos.length > 0) {
+    const ultimoCud = cud_documentos[cud_documentos.length - 1];
+
+    if (!ultimoCud.sin_vencimiento && ultimoCud.fecha_vencimiento) {
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+
+      const fechaVenc = new Date(ultimoCud.fecha_vencimiento);
+      fechaVenc.setHours(0, 0, 0, 0);
+
+      const fechaAviso = restarMeses(fechaVenc, 3);
+
+      // ❌ YA VENCIDO
+      if (hoy > fechaVenc) {
+        alertaCud.textContent = "❌ El CUD se encuentra vencido";
+        alertaCud.classList.add("alerta-error");
+        alertaCud.style.display = "block";
+      }
+      // ⚠️ POR VENCER (3 meses antes)
+      else if (hoy >= fechaAviso) {
+        alertaCud.textContent = "⚠️ El CUD está próximo a vencer";
+        alertaCud.style.display = "block";
+      }
+    }
+  }
 }
 
   // Estudios
@@ -1263,7 +1314,8 @@ if (discapacidad) {
 // ACTUALIZAR CUD EXISTENTE
 // =========================
 if (discapacidad && cud_documentos.length > 0) {
-  const ultimoCud = cud_documentos[cud_documentos.length - 1];
+  const ultimoIndex = cud_documentos.length - 1;
+  const ultimoCud = cud_documentos[ultimoIndex];
 
   const { error: cudUpdateError } = await supabase
     .from("cud_documentos")
@@ -1279,6 +1331,14 @@ if (discapacidad && cud_documentos.length > 0) {
     Swal.fire("Error", "No se pudo actualizar el CUD", "error");
     return;
   }
+
+  // 🔥 ACTUALIZAR ESTADO LOCAL
+  cud_documentos[ultimoIndex] = {
+    ...ultimoCud,
+    fecha_emision,
+    fecha_vencimiento: sin_vencimiento ? null : fecha_vencimiento,
+    sin_vencimiento
+  };
 }
 
   // =========================
@@ -1391,7 +1451,10 @@ const { data: familiares, error } = await query;
    EVENTOS
 ===================== */
 document.getElementById("btnEditar").addEventListener("click", entrarModoEdicion);
-document.getElementById("btnCancelar").addEventListener("click", renderFicha);
+document.getElementById("btnCancelar").addEventListener("click", async () => {
+  modoEdicion = false;
+  await renderFicha(cud_documentos);
+});
 document.getElementById("btnGuardar").addEventListener("click", guardarCambios);
 document.getElementById("btnBaja").addEventListener("click", darDeBaja);
 document.getElementById("btnReactivar").addEventListener("click", reactivarAfiliado);

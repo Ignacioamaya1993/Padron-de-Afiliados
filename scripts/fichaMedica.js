@@ -165,7 +165,7 @@ async function eliminarRegistro(tabla, id) {
     }
   }
 
-  // 3Borrar registro en Supabase
+  // Borrar registro en Supabase
   const { error: delError } = await supabase.from(tabla).delete().eq("id", id);
   if (delError) return Swal.fire("Error", delError.message, "error");
 

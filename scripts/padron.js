@@ -25,6 +25,27 @@ function calcularEdad(fechaNacimiento) {
   return edad;
 }
 
+function obtenerAlertaCud(cuds) {
+  if (!cuds || !cuds.length) return null;
+
+  const cud = cuds[cuds.length - 1];
+  if (cud.sin_vencimiento) return null;
+  if (!cud.fecha_vencimiento) return null;
+
+  const hoy = new Date();
+  const venc = new Date(cud.fecha_vencimiento);
+  const diffDias = Math.floor((venc - hoy) / (1000 * 60 * 60 * 24));
+
+  if (diffDias < 0) {
+    return "❌ CUD vencido";
+  }
+
+  if (diffDias <= 90) {
+    return "⚠ CUD próximo a vencer";
+  }
+
+  return null;
+}
 
 /*
   Genera una alerta para jubilados/pensionados ANSES
@@ -408,7 +429,11 @@ async function buscarAfiliados(texto, token) {
         activo,
         grupo_familiar_codigo,
         fecha_ultimo_pago_cuota,
-        categoria_id (nombre)
+        categoria_id (nombre),
+        cud_documentos (
+        fecha_vencimiento,
+        sin_vencimiento
+        )
       `);
 
     palabras.forEach(p => {
@@ -454,6 +479,7 @@ async function buscarAfiliados(texto, token) {
     */
     afiliados.forEach(a => {
       const textoParentesco = a.numero_afiliado.endsWith("/00") ? "Titular" : (dicParentescos[a.parentesco_id] || "N/A");
+      const alertaCud = obtenerAlertaCud(a.cud_documentos);
       const alerta = obtenerAlertaHijo(a.fechaNacimiento, textoParentesco, a.estudios);
       const alertaJubilado = obtenerAlertaJubilado(a.categoria_id?.nombre, a.fecha_ultimo_pago_cuota, a.fechaNacimiento);      
       const edad = a.fechaNacimiento ? calcularEdad(a.fechaNacimiento) : "";
@@ -469,6 +495,7 @@ async function buscarAfiliados(texto, token) {
         Afiliado: ${a.numero_afiliado} | ${textoParentesco}
         ${alerta ? `<div class="alerta-edad">${alerta}</div>` : ""}
         ${alertaJubilado ? `<div class="alerta-edad">${alertaJubilado}</div>` : ""}
+        ${alertaCud ? `<div class="alerta-cud">${alertaCud}</div>` : ""}
       `;
       div.onclick = () => location.href = `/pages/afiliado.html?id=${a.id}`;
       resultadosDiv.appendChild(div);
