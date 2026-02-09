@@ -83,16 +83,6 @@ function mesesHastaCumple(fechaNacimiento, edadObjetivo) {
 }
 
 /*
-  Devuelve true si la persona ya superó una edad límite
-*/
-function pasoEdadLimite(fechaNacimiento, edadLimite) {
-  if (!fechaNacimiento) return true;
-  const fn = new Date(fechaNacimiento);
-  const fechaLimite = new Date(fn.getFullYear() + edadLimite, fn.getMonth(), fn.getDate());
-  return new Date() >= fechaLimite;
-}
-
-/*
   Genera alertas para hijos o menores bajo guarda
   cuando están cerca de perder cobertura por edad
 */
@@ -137,7 +127,6 @@ function obtenerAlertaHijo(fechaNacimiento, parentesco, estudios) {
   Referencias a todos los inputs y secciones del formulario
 */
 const f = document.getElementById("PadronForm");
-
 const parentescoSelect = f.querySelector('[name="parentesco_id"]');
 const fechaNacimientoInput = f.querySelector('[name="fechaNacimiento"]');
 const estudiosField = document.getElementById("estudiosField");
@@ -445,7 +434,7 @@ async function buscarAfiliados(texto, token) {
     const { data: afiliados, error } = await query.limit(20);
     if (error) throw error;
 
-    // 👇 si ya hubo otra búsqueda, ignoro esta
+    // si ya hubo otra búsqueda, ignoro esta
     if (token !== searchToken) return;
 
     resultadosDiv.innerHTML = "";
@@ -785,7 +774,7 @@ const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
 if (error) {
   console.error("Error al insertar afiliado:", error);
   Swal.fire("Error", "No se pudo guardar el afiliado", "error");
-  return; // 🔹 evitar usar nuevoAfiliado si hay error
+  return;
 }
 
   if (discapacidadCheckbox.checked && adjuntoDiscapacidad) {

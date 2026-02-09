@@ -170,15 +170,6 @@ function calcularGrupoFamiliar(numeroAfiliado) {
   return numeroAfiliado.substring(guionIndex + 1, slashIndex); // toma todo lo que está entre guion y barra
 }
 
-function mesesParaCumplirEdad(fechaNacimiento, edadObjetivo) {
-  if (!fechaNacimiento) return null;
-  const hoy = new Date();
-  const fn = new Date(fechaNacimiento);
-  const fechaLimite = new Date(fn.getFullYear() + edadObjetivo, fn.getMonth(), fn.getDate());
-  const diffMeses = (fechaLimite.getFullYear() - hoy.getFullYear()) * 12 + (fechaLimite.getMonth() - hoy.getMonth());
-  return diffMeses;
-}
-
 function mostrarEstado(activo) {
   const estadoSpan = document.getElementById("estadoAfiliado");
   if (!estadoSpan) return;
@@ -397,13 +388,13 @@ if (alertaCud) {
 
       const fechaAviso = restarMeses(fechaVenc, 3);
 
-      // ❌ YA VENCIDO
+      // YA VENCIDO
       if (hoy > fechaVenc) {
         alertaCud.textContent = "❌ El CUD se encuentra vencido";
         alertaCud.classList.add("alerta-error");
         alertaCud.style.display = "block";
       }
-      // ⚠️ POR VENCER (3 meses antes)
+      // POR VENCER (3 meses antes)
       else if (hoy >= fechaAviso) {
         alertaCud.textContent = "⚠️ El CUD está próximo a vencer";
         alertaCud.style.display = "block";
@@ -696,7 +687,6 @@ async function entrarModoEdicion() {
   actualizarAdjuntoEdicion();
   toggleBotones(true);
   renderAdjuntosDiscapacidad();
-
 }
 
 /* =====================
@@ -1122,7 +1112,6 @@ function restaurarCampos() {
   });
 }
 
-
 function toggleBotones(editando) {
   document.getElementById("btnEditar").style.display = editando ? "none" : "inline-block";
   document.getElementById("btnGuardar").style.display = editando ? "inline-block" : "none";
@@ -1167,7 +1156,6 @@ async function guardarCambios() {
   // Validaciones de edad y adjuntos
   // =========================
   const adjEstudiosInput = document.getElementById("adjuntoEstudiosInput");
-  const adjDispInput = document.getElementById("adjuntoDiscapacidadInput");
 
   // Hijos 21-26
   const esHijo21a26 = parentescoNombre === "Hijos" && fecha_nacimiento && pasoEdadLimite(fecha_nacimiento, 21) && !pasoEdadLimite(fecha_nacimiento, 26);
@@ -1332,7 +1320,7 @@ if (discapacidad && cud_documentos.length > 0) {
     return;
   }
 
-  // 🔥 ACTUALIZAR ESTADO LOCAL
+  // ACTUALIZAR ESTADO LOCAL
   cud_documentos[ultimoIndex] = {
     ...ultimoCud,
     fecha_emision,
