@@ -2,83 +2,66 @@ import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
-    
 export async function init(afiliadoId) {
   if (!afiliadoId) {
     Swal.fire("Error", "Afiliado no encontrado", "error");
     throw new Error("ID afiliado faltante");
   }
-  
-  // =====================
-  // INIT HEADER
-  // =====================
+
   await cargarHeader();
 
-  // =====================
-  // ELEMENTOS
-  // =====================
+  /* =====================
+     ESTADO
+  ===================== */
+  let editandoId = null;
+  let archivosAdjuntos = [];
+
+  /* =====================
+     ELEMENTOS
+  ===================== */
   const btnNuevo = document.getElementById("btnNuevoMedicamento");
   const btnCancelar = document.getElementById("btnCancelarMedicamento");
+  const btnAgregarAdjunto = document.getElementById("btnAgregarAdjunto");
+
   const form = document.getElementById("formMedicamento");
   const lista = document.getElementById("listaMedicamentos");
 
   const tipoSelect = document.getElementById("tipoMedicamento");
+  const datosMedicamento = document.getElementById("datosMedicamento");
   const campoLatas = document.getElementById("campoLatas");
   const campoInicio = document.getElementById("campoInicio");
   const campoVencimiento = document.getElementById("campoVencimiento");
-  const datosMedicamento = document.getElementById("datosMedicamento");
 
-  // =====================
-  // TIPOS MEDICAMENTOS
-  // =====================
+  const adjuntosContainer = document.getElementById("adjuntosContainer");
+
+  /* =====================
+     TIPOS MEDICAMENTOS
+  ===================== */
   async function cargarTipos() {
     const { data, error } = await supabase
       .from("tipo_medicamentos")
       .select("id, nombre")
       .order("nombre");
 
-    if (error) {
-      console.error(error);
-      return;
-    }
+    if (error) return console.error(error);
 
     tipoSelect.innerHTML = `<option value="">Seleccione tipo</option>`;
-
-    data.forEach(tipo => {
-      const option = document.createElement("option");
-      option.value = tipo.id;
-      option.textContent = tipo.nombre;
-      tipoSelect.appendChild(option);
+    data.forEach(t => {
+      const opt = document.createElement("option");
+      opt.value = t.id;
+      opt.textContent = t.nombre;
+      tipoSelect.appendChild(opt);
     });
-
-    actualizarCamposPorTipo();
   }
 
-  // =====================
-  // CAMPOS SEGÚN TIPO
-  // =====================
   function actualizarCamposPorTipo() {
     const tipoId = Number(tipoSelect.value);
 
-    if (!tipoId) {
-      datosMedicamento.classList.add("hidden");
-      campoLatas.classList.add("hidden");
-      campoInicio.classList.add("hidden");
-      campoVencimiento.classList.add("hidden");
-      return;
-    }
-
-    datosMedicamento.classList.remove("hidden");
+    datosMedicamento.classList.toggle("hidden", !tipoId);
 
     campoLatas.classList.add("hidden");
     campoInicio.classList.add("hidden");
     campoVencimiento.classList.add("hidden");
-
-    if (tipoId !== 4) form.latas_entregadas.value = "";
-    if (![6, 7].includes(tipoId)) {
-      form.fecha_inicio.value = "";
-      form.fecha_vencimiento.value = "";
-    }
 
     if (tipoId === 4) campoLatas.classList.remove("hidden");
     if ([6, 7].includes(tipoId)) {
@@ -89,91 +72,224 @@ export async function init(afiliadoId) {
 
   tipoSelect.addEventListener("change", actualizarCamposPorTipo);
 
-  // =====================
-  // LISTAR MEDICAMENTOS
-  // =====================
+  /* =====================
+     ADJUNTOS
+  ===================== */
+  function resetAdjuntos() {
+    archivosAdjuntos = [];
+    adjuntosContainer.innerHTML = "";
+  }
+
+  function agregarAdjuntoInput() {
+    const wrapper = document.createElement("div");
+    wrapper.className = "adjunto-item";
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".pdf,.jpg,.png";
+
+    input.addEventListener("change", () => {
+      wrapper.archivo = input.files[0] || null;
+    });
+
+    const btnEliminar = document.createElement("button");
+    btnEliminar.type = "button";
+    btnEliminar.textContent = "✖";
+    btnEliminar.className = "btn-eliminar-adjunto";
+
+    btnEliminar.addEventListener("click", () => {
+      archivosAdjuntos = archivosAdjuntos.filter(a => a !== wrapper);
+      wrapper.remove();
+    });
+
+    wrapper.archivo = null;
+    archivosAdjuntos.push(wrapper);
+
+    wrapper.appendChild(input);
+    wrapper.appendChild(btnEliminar);
+    adjuntosContainer.appendChild(wrapper);
+  }
+
+  btnAgregarAdjunto.addEventListener("click", agregarAdjuntoInput);
+
+  /* =====================
+     LISTAR MEDICAMENTOS
+  ===================== */
   async function cargarMedicamentos() {
     const { data, error } = await supabase
       .from("medicamentos")
-      .select(`*, tipo_medicamentos ( nombre )`)
+      .select(`*, tipo_medicamentos(nombre)`)
       .eq("afiliado_id", afiliadoId)
       .order("fecha_carga", { ascending: false });
 
-    if (error) {
-      console.error(error);
-      return;
-    }
+    if (error) return console.error(error);
 
     lista.innerHTML = "";
+    if (!data.length) return;
 
-    if (!data.length) {
-      lista.innerHTML = "<p>No hay medicamentos cargados.</p>";
-      return;
+    const f = d => (d ? new Date(d).toLocaleDateString("es-AR") : "-");
+
+    for (const med of data) {
+      const { data: docs } = await supabase
+        .from("fichamedica_documentos")
+        .select("*")
+        .eq("tipo_documento", "medicamentos")
+        .eq("entidad_relacion_id", med.id);
+
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <strong>${med.tipo_medicamentos?.nombre || "-"}</strong>
+
+        <div class="med-card-section grid-fechas">
+          <div><label>Fecha de carga</label><input readonly value="${f(med.fecha_carga)}"></div>
+          <div><label>Fecha de autorización</label><input readonly value="${f(med.fecha_autorizacion)}"></div>
+          <div><label>Fecha de entrega</label><input readonly value="${f(med.fecha_entrega)}"></div>
+          <div><label>Próxima carga</label><input readonly value="${f(med.proxima_carga)}"></div>
+        </div>
+
+        ${
+          med.latas_entregadas
+            ? `<div class="med-card-section">
+                 <label>Latas entregadas</label>
+                 <input readonly value="${med.latas_entregadas}">
+               </div>`
+            : ""
+        }
+
+        ${
+          med.fecha_inicio || med.fecha_vencimiento
+            ? `<div class="med-card-section grid-fechas">
+                 <div><label>Inicio</label><input readonly value="${f(med.fecha_inicio)}"></div>
+                 <div><label>Vencimiento</label><input readonly value="${f(med.fecha_vencimiento)}"></div>
+               </div>`
+            : ""
+        }
+
+        ${
+          med.observaciones
+            ? `<div class="med-card-section">
+                 <label>Observaciones</label>
+                 <textarea readonly>${med.observaciones}</textarea>
+               </div>`
+            : ""
+        }
+
+        ${
+          docs.length
+            ? `<div class="med-card-section">
+                 <label>Adjuntos</label>
+                 <div class="adjuntos-lista">
+                   ${docs
+                     .map(
+                       d =>
+                         `<a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>`
+                     )
+                     .join("")}
+                 </div>
+               </div>`
+            : ""
+        }
+
+        <div class="acciones">
+          <button class="editar" data-id="${med.id}">✏️ Editar</button>
+          <button class="eliminar" data-id="${med.id}">🗑️ Eliminar</button>
+        </div>
+      `;
+
+      lista.appendChild(card);
     }
-
-    data.forEach(med => {
-      const div = document.createElement("div");
-      div.className = "card";
-
-div.innerHTML = `
-  <strong>${med.tipo_medicamentos?.nombre || "-"}</strong>
-  <div class="med-card-section">
-    <h4>Fechas generales</h4>
-    Fecha carga: ${med.fecha_carga || "-"}<br>
-    Fecha autorización: ${med.fecha_autorizacion || "-"}<br>
-    Fecha entrega: ${med.fecha_entrega || "-"}<br>
-    Próxima carga: ${med.proxima_carga || "-"}<br>
-  </div>
-
-  <div class="med-card-section">
-    <h4>Campos especiales</h4>
-    ${med.latas_entregadas ? `Latas entregadas: ${med.latas_entregadas}<br>` : ""}
-    ${med.fecha_inicio ? `Fecha inicio: ${med.fecha_inicio}<br>` : ""}
-    ${med.fecha_vencimiento ? `Fecha vencimiento: ${med.fecha_vencimiento}<br>` : ""}
-  </div>
-
-  <div class="med-card-section">
-    <h4>Extras</h4>
-    Observaciones: ${med.observaciones || "-"}<br>
-    ${med.archivo_url ? `<a href="${med.archivo_url}" target="_blank">📎 Ver adjunto</a>` : "-"}
-  </div>
-
-  <div class="acciones">
-    <button class="editar" data-id="${med.id}">✏️</button>
-    <button class="eliminar" data-id="${med.id}">🗑️</button>
-  </div>
-`;
-
-      lista.appendChild(div);
-    });
   }
 
-  // =====================
-  // NUEVO / CANCELAR
-  // =====================
+  /* =====================
+     NUEVO / CANCELAR
+  ===================== */
   btnNuevo.addEventListener("click", () => {
+    editandoId = null;
     form.reset();
-    form.id.value = "";
-    datosMedicamento.classList.add("hidden");
+    resetAdjuntos();
+    agregarAdjuntoInput();
     actualizarCamposPorTipo();
     form.classList.remove("hidden");
   });
 
   btnCancelar.addEventListener("click", () => {
+    editandoId = null;
     form.reset();
+    resetAdjuntos();
     form.classList.add("hidden");
   });
 
-  // =====================
-  // GUARDAR / EDITAR
-  // =====================
+  /* =====================
+     EDITAR / ELIMINAR
+  ===================== */
+  lista.addEventListener("click", async e => {
+    if (e.target.classList.contains("editar")) {
+      editandoId = e.target.dataset.id;
+      form.reset();
+      resetAdjuntos();
+
+      const { data: med } = await supabase
+        .from("medicamentos")
+        .select("*")
+        .eq("id", editandoId)
+        .single();
+
+      Object.entries(med).forEach(([k, v]) => {
+        if (form[k]) form[k].value = v ?? "";
+      });
+
+      tipoSelect.value = med.tipo_medicamento_id;
+      actualizarCamposPorTipo();
+
+      const { data: docs } = await supabase
+        .from("fichamedica_documentos")
+        .select("*")
+        .eq("tipo_documento", "medicamentos")
+        .eq("entidad_relacion_id", editandoId);
+
+      docs.forEach(doc => {
+        const div = document.createElement("div");
+        div.className = "adjunto-item";
+        div.innerHTML = `
+          <a href="${doc.url}" target="_blank">📎 ${doc.nombre_archivo}</a>
+          <button type="button">✖</button>
+        `;
+
+        div.querySelector("button").addEventListener("click", async () => {
+          await supabase
+            .from("fichamedica_documentos")
+            .delete()
+            .eq("id", doc.id);
+          div.remove();
+        });
+
+        adjuntosContainer.appendChild(div);
+      });
+
+      form.classList.remove("hidden");
+    }
+
+    if (e.target.classList.contains("eliminar")) {
+      const id = e.target.dataset.id;
+
+      await supabase
+        .from("fichamedica_documentos")
+        .delete()
+        .eq("tipo_documento", "medicamentos")
+        .eq("entidad_relacion_id", id);
+
+      await supabase.from("medicamentos").delete().eq("id", id);
+      cargarMedicamentos();
+    }
+  });
+
+  /* =====================
+     GUARDAR
+  ===================== */
   form.addEventListener("submit", async e => {
     e.preventDefault();
-
-    let archivoUrl = null;
-    const file = form.adjunto.files[0];
-
-    if (file) archivoUrl = await subirArchivoCloudinary(file);
 
     const datos = {
       afiliado_id: afiliadoId,
@@ -185,68 +301,47 @@ div.innerHTML = `
       latas_entregadas: form.latas_entregadas.value || null,
       fecha_inicio: form.fecha_inicio.value || null,
       fecha_vencimiento: form.fecha_vencimiento.value || null,
-      observaciones: form.observaciones.value || null,
-      ...(archivoUrl && { archivo_url: archivoUrl }),
+      observaciones: form.observaciones.value || null
     };
 
-    let query;
-    if (form.id.value) {
-      query = supabase.from("medicamentos").update(datos).eq("id", form.id.value);
+    let medicamentoId = editandoId;
+
+    if (editandoId) {
+      await supabase.from("medicamentos").update(datos).eq("id", editandoId);
     } else {
-      query = supabase.from("medicamentos").insert(datos);
+      const { data } = await supabase
+        .from("medicamentos")
+        .insert(datos)
+        .select()
+        .single();
+
+      medicamentoId = data.id;
     }
 
-    const { error } = await query;
+    for (const adj of archivosAdjuntos) {
+      if (!adj.archivo) continue;
 
-    if (error) {
-      Swal.fire("Error", error.message, "error");
-      return;
+      const url = await subirArchivoCloudinary(adj.archivo);
+
+      await supabase.from("fichamedica_documentos").insert({
+        afiliado_id: afiliadoId,
+        tipo_documento: "medicamentos",
+        entidad_relacion_id: medicamentoId,
+        nombre_archivo: adj.archivo.name,
+        url
+      });
     }
 
-    Swal.fire("OK", "Medicamento guardado", "success");
+    editandoId = null;
     form.reset();
+    resetAdjuntos();
     form.classList.add("hidden");
     cargarMedicamentos();
   });
 
-  // =====================
-  // EDITAR / ELIMINAR
-  // =====================
-  lista.addEventListener("click", async e => {
-    const id = e.target.dataset.id;
-    if (!id) return;
-
-    if (e.target.classList.contains("editar")) {
-      const { data, error } = await supabase.from("medicamentos").select("*").eq("id", id).single();
-      if (error) return;
-
-      Object.keys(data).forEach(key => {
-        if (form[key]) form[key].value = data[key] ?? "";
-      });
-
-      actualizarCamposPorTipo();
-      form.classList.remove("hidden");
-    }
-
-    if (e.target.classList.contains("eliminar")) {
-      const confirm = await Swal.fire({
-        title: "¿Eliminar medicamento?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Sí",
-        cancelButtonText: "No",
-      });
-
-      if (!confirm.isConfirmed) return;
-
-      await supabase.from("medicamentos").delete().eq("id", id);
-      cargarMedicamentos();
-    }
-  });
-
-  // =====================
-  // INIT
-  // =====================
-  cargarTipos();
+  /* =====================
+     INIT
+  ===================== */
+  await cargarTipos();
   cargarMedicamentos();
 }

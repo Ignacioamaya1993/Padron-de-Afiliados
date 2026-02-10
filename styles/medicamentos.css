@@ -1,7 +1,5 @@
-/* fichaMedica / Medicamentos */
-
 /* ===================== */
-/* GENERAL Y FORMULARIOS */
+/* GENERAL */
 /* ===================== */
 section {
   padding: 1rem;
@@ -10,8 +8,8 @@ section {
   font-family: Arial, sans-serif;
 }
 
-h2, h3 {
-  margin-bottom: 1rem;
+.hidden {
+  display: none !important;
 }
 
 /* ===================== */
@@ -23,186 +21,225 @@ button {
   border-radius: 6px;
   font-size: 0.9rem;
   padding: 0.5rem 1rem;
-  transition: 0.2s;
+  transition: opacity 0.2s ease, transform 0.1s ease;
 }
 
 button:hover {
   opacity: 0.9;
 }
 
-/* Botón Nuevo */
+button:active {
+  transform: scale(0.97);
+}
+
 .btn-nuevo {
   background-color: #2f80ed;
   color: white;
   margin-bottom: 1rem;
 }
 
-/* Botón Guardar */
-form .form-actions button[type="submit"] {
-  background-color: #27ae60;
-  color: white;
-  margin-right: 0.5rem;
+/* Botón adjuntos */
+.btn-nuevoAdjunto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-weight: 600;
+  color: #065f46;
+  background-color: #ecfdf5;
+  border: 1px solid #34d399;
+  max-width: 170px;
 }
 
-/* Botón Cancelar */
-form .form-actions .btn-cancelar {
-  background-color: #eb5757;
+.btn-nuevoAdjunto:hover {
+  background-color: #d1fae5;
+}
+
+/* Guardar / Cancelar */
+.btn-guardar {
+  background-color: #16a34a;
   color: white;
+  max-width: 150px;
+}
+
+.btn-guardar:hover {
+  background-color: #15803d;
+}
+
+.btn-cancelar {
+  background-color: #e5e7eb;
+  color: #0f172a;
+  max-width: 150px;
+}
+
+.grid-medicamento .acciones {
+  display: inline-block
 }
 
 /* ===================== */
-/* FORMULARIO GENERAL */
+/* FORMULARIO */
 /* ===================== */
-form {
+.form-card {
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  background-color: #f9f9f9;
+  padding: 16px;
+  margin-bottom: 20px;
+  background: #fff;
 }
 
-form label {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0.8rem;
-  font-weight: 500;
-}
-
+/* Inputs */
 form input,
 form select,
 form textarea {
-  margin-top: 0.3rem;
-  padding: 0.4rem 0.5rem;
+  padding: 0.45rem 0.55rem;
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 0.9rem;
+  color: #0f172a;
+  background-color: #fff;
+  max-width: 350px;
 }
 
 form textarea {
-  min-height: 60px;
   resize: vertical;
 }
 
-.hidden {
-  display: none !important;
+/* Input file */
+input[type="file"] {
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  background: #fff7ed;
+  padding: 0.4rem;
+  cursor: pointer;
 }
 
 /* ===================== */
-/* DATOS DEL MEDICAMENTO (MEJORADO) */
+/* GRID MEDICAMENTO */
 /* ===================== */
-#datosMedicamento {
+.grid-medicamento {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fefefe;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  margin-top: 1rem;
 }
 
-#datosMedicamento label {
+.grid-medicamento > div {
   display: flex;
   flex-direction: column;
+}
+
+.grid-medicamento label {
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.2rem;
 }
 
-#datosMedicamento input,
-#datosMedicamento select,
-#datosMedicamento textarea {
-  margin-top: 0.3rem;
-  padding: 0.4rem 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 0.9rem;
-}
-
-/* textarea más amplio, ocupa toda la fila */
-#datosMedicamento textarea {
-  min-height: 70px;
-  resize: vertical;
+.full-row {
   grid-column: 1 / -1;
-}
-
-/* Botones guardar / cancelar al final, en línea y ocupando toda la fila */
-#datosMedicamento .form-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  grid-column: 1 / -1;
-  justify-content: flex-end;
 }
 
 /* ===================== */
-/* LISTA DE MEDICAMENTOS */
+/* CARDS MEDICAMENTOS */
 /* ===================== */
 #listaMedicamentos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.6rem;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.35rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-width: 400px;
 }
 
-/* Card individual */
-#listaMedicamentos .card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
-  background-color: #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+/* Card en edición */
+.card.editando {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+  background: #f8fafc;
 }
 
-/* Acciones dentro de la card */
-.acciones {
-  margin-top: 0.5rem;
-  display: flex;
-  gap: 0.5rem;
+/* Título */
+.card strong {
+  font-size: 1rem;
+  color: #0f172a;
 }
 
-.acciones button {
-  font-size: 0.9rem;
-  padding: 0.3rem 0.6rem;
-  border-radius: 5px;
-}
-
-.acciones .editar {
-  background-color: #f2c94c;
-  color: #333;
-}
-
-.acciones .eliminar {
-  background-color: #eb5757;
-  color: #fff;
-}
-
+/* Secciones */
 .med-card-section {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #eee;
+  padding-top: 0.4rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 0.2rem;
 }
-.med-card-section h4 {
-  margin: 0 0 0.3rem 0;
-  font-size: 0.95rem;
-  color: #555;
+
+/* Grids internos */
+.grid-fechas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.3rem;
+}
+
+.grid-fechas label {
+  font-size: 0.85rem;
+  color: #000000;
+}
+
+.grid-fechas input {
+    background: #f8fafc;
+    padding: 0.5rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+/* Observaciones */
+.med-card-section textarea {
+  font-size: 0.8rem;
+  background: #f1f5f9;
+  border: 1px solid #e5e7eb;
+}
+
+/* ===================== */
+/* ACCIONES CARD */
+/* ===================== */
+.card .acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+/* Botones card */
+.card .editar {
+  background-color: #2563eb;
+  color: white;
+}
+
+.card .cancelar-edicion {
+  background-color: #e5e7eb;
+  color: #0f172a;
+}
+
+.card .eliminar {
+  background-color: #dc2626;
+  color: white;
 }
 
 /* ===================== */
 /* RESPONSIVE */
 /* ===================== */
-@media (max-width: 600px) {
-  form label {
-    font-size: 0.85rem;
-  }
-
-  button {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.7rem;
-  }
-
-  #listaMedicamentos .card {
-    font-size: 0.9rem;
-  }
-
-  #datosMedicamento {
+@media (max-width: 700px) {
+  .grid-medicamento {
     grid-template-columns: 1fr;
   }
 }
