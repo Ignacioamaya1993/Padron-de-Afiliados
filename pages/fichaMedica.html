@@ -3,171 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ficha Medica</title>
-  <link rel="icon" type="image/png" href="../assets/images/Solo_logo.png">
+  <title>Medicamentos</title>
 
+  <link rel="icon" type="image/png" href="../assets/images/Solo_logo.png">
 
   <!-- CSS -->
   <link rel="stylesheet" href="../styles/header.css" />
   <link rel="stylesheet" href="../styles/fichaMedica.css" />
+  <link rel="stylesheet" href="../styles/medicamentos.css" />
 
   <!-- SweetAlert -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
-<!-- HEADER COMÚN -->
 <header>
   <div id="header-container"></div>
 </header>
 
 <main>
-
-  <!-- 🔙 ACCIONES DE LA FICHA (propias de esta página) -->
   <div class="ficha-header">
-    <button id="btnVolver" class="volver-btn">
-      ⬅️ Volver a la Ficha del Afiliado
-    </button>
-
-    <h2 id="nombreAfiliado">Nombre Afiliado</h2>
+    <h2 id="nombreAfiliado">Afiliado</h2>
+    <button id="btnVolver" class="volver-btn">⬅️ Volver al afiliado</button>
   </div>
 
-  <!-- TABS -->
   <div class="tabs">
-    <button class="tab-button active" data-tab="tabEnfermedades">Enfermedades</button>
-    <button class="tab-button" data-tab="tabMedicamentos">Medicamentos</button>
-    <button class="tab-button" data-tab="tabIncidencias">Incidencias</button>
-    <button class="tab-button" data-tab="tabAdicciones">Adicciones</button>
+    <button class="tab-button" data-module="medicamentos">Medicamentos</button>
+    <button class="tab-button" data-module="derivaciones">Derivaciones</button>
+    <!-- más pestañas -->
   </div>
 
-  <!-- TAB CONTENIDOS -->
-
-  <!-- ENFERMEDADES -->
-  <section id="tabEnfermedades" class="tab-content active">
-    <button id="btnNuevoEnfermedad" class="btn-nuevo">+ Nueva Enfermedad</button>
-
-    <form id="formEnfermedad" class="form-inline hidden">
-      <input type="hidden" name="id">
-      <label>Nombre de la enfermedad
-        <input type="text" name="enfermedad" placeholder="Nombre enfermedad" required>
-      </label>
-      <label>Fecha de diagnóstico
-        <input type="date" name="fecha_diagnostico" required>
-      </label>
-      <label>Observaciones
-        <textarea name="observaciones" placeholder="Observaciones"></textarea>
-      </label>
-      <label>Adjunto
-        <input type="file" name="adjunto">
-      </label>
-      <div class="form-actions">
-        <button type="submit">Guardar</button>
-        <button type="button" class="btn-cancelar" id="btnCancelarEnfermedad">Cancelar</button>
-      </div>
-    </form>
-
-    <div id="listaEnfermedades"></div>
-  </section>
-
-  <!-- MEDICAMENTOS -->
-  <section id="tabMedicamentos" class="tab-content">
-    <button id="btnNuevoMedicamento" class="btn-nuevo">+ Nuevo Medicamento</button>
-
-    <form id="formMedicamento" class="form-inline hidden">
-      <input type="hidden" name="id">
-      <label>Nombre del medicamento
-        <input type="text" name="medicamento" placeholder="Nombre medicamento" required>
-      </label>
-      <label>Dosis
-        <input type="text" name="dosis" placeholder="Dosis" required>
-      </label>
-      <label>Frecuencia / Intensidad
-        <input type="text" name="frecuencia" placeholder="Frecuencia / Intensidad">
-      </label>
-      <label>Fecha de inicio
-        <input type="date" name="fecha_inicio" required>
-      </label>
-      <label>Fecha de fin
-        <input type="date" name="fecha_fin">
-      </label>
-      <label>Última entrega
-        <input type="date" name="ultima_entrega">
-      </label>
-      <label>Próxima entrega
-        <input type="date" name="proximo_entrega">
-      </label>
-      <label>Observaciones
-        <textarea name="observaciones" placeholder="Observaciones"></textarea>
-      </label>
-      <label>Adjunto
-        <input type="file" name="adjunto">
-      </label>
-      <div class="form-actions">
-        <button type="submit">Guardar</button>
-        <button type="button" class="btn-cancelar" id="btnCancelarMedicamento">Cancelar</button>
-      </div>
-    </form>
-
-    <div id="listaMedicamentos"></div>
-  </section>
-
-  <!-- INCIDENCIAS -->
-  <section id="tabIncidencias" class="tab-content">
-    <button id="btnNuevoIncidencia" class="btn-nuevo">+ Nueva Incidencia</button>
-
-    <form id="formIncidencia" class="form-inline hidden">
-      <input type="hidden" name="id">
-      <label>Título
-        <input type="text" name="titulo" placeholder="Título" required>
-      </label>
-      <label>Tipo (enfermedad, accidente...)
-        <input type="text" name="tipo" placeholder="Tipo" required>
-      </label>
-      <label>Descripción
-        <textarea name="descripcion" placeholder="Descripción"></textarea>
-      </label>
-      <label>Fecha
-        <input type="date" name="fecha" required>
-      </label>
-      <label>Adjunto
-        <input type="file" name="adjunto">
-      </label>
-      <div class="form-actions">
-        <button type="submit">Guardar</button>
-        <button type="button" class="btn-cancelar" id="btnCancelarIncidencia">Cancelar</button>
-      </div>
-    </form>
-
-    <div id="listaIncidencias"></div>
-  </section>
-
-  <!-- ADICCIONES -->
-  <section id="tabAdicciones" class="tab-content">
-    <button id="btnNuevoAdiccion" class="btn-nuevo">+ Nueva Adicción</button>
-
-    <form id="formAdiccion" class="form-inline hidden">
-      <input type="hidden" name="id">
-      <label>Tipo de adicción
-        <input type="text" name="adiccion" placeholder="Tipo de adicción" required>
-      </label>
-      <label>Frecuencia / Intensidad
-        <input type="text" name="frecuencia" placeholder="Frecuencia / Intensidad">
-      </label>
-      <label>Observaciones
-        <textarea name="observaciones" placeholder="Observaciones"></textarea>
-      </label>
-      <label>Adjunto
-        <input type="file" name="adjunto">
-      </label>
-      <div class="form-actions">
-        <button type="submit">Guardar</button>
-        <button type="button" class="btn-cancelar" id="btnCancelarAdiccion">Cancelar</button>
-      </div>
-    </form>
-
-    <div id="listaAdicciones"></div>
-  </section>
-
+  <div id="tab-container">
+    <!-- Aquí se cargará dinámicamente el HTML de cada módulo -->
+  </div>
 </main>
 
 <script type="module" src="../scripts/fichaMedica.js"></script>

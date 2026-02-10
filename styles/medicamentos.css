@@ -1,0 +1,208 @@
+/* fichaMedica / Medicamentos */
+
+/* ===================== */
+/* GENERAL Y FORMULARIOS */
+/* ===================== */
+section {
+  padding: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+h2, h3 {
+  margin-bottom: 1rem;
+}
+
+/* ===================== */
+/* BOTONES */
+/* ===================== */
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  transition: 0.2s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Botón Nuevo */
+.btn-nuevo {
+  background-color: #2f80ed;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+/* Botón Guardar */
+form .form-actions button[type="submit"] {
+  background-color: #27ae60;
+  color: white;
+  margin-right: 0.5rem;
+}
+
+/* Botón Cancelar */
+form .form-actions .btn-cancelar {
+  background-color: #eb5757;
+  color: white;
+}
+
+/* ===================== */
+/* FORMULARIO GENERAL */
+/* ===================== */
+form {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #f9f9f9;
+}
+
+form label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+}
+
+form input,
+form select,
+form textarea {
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+
+form textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ===================== */
+/* DATOS DEL MEDICAMENTO (MEJORADO) */
+/* ===================== */
+#datosMedicamento {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fefefe;
+}
+
+#datosMedicamento label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+#datosMedicamento input,
+#datosMedicamento select,
+#datosMedicamento textarea {
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+
+/* textarea más amplio, ocupa toda la fila */
+#datosMedicamento textarea {
+  min-height: 70px;
+  resize: vertical;
+  grid-column: 1 / -1;
+}
+
+/* Botones guardar / cancelar al final, en línea y ocupando toda la fila */
+#datosMedicamento .form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+}
+
+/* ===================== */
+/* LISTA DE MEDICAMENTOS */
+/* ===================== */
+#listaMedicamentos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* Card individual */
+#listaMedicamentos .card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* Acciones dentro de la card */
+.acciones {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.acciones button {
+  font-size: 0.9rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+}
+
+.acciones .editar {
+  background-color: #f2c94c;
+  color: #333;
+}
+
+.acciones .eliminar {
+  background-color: #eb5757;
+  color: #fff;
+}
+
+.med-card-section {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #eee;
+}
+.med-card-section h4 {
+  margin: 0 0 0.3rem 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* ===================== */
+/* RESPONSIVE */
+/* ===================== */
+@media (max-width: 600px) {
+  form label {
+    font-size: 0.85rem;
+  }
+
+  button {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.7rem;
+  }
+
+  #listaMedicamentos .card {
+    font-size: 0.9rem;
+  }
+
+  #datosMedicamento {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,64 @@
+<!-- MEDICAMENTOS -->
+<section>
+  <button id="btnNuevoMedicamento" class="btn-nuevo">+ Nuevo Medicamento</button>
+
+  <form id="formMedicamento" class="form-inline hidden">
+    <input type="hidden" name="id">
+
+    <label>Tipo de medicamento
+      <select name="tipo_medicamento_id" id="tipoMedicamento" required>
+        <option value="">Seleccione tipo</option>
+      </select>
+    </label>
+
+    <!-- DATOS (ocultos hasta elegir tipo) -->
+    <div id="datosMedicamento" class="hidden">
+      
+      <!-- Fechas generales -->
+      <h4>Fechas generales</h4>
+      <label>Fecha de carga
+        <input type="date" name="fecha_carga" required>
+      </label>
+      <label>Fecha de autorización
+        <input type="date" name="fecha_autorizacion">
+      </label>
+      <label>Fecha de entrega
+        <input type="date" name="fecha_entrega">
+      </label>
+      <label>Próxima carga
+        <input type="date" name="proxima_carga">
+      </label>
+
+      <!-- Campos especiales según tipo -->
+      <h4>Campos especiales</h4>
+      <label id="campoLatas" class="hidden">
+        Latas entregadas
+        <input type="number" name="latas_entregadas" min="1">
+      </label>
+      <label id="campoInicio" class="hidden">
+        Fecha inicio
+        <input type="date" name="fecha_inicio">
+      </label>
+      <label id="campoVencimiento" class="hidden">
+        Fecha vencimiento
+        <input type="date" name="fecha_vencimiento">
+      </label>
+
+      <!-- Observaciones y adjunto -->
+      <h4>Extras</h4>
+      <label class="full-width">Observaciones
+        <textarea name="observaciones"></textarea>
+      </label>
+      <label class="full-width">Adjunto
+        <input type="file" name="adjunto">
+      </label>
+
+      <div class="form-actions">
+        <button type="submit">Guardar</button>
+        <button type="button" id="btnCancelarMedicamento" class="btn-cancelar">Cancelar</button>
+      </div>
+    </div>
+  </form>
+
+  <div id="listaMedicamentos"></div>
+</section>
