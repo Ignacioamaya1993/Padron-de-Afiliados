@@ -1,3 +1,16 @@
+  <style>
+/* Mover todo a la izquierda */
+main, section {
+  max-width: none;      /* quita el límite de ancho */
+  margin: 0;            /* elimina el centrado automático */
+}
+
+/* Lista de medicamentos (cards) alineadas a la izquierda */
+#listaMedicamentos {
+  justify-content: start; /* pega las cards al borde izquierdo */
+}
+</style>
+
 <!-- MEDICAMENTOS -->
 <section>
 
@@ -41,7 +54,7 @@
       </div>
 
       <div>
-        <label>Próxima carga</label>
+        <label>Próxima entrega</label>
         <input type="date" name="proxima_carga">
       </div>
 
