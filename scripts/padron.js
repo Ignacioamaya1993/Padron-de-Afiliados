@@ -371,22 +371,25 @@ let debounce;
   Escucha escritura en el input de búsqueda
   Ejecuta la búsqueda recién después de 300ms sin teclear
 */
-searchInput.addEventListener("input", e => {
+function manejarBusqueda() {
   clearTimeout(debounce);
 
-  const texto = e.target.value
+  const texto = searchInput.value
     .trim()
     .replace(/\s+/g, " ");
 
   resultadosDiv.innerHTML = "";
 
   if (texto.length < 3) {
-    searchToken++; // invalida búsquedas anteriores
+    searchToken++;
     return;
   }
 
   debounce = setTimeout(() => buscarAfiliados(texto, ++searchToken), 300);
-});
+}
+
+// Escucha TODOS los posibles disparadores
+searchInput.addEventListener("input", manejarBusqueda);
 
 /*
   Consulta afiliados en Supabase y renderiza los resultados
@@ -425,11 +428,13 @@ async function buscarAfiliados(texto, token) {
         )
       `);
 
-    palabras.forEach(p => {
-      query = query.or(
+    const filtro = palabras
+      .map(p => 
         `nombre_completo.ilike.%${p}%,dni.ilike.%${p}%,numero_afiliado.ilike.%${p}%`
-      );
-    });
+      )
+      .join(",");
+
+    query = query.or(filtro);
 
     const { data: afiliados, error } = await query.limit(20);
     if (error) throw error;

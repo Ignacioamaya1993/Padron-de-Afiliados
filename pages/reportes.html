@@ -17,11 +17,12 @@
 </head>
 <body>
 
-  <!-- HEADER COMÚN -->
+  <!-- HEADER -->
   <div id="header-container"></div>
 
   <main class="reportes-container">
-        <button id="btnVolver" class="volver-btn">
+
+    <button id="btnVolver" class="volver-btn">
       ⬅️ Volver al buscador
     </button>
 
@@ -30,16 +31,43 @@
 
     <section class="reportes-grid">
 
+      <!-- REPORTE 1 -->
       <div class="reporte-card" data-reporte="afiliados">
         <h3>Afiliados</h3>
         <p>Listado completo de todos los afiliados</p>
         <button type="button">Ver reporte</button>
       </div>
 
+      <!-- REPORTE 2 -->
+      <div class="reporte-card" data-reporte="hijos-estudiantes">
+        <h3>Hijos 21 a 26 sin certificado</h3>
+        <p>Hijos entre 21 y 26 años que estudian y no cargaron certificado</p>
+        <button type="button">Ver reporte</button>
+      </div>
+
+      <!-- REPORTE 3 -->
+      <div class="reporte-card" data-reporte="discapacidad-sin-cud">
+        <h3>Discapacidad sin CUD</h3>
+        <p>Afiliados con discapacidad que no tienen CUD cargado</p>
+        <button type="button">Ver reporte</button>
+      </div>
+
+      <!-- REPORTE 4 (UNIFICADO) -->
+      <div class="reporte-card" data-reporte="datos-faltantes">
+        <h3>Datos Faltantes</h3>
+        <p>Afiliados sin mail, teléfono, CBU/CVU/Alias o grupo sanguíneo</p>
+        <button type="button">Ver reporte</button>
+      </div>
+
     </section>
 
-    <section id="reporteResultado" class="reporte-resultado hidden">
-      <h2 id="reporteTitulo">Afiliados</h2>
+    <!-- RESULTADO -->
+    <section id="reporteResultado" class="reporte-resultado collapsed">
+
+      <h2 id="reporteTitulo">Reporte</h2>
+
+      <!-- 🔹 RESUMEN (solo se usa en datos faltantes) -->
+      <div id="resumenReporte"></div>
 
       <div class="reporte-actions">
         <button id="exportExcel" type="button">Exportar Excel</button>
@@ -52,6 +80,7 @@
           <tbody></tbody>
         </table>
       </div>
+
     </section>
 
   </main>
@@ -60,10 +89,10 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <!-- jsPDF -->
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
-<!-- AutoTable (tablas en PDF) -->
-<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.29/dist/jspdf.plugin.autotable.min.js"></script>
+  <!-- AutoTable -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.29/dist/jspdf.plugin.autotable.min.js"></script>
 
   <!-- JS -->
   <script type="module" src="../scripts/reportes.js"></script>

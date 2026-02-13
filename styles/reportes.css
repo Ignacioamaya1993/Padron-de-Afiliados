@@ -128,3 +128,20 @@ th, td {
   border-bottom: 1px solid #e5e7eb;
   font-size: 0.85rem;
 }
+
+.reporte-resultado {
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  max-height: 0;
+  opacity: 0;
+}
+
+.reporte-resultado.expanded {
+  max-height: 2000px; /* suficiente para el contenido */
+  opacity: 1;
+}
+
+.reporte-resultado.collapsed {
+  max-height: 0;
+  opacity: 0;
+}
