@@ -1,5 +1,5 @@
 // fichaMedica.js
-import { supabase } from "./supabase.js"; // asegúrate de tener tu instancia Supabase
+import { supabase } from "./supabase.js";
 
 // =====================
 // Contenedores
@@ -10,25 +10,19 @@ const btnVolver = document.getElementById("btnVolver");
 const nombreAfiliadoEl = document.getElementById("nombreAfiliado");
 
 // =====================
-// Guardamos módulos cargados
+// Contenedores persistentes por módulo
 // =====================
-const loadedModules = {};
+const moduleContainers = {};
 
 // =====================
 // Obtener afiliadoId
 // =====================
 let afiliadoId = new URLSearchParams(window.location.search).get("id");
-
-if (!afiliadoId) {
-  afiliadoId = localStorage.getItem("afiliadoId");
-}
-
+if (!afiliadoId) afiliadoId = localStorage.getItem("afiliadoId");
 if (!afiliadoId) {
   Swal.fire("Error", "Afiliado no encontrado", "error");
   throw new Error("ID afiliado faltante");
 }
-
-// Guardar en localStorage
 localStorage.setItem("afiliadoId", afiliadoId);
 
 // =====================
@@ -41,63 +35,65 @@ async function cargarNombreAfiliado(id) {
       .select("nombre, apellido")
       .eq("id", id)
       .single();
-
     if (error || !data) {
       console.error("Error cargando afiliado:", error);
       nombreAfiliadoEl.textContent = "Afiliado";
       return;
     }
-
     nombreAfiliadoEl.textContent = `${data.nombre} ${data.apellido}`;
   } catch (err) {
     console.error("Error cargando afiliado:", err);
     nombreAfiliadoEl.textContent = "Afiliado";
   }
 }
-
-// Llamada inicial
 cargarNombreAfiliado(afiliadoId);
 
 // =====================
-// Cargar módulos dinámicamente
+// Cargar módulo
 // =====================
 async function loadModule(moduleName) {
-  try {
-    // HTML
-    const html = await fetch(`./${moduleName}.html`).then(r => r.text());
-    container.innerHTML = html;
-  } catch (err) {
-    console.error(`Error cargando ${moduleName}.html`, err);
-    container.innerHTML = `<p>Error cargando el módulo ${moduleName}</p>`;
+  // Ocultar todos los contenedores
+  Object.values(moduleContainers).forEach(c => c.style.display = "none");
+
+  // Si ya existe el contenedor, solo mostrarlo
+  if (moduleContainers[moduleName]) {
+    moduleContainers[moduleName].style.display = "block";
     return;
   }
 
-  // JS
-  if (!loadedModules[moduleName]) {
-    try {
-      const module = await import(`../scripts/${moduleName}.js`);
+  // Crear contenedor nuevo
+  let div = document.createElement("div");
+  div.style.display = "block";
+  container.appendChild(div);
+  moduleContainers[moduleName] = div;
 
-      // Llamar init() pasando afiliadoId
-      if (typeof module.init === "function") {
-        await module.init(afiliadoId);
-      }
-
-      loadedModules[moduleName] = true;
-    } catch (err) {
-      console.error(`Error cargando ${moduleName}.js`, err);
-    }
+  // Cargar HTML
+  try {
+    const html = await fetch(`./${moduleName}.html`).then(r => r.text());
+    div.innerHTML = html;
+  } catch (err) {
+    console.error(`Error cargando ${moduleName}.html`, err);
+    div.innerHTML = `<p>Error cargando el módulo ${moduleName}</p>`;
+    return;
   }
 
-      // cargar CSS del módulo
-    const cssLinkId = `css-${moduleName}`;
-    if (!document.getElementById(cssLinkId)) {
-      const link = document.createElement("link");
-      link.id = cssLinkId;
-      link.rel = "stylesheet";
-      link.href = `../styles/${moduleName}.css`;
-      document.head.appendChild(link);
-    }
+  // Cargar JS del módulo
+  try {
+    const module = await import(`../scripts/${moduleName}.js`);
+    if (typeof module.init === "function") await module.init(afiliadoId);
+  } catch (err) {
+    console.error(`Error cargando ${moduleName}.js`, err);
+  }
 
+  // Cargar CSS del módulo si no está
+  const cssLinkId = `css-${moduleName}`;
+  if (!document.getElementById(cssLinkId)) {
+    const link = document.createElement("link");
+    link.id = cssLinkId;
+    link.rel = "stylesheet";
+    link.href = `../styles/${moduleName}.css`;
+    document.head.appendChild(link);
+  }
 }
 
 // =====================
@@ -128,9 +124,5 @@ if (tabsContainer.querySelector(".tab-button")) {
 // =====================
 btnVolver.addEventListener("click", () => {
   const id = localStorage.getItem("afiliadoId");
-  if (id) {
-    window.location.href = `./afiliado.html?id=${id}`;
-  } else {
-    window.location.href = "./afiliado.html";
-  }
+  window.location.href = id ? `./afiliado.html?id=${id}` : "./afiliado.html";
 });

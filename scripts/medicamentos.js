@@ -16,6 +16,9 @@ export async function init(afiliadoId) {
   let editandoId = null;
   let archivosAdjuntos = [];
 
+  let paginaActual = 0;
+  const POR_PAGINA = 12;
+
   /* =====================
      ELEMENTOS
   ===================== */
@@ -111,87 +114,144 @@ export async function init(afiliadoId) {
   /* =====================
      LISTAR MEDICAMENTOS
   ===================== */
-  async function cargarMedicamentos() {
-    const { data, error } = await supabase
-      .from("medicamentos")
-      .select(`*, tipo_medicamentos(nombre)`)
-      .eq("afiliado_id", afiliadoId)
-      .order("fecha_carga", { ascending: false });
+async function cargarMedicamentos() {
 
-    if (error) return console.error(error);
+  const desde = paginaActual * POR_PAGINA;
+  const hasta = desde + POR_PAGINA - 1;
 
-    lista.innerHTML = "";
-    if (!data.length) return;
+  const { data: meds, error, count } = await supabase
+    .from("medicamentos")
+    .select(`*, tipo_medicamentos(nombre)`, { count: "exact" })
+    .eq("afiliado_id", afiliadoId)
+    .order("fecha_carga", { ascending: false })
+    .range(desde, hasta);
 
-    const fISO = d => (d ? d.split("T")[0] : "");
+  if (error) return console.error(error);
 
-    for (const med of data) {
-      const { data: docs } = await supabase
-        .from("fichamedica_documentos")
-        .select("*")
-        .eq("tipo_documento", "medicamentos")
-        .eq("entidad_relacion_id", med.id);
+  lista.innerHTML = "";
 
-      const card = document.createElement("div");
-      card.className = "card";
-      card.dataset.id = med.id;
-      card._adjuntosNuevos = [];
-      card._adjuntosEliminar = [];
+  if (!meds.length) return;
 
-      card.innerHTML = `
-        <strong>${med.tipo_medicamentos?.nombre || "-"}</strong>
+  // 🔥 Traemos los documentos SOLO de esta página
+  const medIds = meds.map(m => m.id);
 
-        <div class="med-card-section grid-fechas">
-          <div><label>Fecha de carga</label><input type="date" name="fecha_carga" readonly value="${fISO(med.fecha_carga)}"></div>
-          <div><label>Fecha de autorización</label><input type="date" name="fecha_autorizacion" readonly value="${fISO(med.fecha_autorizacion)}"></div>
-          <div><label>Fecha de entrega</label><input type="date" name="fecha_entrega" readonly value="${fISO(med.fecha_entrega)}"></div>
-          <div><label>Próxima carga</label><input type="date" name="proxima_carga" readonly value="${fISO(med.proxima_carga)}"></div>
-        </div>
+  const { data: docs } = await supabase
+    .from("fichamedica_documentos")
+    .select("*")
+    .eq("tipo_documento", "medicamentos")
+    .in("entidad_relacion_id", medIds);
 
-        ${med.latas_entregadas ? `
-        <div class="med-card-section grid-fechas">
-          <div><label>Latas entregadas</label><input name="latas_entregadas" readonly value="${med.latas_entregadas}"></div>
-        </div>` : ""}
+  const docsPorMedicamento = {};
+  docs.forEach(d => {
+    if (!docsPorMedicamento[d.entidad_relacion_id]) {
+      docsPorMedicamento[d.entidad_relacion_id] = [];
+    }
+    docsPorMedicamento[d.entidad_relacion_id].push(d);
+  });
 
-        ${[6,7].includes(med.tipo_medicamento_id) ? `
-        <div class="med-card-section grid-fechas">
-          <div><label>Inicio</label><input type="date" name="fecha_inicio" readonly value="${fISO(med.fecha_inicio)}"></div>
-          <div><label>Vencimiento</label><input type="date" name="fecha_vencimiento" readonly value="${fISO(med.fecha_vencimiento)}"></div>
-        </div>` : ""}
+  const fISO = d => (d ? d.split("T")[0] : "");
+  const fragment = document.createDocumentFragment();
+
+  for (const med of meds) {
+    const documentos = docsPorMedicamento[med.id] || [];
+
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.id = med.id;
+    card._adjuntosNuevos = [];
+    card._adjuntosEliminar = [];
+
+    card.innerHTML = `
+      <strong>${med.tipo_medicamentos?.nombre || "-"}</strong>
+
+      <div class="med-card-section grid-fechas">
+        <div><label>Fecha de carga</label><input type="date" name="fecha_carga" readonly value="${fISO(med.fecha_carga)}"></div>
+        <div><label>Fecha de autorización</label><input type="date" name="fecha_autorizacion" readonly value="${fISO(med.fecha_autorizacion)}"></div>
+        <div><label>Fecha de entrega</label><input type="date" name="fecha_entrega" readonly value="${fISO(med.fecha_entrega)}"></div>
+        <div><label>Próxima carga</label><input type="date" name="proxima_carga" readonly value="${fISO(med.proxima_carga)}"></div>
+      </div>
+
+      ${med.latas_entregadas ? `
+      <div class="med-card-section grid-fechas">
+        <div><label>Latas entregadas</label><input name="latas_entregadas" readonly value="${med.latas_entregadas}"></div>
+      </div>` : ""}
+
+      ${[6,7].includes(med.tipo_medicamento_id) ? `
+      <div class="med-card-section grid-fechas">
+        <div><label>Inicio</label><input type="date" name="fecha_inicio" readonly value="${fISO(med.fecha_inicio)}"></div>
+        <div><label>Vencimiento</label><input type="date" name="fecha_vencimiento" readonly value="${fISO(med.fecha_vencimiento)}"></div>
+      </div>` : ""}
 
       <div class="med-card-section">
         <label>Observaciones</label>
         <textarea name="observaciones" readonly>${med.observaciones || "Sin observaciones"}</textarea>
       </div>
 
-        ${docs.length ? `
-        <div class="med-card-section adjuntos-card">
-          <label>Adjuntos</label>
-          <div class="adjuntos-lista">
-            ${docs.map(d => `
-              <div class="adjunto-item" data-doc-id="${d.id}">
-                <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-                <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
-              </div>`).join("")}
-          </div>
-        </div>` : ""}
-
-        <div class="med-card-section hidden adjuntos-edicion">
-          <button type="button" class="btn-agregar-adjunto-card">➕ Agregar adjunto</button>
-          <div class="adjuntos-nuevos"></div>
+      ${documentos.length ? `
+      <div class="med-card-section adjuntos-card">
+        <label>Adjuntos</label>
+        <div class="adjuntos-lista">
+          ${documentos.map(d => `
+            <div class="adjunto-item" data-doc-id="${d.id}">
+              <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+              <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
+            </div>`).join("")}
         </div>
+      </div>` : ""}
 
-        <div class="acciones">
-          <button class="editar">✏️ Editar</button>
-          <button class="eliminar">🗑️ Eliminar</button>
-          <button class="guardar hidden">💾 Guardar</button>
-          <button class="cancelar hidden">Cancelar</button>
-        </div>
-      `;
+      <div class="med-card-section hidden adjuntos-edicion">
+        <button type="button" class="btn-agregar-adjunto-card">➕ Agregar adjunto</button>
+        <div class="adjuntos-nuevos"></div>
+      </div>
 
-      lista.appendChild(card);
-    }
+      <div class="acciones">
+        <button class="editar">✏️ Editar</button>
+        <button class="eliminar">🗑️ Eliminar</button>
+        <button class="guardar hidden">💾 Guardar</button>
+        <button class="cancelar hidden">Cancelar</button>
+      </div>
+    `;
+
+    fragment.appendChild(card);
   }
+
+    lista.appendChild(fragment);
+
+  renderPaginacion(count);
+}
+
+function renderPaginacion(total) {
+
+  const contenedor = document.getElementById("paginacionMedicamentos");
+  contenedor.innerHTML = "";
+
+  const totalPaginas = Math.ceil(total / POR_PAGINA);
+
+  const btnAnterior = document.createElement("button");
+  btnAnterior.textContent = "⬅ Anterior";
+  btnAnterior.disabled = paginaActual === 0;
+
+  btnAnterior.addEventListener("click", () => {
+    paginaActual--;
+    cargarMedicamentos();
+  });
+
+  const btnSiguiente = document.createElement("button");
+  btnSiguiente.textContent = "Siguiente ➡";
+  btnSiguiente.disabled = paginaActual >= totalPaginas - 1;
+
+  btnSiguiente.addEventListener("click", () => {
+    paginaActual++;
+    cargarMedicamentos();
+  });
+
+  const info = document.createElement("span");
+  info.textContent = ` Página ${paginaActual + 1} de ${totalPaginas} `;
+
+  contenedor.appendChild(btnAnterior);
+  contenedor.appendChild(info);
+  contenedor.appendChild(btnSiguiente);
+}
 
   /* =====================
      ACCIONES CARD

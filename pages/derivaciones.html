@@ -1,0 +1,133 @@
+  <style>
+/* Mover todo a la izquierda */
+main, section {
+  max-width: none;      /* quita el límite de ancho */
+  margin: 0;            /* elimina el centrado automático */
+}
+
+/* Lista de medicamentos (cards) alineadas a la izquierda */
+#listaMedicamentos {
+  justify-content: start; /* pega las cards al borde izquierdo */
+}
+</style>
+
+<!-- DERIVACIONES -->
+<section id="seccionDerivaciones">
+
+  <!-- BOTÓN NUEVO -->
+  <button id="btnNuevaDerivacion" class="btn-nuevo">
+    + Nueva Derivación
+  </button>
+
+  <!-- ========================= -->
+  <!-- FORMULARIO DERIVACIÓN -->
+  <!-- ========================= -->
+  <form id="formDerivacion" class="form-card oculto">
+
+    <input type="hidden" id="derivacionId" />
+
+    <div class="form-grid">
+
+      <!-- Tipo -->
+      <div class="form-group">
+        <label>Tipo de Derivación</label>
+        <select id="tipoDerivacion" required>
+          <option value="">Seleccione...</option>
+        </select>
+      </div>
+
+      <!-- Fechas principales -->
+      <div class="form-group">
+        <label>Fecha Inicio</label>
+        <input type="date" id="fechaInicio" required />
+      </div>
+
+      <div class="form-group">
+        <label>Fecha Fin</label>
+        <input type="date" id="fechaFin" />
+      </div>
+
+      <div class="form-group">
+        <label>Lugar</label>
+        <input type="text" id="lugar" />
+      </div>
+
+      <!-- Orden médica -->
+      <div class="form-group">
+        <label>Fecha Orden Médico</label>
+        <input type="date" id="fechaOrdenMedico" />
+      </div>
+
+      <div class="form-group">
+        <label>Fecha que trajo la orden</label>
+        <input type="date" id="fechaTrajoOrden" />
+      </div>
+
+      <!-- Autorización -->
+      <div class="form-group">
+        <label>Fecha Autorización</label>
+        <input type="date" id="fechaAutorizacion" />
+      </div>
+
+      <div class="form-group">
+        <label>Autorizado por</label>
+        <select id="autorizadoPor">
+          <option value="">Seleccione...</option>
+          <option value="ACTIVA">ACTIVA</option>
+          <option value="FATLYF">FATLYF</option>
+        </select>
+      </div>
+
+      <!-- Turno -->
+      <div class="form-group">
+        <label>Fecha Turno</label>
+        <input type="date" id="fechaTurno" />
+      </div>
+
+      <!-- Carga -->
+      <div class="form-group">
+        <label>N° Carga</label>
+        <input type="text" id="nroCarga" />
+      </div>
+
+      <!-- Estado -->
+      <div class="form-group">
+        <label>Estado</label>
+        <input type="text" id="estado" />
+      </div>
+
+      <!-- Observaciones -->
+      <div class="form-group full-width">
+        <label>Observaciones</label>
+        <textarea id="observaciones" rows="3"></textarea>
+      </div>
+
+      <!-- Adjuntos -->
+      <div class="form-group full-width">
+        <label>Adjuntar Documentos</label>
+        <input type="file" id="adjuntosDerivacion" multiple />
+      </div>
+
+    </div>
+
+    <!-- BOTONES -->
+    <div class="form-actions">
+      <button type="submit" class="btn-guardar">Guardar</button>
+      <button type="button" id="btnCancelarDerivacion" class="btn-cancelar">
+        Cancelar
+      </button>
+    </div>
+
+  </form>
+
+  <!-- ========================= -->
+  <!-- CONTENEDOR CARDS -->
+  <!-- ========================= -->
+  <div id="contenedorDerivaciones" class="cards-grid"></div>
+
+  <!-- ========================= -->
+  <!-- PAGINACIÓN -->
+  <!-- ========================= -->
+  <div id="paginacionDerivaciones" class="paginacion"></div>
+
+</section>

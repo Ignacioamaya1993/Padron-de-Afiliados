@@ -38,6 +38,11 @@ button:active {
   margin-bottom: 1rem;
 }
 
+/* fichaMedica.css o derivaciones.css */
+.oculto {
+  display: none;
+}
+
 /* Botón adjuntos */
 .btn-nuevoAdjunto {
   display: inline-flex;
@@ -73,7 +78,7 @@ button:active {
   max-width: 150px;
 }
 
-.grid-medicamento .acciones {
+.grid-derivacion .acciones {
   display: inline-block
 }
 
@@ -113,21 +118,21 @@ input[type="file"] {
 }
 
 /* ===================== */
-/* GRID MEDICAMENTO */
+/* GRID DERIVACIONES */
 /* ===================== */
-.grid-medicamento {
+.grid-derivacion {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.8rem;
   margin-top: 1rem;
 }
 
-.grid-medicamento > div {
+.grid-derivacion > div {
   display: flex;
   flex-direction: column;
 }
 
-.grid-medicamento label {
+.grid-derivacion label {
   font-weight: 500;
   font-size: 0.85rem;
   margin-bottom: 0.2rem;
@@ -138,9 +143,9 @@ input[type="file"] {
 }
 
 /* ===================== */
-/* CARDS MEDICAMENTOS */
+/* CARDS DERIVACIONES */
 /* ===================== */
-#listaMedicamentos {
+#contenedorDerivaciones {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 0.6rem;
@@ -291,9 +296,8 @@ input[type="file"] {
 }
 
 /* ===================== */
-/* PAGINACIÓN MEDICAMENTOS */
+/* PAGINACIÓN DERIVACIONES */
 /* ===================== */
-
 .paginacion {
   display: flex;
   justify-content: center;
@@ -339,7 +343,7 @@ input[type="file"] {
 /* RESPONSIVE */
 /* ===================== */
 @media (max-width: 700px) {
-  .grid-medicamento {
+  .grid-derivacion {
     grid-template-columns: 1fr;
   }
 }
