@@ -145,3 +145,65 @@ th, td {
   max-height: 0;
   opacity: 0;
 }
+
+/* =========================
+   FILTRO REPORTE REINTEGROS
+========================= */
+
+.filtro-reintegros {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+.filtro-reintegros > div {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filtro-reintegros label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+}
+
+.filtro-reintegros input {
+  height: 38px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  min-width: 170px;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.filtro-reintegros input:focus {
+  border-color: #2b7cff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(43,124,255,0.15);
+}
+
+.filtro-reintegros input:disabled {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.filtro-reintegros button {
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: none;
+  background-color: #2b7cff;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.filtro-reintegros button:hover {
+  background-color: #1f5fd6;
+}

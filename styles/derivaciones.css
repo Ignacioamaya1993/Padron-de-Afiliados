@@ -87,21 +87,68 @@ button:active {
 /* ===================== */
 .form-card {
   border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: 10px;
+  padding: 20px;
   margin-bottom: 20px;
   background: #fff;
-  max-width: 1000px;
+  max-width: 1100px;   /* ⬅️ más ancho pero controlado */
+}
+
+/* Grid principal del formulario */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* ⬅️ 4 columnas */
+  gap: 1rem;
+}
+
+/* Labels */
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+/* Cada grupo */
+.form-group {
+  display: flex;
+  flex-direction: column;
 }
 
 /* Inputs */
-form input,
-form select,
-form textarea {
-    padding: 0.6rem;
-    border-radius: 6px;
-    border: 1px solid #cbd5e1;
-    background: white;
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  font-size: 0.9rem;
+}
+
+/* Acciones */
+.form-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-secundario {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 6px 10px;
+    font-weight: 600;
+    color: #065f46;
+    background-color: #ecfdf5;
+    border: 1px solid #34d399;
+    max-width: 170px;
+}
+
+/* Observaciones ocupa toda la fila */
+.full-width {
+  grid-column: 1 / -1;
 }
 
 form textarea {
@@ -115,6 +162,7 @@ input[type="file"] {
   background: #fff7ed;
   padding: 0.4rem;
   cursor: pointer;
+  max-width: 300px;
 }
 
 /* ===================== */
@@ -283,6 +331,7 @@ input[type="file"] {
   background: #f5f5f5;
   border: 1px solid #ddd;
   cursor: default;
+  max-width: 150px;
 }
 
 .card .editando {

@@ -102,10 +102,14 @@ main, section {
         <textarea id="observaciones" rows="3"></textarea>
       </div>
 
-      <!-- Adjuntos -->
       <div class="form-group full-width">
         <label>Adjuntar Documentos</label>
-        <input type="file" id="adjuntosDerivacion" multiple />
+
+        <div id="adjuntosFormLista" class="adjuntos-nuevos"></div><br>
+
+                <button type="button" id="btnAgregarAdjuntoForm" class="btn-secundario">
+          ➕ Agregar adjunto
+        </button>
       </div>
 
     </div>

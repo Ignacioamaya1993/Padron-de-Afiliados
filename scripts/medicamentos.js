@@ -77,39 +77,51 @@ export async function init(afiliadoId) {
   function resetAdjuntos() {
     archivosAdjuntos = [];
     adjuntosContainer.innerHTML = "";
+    agregarAdjuntoInput(adjuntosContainer, archivosAdjuntos, true); 
   }
 
-  function agregarAdjuntoInput(container = adjuntosContainer, arr = archivosAdjuntos) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "adjunto-item";
+    function agregarAdjuntoInput(
+      container = adjuntosContainer,
+      arr = archivosAdjuntos,
+      obligatorio = false
+    ) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "adjunto-item";
 
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".pdf,.jpg,.png";
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".pdf,.jpg,.png";
 
-    input.addEventListener("change", () => {
-      wrapper.archivo = input.files[0] || null;
+      input.addEventListener("change", () => {
+        wrapper.archivo = input.files[0] || null;
+      });
+
+      wrapper.archivo = null;
+      arr.push(wrapper);
+
+      wrapper.appendChild(input);
+
+      // ❗ Si NO es obligatorio, puede eliminarse
+      if (!obligatorio) {
+        const btnEliminar = document.createElement("button");
+        btnEliminar.type = "button";
+        btnEliminar.textContent = "✖";
+        btnEliminar.className = "btn-eliminar-adjunto";
+
+        btnEliminar.addEventListener("click", () => {
+          arr.splice(arr.indexOf(wrapper), 1);
+          wrapper.remove();
+        });
+
+        wrapper.appendChild(btnEliminar);
+      }
+
+      container.appendChild(wrapper);
+    }
+
+    btnAgregarAdjunto.addEventListener("click", () => {
+      agregarAdjuntoInput(adjuntosContainer, archivosAdjuntos, false);
     });
-
-    const btnEliminar = document.createElement("button");
-    btnEliminar.type = "button";
-    btnEliminar.textContent = "✖";
-    btnEliminar.className = "btn-eliminar-adjunto";
-
-    btnEliminar.addEventListener("click", () => {
-      arr.splice(arr.indexOf(wrapper), 1);
-      wrapper.remove();
-    });
-
-    wrapper.archivo = null;
-    arr.push(wrapper);
-
-    wrapper.appendChild(input);
-    wrapper.appendChild(btnEliminar);
-    container.appendChild(wrapper);
-  }
-
-  btnAgregarAdjunto.addEventListener("click", () => agregarAdjuntoInput());
 
   /* =====================
      LISTAR MEDICAMENTOS
@@ -182,6 +194,13 @@ async function cargarMedicamentos() {
         <div><label>Vencimiento</label><input type="date" name="fecha_vencimiento" readonly value="${fISO(med.fecha_vencimiento)}"></div>
       </div>` : ""}
 
+      <div class="med-card-section grid-fechas">
+        <div>
+          <label>Reintegro</label>
+          <input type="number" step="0.01" name="reintegro" readonly value="${med.reintegro ?? ""}">
+        </div>
+      </div>
+      
       <div class="med-card-section">
         <label>Observaciones</label>
         <textarea name="observaciones" readonly>${med.observaciones || "Sin observaciones"}</textarea>
@@ -308,38 +327,66 @@ function renderPaginacion(total) {
 
     // GUARDAR
     if (e.target.classList.contains("guardar")) {
+
       const datos = {};
+
       card.querySelectorAll("input[name], textarea[name]").forEach(el => {
+
+        // Convertir reintegro a número real
+        if (el.name === "reintegro") {
+          datos.reintegro = el.value !== ""
+            ? parseFloat(el.value)
+            : null;
+          return;
+        }
+
         datos[el.name] = el.value || null;
       });
 
-      await supabase.from("medicamentos").update(datos).eq("id", id);
+      const { error } = await supabase
+        .from("medicamentos")
+        .update(datos)
+        .eq("id", id);
 
-      for (const docId of card._adjuntosEliminar) {
-        await supabase.from("fichamedica_documentos").delete().eq("id", docId);
+      if (error) {
+        console.error("Error al actualizar medicamento:", error);
+        Swal.fire("Error", error.message, "error");
+        return;
       }
 
+      // 🔹 Eliminar adjuntos marcados
+      for (const docId of card._adjuntosEliminar) {
+        await supabase
+          .from("fichamedica_documentos")
+          .delete()
+          .eq("id", docId);
+      }
+
+      // 🔹 Subir nuevos adjuntos
       for (const adj of card._adjuntosNuevos) {
         if (!adj.archivo) continue;
+
         const url = await subirArchivoCloudinary(adj.archivo);
 
-        await supabase.from("fichamedica_documentos").insert({
-          afiliado_id: afiliadoId,
-          tipo_documento: "medicamentos",
-          entidad_relacion_id: id,
-          nombre_archivo: adj.archivo.name,
-          url
-        });
+        await supabase
+          .from("fichamedica_documentos")
+          .insert({
+            afiliado_id: afiliadoId,
+            tipo_documento: "medicamentos",
+            entidad_relacion_id: id,
+            nombre_archivo: adj.archivo.name,
+            url
+          });
       }
 
       editandoId = null;
       cargarMedicamentos();
 
       Swal.fire({
-        icon: 'success',
-        title: 'Guardado',
-        text: 'Cambios guardados correctamente',
-        confirmButtonText: 'OK'
+        icon: "success",
+        title: "Guardado",
+        text: "Cambios guardados correctamente",
+        confirmButtonText: "OK"
       });
     }
 
@@ -390,7 +437,6 @@ function renderPaginacion(total) {
     editandoId = null;
     form.reset();
     resetAdjuntos();
-    agregarAdjuntoInput();
     actualizarCamposPorTipo();
     form.classList.remove("hidden");
   });
@@ -405,6 +451,12 @@ function renderPaginacion(total) {
   form.addEventListener("submit", async e => {
     e.preventDefault();
 
+        // Validación adjunto obligatorio
+    if (!archivosAdjuntos[0] || !archivosAdjuntos[0].archivo) {
+      Swal.fire("Atención", "Debe adjuntar al menos un archivo.", "warning");
+      return;
+    }
+
     const datos = {
       afiliado_id: afiliadoId,
       tipo_medicamento_id: form.tipo_medicamento_id.value,
@@ -415,7 +467,10 @@ function renderPaginacion(total) {
       latas_entregadas: form.latas_entregadas.value || null,
       fecha_inicio: form.fecha_inicio.value || null,
       fecha_vencimiento: form.fecha_vencimiento.value || null,
-      observaciones: form.observaciones.value || null
+      observaciones: form.observaciones.value || null,
+      reintegro: form.reintegro?.value
+      ? parseFloat(form.reintegro.value)
+      : null,
     };
 
     const { data } = await supabase.from("medicamentos").insert(datos).select().single();

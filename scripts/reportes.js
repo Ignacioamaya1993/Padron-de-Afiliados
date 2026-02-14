@@ -49,6 +49,7 @@ reporteCards.forEach(card => {
     if (tipo === "hijos-estudiantes") await cargarHijosSinCertificado();
     if (tipo === "discapacidad-sin-cud") await cargarDiscapacidadSinCud();
     if (tipo === "datos-faltantes") await cargarDatosFaltantes();
+        if (tipo === "reintegros") await cargarReporteReintegros();
 
     // Abrir con animación
     reporteResultado.classList.remove("collapsed");
@@ -62,6 +63,18 @@ exportPdfBtn?.addEventListener("click", exportarPDF);
 /* =====================
    UTILIDADES
 ===================== */
+
+function formatearFechaAR(fecha) {
+  if (!fecha) return "";
+
+  // Si viene como timestamp ISO
+  if (fecha.includes("T")) {
+    return fecha.split("T")[0].split("-").reverse().join("/");
+  }
+
+  // Si viene como date simple (YYYY-MM-DD)
+  return fecha.split("-").reverse().join("/");
+}
 
 function calcularEdad(fechaNacimiento) {
   if (!fechaNacimiento) return "";
@@ -321,6 +334,174 @@ async function cargarDatosFaltantes() {
         Sin grupo sanguíneo: ${sinGrupo}
       </div>
     `;
+
+  } catch (err) {
+    console.error(err);
+    Swal.fire("Error", "No se pudo generar el reporte", "error");
+  }
+}
+
+/* =====================
+   REPORTE 5: REINTEGROS
+===================== */
+async function cargarReporteReintegros() {
+  try {
+    reporteTitulo.textContent = "Reporte de Reintegros";
+
+    const resumen = document.getElementById("resumenReporte");
+    resumen.innerHTML = `
+      <div class="filtro-reintegros">
+        <div class="fila-filtros">
+          <div>
+            <label>DNI Afiliado</label><br>
+            <input type="number" id="dniAfiliado" placeholder="Ingrese DNI">
+          </div>
+          <div>
+            <label>Nombre</label><br>
+            <input type="text" id="nombreAfiliado" disabled>
+          </div>
+          <div>
+            <label>Desde</label><br>
+            <input type="date" id="fechaDesde">
+          </div>
+          <div>
+            <label>Hasta</label><br>
+            <input type="date" id="fechaHasta">
+          </div>
+          <div>
+            <button id="btnGenerarReintegro" class="btn-nuevo">
+              Generar
+            </button>
+          </div>
+        </div>
+        <hr style="margin:20px 0;">
+      </div>
+    `;
+
+    const dniInput = document.getElementById("dniAfiliado");
+    const nombreInput = document.getElementById("nombreAfiliado");
+    const btnGenerar = document.getElementById("btnGenerarReintegro");
+
+    let afiliadoActual = null;
+    datosReporteActual = [];
+
+    // 🔹 Listener del input (SOLO UNA VEZ)
+    dniInput.addEventListener("input", async () => {
+      const dni = dniInput.value.trim();
+      afiliadoActual = null;
+      nombreInput.value = "";
+
+      if (dni.length < 7) return;
+
+      const { data, error } = await supabase
+        .from("afiliados")
+        .select("id, nombre_completo")
+        .eq("dni", dni)
+        .maybeSingle();
+
+      if (error) return console.error(error);
+
+      if (!data) nombreInput.value = "No encontrado";
+      else {
+        nombreInput.value = data.nombre_completo;
+        afiliadoActual = data;
+      }
+    });
+
+    // 🔹 Listener del botón (SOLO UNA VEZ)
+    btnGenerar.addEventListener("click", async () => {
+      if (!afiliadoActual) return Swal.fire("Error", "Debe ingresar un afiliado válido", "error");
+
+      const desde = document.getElementById("fechaDesde").value;
+      const hasta = document.getElementById("fechaHasta").value;
+
+      if (!desde || !hasta) return Swal.fire("Error", "Debe seleccionar rango de fechas", "error");
+
+      const desdeISO = `${desde}T00:00:00`;
+      const hastaISO = `${hasta}T23:59:59`;
+
+  // ================= MEDICAMENTOS =================
+  const { data: medicamentos, error: errorMed } = await supabase
+    .from("medicamentos")
+    .select(`
+      reintegro,
+      fecha_reintegro,
+      fecha_carga,
+      observaciones,
+      afiliados(nombre_completo)
+    `)
+    .eq("afiliado_id", afiliadoActual.id)
+    .not("reintegro", "is", null)
+    .gte("fecha_reintegro", desdeISO)
+    .lte("fecha_reintegro", hastaISO);
+
+  if (errorMed) console.error("Error medicamentos:", errorMed);
+
+// ================= DERIVACIONES =================
+const { data: derivaciones, error: errorDer } = await supabase
+  .from("derivaciones")
+  .select(`
+    reintegro,
+    fecha_reintegro,
+    fecha_inicio,
+    afiliados(nombre_completo)
+  `)
+  .eq("afiliado_id", afiliadoActual.id)
+  .not("reintegro", "is", null)
+  .gte("fecha_reintegro", desdeISO)
+  .lte("fecha_reintegro", hastaISO);
+
+if (errorDer) console.error("Error derivaciones:", errorDer);
+
+console.log("Derivaciones:", derivaciones); // 👈 ACÁ
+
+  let totalMedicamentos = 0;
+  let totalDerivaciones = 0;
+  const listaFinal = [];
+
+  medicamentos?.forEach(m => {
+    const monto = Number(m.reintegro) || 0;
+    totalMedicamentos += monto;
+
+    listaFinal.push({
+      seccion: "Medicamentos",
+      afiliado: m.afiliados?.nombre_completo || "",
+      fecha_reintegro: formatearFechaAR(m.fecha_reintegro),
+      fecha_identificatoria: formatearFechaAR(m.fecha_carga),
+      detalle: m.observaciones || "",
+      monto
+    });
+  });
+
+  derivaciones?.forEach(d => {
+    const monto = Number(d.reintegro) || 0;
+    totalDerivaciones += monto;
+
+    listaFinal.push({
+      seccion: "Derivaciones",
+      afiliado: d.afiliados?.nombre_completo || "",
+      fecha_reintegro: formatearFechaAR(d.fecha_reintegro),
+      fecha_identificatoria: formatearFechaAR(d.fecha_inicio),
+      monto
+    });
+  });
+
+  const totalGeneral = totalMedicamentos + totalDerivaciones;
+
+  datosReporteActual = listaFinal;
+
+  document.getElementById("resumenReporte").innerHTML += `
+    <div style="font-weight:bold; margin-bottom:15px;">
+      Afiliado: ${afiliadoActual.nombre_completo}<br>
+      Periodo: ${formatearFechaAR(desde)} al ${formatearFechaAR(hasta)}<br><br>
+      Total Medicamentos: $${totalMedicamentos.toLocaleString("es-AR")}<br>
+      Total Derivaciones: $${totalDerivaciones.toLocaleString("es-AR")}<br><br>
+      <span style="font-size:18px;">
+        TOTAL GENERAL: $${totalGeneral.toLocaleString("es-AR")}
+      </span>
+    </div>
+  `;
+});
 
   } catch (err) {
     console.error(err);
