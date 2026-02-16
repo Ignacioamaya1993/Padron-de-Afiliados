@@ -49,3 +49,29 @@ main {
   margin: 0 auto;
 }
 
+/* ===================== TABS ===================== */
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab-button {
+  padding: 0.6rem 1.2rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f3f4f6;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tab-button:hover {
+  background-color: #e5e7eb;
+}
+
+/* PESTAÑA ACTIVA */
+.tab-button.active {
+  background-color: #2563eb;  /* azul más fuerte */
+  color: #fff;                /* texto blanco */
+  border-color: #1d4ed8;
+}

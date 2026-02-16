@@ -6,7 +6,7 @@ main, section {
 }
 
 /* Lista de medicamentos (cards) alineadas a la izquierda */
-#listaMedicamentos {
+#listaDerivaciones {
   justify-content: start; /* pega las cards al borde izquierdo */
 }
 </style>
@@ -102,15 +102,12 @@ main, section {
         <textarea id="observaciones" rows="3"></textarea>
       </div>
 
-      <div class="form-group full-width">
-        <label>Adjuntar Documentos</label>
-
-        <div id="adjuntosFormLista" class="adjuntos-nuevos"></div><br>
-
-                <button type="button" id="btnAgregarAdjuntoForm" class="btn-secundario">
-          ➕ Agregar adjunto
-        </button>
-      </div>
+          <!-- Adjuntos -->
+    <div class="form-row">
+      <label>Adjuntar Documentos</label>
+      <div id="adjuntosFormLista" class="adjuntos-nuevos"></div>
+      <button type="button" id="btnAgregarAdjuntoForm">➕ Agregar adjunto</button>
+    </div>
 
     </div>
 

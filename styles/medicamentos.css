@@ -52,27 +52,6 @@ button:active {
   max-width: 170px;
 }
 
-.btn-nuevoAdjunto:hover {
-  background-color: #d1fae5;
-}
-
-/* Guardar / Cancelar */
-.btn-guardar {
-  background-color: #16a34a;
-  color: white;
-  max-width: 150px;
-}
-
-.btn-guardar:hover {
-  background-color: #15803d;
-}
-
-.btn-cancelar {
-  background-color: #e5e7eb;
-  color: #0f172a;
-  max-width: 150px;
-}
-
 .grid-medicamento .acciones {
   display: inline-block
 }
@@ -93,14 +72,12 @@ button:active {
 form input,
 form select,
 form textarea {
-    padding: 0.6rem;
-    border-radius: 6px;
-    border: 1px solid #cbd5e1;
-    background: white;
-}
-
-form textarea {
-  resize: vertical;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  transition: border 0.2s ease;
 }
 
 /* Input file */

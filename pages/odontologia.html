@@ -1,0 +1,86 @@
+<style>
+/* Mover todo a la izquierda */
+main, section {
+  max-width: none;      /* quita el límite de ancho */
+  margin: 0;            /* elimina el centrado automático */
+}
+
+/* Lista de medicamentos (cards) alineadas a la izquierda */
+#listaMedicamentos {
+  justify-content: start; /* pega las cards al borde izquierdo */
+}
+</style>
+
+<section class="odontologia">
+
+  <!-- BOTON NUEVA ODONTOLOGÍA -->
+  <button id="btnNuevaOdontologia" class="btn-nuevo">+ Nueva Odontología</button>
+
+  <!-- FORMULARIO DE ALTA -->
+  <form id="formOdontologia" class="form-card hidden">
+
+    <div class="grid-fechas">
+      <div>
+        <label for="fecha_carga">Fecha carga</label>
+        <input type="date" id="fecha_carga" name="fecha_carga" required>
+      </div>
+      <div>
+        <label for="fecha_orden">Fecha orden</label>
+        <input type="date" id="fecha_orden" name="fecha_orden">
+      </div>
+      <div>
+        <label for="fecha_recepcion_orden">Fecha recepción orden</label>
+        <input type="date" id="fecha_recepcion_orden" name="fecha_recepcion_orden">
+      </div>
+      <div>
+        <label for="fecha_factura">Fecha factura</label>
+        <input type="date" id="fecha_factura" name="fecha_factura">
+      </div>
+      <div>
+        <label for="fecha_firma_recibo">Fecha firma recibo</label>
+        <input type="date" id="fecha_firma_recibo" name="fecha_firma_recibo">
+      </div>
+      <div>
+        <label for="fecha_envio_recibo">Fecha envío recibo</label>
+        <input type="date" id="fecha_envio_recibo" name="fecha_envio_recibo">
+      </div>
+    </div>
+
+    <div>
+      <label for="observacion">Observación</label>
+      <textarea id="observacion" name="observacion" rows="3"></textarea>
+    </div>
+
+    <!-- Adjuntos -->
+    <div class="form-row">
+      <label>Adjuntar Documentos</label>
+      <div id="adjuntosContainer" class="adjuntos-nuevos"></div>
+      <button type="button" id="btnAgregarAdjunto">➕ Agregar adjunto</button>
+    </div>
+
+    <!-- REINTEGRO (SOLO EDICION, oculto por defecto) -->
+    <div class="form-group hidden full-width campo-reintegro">
+      <div>
+        <label>Reintegro</label>
+        <input type="number" name="reintegro" step="0.01">
+      </div>
+      <div>
+        <label>Fecha reintegro</label>
+        <input type="date" name="fecha_reintegro">
+      </div>
+    </div>
+
+    <div class="acciones-form">
+      <button type="submit" class="btn-guardar">Guardar</button>
+      <button type="button" id="btnCancelarOdontologia" class="btn-cancelar">Cancelar</button>
+    </div>
+
+  </form>
+
+  <!-- LISTA DE ODONTOLOGÍA -->
+  <div id="listaOdontologia" class="lista-cards"></div>
+
+  <!-- PAGINACION -->
+  <div id="paginacionOdontologia" class="paginacion"></div>
+
+</section>

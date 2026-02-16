@@ -103,7 +103,6 @@ export async function init(afiliadoId) {
     contenedor.innerHTML = "";
 
     if (!data || !data.length) {
-      contenedor.innerHTML = "<p>No hay derivaciones registradas.</p>";
       renderPaginacion(0);
       return;
     }

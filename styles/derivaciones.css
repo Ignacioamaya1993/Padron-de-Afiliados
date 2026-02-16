@@ -61,23 +61,6 @@ button:active {
   background-color: #d1fae5;
 }
 
-/* Guardar / Cancelar */
-.btn-guardar {
-  background-color: #16a34a;
-  color: white;
-  max-width: 150px;
-}
-
-.btn-guardar:hover {
-  background-color: #15803d;
-}
-
-.btn-cancelar {
-  background-color: #e5e7eb;
-  color: #0f172a;
-  max-width: 150px;
-}
-
 .grid-derivacion .acciones {
   display: inline-block
 }
@@ -162,7 +145,7 @@ input[type="file"] {
   background: #fff7ed;
   padding: 0.4rem;
   cursor: pointer;
-  max-width: 300px;
+  max-width: 100%;
 }
 
 /* ===================== */

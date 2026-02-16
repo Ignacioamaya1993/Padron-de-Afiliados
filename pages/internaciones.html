@@ -1,0 +1,90 @@
+  <style>
+/* Mover todo a la izquierda */
+main, section {
+  max-width: none;      /* quita el límite de ancho */
+  margin: 0;            /* elimina el centrado automático */
+}
+
+/* Lista de medicamentos (cards) alineadas a la izquierda */
+#lista {
+  justify-content: start; /* pega las cards al borde izquierdo */
+}
+</style>
+
+<!-- INTERNACIONES -->
+<section id="internacionesSection">
+
+  <!-- Botón para nuevo registro -->
+  <button id="btnNuevaInternacion" class="btn-nuevo">+ Nueva Internación</button>
+
+  <!-- Formulario oculto -->
+  <form id="formInternacion" class="form-card oculto">
+    <div class="form-row">
+      <label for="tipoInternacion">Tipo de internación</label>
+      <select id="tipoInternacion" required></select>
+    </div>
+
+    <div class="form-row">
+      <label for="fechaCarga">Fecha Carga</label>
+      <input type="date" id="fechaCarga" required>
+    </div>
+
+    <div class="form-row">
+      <label for="fechaOrden">Fecha Orden</label>
+      <input type="date" id="fechaOrden">
+    </div>
+
+    <div class="form-row">
+      <label for="fechaRecepcionOrden">Fecha Recepción Orden</label>
+      <input type="date" id="fechaRecepcionOrden">
+    </div>
+
+    <div class="form-row">
+      <label for="fechaTurno">Fecha Turno</label>
+      <input type="date" id="fechaTurno">
+    </div>
+
+    <div class="form-row">
+      <label for="fechaCirugia">Fecha Cirugía</label>
+      <input type="date" id="fechaCirugia">
+    </div>
+
+    <div class="form-row">
+      <label for="fechaAlta">Fecha Alta</label>
+      <input type="date" id="fechaAlta">
+    </div>
+
+    <div class="form-row">
+      <label for="lugarInternacion">Lugar</label>
+      <select id="lugarInternacion" required></select>
+    </div>
+
+    <div class="form-row oculto" id="rowReintegro">
+    <label for="reintegroInternacion">Reintegro</label>
+    <input type="number" step="0.01" id="reintegroInternacion">
+    </div>
+
+    <div class="form-row full-width">
+      <label for="observacionesInternacion">Observaciones</label>
+      <textarea id="observacionesInternacion" rows="3"></textarea>
+    </div>
+
+    <!-- Adjuntos -->
+    <div class="form-row">
+      <label>Adjuntar Documentos</label>
+      <div id="adjuntosFormListaInternacion"class="adjuntos-nuevos"></div>
+      <button type="button" id="btnAgregarAdjuntoFormInternacion">➕ Agregar adjunto</button>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-guardar">💾 Guardar</button>
+      <button type="button" id="btnCancelarInternacion">Cancelar</button>
+    </div>
+  </form>
+
+  <!-- Contenedor de cards -->
+  <div id="contenedorInternaciones"></div>
+
+  <!-- Paginación -->
+  <div id="paginacionInternaciones" class="paginacion"></div>
+</section>

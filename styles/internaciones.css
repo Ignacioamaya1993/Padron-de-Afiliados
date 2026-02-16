@@ -1,0 +1,185 @@
+/* ===================== */
+/* INTERNACIONES - Estilo */
+/* ===================== */
+
+.form-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #fff;
+  max-width: 1100px;   /* ⬅️ más ancho pero controlado */
+}
+
+/* =====================
+   Formulario Internaciones
+===================== */
+#formInternacion {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columnas iguales */
+  gap: 1rem; /* espacio entre filas y columnas */
+  align-items: start;
+  margin-top: 0rem;
+  max-width: 1100px;
+}
+
+/* Cada fila es una celda del grid */
+#formInternacion .form-row {
+  display: flex;
+  flex-direction: column; /* label arriba del input */
+  width: 100%;
+}
+
+/* Inputs y selects ocupan todo el ancho de su celda */
+#formInternacion input,
+#formInternacion select,
+#formInternacion textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Textarea grande ocupa 2 columnas */
+#observacionesInternacion {
+  grid-column: span 2;
+}
+
+/* Adjuntos ocupan todas las columnas */
+#btnAgregarAdjuntoFormInternacion {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  max-width: 160px;
+}
+
+/* Botones de acción ocupan toda la fila */
+#formInternacion .form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+
+/* Opcional: estilo de botón nuevo / cancelar */
+#btnNuevaInternacion,
+#btnCancelarInternacion {
+  cursor: pointer;
+}
+
+
+#internacionesSection h2 {
+  margin-bottom: 1rem;
+}
+
+.form-row {
+  margin-bottom: 0.8rem;
+  flex-direction: column;
+}
+
+.form-row label {
+font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  padding: 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+
+.btn-nuevo,
+.form-actions button {
+  padding: 0.5rem 1rem;
+  margin: 0.3rem 0.1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-nuevo {
+  background-color: #2f80ed;
+  color: white;
+}
+
+.form-actions button.guardar {
+  background-color: #27ae60;
+  color: white;
+}
+
+.form-actions button#btnCancelarInternacion {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.oculto {
+  display: none !important;
+}
+
+#contenedorInternaciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 0.6rem;
+}
+
+.card select[name="lugar_internacion_id"] {
+  width: 100%;
+  padding: 4px 6px;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Cards */
+.card {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    padding: 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.35rem !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    min-width: 350px !important;
+    min-height: 400px !important;
+}
+
+.card .acciones button {
+  margin-right: 0.3rem;
+}
+
+.card input[readonly],
+.card textarea[readonly] {
+  background-color: #eee;
+}
+
+/* Grid fechas */
+.grid-fechas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.5rem;
+}
+
+/* Adjuntos */
+.adjuntos-lista, .adjuntos-nuevos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  max-width: 340px;
+}
+
+.adjunto-item, .adjunto-item-nuevo {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  border: 1px solid #ddd;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  background-color: #fff;
+}

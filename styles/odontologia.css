@@ -1,0 +1,125 @@
+/* ===================== */
+/* ODONTOLOGIA - Estilo   */
+/* ===================== */
+
+/* Contenedor principal */
+#listaOdontologia {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: start;
+    margin-top: 20px;
+}
+
+/* Grid de fechas en cards */
+#listaOdontologia .grid-fechas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.5rem;
+}
+
+/* Grid de fechas en formulario de alta: 3 columnas x 2 filas */
+#formOdontologia .grid-fechas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* Labels y campos */
+#listaOdontologia label,
+#formOdontologia label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+#formOdontologia .grid-reintegro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+
+#formOdontologia input,
+#formOdontologia select,
+#formOdontologia textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  height: 40px;
+}
+
+/* Textarea específico */
+#listaOdontologia textarea,
+#formOdontologia textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Adjuntos */
+.adjuntos-card,
+#adjuntosOdontologiaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.adjunto-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adjunto-item input[type="file"] {
+  flex: 1;
+}
+
+/* Campo reintegro oculto por defecto en alta */
+#campoReintegroAlta { display: none; }
+
+/* Paginación */
+#paginacionOdontologia {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+#paginacionOdontologia button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#paginacionOdontologia button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#paginacionOdontologia span { font-weight: 600; }
+
+/* Reintegro en cards y en formulario */
+.campo-reintegro {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+
+.campo-reintegro > div {
+  flex: 1;
+}
+
+.hidden {
+  display: none !important;
+}

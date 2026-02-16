@@ -142,9 +142,12 @@ async function cargarMedicamentos() {
 
   lista.innerHTML = "";
 
-  if (!meds.length) return;
-
-  // 🔥 Traemos los documentos SOLO de esta página
+  if (!meds.length) {
+    renderPaginacion(count);
+    return;
+  }
+  
+  // Traemos los documentos SOLO de esta página
   const medIds = meds.map(m => m.id);
 
   const { data: docs } = await supabase

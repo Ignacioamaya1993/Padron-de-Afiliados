@@ -68,27 +68,23 @@ main, section {
         <input type="date" name="fecha_vencimiento">
       </div>
 
-            <div>
+      <!-- Observaciones -->
+      <div class="form-group full-width">
         <label>Observaciones</label>
-        <textarea name="observaciones"></textarea>
+        <textarea id="observaciones" rows="3"></textarea>
       </div>
 
-      <!-- ADJUNTOS -->
-      <div class="full-row">
-        <label>Adjuntos</label>
-        <div id="adjuntosContainer"></div><br>
-
-        <button type="button" id="btnAgregarAdjunto" class="btn-nuevoAdjunto">
-          ➕ Agregar adjunto
-        </button>
-      </div>
+                <!-- Adjuntos -->
+    <div class="form-row">
+      <label>Adjuntar Documentos</label>
+      <div id="adjuntosContainer" class="adjuntos-nuevos"></div>
+      <button type="button" id="btnAgregarAdjunto">➕ Agregar adjunto</button>
+    </div>
 
       <!-- ACCIONES -->
       <div class="full-row acciones">
-        <button type="submit" class="btn-guardar">💾 Guardar</button>
-        <button type="button" id="btnCancelarMedicamento" class="btn-cancelar">
-          Cancelar
-        </button>
+      <button type="submit" class="btn-guardar">💾 Guardar</button>
+      <button type="button" id="btnCancelarMedicamento" class="btn-cancelar">Cancelar</button>
       </div>
 
     </div>

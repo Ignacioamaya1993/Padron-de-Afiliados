@@ -55,6 +55,9 @@ async function loadModule(moduleName) {
   // Ocultar todos los contenedores
   Object.values(moduleContainers).forEach(c => c.style.display = "none");
 
+  // Guardamos la pestaña activa en localStorage
+  localStorage.setItem("ultimaPestana", moduleName);
+
   // Si ya existe el contenedor, solo mostrarlo
   if (moduleContainers[moduleName]) {
     moduleContainers[moduleName].style.display = "block";
@@ -62,7 +65,7 @@ async function loadModule(moduleName) {
   }
 
   // Crear contenedor nuevo
-  let div = document.createElement("div");
+  const div = document.createElement("div");
   div.style.display = "block";
   container.appendChild(div);
   moduleContainers[moduleName] = div;
@@ -111,13 +114,23 @@ tabsContainer.addEventListener("click", (e) => {
 });
 
 // =====================
-// Cargar módulo por defecto
+// Inicializar pestaña por defecto o última activa
 // =====================
-if (tabsContainer.querySelector(".tab-button")) {
-  const defaultModule = tabsContainer.querySelector(".tab-button").dataset.module;
+(function initTabs() {
+  const ultimaPestana = localStorage.getItem("ultimaPestana");
+  let defaultModule = tabsContainer.querySelector(".tab-button").dataset.module;
+
+  if (ultimaPestana) {
+    defaultModule = ultimaPestana;
+  }
+
   loadModule(defaultModule);
-  tabsContainer.querySelector(".tab-button").classList.add("active");
-}
+
+  // marcar activa
+  document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
+  const btn = Array.from(document.querySelectorAll(".tab-button")).find(b => b.dataset.module === defaultModule);
+  if (btn) btn.classList.add("active");
+})();
 
 // =====================
 // Botón Volver
