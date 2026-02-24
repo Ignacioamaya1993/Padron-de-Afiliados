@@ -15,18 +15,36 @@
   border: 1px solid #ddd;
   border-radius: 10px;
   background: #fff;
-  padding: 18px;
-  width: 340px;             /* mismo tamaño que derivaciones */
+  padding: 16px;
+  width: 340px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columnas fijas */
+  gap: 12px;
   transition: all 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }
 
 .practica-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+}
+
+/* Campos que ocupan toda la fila */
+.practica-card .full-width {
+  grid-column: 1 / -1;
+}
+
+.practica-card textarea {
+  min-height: 50px;
+  resize: vertical;
+}
+
+/* Labels */
+.practica-card label {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 4px;
+  display: block;
 }
 
 /* Título */
@@ -71,9 +89,10 @@
 
 /* Botones dentro de la card */
 .practica-card .acciones {
-  margin-top: 10px;
+  grid-column: 1 / -1;
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .practica-card button {
@@ -105,12 +124,12 @@
 
 
 .form-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  background: #fff;
-  max-width: 1100px;
+  border: 1px solid #ddd !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  margin-bottom: 20px !important;
+  background: #fff !important;
+  max-width: 700px !important;
 }
 
 /* ===================== */
@@ -142,7 +161,6 @@
 
 .form-group label {
   font-size: 14px;
-  font-weight: 600;
   margin-bottom: 5px;
   color: #333;
 }
@@ -247,25 +265,47 @@ input[type="file"] {
   background-color: #e0e0e0;
 }
 
-.adjunto-item, .adjunto-item-nuevo {
-    display: flex;
-    align-items: center;
-    gap: 0.2rem;
-    border: 1px solid #ddd;
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    background-color: #fff;
+/* Adjuntos individuales */
+.adjunto-item,
+.adjunto-item-nuevo {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  background-color: #fff;
 }
 
-/* ===================== */
-/* ADJUNTOS */
-/* ===================== */
+/* Botón agregar adjunto */
+.practica-card .btn-agregar-adjunto-card {
+  align-self: start;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
 
-.adjuntos-nuevos {
+.practica-card .btn-agregar-adjunto-card:hover {
+  background-color: #e0e0e0;
+}
+
+/* Fecha reintegro */
+.practica-card .fecha-reintegro {
+  grid-column: 1 / -1; /* ocupa toda la fila */
+}
+
+
+/* Adjuntos */
+.practica-card .adjuntos-card,
+.practica-card .adjuntos-nuevos-card {
+  grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 /* ===================== */
@@ -274,4 +314,11 @@ input[type="file"] {
 
 .oculto {
   display: none !important;
+}
+
+.card .acciones {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.4rem !important;
+    margin-top: 20px !important;
 }

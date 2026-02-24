@@ -1,0 +1,171 @@
+/* =============================== */
+/* ATENCIÓN DOMICILIARIA */
+/* =============================== */
+
+/* Card del formulario */
+.form-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background: #fff;
+  max-width: 700px;
+}
+
+/* Filas de dos columnas */
+.grid-dos-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+/* Cada campo dentro del grid */
+.form-card .form-group,
+.form-card .grid-dos-columnas > div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Labels */
+.form-card label {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+/* Inputs y textarea */
+.form-card input,
+.form-card select,
+.form-card textarea {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Textarea observación ocupa todo el ancho */
+.form-card textarea {
+  resize: vertical;
+}
+
+/* Adjuntos */
+.form-card .adjuntos-nuevos,
+.form-card .adjuntos-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* Botones del formulario */
+.acciones-form,
+.form-card .acciones {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Estilos botones */
+.btn-principal,
+.btn-guardar,
+.btn-cancelar,
+.btn-eliminar-adjunto {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-principal {
+  background: #2f6fed;
+  color: #fff;
+}
+.btn-principal:hover {
+  background: #2457bd;
+}
+
+/* Campo reintegro (solo edición) */
+.campo-reintegro {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.campo-reintegro > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =============================== */
+/* LISTADO DE CARDS */
+/* =============================== */
+
+#listaAtencionDomiciliaria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: flex-start;
+}
+
+/* Card individual */
+.card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  background: #fff;
+  width: 320px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Header card */
+.card-header {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+/* Body */
+.card-body p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+/* Acciones card */
+.card .acciones {
+  margin-top: 10px;
+  text-align: right;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+/* Botones dentro de cards */
+.card .editar,
+.card .guardar,
+.card .cancelar,
+.card .eliminar {
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+/* Adjuntos dentro de cards */
+.adjuntos-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.adjuntos-card a {
+  text-decoration: none;
+  color: #2f6fed;
+}

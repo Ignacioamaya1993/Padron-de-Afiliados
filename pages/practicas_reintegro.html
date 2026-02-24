@@ -1,0 +1,82 @@
+  <style>
+/* Mover todo a la izquierda */
+main, section {
+  max-width: none;      /* quita el límite de ancho */
+  margin: 0;            /* elimina el centrado automático */
+}
+
+#listaPracticasReintegro {
+  justify-content: start; /* pega las cards al borde izquierdo */
+}
+</style>
+
+<section class="practicas-reintegro prx-wrapper">
+
+  <button id="btnNuevaPracticaReintegro" class="prx-btn-nuevo">
+    + Nueva Práctica por Reintegro
+  </button>
+
+  <form id="formPracticaReintegro" class="prx-form-card hidden">
+
+    <div class="prx-grid-fechas">
+      <div class="prx-field">
+        <label>Fecha carga</label>
+        <input type="date" name="fecha_carga" required>
+      </div>
+
+      <div class="prx-field">
+        <label>Fecha prescripción</label>
+        <input type="date" name="fecha_prescripcion">
+      </div>
+
+      <div class="prx-field">
+        <label>Fecha vencimiento</label>
+        <input type="date" name="fecha_vencimiento">
+      </div>
+
+      <div class="prx-field">
+        <label>Tipo</label>
+        <select name="tipo_practica_id" id="tipoPracticaSelect"></select>
+      </div>
+    </div>
+
+    <div class="prx-field">
+      <label>Observación</label>
+      <textarea name="observacion" rows="3"></textarea>
+    </div>
+
+    <!-- Adjuntos -->
+    <div class="prx-form-row">
+      <label>Adjuntar Documentos</label>
+      <div id="adjuntosPracticasContainer" class="prx-adjuntos-nuevos"></div>
+      <button type="button" id="btnAgregarAdjuntoPractica" class="prx-btn-agregar-adjunto">
+        ➕ Agregar adjunto
+      </button>
+    </div>
+
+    <!-- REINTEGRO SOLO EDICIÓN -->
+    <div class="prx-form-group hidden prx-campo-reintegro">
+      <div class="prx-field">
+        <label>Reintegro</label>
+        <input type="number" name="reintegro" step="0.01">
+      </div>
+      <div class="prx-field">
+        <label>Fecha reintegro</label>
+        <input type="date" name="fecha_reintegro">
+      </div>
+    </div>
+
+    <div class="prx-acciones-form">
+      <button type="submit" class="prx-btn-guardar">Guardar</button>
+      <button type="button" id="btnCancelarPracticaReintegro" class="prx-btn-cancelar">
+        Cancelar
+      </button>
+    </div>
+
+  </form>
+
+  <div id="listaPracticasReintegro" class="prx-lista-cards"></div>
+
+  <!-- PAGINACION -->
+  <div id="paginacionPracticasReintegro" class="paginacion"></div>
+</section>

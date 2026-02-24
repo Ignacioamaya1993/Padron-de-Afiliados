@@ -213,6 +213,11 @@ function actualizarCamposPorTipo() {
 
         <div><label>Reintegro</label><input type="number" step="0.01" name="reintegro" readonly value="${p.reintegro ?? ""}"></div>
 
+            <div class="full-width fecha-reintegro">
+      <label>Fecha reintegro</label>
+      <input type="date" name="fecha_reintegro" readonly value="">
+    </div>
+
         <div class="med-card-section">
           <label>Observación</label>
           <textarea name="observacion" readonly>${p.observacion || "Sin observaciones"}</textarea>
@@ -254,6 +259,71 @@ lista.addEventListener("click", async e => {
 
   if (e.target.classList.contains("editar")) {
 
+/* ===== ADJUNTOS EN EDICIÓN ===== */
+
+let adjuntosCard = card.querySelector(".adjuntos-card");
+
+// Si no existe, crearlo
+if (!adjuntosCard) {
+  adjuntosCard = document.createElement("div");
+  adjuntosCard.className = "adjuntos-card";
+  card.insertBefore(adjuntosCard, card.querySelector(".acciones"));
+}
+
+// Mostrar botones eliminar para existentes
+adjuntosCard.querySelectorAll(".adjunto-item").forEach(item => {
+  const btn = item.querySelector(".btn-eliminar-adjunto");
+  if (!btn) return;
+  btn.classList.remove("hidden");
+
+  btn.addEventListener("click", () => {
+    const docId = item.dataset.docId;
+    if (docId) card._adjuntosEliminar.push(docId);
+    item.remove();
+  });
+});
+
+// Agregar botón "Agregar adjunto" si no existe
+if (!adjuntosCard.querySelector(".btn-agregar-adjunto-card")) {
+  const btnAgregar = document.createElement("button");
+  btnAgregar.type = "button";
+  btnAgregar.textContent = "➕ Agregar adjunto";
+  btnAgregar.className = "btn-agregar-adjunto-card";
+
+  btnAgregar.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "adjunto-item";
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".pdf,.jpg,.png";
+
+    input.addEventListener("change", () => {
+      wrapper.archivo = input.files[0] || null;
+    });
+
+    wrapper.archivo = null;
+    card._adjuntosNuevos.push(wrapper);
+
+    wrapper.appendChild(input);
+
+    const btnEliminar = document.createElement("button");
+    btnEliminar.type = "button";
+    btnEliminar.textContent = "✖";
+    btnEliminar.className = "btn-eliminar-adjunto";
+
+    btnEliminar.addEventListener("click", () => {
+      card._adjuntosNuevos = card._adjuntosNuevos.filter(a => a !== wrapper);
+      wrapper.remove();
+    });
+
+    wrapper.appendChild(btnEliminar);
+    adjuntosCard.appendChild(wrapper);
+  });
+
+  adjuntosCard.appendChild(btnAgregar);
+}
+
     card.querySelectorAll("input, textarea").forEach(el => {
     if (el.name !== "prestador") {
         el.removeAttribute("readonly");
@@ -290,7 +360,9 @@ lista.addEventListener("click", async e => {
         nombre_kinesiologo: card.querySelector("[name='nombre_kinesiologo']")?.value || null,
         lugar: card.querySelector("[name='lugar']")?.value || null,
         observacion: card.querySelector("[name='observacion']").value || null,
-        reintegro: parseInt(card.querySelector("[name='reintegro']").value) || 0
+        reintegro: card.querySelector("[name='reintegro']").value
+          ? parseFloat(card.querySelector("[name='reintegro']").value)
+          : null
         };
 
     await supabase
@@ -298,7 +370,32 @@ lista.addEventListener("click", async e => {
       .update(datosUpdate)
       .eq("id", id);
 
-    Swal.fire("Actualizado", "Práctica actualizada", "success");
+      /* ===== PROCESAR ADJUNTOS NUEVOS ===== */
+
+for (const adj of card._adjuntosNuevos) {
+  if (!adj.archivo) continue;
+
+  const url = await subirArchivoCloudinary(adj.archivo);
+
+  await supabase.from("fichamedica_documentos").insert({
+    afiliado_id: afiliadoId,
+    tipo_documento: "practicas",
+    entidad_relacion_id: id,
+    nombre_archivo: adj.archivo.name,
+    url
+  });
+}
+
+/* ===== ELIMINAR ADJUNTOS MARCADOS ===== */
+
+for (const docId of card._adjuntosEliminar) {
+  await supabase
+    .from("fichamedica_documentos")
+    .delete()
+    .eq("id", docId);
+}
+
+    Swal.fire("Guardado", "Cambios guardados correctamente", "success");
     cargarPracticas();
   }
 
@@ -307,7 +404,8 @@ lista.addEventListener("click", async e => {
   if (e.target.classList.contains("eliminar")) {
 
     const confirmar = await Swal.fire({
-      title: "¿Eliminar práctica?",
+      title: "¿Está seguro?",
+      text: "Se eliminará esta practica y todos sus adjuntos.",
       icon: "warning",
       showCancelButton: true
     });

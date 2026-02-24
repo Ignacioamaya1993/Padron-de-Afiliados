@@ -1,0 +1,304 @@
+/* ===================================== */
+/* PRACTICAS POR REINTEGRO - MODULO PRX */
+/* ===================================== */
+
+.prx-wrapper {
+  max-width: 1100px;
+}
+
+/* ============================= */
+/* BOTON NUEVO */
+/* ============================= */
+
+.prx-btn-nuevo {
+    background-color: #2f80ed;
+    color: white;
+    margin-bottom: 20px;
+}
+
+/* ============================= */
+/* FORM CARD */
+/* ============================= */
+
+.prx-form-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  max-width: 700px;
+}
+
+/* ============================= */
+/* GRID FECHAS */
+/* ============================= */
+
+.prx-grid-fechas {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* ============================= */
+/* CAMPOS */
+/* ============================= */
+
+.prx-field label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #555;
+}
+
+.prx-field input,
+.prx-field select,
+.prx-field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.prx-field textarea {
+  resize: vertical;
+}
+
+input[type="file"] {
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    background: #fff7ed;
+    padding: 0.4rem;
+    cursor: pointer;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* ============================= */
+/* REINTEGRO LADO A LADO */
+/* ============================= */
+
+.prx-campo-reintegro {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+  margin-bottom: 16px;
+}
+
+.prx-campo-reintegro > .prx-field {
+  flex: 1;
+}
+
+.prx-adjuntos-edicion {
+  width: 100%;         
+  box-sizing: border-box; 
+  padding: 10px;       
+  display: flex;         
+  flex-direction: column; 
+  gap: 10px;         
+}
+
+/* ============================= */
+/* ADJUNTOS */
+/* ============================= */
+
+.prx-adjuntos-nuevos,
+.prx-adjuntos-card {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prx-adjunto-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.prx-adjunto-item a {
+  text-decoration: none;
+  font-size: 14px;
+  color: #0077cc;
+}
+
+.prx-adjunto-item a:hover {
+  text-decoration: underline;
+}
+
+.prx-btn-eliminar-adjunto {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #c00;
+}
+
+/* ============================= */
+/* CARDS LISTADO */
+/* ============================= */
+
+.prx-lista-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 0.6rem;
+}
+
+.prx-card {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    padding: 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.35rem !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    max-width: 400px;
+
+}
+
+.prx-card input[readonly],
+.prx-card textarea[readonly] {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  cursor: default;
+}
+
+.prx-card.modo-edicion input,
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    background: #fff7ed;
+    padding: 0.4rem;
+    cursor: pointer;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* ============================= */
+/* ACCIONES */
+/* ============================= */
+
+.prx-acciones,
+.prx-acciones-form {
+margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.prx-acciones button{
+display: flex;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    margin-top: auto;
+}
+
+.prx-editar {
+    background-color: #2563eb;
+    color: white;
+}
+
+.prx-eliminar {
+  background-color: #dc2626;
+  color: white;
+}
+
+.prx-guardar,
+.prx-btn-guardar {
+background-color: #1976d2;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.prx-cancelar,
+.prx-btn-cancelar {
+background-color: #e53935;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+/* Hover suave */
+
+.prx-acciones button:hover,
+.prx-acciones-form button:hover {
+  opacity: 0.9;
+}
+
+.acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    margin-top: auto;
+}
+
+/* ============================= */
+/* PAGINACION */
+/* ============================= */
+
+.prx-paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.prx-paginacion button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.prx-paginacion button:disabled {
+    background-color: #c5c5c5;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+#paginacionPracticasReintegro span { font-weight: 600; }
+
+/* ============================= */
+/* UTILIDADES */
+/* ============================= */
+
+.prx-wrapper .hidden {
+  display: none !important;
+}
+
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 900px) {
+  .prx-grid-fechas {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .prx-grid-fechas {
+    grid-template-columns: 1fr;
+  }
+
+  .prx-campo-reintegro {
+    flex-direction: column;
+  }
+}

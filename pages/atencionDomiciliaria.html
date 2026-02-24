@@ -1,0 +1,87 @@
+<style>
+/* Mover todo a la izquierda */
+main, section {
+  max-width: none;
+  margin: 0;
+}
+
+/* Lista de cards alineadas a la izquierda */
+#listaAtencionDomiciliaria {
+  justify-content: start;
+}
+</style>
+
+<section class="atencion-domiciliaria">
+
+  <!-- BOTÓN NUEVA ATENCIÓN -->
+  <button id="btnNuevaAtencion" class="btn-nuevo">+ Nueva Atención</button>
+
+<!-- FORMULARIO DE ALTA -->
+<form id="formAtencionDomiciliaria" class="form-card hidden">
+
+  <!-- FILA 1: TIPO y FECHA CARGA -->
+  <div class="grid-dos-columnas">
+    <div class="form-group">
+      <label>Tipo</label>
+      <select id="tipo_atencion_id" required>
+        <option value="">Seleccionar</option>
+      </select>
+    </div>
+    <div>
+      <label for="fecha_carga">Fecha carga</label>
+      <input type="date" id="fecha_carga" name="fecha_carga" required>
+    </div>
+  </div>
+
+  <!-- FILA 2: FECHA INICIO PERIODO y FECHA FIN PERIODO -->
+  <div class="grid-dos-columnas">
+    <div>
+      <label for="fecha_inicio_periodo">Fecha inicio período</label>
+      <input type="date" id="fecha_inicio_periodo" name="fecha_inicio_periodo" required>
+    </div>
+    <div>
+      <label for="fecha_fin_periodo">Fecha fin período</label>
+      <input type="date" id="fecha_fin_periodo" name="fecha_fin_periodo" required>
+    </div>
+  </div>
+
+  <!-- OBSERVACIÓN -->
+  <div>
+    <label for="observacion">Observación</label>
+    <textarea id="observacion" name="observacion" rows="3"></textarea>
+  </div>
+
+  <!-- ADJUNTOS -->
+  <div class="form-row">
+    <label>Adjuntar Documentos</label>
+    <div id="adjuntosAtencionContainer" class="adjuntos-nuevos"></div>
+    <button type="button" id="btnAgregarAdjuntoAtencion">➕ Agregar adjunto</button>
+  </div>
+
+  <!-- REINTEGRO (solo edición, oculto por defecto) -->
+  <div class="form-group hidden full-width campo-reintegro">
+    <div>
+      <label>Reintegro</label>
+      <input type="number" name="reintegro" step="0.01">
+    </div>
+    <div>
+      <label>Fecha reintegro</label>
+      <input type="date" name="fecha_reintegro">
+    </div>
+  </div>
+
+  <!-- BOTONES -->
+  <div class="acciones-form">
+    <button type="submit" class="btn-guardar">Guardar</button>
+    <button type="button" id="btnCancelarAtencion" class="btn-cancelar">Cancelar</button>
+  </div>
+
+</form>
+
+  <!-- LISTA DE ATENCIONES -->
+  <div id="listaAtencionDomiciliaria" class="lista-cards"></div>
+
+  <!-- PAGINACIÓN -->
+  <div id="paginacionAtencionDomiciliaria" class="paginacion"></div>
+
+</section>

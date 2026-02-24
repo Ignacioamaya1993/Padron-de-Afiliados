@@ -30,7 +30,6 @@
 #listaOdontologia label,
 #formOdontologia label {
   display: block;
-  font-weight: 600;
   margin-bottom: 3px;
 }
 
@@ -40,7 +39,6 @@
   gap: 15px;
   margin-bottom: 15px;
 }
-
 
 #formOdontologia input,
 #formOdontologia select,
@@ -85,11 +83,12 @@
 
 /* Paginación */
 #paginacionOdontologia {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
 }
 
 #paginacionOdontologia button {
@@ -102,8 +101,9 @@
 }
 
 #paginacionOdontologia button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    background-color: #c5c5c5;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 #paginacionOdontologia span { font-weight: 600; }

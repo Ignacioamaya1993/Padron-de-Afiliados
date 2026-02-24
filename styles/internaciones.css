@@ -3,12 +3,12 @@
 /* ===================== */
 
 .form-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  background: #fff;
-  max-width: 1100px;   /* ⬅️ más ancho pero controlado */
+  border: 1px solid #ddd !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  margin-bottom: 20px !important;
+  background: #fff !important;
+  max-width: 900px !important;
 }
 
 /* =====================
@@ -79,9 +79,8 @@
 }
 
 .form-row label {
-font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
 }
 
 .form-row input,
@@ -146,7 +145,7 @@ font-size: 0.85rem;
     flex-direction: column !important;
     gap: 0.35rem !important;
     transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-    min-width: 350px !important;
+    min-width: 400px !important;
     min-height: 400px !important;
 }
 
@@ -182,4 +181,10 @@ font-size: 0.85rem;
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
   background-color: #fff;
+}
+
+.card .acciones {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.4rem !important;
 }

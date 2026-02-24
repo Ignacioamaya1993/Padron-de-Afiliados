@@ -187,50 +187,83 @@ card.innerHTML = `
       card.querySelector(".editar").classList.add("hidden");
       card.querySelector(".eliminar").classList.add("hidden");
 
-      // Adjuntos dinámicos
-      const adjuntosCard = card.querySelector(".adjuntos-card");
-      if (adjuntosCard) {
-        adjuntosCard.querySelectorAll(".btn-eliminar-adjunto").forEach(btn => btn.classList.remove("hidden"));
+// Adjuntos dinámicos
+const adjuntosCard = card.querySelector(".adjuntos-card");
 
-        if (!card.querySelector(".btn-agregar-adjunto-card")) {
-          const btnAgregar = document.createElement("button");
-          btnAgregar.type = "button";
-          btnAgregar.textContent = "➕ Agregar adjunto";
-          btnAgregar.className = "btn-agregar-adjunto-card";
-          btnAgregar.addEventListener("click", () => {
-            const wrapper = document.createElement("div");
-            wrapper.className = "adjunto-item";
+if (adjuntosCard) {
 
-            const input = document.createElement("input");
-            input.type = "file";
-            input.accept = ".pdf,.jpg,.png";
-            input.addEventListener("change", async () => {
-              const file = input.files[0];
-              if (!file) return;
-              const url = await subirArchivoCloudinary(file);
-              await supabase.from("fichamedica_documentos").insert({
-                afiliado_id: afiliadoId,
-                tipo_documento: "odontologia",
-                entidad_relacion_id: card.dataset.id,
-                nombre_archivo: file.name,
-                url
-              });
-              cargarOdontologia();
-            });
-            wrapper.appendChild(input);
+  // Mostrar botones eliminar de adjuntos existentes
+  adjuntosCard.querySelectorAll(".btn-eliminar-adjunto").forEach(btn => {
+    btn.classList.remove("hidden");
 
-            const btnEliminar = document.createElement("button");
-            btnEliminar.type = "button";
-            btnEliminar.textContent = "✖";
-            btnEliminar.className = "btn-eliminar-adjunto";
-            btnEliminar.addEventListener("click", () => wrapper.remove());
-            wrapper.appendChild(btnEliminar);
+    btn.onclick = async () => {
+      const item = btn.closest(".adjunto-item");
+      const docId = item.dataset.docId;
 
-            adjuntosCard.appendChild(wrapper);
-          });
-          adjuntosCard.appendChild(btnAgregar);
-        }
+      if (docId) {
+        // 🔴 Elimina de Supabase si ya existe en BD
+        await supabase
+          .from("fichamedica_documentos")
+          .delete()
+          .eq("id", docId);
       }
+
+      item.remove();
+    };
+  });
+
+  // Botón agregar adjunto nuevo
+  if (!card.querySelector(".btn-agregar-adjunto-card")) {
+
+    const btnAgregar = document.createElement("button");
+    btnAgregar.type = "button";
+    btnAgregar.textContent = "➕ Agregar adjunto";
+    btnAgregar.className = "btn-agregar-adjunto-card";
+
+    btnAgregar.addEventListener("click", () => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "adjunto-item";
+
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".pdf,.jpg,.png";
+
+      input.addEventListener("change", async () => {
+        const file = input.files[0];
+        if (!file) return;
+
+        const url = await subirArchivoCloudinary(file);
+
+        await supabase.from("fichamedica_documentos").insert({
+          afiliado_id: afiliadoId,
+          tipo_documento: "odontologia",
+          entidad_relacion_id: card.dataset.id,
+          nombre_archivo: file.name,
+          url
+        });
+
+        cargarOdontologia();
+      });
+
+      wrapper.appendChild(input);
+
+      const btnEliminar = document.createElement("button");
+      btnEliminar.type = "button";
+      btnEliminar.textContent = "✖";
+      btnEliminar.className = "btn-eliminar-adjunto";
+
+      btnEliminar.addEventListener("click", () => {
+        wrapper.remove(); // solo elimina del DOM si aún no se subió
+      });
+
+      wrapper.appendChild(btnEliminar);
+      adjuntosCard.appendChild(wrapper);
+    });
+
+    adjuntosCard.appendChild(btnAgregar);
+  }
+}
+
     }
 
     if (e.target.classList.contains("cancelar")) cargarOdontologia();
@@ -250,13 +283,14 @@ card.innerHTML = `
       };
 
       await supabase.from("odontologia").update(datosUpdate).eq("id", id);
-      Swal.fire("Actualizado", "Registro actualizado", "success");
+      Swal.fire("Guardado", "Cambios guardados correctamente", "success");
       cargarOdontologia();
     }
 
     if (e.target.classList.contains("eliminar")) {
       const confirmar = await Swal.fire({
-        title: "¿Eliminar registro?",
+        title: '¿Está seguro?',
+        text: "Se eliminará esta odontología y todos sus adjuntos.",
         icon: "warning",
         showCancelButton: true
       });

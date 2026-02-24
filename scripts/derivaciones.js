@@ -251,16 +251,36 @@ export async function init(afiliadoId) {
 
       card.querySelectorAll(".btn-eliminar-adjunto").forEach(b => b.classList.remove("hidden"));
       card.querySelector(".adjuntos-edicion").classList.remove("hidden");
+      const adjuntosEdicion = card.querySelector(".adjuntos-edicion");
+      if (adjuntosEdicion) {
+        adjuntosEdicion.classList.remove("hidden");
 
-      card.querySelector(".btn-agregar-adjunto-card")
-        .addEventListener("click", () => {
+        const btnAgregar = adjuntosEdicion.querySelector(".btn-agregar-adjunto-card");
+        btnAgregar.addEventListener("click", () => {
           const wrapper = document.createElement("div");
+          wrapper.classList.add("adjunto-item-nuevo"); // para estilos
+
           const input = document.createElement("input");
           input.type = "file";
           wrapper.appendChild(input);
-          card.querySelector(".adjuntos-nuevos").appendChild(wrapper);
+
+          // Botón eliminar
+          const btnEliminar = document.createElement("button");
+          btnEliminar.type = "button";
+          btnEliminar.textContent = "✖";
+          btnEliminar.classList.add("btn-eliminar-adjunto");
+
+          btnEliminar.addEventListener("click", () => {
+            wrapper.remove(); // lo quita del DOM
+            card._adjuntosNuevos = card._adjuntosNuevos.filter(w => w !== wrapper); // y del array
+          });
+
+          wrapper.appendChild(btnEliminar);
+
+          adjuntosEdicion.querySelector(".adjuntos-nuevos").appendChild(wrapper);
           card._adjuntosNuevos.push(wrapper);
         });
+      }
 
       card.querySelector(".editar").classList.add("hidden");
       card.querySelector(".eliminar").classList.add("hidden");
@@ -300,6 +320,20 @@ export async function init(afiliadoId) {
         Swal.fire('Eliminado', 'La derivación fue eliminada correctamente', 'success');
       }
     }
+
+    // ELIMINAR ADJUNTO EXISTENTE (marcar para borrar)
+if (e.target.classList.contains("btn-eliminar-adjunto")) {
+  const item = e.target.closest(".adjunto-item");
+  const docId = item.dataset.docId;
+
+  if (docId) {
+    // Guardamos para eliminar al guardar
+    card._adjuntosEliminar.push(docId);
+  }
+
+  // Lo quitamos visualmente
+  item.remove();
+}
 
     // GUARDAR
 if (e.target.classList.contains("guardar")) {

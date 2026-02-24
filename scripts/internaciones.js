@@ -251,8 +251,28 @@ if (e.target.classList.contains("editar")) {
     if (el.tagName === "TEXTAREA" && el.value === "Sin observaciones") el.value = "";
   });
 
-  card.querySelectorAll(".btn-eliminar-adjunto").forEach(b => b.classList.remove("hidden"));
-  card.querySelector(".adjuntos-edicion").classList.remove("hidden");
+card._adjuntosEliminar = [];
+card._adjuntosNuevos = [];
+
+card.querySelectorAll(".adjunto-item").forEach(item => {
+
+  const btn = item.querySelector(".btn-eliminar-adjunto");
+  if (!btn) return;
+
+  btn.classList.remove("hidden");
+
+  btn.addEventListener("click", () => {
+
+    const docId = item.dataset.docId;
+
+    if (docId) {
+      card._adjuntosEliminar.push(docId);
+    }
+
+    item.remove();
+  });
+
+});
 
 // Reemplazar input de Lugar por select editable
 const inputLugar = card.querySelector('input[name="lugar"]');
@@ -277,16 +297,36 @@ lugarSelect.querySelectorAll("option").forEach(opt => {
 inputLugar.replaceWith(selectLugar);
 
   // Adjuntos
-  card.querySelector(".btn-agregar-adjunto-card")
-    .addEventListener("click", () => {
-      const wrapper = document.createElement("div");
-      const input = document.createElement("input");
-      input.type = "file";
-      wrapper.appendChild(input);
-      card.querySelector(".adjuntos-nuevos").appendChild(wrapper);
-      card._adjuntosNuevos = card._adjuntosNuevos || [];
-      card._adjuntosNuevos.push(wrapper);
-    });
+const adjuntosEdicion = card.querySelector(".adjuntos-edicion");
+if (adjuntosEdicion) {
+  adjuntosEdicion.classList.remove("hidden");
+
+  const btnAgregar = adjuntosEdicion.querySelector(".btn-agregar-adjunto-card");
+  btnAgregar.addEventListener("click", () => {
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("adjunto-item-nuevo"); // opcional, para estilos
+
+  const input = document.createElement("input");
+  input.type = "file";
+  wrapper.appendChild(input);
+
+  // Botón eliminar
+  const btnEliminar = document.createElement("button");
+  btnEliminar.type = "button";
+  btnEliminar.textContent = "✖";
+  btnEliminar.classList.add("btn-eliminar-adjunto");
+  btnEliminar.addEventListener("click", () => {
+    wrapper.remove();               // lo quita del DOM
+    card._adjuntosNuevos = card._adjuntosNuevos.filter(w => w !== wrapper); // y del array
+  });
+
+  wrapper.appendChild(btnEliminar);
+
+  adjuntosEdicion.querySelector(".adjuntos-nuevos").appendChild(wrapper);
+  card._adjuntosNuevos.push(wrapper);
+});
+
+}
 
   card.querySelector(".editar").classList.add("hidden");
   card.querySelector(".eliminar").classList.add("hidden");
