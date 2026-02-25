@@ -150,7 +150,15 @@ export async function init(afiliadoId) {
               <div><label>Fecha Cirugía</label><input type="date" name="fecha_cirugia" readonly value="${fISO(inter.fecha_cirugia)}"></div>
               <div><label>Fecha Alta</label><input type="date" name="fecha_alta" readonly value="${fISO(inter.fecha_alta)}"></div>
               <div><label>Lugar</label><input name="lugar" readonly value="${inter.lugar_internacion_id ? lugarSelect.querySelector('option[value="'+inter.lugar_internacion_id+'"]')?.textContent : ""}"></div>
-              <div><label>Reintegro</label><input type="number" step="0.01" name="reintegro" readonly value="${inter.reintegro ?? ""}"></div>
+            <div>
+              <label>Reintegro</label>
+              <input type="number" step="0.01" name="reintegro" readonly value="${inter.reintegro ?? ""}">
+            </div>
+
+            <div>
+              <label>Fecha Reintegro</label>
+              <input type="date" name="fecha_reintegro" readonly value="${fISO(inter.fecha_reintegro)}">
+            </div>
             </div>
 
             <div class="med-card-section">
@@ -479,7 +487,12 @@ btnCancelar.addEventListener("click", () => {
       fecha_cirugia: document.getElementById("fechaCirugia").value || null,
       fecha_alta: document.getElementById("fechaAlta").value || null,
       reintegro: document.getElementById("reintegroInternacion").value || null,
-      observaciones: document.getElementById("observacionesInternacion").value || null
+      observaciones: document.getElementById("observacionesInternacion").value || null,
+      reintegro: document.getElementById("reintegroInternacion").value
+      ? parseFloat(document.getElementById("reintegroInternacion").value)
+      : null,
+
+    fecha_reintegro: document.getElementById("fechaReintegroInternacion").value || null,
     };
 
     const { data } = await supabase.from("internaciones").insert(datos).select().single();

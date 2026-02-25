@@ -1,0 +1,114 @@
+<style>
+/* Mover todo a la izquierda */
+main, section {
+  max-width: none;
+  margin: 0;
+}
+
+/* Lista de cards alineadas a la izquierda */
+#listaOxigenoterapia {
+  justify-content: start;
+}
+</style>
+
+<!-- ===================== -->
+<!-- OXIGENOTERAPIA -->
+<!-- ===================== -->
+
+<section id="oxigenoterapiaSection">
+
+  <!-- BOTÓN NUEVO -->
+  <button id="btnNuevaOxigenoterapia">
+    ➕ Nueva Oxigenoterapia
+  </button>
+
+  <!-- ===================== -->
+  <!-- FORMULARIO ALTA -->
+  <!-- ===================== -->
+
+  <div id="formOxigenoterapia" class="form-card hidden">
+    <form id="formOxigenoterapiaForm">
+
+      <div class="grid-fechas">
+
+        <div>
+          <label for="tipoEquipoOxigenoterapia">Tipo equipo</label>
+          <select id="tipoEquipoOxigenoterapia" name="tipoequipo_id" required>
+            <option value="">Seleccione</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="fechaInicioTratamiento">Fecha inicio tratamiento</label>
+          <input 
+            type="date" 
+            id="fechaInicioTratamiento" 
+            name="fecha_inicio_tratamiento" 
+            required
+          >
+        </div>
+
+        <div>
+          <label for="fechaFinTratamiento">Fecha fin tratamiento</label>
+          <input 
+            type="date" 
+            id="fechaFinTratamiento" 
+            name="fecha_fin_tratamiento"
+          >
+        </div>
+
+      </div>
+
+      <div class="full-width">
+        <label for="observacionOxigenoterapia">Observación</label>
+        <textarea 
+          id="observacionOxigenoterapia" 
+          name="observacion"
+        ></textarea>
+      </div>
+
+      <!-- ===================== -->
+      <!-- ADJUNTOS -->
+      <!-- ===================== -->
+
+      <div>
+        <label>Adjuntos</label>
+
+        <div id="adjuntosOxigenoterapiaContainer"></div>
+
+        <button 
+          type="button" 
+          id="btnAgregarAdjuntoOxigenoterapia"
+        >
+          ➕ Agregar adjunto
+        </button>
+      </div>
+
+      <!-- ACCIONES -->
+
+      <div class="acciones">
+        <button type="submit">💾 Guardar</button>
+        <button 
+          type="button" 
+          id="btnCancelarOxigenoterapia"
+        >
+          Cancelar
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- ===================== -->
+  <!-- LISTADO (CARDS) -->
+  <!-- ===================== -->
+
+  <div id="listaOxigenoterapia"></div>
+
+  <!-- ===================== -->
+  <!-- PAGINACIÓN -->
+  <!-- ===================== -->
+
+  <div id="paginacionOxigenoterapia"></div>
+
+</section>

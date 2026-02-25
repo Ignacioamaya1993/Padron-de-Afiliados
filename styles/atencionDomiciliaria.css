@@ -169,3 +169,15 @@
   text-decoration: none;
   color: #2f6fed;
 }
+
+/* =====================
+   PAGINACIÓN CENTRADA
+===================== */
+
+#paginacionAtencionDomiciliaria {
+  display: flex;
+  justify-content: center;   /* centra horizontal */
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}

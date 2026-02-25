@@ -153,7 +153,15 @@ export async function init(afiliadoId) {
           <div><label>Días Demora</label><input name="dias_demora" readonly value="${diasDemora !== null ? diasDemora : ""}"></div>
           <div><label>Nro Carga</label><input name="nro_carga" readonly value="${deriv.nro_carga || ""}"></div>
           <div><label>Estado</label><input name="estado" readonly value="${deriv.estado || ""}"></div>
-          <div><label>Reintegro</label><input type="number" step="0.01" name="reintegro" readonly value="${deriv.reintegro ?? ""}"></div>
+          <div>
+            <label>Reintegro</label>
+            <input type="number" step="0.01" name="reintegro" readonly value="${deriv.reintegro ?? ""}">
+          </div>
+
+          <div>
+            <label>Fecha Reintegro</label>
+            <input type="date" name="fecha_reintegro" readonly value="${fISO(deriv.fecha_reintegro)}">
+          </div>
         </div>
 
         <div class="med-card-section">
@@ -453,7 +461,11 @@ form.addEventListener("submit", async e => {
     autorizado_por: document.getElementById("autorizadoPor").value || null,
     nro_carga: document.getElementById("nroCarga").value || null,
     estado: document.getElementById("estado").value || null,
-    observaciones: document.getElementById("observaciones").value || null
+    observaciones: document.getElementById("observaciones").value || null,
+    reintegro: document.getElementById("reintegro").value
+  ? parseFloat(document.getElementById("reintegro").value)
+  : null,
+  fecha_reintegro: document.getElementById("fechaReintegro").value || null,
   };
 
   const { data } = await supabase

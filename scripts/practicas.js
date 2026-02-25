@@ -213,9 +213,9 @@ function actualizarCamposPorTipo() {
 
         <div><label>Reintegro</label><input type="number" step="0.01" name="reintegro" readonly value="${p.reintegro ?? ""}"></div>
 
-            <div class="full-width fecha-reintegro">
+    <div class="full-width fecha-reintegro">
       <label>Fecha reintegro</label>
-      <input type="date" name="fecha_reintegro" readonly value="">
+      <input type="date" name="fecha_reintegro" readonly value="${fISO(p.fecha_reintegro)}">
     </div>
 
         <div class="med-card-section">
@@ -362,7 +362,8 @@ if (!adjuntosCard.querySelector(".btn-agregar-adjunto-card")) {
         observacion: card.querySelector("[name='observacion']").value || null,
         reintegro: card.querySelector("[name='reintegro']").value
           ? parseFloat(card.querySelector("[name='reintegro']").value)
-          : null
+          : null,
+          fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null,
         };
 
     await supabase

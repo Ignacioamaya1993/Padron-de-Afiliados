@@ -197,12 +197,16 @@ async function cargarMedicamentos() {
         <div><label>Vencimiento</label><input type="date" name="fecha_vencimiento" readonly value="${fISO(med.fecha_vencimiento)}"></div>
       </div>` : ""}
 
-      <div class="med-card-section grid-fechas">
-        <div>
-          <label>Reintegro</label>
-          <input type="number" step="0.01" name="reintegro" readonly value="${med.reintegro ?? ""}">
-        </div>
+    <div class="med-card-section grid-fechas">
+      <div>
+        <label>Reintegro</label>
+        <input type="number" step="0.01" name="reintegro" readonly value="${med.reintegro ?? ""}">
       </div>
+      <div>
+        <label>Fecha reintegro</label>
+        <input type="date" name="fecha_reintegro" readonly value="${fISO(med.fecha_reintegro)}">
+      </div>
+    </div>
       
       <div class="med-card-section">
         <label>Observaciones</label>
@@ -474,6 +478,7 @@ function renderPaginacion(total) {
       reintegro: form.reintegro?.value
       ? parseFloat(form.reintegro.value)
       : null,
+      fecha_reintegro: form.fecha_reintegro?.value || null,
     };
 
     const { data } = await supabase.from("medicamentos").insert(datos).select().single();
