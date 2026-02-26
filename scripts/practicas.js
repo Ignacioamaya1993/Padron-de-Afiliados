@@ -408,7 +408,11 @@ for (const docId of card._adjuntosEliminar) {
       title: "¿Está seguro?",
       text: "Se eliminará esta practica y todos sus adjuntos.",
       icon: "warning",
-      showCancelButton: true
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
     });
 
     if (!confirmar.isConfirmed) return;

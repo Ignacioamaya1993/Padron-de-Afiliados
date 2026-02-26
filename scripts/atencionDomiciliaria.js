@@ -294,8 +294,11 @@ lista.addEventListener("click", async e => {
       title: "¿Está seguro?",
       text: "Se eliminará esta atencion domiciliaria y todos sus adjuntos.",
       icon: "warning",
-      showCancelButton: true
-    });
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'    });
     if (!confirmar.isConfirmed) return;
 
     await supabase.from("atencion_domiciliaria").delete().eq("id", id);

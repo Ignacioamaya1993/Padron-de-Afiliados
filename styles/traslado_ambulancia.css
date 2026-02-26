@@ -1,0 +1,306 @@
+/* ===================== */
+/* GENERAL */
+/* ===================== */
+section {
+  padding: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.oculto {
+  display: none;
+}
+
+/* ===================== */
+/* BOTONES */
+/* ===================== */
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+.btn-nuevo {
+  background-color: #2f80ed;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.btn-nuevoAdjunto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-weight: 600;
+  color: #065f46;
+  background-color: #ecfdf5;
+  border: 1px solid #34d399;
+  max-width: 170px;
+}
+
+.btn-nuevoAdjunto:hover {
+  background-color: #d1fae5;
+}
+
+.btn-secundario {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-weight: 600;
+  color: #065f46;
+  background-color: #ecfdf5;
+  border: 1px solid #34d399;
+  max-width: 170px;
+}
+
+/* ===================== */
+/* FORMULARIO */
+/* ===================== */
+.form-card {
+  border: 1px solid #ddd !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  margin-bottom: 20px !important;
+  background: #fff !important;
+  max-width: 900px !important;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  font-size: 0.9rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+form textarea {
+  resize: vertical;
+}
+
+/* Input file */
+input[type="file"] {
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  background: #fff7ed;
+  padding: 0.4rem;
+  cursor: pointer;
+  max-width: 100%;
+}
+
+/* ===================== */
+/* GRID INTERNO CARD */
+/* ===================== */
+.grid-traslado {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.5rem;
+}
+
+.grid-traslado label {
+  font-size: 0.85rem;
+  margin-bottom: 0.2rem;
+}
+
+/* ===================== */
+/* CONTENEDOR CARDS */
+/* ===================== */
+#contenedorTrasladoAmbulancia {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 0.6rem;
+}
+
+/* ===================== */
+/* CARD */
+/* ===================== */
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-width: 350px;
+  min-height: 380px;
+}
+
+.card.editando {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+  background: #f8fafc;
+}
+
+.card strong {
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.card .card-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 0.35rem;
+}
+
+.med-card-section {
+  padding-top: 0.4rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 0.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.med-card-section textarea {
+  font-size: 0.8rem;
+  background: #f1f5f9;
+  border: 1px solid #e5e7eb;
+  min-width: 340px;
+}
+
+/* Adjuntos */
+.adjuntos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 0.4rem;
+  min-height: 80px;
+}
+
+/* ===================== */
+/* ACCIONES CARD */
+/* ===================== */
+.card .acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  margin-top: auto;
+}
+
+.card .editar {
+  background-color: #2563eb;
+  color: white;
+}
+
+.card .cancelar-edicion {
+  background-color: #e5e7eb;
+  color: #0f172a;
+}
+
+.card .eliminar {
+  background-color: #dc2626;
+  color: white;
+}
+
+.card input[readonly],
+.card textarea[readonly] {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  cursor: default;
+}
+
+.card input[readonly][type="date"] {
+  pointer-events: none;
+  background: #f5f5f5;
+}
+
+/* ===================== */
+/* PAGINACIÓN */
+/* ===================== */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.paginacion button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background-color: #2c7be5;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.paginacion button:hover:not(:disabled) {
+  background-color: #1a68d1;
+  transform: translateY(-1px);
+}
+
+.paginacion button:disabled {
+  background-color: #c5c5c5;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.paginacion span {
+  font-weight: 600;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+/* ===================== */
+/* RESPONSIVE */
+/* ===================== */
+@media (max-width: 700px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #contenedorTrasladoAmbulancia {
+    grid-template-columns: 1fr;
+  }
+}

@@ -50,13 +50,17 @@ main {
 }
 
 /* ===================== TABS ===================== */
+/* ===================== TABS ===================== */
 .tabs {
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;       /* permite que las pestañas pasen a la siguiente línea */
+  gap: 0.5rem;           /* espacio entre pestañas */
   margin-bottom: 1.5rem;
 }
 
+/* que cada pestaña intente ocupar espacio proporcional si querés */
 .tab-button {
+  text-align: center;    /* centrar texto dentro del botón */
   padding: 0.6rem 1.2rem;
   border: 1px solid #d1d5db;
   border-radius: 8px;

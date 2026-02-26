@@ -292,8 +292,11 @@ if (adjuntosCard) {
         title: '¿Está seguro?',
         text: "Se eliminará esta odontología y todos sus adjuntos.",
         icon: "warning",
-        showCancelButton: true
-      });
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'      });
       if (!confirmar.isConfirmed) return;
 
       await supabase.from("odontologia").delete().eq("id", id);

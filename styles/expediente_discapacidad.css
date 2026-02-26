@@ -1,0 +1,177 @@
+/* ============================== */
+/* EXPEDIENTE DISCAPACIDAD */
+/* ============================== */
+
+.form-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #fff;
+  max-width: 1100px;
+}
+
+.form-card label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.form-card input,
+.form-card select,
+.form-card textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+}
+
+.form-card textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ============================== */
+/* GRIDS */
+/* ============================== */
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.grid-fechas {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* ============================== */
+/* LISTADO CARDS */
+/* ============================== */
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  background: #fff;
+  max-width: 1100px;
+}
+
+.card strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.card label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 3px;
+  display: block;
+}
+
+.card input,
+.card textarea {
+  width: 100%;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.card textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+/* ============================== */
+/* ACCIONES */
+/* ============================== */
+
+.acciones {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.acciones button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.acciones button:hover {
+  opacity: 0.85;
+}
+
+/* ============================== */
+/* ADJUNTOS */
+/* ============================== */
+
+.adjuntos-card {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.adjunto-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.adjunto-item a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.adjunto-item a:hover {
+  text-decoration: underline;
+}
+
+.adjunto-item button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: red;
+}
+
+/* ============================== */
+/* PAGINACION */
+/* ============================== */
+
+.paginacion {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.paginacion button {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.paginacion button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================== */
+/* UTILIDADES */
+/* ============================== */
+
+.hidden {
+  display: none !important;
+}

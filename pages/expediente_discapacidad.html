@@ -1,0 +1,99 @@
+<style>
+/* Mover todo a la izquierda */
+main, section {
+  max-width: none;
+  margin: 0;
+}
+
+/* Lista de cards alineadas a la izquierda */
+#listaExpedienteDiscapacidad {
+  justify-content: start;
+}
+</style>
+
+<!-- ========================= -->
+<!-- EXPEDIENTE DISCAPACIDAD  -->
+<!-- ========================= -->
+
+<section>
+
+  <h2>Expediente Discapacidad</h2>
+
+  <button id="btnNuevoExpedienteDiscapacidad">
+    ➕ Nuevo expediente
+  </button>
+
+  <!-- =========================
+       FORMULARIO ALTA
+  ========================= -->
+
+  <div id="formExpedienteDiscapacidad" class="hidden">
+
+    <form id="formExpedienteDiscapacidadForm" class="form-card">
+
+      <div class="grid-2">
+
+        <div>
+          <label>Tipo expediente</label>
+          <select name="tipo_expediente_id" id="tipoExpedienteDiscapacidad" required>
+            <option value="">Seleccione</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Fecha inicio</label>
+          <input type="date" name="fecha_inicio" required>
+        </div>
+
+        <div>
+          <label>Fecha finalización</label>
+          <input type="date" name="fecha_finalizacion">
+        </div>
+
+      </div>
+
+      <div class="full-width">
+        <label>Observación</label>
+        <textarea name="observacion"></textarea>
+      </div>
+
+      <!-- =========================
+           ADJUNTOS
+      ========================= -->
+
+      <div class="full-width">
+        <label>Adjuntos</label>
+        <div id="adjuntosExpedienteDiscapacidadContainer"></div>
+        <button type="button" id="btnAgregarAdjuntoExpedienteDiscapacidad">
+          ➕ Agregar adjunto
+        </button>
+      </div>
+
+      <!-- =========================
+           BOTONES FORM
+      ========================= -->
+
+      <div class="acciones">
+        <button type="submit">💾 Guardar</button>
+        <button type="button" id="btnCancelarExpedienteDiscapacidad">
+          Cancelar
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <!-- =========================
+       LISTADO
+  ========================= -->
+
+  <div id="listaExpedienteDiscapacidad"></div>
+
+  <!-- =========================
+       PAGINACIÓN
+  ========================= -->
+
+  <div id="paginacionExpedienteDiscapacidad" class="paginacion"></div>
+
+</section>

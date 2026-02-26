@@ -220,8 +220,11 @@ btnEliminar.addEventListener("click", async () => {
     title: '¿Está seguro?',
     text: "Se eliminará esta practica por reintegro y todos sus adjuntos.",
     icon: "warning",
-    showCancelButton: true
-  });
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'  });
 
   if (!ok.isConfirmed) return;
 

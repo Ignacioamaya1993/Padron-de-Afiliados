@@ -9,13 +9,11 @@ cargarHeader();
 /* =====================
    CONSTANTES
 ===================== */
-
 const PARENTESCO_HIJO_ID = "3f4b9de6-c920-44c4-8468-e32b74c1530b";
 
 /* =====================
    ELEMENTOS
 ===================== */
-
 const reporteCards = document.querySelectorAll(".reporte-card");
 const reporteResultado = document.getElementById("reporteResultado");
 const reporteTitulo = document.getElementById("reporteTitulo");
@@ -28,7 +26,6 @@ let tipoReporteActual = null;
 /* =====================
    EVENTOS
 ===================== */
-
 reporteCards.forEach(card => {
   card.addEventListener("click", async () => {
     const tipo = card.dataset.reporte;
@@ -49,7 +46,7 @@ reporteCards.forEach(card => {
     if (tipo === "hijos-estudiantes") await cargarHijosSinCertificado();
     if (tipo === "discapacidad-sin-cud") await cargarDiscapacidadSinCud();
     if (tipo === "datos-faltantes") await cargarDatosFaltantes();
-        if (tipo === "reintegros") await cargarReporteReintegros();
+    if (tipo === "reintegros") await cargarReporteReintegros();
 
     // Abrir con animación
     reporteResultado.classList.remove("collapsed");
@@ -63,16 +60,10 @@ exportPdfBtn?.addEventListener("click", exportarPDF);
 /* =====================
    UTILIDADES
 ===================== */
-
 function formatearFechaAR(fecha) {
   if (!fecha) return "";
 
-  // Si viene como timestamp ISO
-  if (fecha.includes("T")) {
-    return fecha.split("T")[0].split("-").reverse().join("/");
-  }
-
-  // Si viene como date simple (YYYY-MM-DD)
+  if (fecha.includes("T")) return fecha.split("T")[0].split("-").reverse().join("/");
   return fecha.split("-").reverse().join("/");
 }
 
@@ -85,24 +76,14 @@ function calcularEdad(fechaNacimiento) {
   const m = hoy.getMonth() - nacimiento.getMonth();
 
   if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) edad--;
-
   return edad;
 }
 
 function obtenerRangoFechas() {
   const hoy = new Date();
 
-  const fechaMax = new Date(
-    hoy.getFullYear() - 21,
-    hoy.getMonth(),
-    hoy.getDate()
-  );
-
-  const fechaMin = new Date(
-    hoy.getFullYear() - 26,
-    hoy.getMonth(),
-    hoy.getDate() + 1
-  );
+  const fechaMax = new Date(hoy.getFullYear() - 21, hoy.getMonth(), hoy.getDate());
+  const fechaMin = new Date(hoy.getFullYear() - 26, hoy.getMonth(), hoy.getDate() + 1);
 
   return {
     fechaMin: fechaMin.toISOString().split("T")[0],
@@ -113,7 +94,6 @@ function obtenerRangoFechas() {
 /* =====================
    REPORTE 1: AFILIADOS
 ===================== */
-
 async function cargarAfiliados() {
   try {
     const { data, error } = await supabase
@@ -140,9 +120,7 @@ async function cargarAfiliados() {
       nombre_completo: a.nombre_completo,
       dni: a.dni,
       numero_afiliado: a.numero_afiliado,
-      fechaNacimiento: a.fechaNacimiento
-        ? new Date(a.fechaNacimiento).toLocaleDateString("es-AR")
-        : "",
+      fechaNacimiento: a.fechaNacimiento ? new Date(a.fechaNacimiento).toLocaleDateString("es-AR") : "",
       edad: calcularEdad(a.fechaNacimiento),
       mail: a.mail || "",
       telefono: a.telefono || "",
@@ -166,7 +144,6 @@ async function cargarAfiliados() {
 /* =====================
    REPORTE 2: HIJOS 21-26
 ===================== */
-
 async function cargarHijosSinCertificado() {
   try {
     const { fechaMin, fechaMax } = obtenerRangoFechas();
@@ -188,11 +165,7 @@ async function cargarHijosSinCertificado() {
 
     if (error) throw error;
 
-    const filtrados = data.filter(a => {
-      const tieneEstudios = a.estudios;
-      const noTieneCertificado = !a.adjuntoEstudios;
-      return tieneEstudios && noTieneCertificado;
-    });
+    const filtrados = data.filter(a => a.estudios && !a.adjuntoEstudios);
 
     datosReporteActual = filtrados.map(a => ({
       nombre_completo: a.nombre_completo,
@@ -217,7 +190,6 @@ async function cargarHijosSinCertificado() {
 /* =====================
    REPORTE 3: DISCAPACIDAD
 ===================== */
-
 async function cargarDiscapacidadSinCud() {
   try {
     const { data: afiliados, error } = await supabase
@@ -247,11 +219,7 @@ async function cargarDiscapacidadSinCud() {
       mapa[doc.afiliado_id].push(doc.archivo_url);
     });
 
-    const sinCud = afiliados.filter(a => {
-      const docs = mapa[a.id];
-      if (!docs) return true;
-      return !docs.some(url => url && url !== "");
-    });
+    const sinCud = afiliados.filter(a => !mapa[a.id] || !mapa[a.id].some(url => url && url !== ""));
 
     datosReporteActual = sinCud.map(a => ({
       nombre_completo: a.nombre_completo,
@@ -278,7 +246,6 @@ async function cargarDiscapacidadSinCud() {
 /* =====================
    REPORTE 4: DATOS FALTANTES
 ===================== */
-
 async function cargarDatosFaltantes() {
   try {
     const { data, error } = await supabase
@@ -303,12 +270,7 @@ async function cargarDatosFaltantes() {
       const t = !a.telefono;
       const c = !a.cbu_cvu;
       const g = !a.grupo_sanguineo;
-
-      if (m) sinMail++;
-      if (t) sinTel++;
-      if (c) sinCbu++;
-      if (g) sinGrupo++;
-
+      if (m) sinMail++; if (t) sinTel++; if (c) sinCbu++; if (g) sinGrupo++;
       return m || t || c || g;
     });
 
@@ -325,7 +287,6 @@ async function cargarDatosFaltantes() {
     }));
 
     reporteTitulo.textContent = "Afiliados con Datos Faltantes";
-
     document.getElementById("resumenReporte").innerHTML = `
       <div style="margin-bottom:15px; font-weight:bold;">
         Sin mail: ${sinMail} |
@@ -376,20 +337,32 @@ async function cargarReporteReintegros() {
         </div>
         <hr style="margin:20px 0;">
       </div>
+
+      <!-- Contenedor donde se mostrarán los resultados -->
+      <div id="resultadosReintegros"></div>
     `;
 
     const dniInput = document.getElementById("dniAfiliado");
     const nombreInput = document.getElementById("nombreAfiliado");
     const btnGenerar = document.getElementById("btnGenerarReintegro");
+    const resultadosContenedor = document.getElementById("resultadosReintegros");
 
-    let afiliadoActual = null;
     datosReporteActual = [];
+    let afiliadoActual = null;
 
-    // 🔹 Listener del input (SOLO UNA VEZ)
-    dniInput.addEventListener("input", async () => {
-      const dni = dniInput.value.trim();
+    // Evitar listeners duplicados
+    dniInput.replaceWith(dniInput.cloneNode(true));
+    btnGenerar.replaceWith(btnGenerar.cloneNode(true));
+
+    const dniInputNuevo = document.getElementById("dniAfiliado");
+    const btnGenerarNuevo = document.getElementById("btnGenerarReintegro");
+
+    // Listener input DNI
+    dniInputNuevo.addEventListener("input", async () => {
+      const dni = dniInputNuevo.value.trim();
       afiliadoActual = null;
       nombreInput.value = "";
+      resultadosContenedor.innerHTML = "";
 
       if (dni.length < 7) return;
 
@@ -408,8 +381,8 @@ async function cargarReporteReintegros() {
       }
     });
 
-    // 🔹 Listener del botón (SOLO UNA VEZ)
-    btnGenerar.addEventListener("click", async () => {
+    // Listener botón Generar
+    btnGenerarNuevo.addEventListener("click", async () => {
       if (!afiliadoActual) return Swal.fire("Error", "Debe ingresar un afiliado válido", "error");
 
       const desde = document.getElementById("fechaDesde").value;
@@ -420,102 +393,86 @@ async function cargarReporteReintegros() {
       const desdeISO = `${desde}T00:00:00`;
       const hastaISO = `${hasta}T23:59:59`;
 
-  // ================= MEDICAMENTOS =================
-  const { data: medicamentos, error: errorMed } = await supabase
-    .from("medicamentos")
-    .select(`
-      reintegro,
-      fecha_reintegro,
-      fecha_carga,
-      observaciones,
-      afiliados(nombre_completo)
-    `)
-    .eq("afiliado_id", afiliadoActual.id)
-    .not("reintegro", "is", null)
-    .gte("fecha_reintegro", desdeISO)
-    .lte("fecha_reintegro", hastaISO);
+      // Cambiar texto del botón
+      btnGenerarNuevo.textContent = "Generando...";
+      btnGenerarNuevo.disabled = true;
+      resultadosContenedor.innerHTML = "";
 
-  if (errorMed) console.error("Error medicamentos:", errorMed);
+      const tablas = [
+        { nombre: "Medicamentos", tabla: "medicamentos", detalle: "observaciones", fecha: "fecha_reintegro" },
+        { nombre: "Derivaciones", tabla: "derivaciones", detalle: "observaciones", fecha: "fecha_reintegro" },
+        { nombre: "Atención Domiciliaria", tabla: "atencion_domiciliaria", detalle: "observacion", fecha: "fecha_reintegro" },
+        { nombre: "Expediente Discapacidad", tabla: "expediente_discapacidad", detalle: "observacion", fecha: "fecha_reintegro" },
+        { nombre: "Internaciones", tabla: "internaciones", detalle: "observaciones", fecha: "fecha_reintegro" },
+        { nombre: "Odontología", tabla: "odontologia", detalle: "observacion", fecha: "fecha_reintegro" },
+        { nombre: "Oxigenoterapia", tabla: "oxigenoterapia", detalle: "observacion", fecha: "fecha_reintegro" },
+        { nombre: "Prácticas", tabla: "practicas", detalle: "observacion", fecha: "fecha_reintegro" },
+        { nombre: "Prácticas Reintegro", tabla: "practicas_reintegro", detalle: "observacion", fecha: "fecha_reintegro" },
+        { nombre: "Traslado Ambulancia", tabla: "traslado_ambulancia", detalle: "observacion", fecha: "fecha_reintegro" }
+      ];
 
-// ================= DERIVACIONES =================
-const { data: derivaciones, error: errorDer } = await supabase
-  .from("derivaciones")
-  .select(`
-    reintegro,
-    fecha_reintegro,
-    fecha_inicio,
-    afiliados(nombre_completo)
-  `)
-  .eq("afiliado_id", afiliadoActual.id)
-  .not("reintegro", "is", null)
-  .gte("fecha_reintegro", desdeISO)
-  .lte("fecha_reintegro", hastaISO);
+      try {
+        // 🔹 Consultas en paralelo
+        const resultadosTablas = await Promise.all(tablas.map(async t => {
+          try {
+            const { data, error } = await supabase
+              .from(t.tabla)
+              .select(`reintegro, ${t.fecha}, ${t.detalle || "null"}`)
+              .eq("afiliado_id", afiliadoActual.id)
+              .not("reintegro", "is", null)
+              .gte(t.fecha, desdeISO)
+              .lte(t.fecha, hastaISO);
 
-if (errorDer) console.error("Error derivaciones:", errorDer);
+            if (error) {
+              console.error(`Error ${t.nombre}:`, error);
+              return [];
+            }
 
-console.log("Derivaciones:", derivaciones); // 👈 ACÁ
+            return data.map(r => ({
+              seccion: t.nombre,
+              detalle: t.detalle ? r[t.detalle] || "" : "",
+              fecha_reintegro: formatearFechaAR(r[t.fecha]),
+              monto: Number(r.reintegro) || 0
+            }));
+          } catch (e) {
+            console.error(e);
+            return [];
+          }
+        }));
 
-  let totalMedicamentos = 0;
-  let totalDerivaciones = 0;
-  const listaFinal = [];
+        datosReporteActual = resultadosTablas.flat();
+        const totalReintegro = datosReporteActual.reduce((acc, r) => acc + r.monto, 0);
 
-  medicamentos?.forEach(m => {
-    const monto = Number(m.reintegro) || 0;
-    totalMedicamentos += monto;
+        // Mostrar resultados
+        resultadosContenedor.innerHTML = `
+          <div style="font-weight:bold; margin-bottom:15px;">
+            Afiliado: ${afiliadoActual.nombre_completo}<br>
+            Periodo: ${formatearFechaAR(desde)} al ${formatearFechaAR(hasta)}<br><br>
+            Total Reintegro: $${totalReintegro.toLocaleString("es-AR")}
+          </div>
+        `;
 
-    listaFinal.push({
-      seccion: "Medicamentos",
-      afiliado: m.afiliados?.nombre_completo || "",
-      fecha_reintegro: formatearFechaAR(m.fecha_reintegro),
-      fecha_identificatoria: formatearFechaAR(m.fecha_carga),
-      detalle: m.observaciones || "",
-      monto
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Error", "No se pudo generar el reporte", "error");
+      } finally {
+        // Volver botón a estado original
+        btnGenerarNuevo.textContent = "Generar";
+        btnGenerarNuevo.disabled = false;
+      }
     });
-  });
-
-  derivaciones?.forEach(d => {
-    const monto = Number(d.reintegro) || 0;
-    totalDerivaciones += monto;
-
-    listaFinal.push({
-      seccion: "Derivaciones",
-      afiliado: d.afiliados?.nombre_completo || "",
-      fecha_reintegro: formatearFechaAR(d.fecha_reintegro),
-      fecha_identificatoria: formatearFechaAR(d.fecha_inicio),
-      monto
-    });
-  });
-
-  const totalGeneral = totalMedicamentos + totalDerivaciones;
-
-  datosReporteActual = listaFinal;
-
-  document.getElementById("resumenReporte").innerHTML += `
-    <div style="font-weight:bold; margin-bottom:15px;">
-      Afiliado: ${afiliadoActual.nombre_completo}<br>
-      Periodo: ${formatearFechaAR(desde)} al ${formatearFechaAR(hasta)}<br><br>
-      Total Medicamentos: $${totalMedicamentos.toLocaleString("es-AR")}<br>
-      Total Derivaciones: $${totalDerivaciones.toLocaleString("es-AR")}<br><br>
-      <span style="font-size:18px;">
-        TOTAL GENERAL: $${totalGeneral.toLocaleString("es-AR")}
-      </span>
-    </div>
-  `;
-});
 
   } catch (err) {
     console.error(err);
-    Swal.fire("Error", "No se pudo generar el reporte", "error");
+    Swal.fire("Error", "No se pudo cargar el reporte", "error");
   }
 }
 
 /* =====================
    EXPORTACIONES
 ===================== */
-
 function exportarExcel() {
-  if (!datosReporteActual.length)
-    return Swal.fire("Sin datos", "No hay datos para exportar", "info");
+  if (!datosReporteActual.length) return Swal.fire("Sin datos", "No hay datos para exportar", "info");
 
   const ws = XLSX.utils.json_to_sheet(datosReporteActual);
   const wb = XLSX.utils.book_new();
@@ -523,16 +480,12 @@ function exportarExcel() {
   const nombreHoja = reporteTitulo.textContent.substring(0, 31);
   XLSX.utils.book_append_sheet(wb, ws, nombreHoja);
 
-  const nombreArchivo = reporteTitulo.textContent
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "_");
-
+  const nombreArchivo = reporteTitulo.textContent.replace(/[^\w\s-]/g, "").replace(/\s+/g, "_");
   XLSX.writeFile(wb, `${nombreArchivo}.xlsx`);
 }
 
 function exportarPDF() {
-  if (!datosReporteActual.length)
-    return Swal.fire("Sin datos", "No hay datos para exportar", "info");
+  if (!datosReporteActual.length) return Swal.fire("Sin datos", "No hay datos para exportar", "info");
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF("landscape");
@@ -550,17 +503,13 @@ function exportarPDF() {
     styles: { fontSize: 8 }
   });
 
-  const nombreArchivo = reporteTitulo.textContent
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "_");
-
+  const nombreArchivo = reporteTitulo.textContent.replace(/[^\w\s-]/g, "").replace(/\s+/g, "_");
   doc.save(`${nombreArchivo}.pdf`);
 }
 
 /* =====================
    VOLVER
 ===================== */
-
 document.getElementById("btnVolver").addEventListener("click", () => {
   window.location.href = "/pages/padron.html";
 });

@@ -1,0 +1,97 @@
+<style>
+/* Mover todo a la izquierda */
+main, section {
+  max-width: none;
+  margin: 0;
+}
+
+/* Cards alineadas a la izquierda */
+#contenedorTrasladoAmbulancia {
+  justify-content: start;
+}
+</style>
+
+<!-- TRASLADO AMBULANCIA -->
+<section id="seccionTrasladoAmbulancia">
+
+  <!-- BOTÓN NUEVO -->
+  <button id="btnNuevoTrasladoAmbulancia" class="btn-nuevo">
+    + Nuevo Traslado Ambulancia
+  </button>
+
+  <!-- ========================= -->
+  <!-- FORMULARIO -->
+  <!-- ========================= -->
+  <form id="formTrasladoAmbulancia" class="form-card oculto">
+
+    <input type="hidden" id="trasladoAmbulanciaId" />
+
+    <div class="form-grid">
+
+      <!-- Fecha carga -->
+      <div class="form-group">
+        <label>Fecha Carga</label>
+        <input type="date" id="fechaCarga" required />
+      </div>
+
+      <!-- Lugar traslado -->
+      <div class="form-group">
+        <label>Lugar de Traslado</label>
+        <input type="text" id="lugarTraslado" required />
+      </div>
+
+      <!-- Observación -->
+      <div class="form-group full-width">
+        <label>Observación</label>
+        <textarea id="observacionTraslado" rows="3"></textarea>
+      </div>
+
+      <!-- Adjuntos -->
+      <div class="form-row full-width">
+        <label>Adjuntar Documentos</label>
+        <div id="adjuntosTrasladoLista" class="adjuntos-nuevos"></div>
+        <button type="button" id="btnAgregarAdjuntoTraslado">
+          ➕ Agregar adjunto
+        </button>
+      </div>
+
+      <!-- ========================= -->
+      <!-- REINTEGRO (SOLO EDICIÓN) -->
+      <!-- ========================= -->
+      <div id="campoReintegroTraslado" class="form-row full-width oculto">
+        
+        <div class="form-group">
+          <label>Reintegro</label>
+          <input type="number" id="reintegroTraslado" step="0.01" />
+        </div>
+
+        <div class="form-group">
+          <label>Fecha Reintegro</label>
+          <input type="date" id="fechaReintegroTraslado" />
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- BOTONES -->
+    <div class="form-actions">
+      <button type="submit" class="btn-guardar">Guardar</button>
+      <button type="button" id="btnCancelarTrasladoAmbulancia" class="btn-cancelar">
+        Cancelar
+      </button>
+    </div>
+
+  </form>
+
+  <!-- ========================= -->
+  <!-- CONTENEDOR CARDS -->
+  <!-- ========================= -->
+  <div id="contenedorTrasladoAmbulancia" class="cards-grid"></div>
+
+  <!-- ========================= -->
+  <!-- PAGINACIÓN -->
+  <!-- ========================= -->
+  <div id="paginacionTrasladoAmbulancia" class="paginacion"></div>
+
+</section>
