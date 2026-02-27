@@ -244,3 +244,283 @@
 #notificacionesDropdown .notif-item:last-child {
   border-bottom: none;
 }
+
+/* =====================
+   HEADER APP
+===================== */
+
+.app-header {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Layout principal */
+.header-inner {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0.8rem 1.5rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: 1rem;
+}
+
+/* =====================
+   BRAND (LOGO + TEXTO)
+===================== */
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.header-brand img {
+  height: 70px;          /* LOGO MÁS GRANDE */
+  width: auto;
+  flex-shrink: 0;
+}
+
+/* =====================
+   CENTRO (MÓDULO)
+===================== */
+
+.header-center {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* =====================
+   USER BAR
+===================== */
+
+.user-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+/* Email / estado */
+#status {
+  opacity: 0.9;
+}
+
+/* Logout */
+#logoutBtn {
+  background: transparent;
+  color: #fca5a5;
+  border: 1px solid #fca5a5;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#logoutBtn:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+/* =====================
+   INTERACCIONES
+===================== */
+
+.header-brand:hover img {
+  transform: scale(1.05);
+}
+
+.header-brand img {
+  transition: transform 0.2s ease;
+}
+
+/* =====================
+   HEADER ACTIONS
+===================== */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Botones de íconos (reportes / notificaciones) */
+.icon-btn {
+  position: relative;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #e5e7eb;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.5);
+  transform: translateY(-1px);
+}
+
+/* =====================
+   BADGE NOTIFICACIONES
+===================== */
+
+.icon-btn .badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 0 0 2px #0f172a;
+}
+
+/* =====================
+   LOGOUT AJUSTE VISUAL
+===================== */
+
+.logout-btn {
+  margin-left: 0.4rem;
+}
+
+/* =====================
+   RESPONSIVE
+===================== */
+
+@media (max-width: 900px) {
+  .header-center {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-inner {
+    grid-template-columns: 1fr;
+    row-gap: 0.6rem;
+  }
+
+  .header-center {
+    text-align: left;
+    white-space: normal;
+  }
+
+  .header-brand img {
+    height: 46px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-brand img {
+    height: 42px;
+  }
+
+  .header-center {
+    font-size: 1rem;
+  }
+
+  .user-bar {
+    justify-content: space-between;
+  }
+}
+
+/* =====================
+   Leido / No leido
+===================== */
+
+#notificacionesDropdown {
+  background: #ffffff;
+  color: #111827;
+}
+
+/* Base */
+#notificacionesDropdown .notif-item {
+  position: relative;
+  padding: 14px 16px 14px 18px;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* 🩶 NO LEÍDA */
+#notificacionesDropdown .notif-item:not(.leida) {
+  background: #f3f4f6;     /* gris claro */
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Barra azul lateral */
+#notificacionesDropdown .notif-item:not(.leida)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: #3483fa; /* azul ML */
+  border-radius: 4px 0 0 4px;
+}
+
+/* Hover no leída */
+#notificacionesDropdown .notif-item:not(.leida):hover {
+  background: #e5e7eb;
+}
+
+/* LEÍDA */
+#notificacionesDropdown .notif-item.leida {
+  background: #ffffff;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+/* Hover leída */
+#notificacionesDropdown .notif-item.leida:hover {
+  background: #f9fafb;
+}
+
+#notificacionesDropdown .notif-item:last-child {
+  border-bottom: none;
+}
+
+/* Contenedor interno */
+#notificacionesDropdown .notif-contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Fecha pequeña */
+#notificacionesDropdown .notif-fecha {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* Si la notificación está leída, la fecha también se atenúa */
+#notificacionesDropdown .notif-item.leida .notif-fecha {
+  color: #c4c7cc;
+}

@@ -1,4 +1,5 @@
 import { login, authObserver } from "./auth.js";
+import { supabase } from "./supabase.js";
 
 // Elementos
 const emailInput = document.getElementById("email");
@@ -45,16 +46,11 @@ function limpiarErrores() {
 async function ejecutarLogin() {
   limpiarErrores();
 
-  const email = emailInput.value.trim();
+  const identificador = emailInput.value.trim();
   const password = passwordInput.value;
 
-  if (!email) {
-    marcarError(emailInput, "Ingresá tu email");
-    return;
-  }
-
-  if (!emailValido(email)) {
-    marcarError(emailInput, "Ingresá un email válido");
+  if (!identificador) {
+    marcarError(emailInput, "Ingresá tu usuario o email");
     return;
   }
 
@@ -63,10 +59,33 @@ async function ejecutarLogin() {
     return;
   }
 
+  let emailReal = identificador;
+
   try {
-    await login(email, password);
+
+    // Si NO es email → buscarlo por username (case-insensitive)
+    if (!emailValido(identificador)) {
+
+      const { data: usuario, error } = await supabase
+        .from("usuarios")
+        .select("email")
+        .ilike("username", identificador)
+        .limit(1)
+        .single();
+
+      if (error || !usuario) {
+        marcarError(emailInput, "Usuario no encontrado");
+        return;
+      }
+
+      emailReal = usuario.email;
+    }
+
+    // Login con email real
+    await login(emailReal, password);
+
   } catch (e) {
-    errorEl.textContent = "Email o contraseña incorrectos";
+    errorEl.textContent = "Usuario o contraseña incorrectos";
   }
 }
 

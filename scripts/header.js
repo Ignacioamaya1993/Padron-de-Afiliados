@@ -1,96 +1,47 @@
-// header.js
 import { supabase } from "./supabase.js";
 import { authObserver, logout } from "./auth.js";
-import { generarNotificaciones, obtenerUltimasNotificaciones } from "./notificaciones.js";
+import { generarNotificaciones } from "./notificaciones.js";
 
 const MAX_NOTIF = 10;
 
+let headerInicializado = false;
+let usuarioActual = null;
+
 // =====================
-// Actualizar badge
+// UTIL STORAGE
+// =====================
+function guardarUsuarioLocal(usuario) {
+  localStorage.setItem("usuarioSistema", JSON.stringify(usuario));
+}
+
+function obtenerUsuarioLocal() {
+  const data = localStorage.getItem("usuarioSistema");
+  return data ? JSON.parse(data) : null;
+}
+
+function limpiarUsuarioLocal() {
+  localStorage.removeItem("usuarioSistema");
+}
+
+// =====================
+// ACTUALIZAR BADGE
 // =====================
 export function actualizarNotificaciones(cantidad) {
   const badge = document.querySelector("#notificacionesBtn .badge");
-  if (!badge) return console.log("Badge no encontrado");
-  badge.hidden = cantidad <= 0;
-  badge.textContent = cantidad > 99 ? "99+" : cantidad;
-}
+  if (!badge) return;
 
-// =====================
-// Renderizar dropdown
-// =====================
-export async function renderNotificaciones(usuario) {
-  if (!usuario) return console.log("Usuario no definido para renderNotificaciones");
-
-  const dropdown = document.getElementById("notificacionesDropdown");
-  if (!dropdown) return console.log("Dropdown no encontrado en renderNotificaciones");
-
-  const { data, error } = await supabase
-    .from("notificaciones")
-    .select("*")
-    .eq("usuario_id", usuario.id)
-    .order("creada", { ascending: false })
-    .limit(MAX_NOTIF);
-
-  if (error) {
-    console.error("Error fetch notificaciones:", error);
-    actualizarNotificaciones(0);
-    dropdown.innerHTML = "";
-    return;
+  if (cantidad > 0) {
+    badge.textContent = cantidad;
+    badge.style.display = "flex";
+  } else {
+    badge.style.display = "none";
   }
-
-  const notifs = data || [];
-  console.log("Notificaciones obtenidas:", notifs);
-
-  actualizarNotificaciones(notifs.filter(n => !n.leida).length);
-
-  dropdown.innerHTML = "";
-  notifs.forEach(n => {
-    const item = document.createElement("div");
-    item.className = "notif-item";
-    item.textContent = n.mensaje;
-    item.dataset.id = n.id;
-    item.dataset.tabla = n.tipo;
-    item.dataset.afiliadoId = n.afiliado_id; // crucial para redirigir
-
-    item.addEventListener("click", async () => {
-      console.log("Notificación clickeada:", n.mensaje);
-
-      // cambio de color al click
-      item.style.background = "#f9f9f9";
-
-      // marcar notificación como leída
-      if (!n.leida) {
-        const { error: errUpdate } = await supabase
-          .from("notificaciones")
-          .update({ leida: true })
-          .eq("id", n.id);
-        if (errUpdate) console.error("Error marcando notificación como leída:", errUpdate);
-        else n.leida = true;
-      }
-
-      // actualizar badge
-      actualizarNotificacionesBadge(usuario.id);
-
-      // redirigir a fichaMedica.html con afiliado y módulo
-      const targetAfiliadoId = n.afiliado_id || usuario.id;
-      const targetModulo = n.tipo;
-      if (targetAfiliadoId && targetModulo) {
-        const url = `/pages/fichaMedica.html?id=${targetAfiliadoId}&modulo=${targetModulo}`;
-        console.log("Redirigiendo a:", url);
-        window.location.href = url;
-      } else {
-        console.warn("Faltan afiliado_id o tipo para redirigir");
-      }
-    });
-
-    dropdown.appendChild(item);
-  });
 }
 
 // =====================
-// Actualizar badge desde DB
+// CONTAR NO LEÍDAS
 // =====================
-export async function actualizarNotificacionesBadge(usuarioId) {
+async function actualizarNotificacionesBadge(usuarioId) {
   const { count, error } = await supabase
     .from("notificaciones")
     .select("*", { count: "exact", head: true })
@@ -103,32 +54,115 @@ export async function actualizarNotificacionesBadge(usuarioId) {
     return;
   }
 
-  console.log("Cantidad de notificaciones no leídas:", count);
   actualizarNotificaciones(count || 0);
 }
 
 // =====================
-// Cargar header
+// RENDER NOTIFICACIONES
+// =====================
+async function renderNotificaciones() {
+  if (!usuarioActual) return;
+
+  const dropdown = document.getElementById("notificacionesDropdown");
+  if (!dropdown) return;
+
+  dropdown.innerHTML = "";
+
+  const tiposPermitidos = usuarioActual.notificaciones || [];
+
+  const { data, error } = await supabase
+    .from("notificaciones")
+    .select("*")
+    .eq("usuario_id", usuarioActual.id)
+    .in("tipo", tiposPermitidos)
+    .order("creada", { ascending: false })
+    .limit(MAX_NOTIF);
+
+  if (error) {
+    console.error("Error cargando notificaciones:", error);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    dropdown.innerHTML = `<div class="notif-item">No hay notificaciones</div>`;
+    return;
+  }
+
+  for (const notif of data) {
+    const item = document.createElement("div");
+    item.classList.add("notif-item");
+
+    if (notif.leida) item.classList.add("leida");
+
+    // Formatear fecha
+    function formatearFecha(fechaISO) {
+      const fecha = new Date(fechaISO);
+      return fecha.toLocaleDateString("es-AR");
+    }
+
+    const fechaFormateada = notif.creada
+      ? formatearFecha(notif.creada)
+      : "";
+
+    // Crear estructura interna
+    item.innerHTML = `
+      <div class="notif-contenido">
+        <div class="notif-mensaje">${notif.mensaje}</div>
+        <div class="notif-fecha">${fechaFormateada}</div>
+      </div>
+    `;
+
+    item.addEventListener("click", async () => {
+      try {
+        if (!notif.leida) {
+          await supabase
+            .from("notificaciones")
+            .update({ leida: true })
+            .eq("id", notif.id);
+
+          item.classList.add("leida");
+          await actualizarNotificacionesBadge(usuarioActual.id);
+        }
+
+      if (notif.afiliado_id) {
+        window.location.href =
+          `/pages/fichaMedica.html?id=${notif.afiliado_id}&modulo=${notif.tipo}`;
+      }
+      } catch (err) {
+        console.error("Error al procesar notificación:", err);
+      }
+    });
+
+    dropdown.appendChild(item);
+  }
+}
+
+// =====================
+// CARGAR HEADER
 // =====================
 export async function cargarHeader() {
   const container = document.getElementById("header-container");
-  if (!container) return console.log("Container header-container no encontrado");
+  if (!container) return;
 
   try {
     const res = await fetch("/pages/header.html");
     const html = await res.text();
     container.innerHTML = html;
-    console.log("Header cargado correctamente");
-    inicializarAuthHeader();
+
+    if (!headerInicializado) {
+      inicializarHeader();
+      headerInicializado = true;
+    }
+
   } catch (err) {
     console.error("Error cargando header:", err);
   }
 }
 
 // =====================
-// Inicializar header
+// INICIALIZAR HEADER
 // =====================
-function inicializarAuthHeader() {
+function inicializarHeader() {
   const statusSpan = document.getElementById("status");
   const logoutBtn = document.getElementById("logoutBtn");
   const reportesBtn = document.getElementById("reportesBtn");
@@ -138,60 +172,81 @@ function inicializarAuthHeader() {
   if (!notificacionesBtn || !dropdown) return;
 
   // Toggle dropdown
-  notificacionesBtn.addEventListener("click", (e) => {
+  notificacionesBtn.addEventListener("click", async (e) => {
     e.stopPropagation();
+
     dropdown.classList.toggle("hidden");
-    console.log("Campana clickeada, dropdown hidden?", dropdown.classList.contains("hidden"));
+
+    if (!dropdown.classList.contains("hidden")) {
+      await renderNotificaciones();
+      if (usuarioActual) {
+        await actualizarNotificacionesBadge(usuarioActual.id);
+      }
+    }
   });
 
+  // Cerrar al hacer click afuera
   document.addEventListener("click", (e) => {
     if (!dropdown.contains(e.target) && e.target !== notificacionesBtn) {
       dropdown.classList.add("hidden");
     }
   });
 
-  // Observador de auth
+  // =====================
+  // AUTH OBSERVER
+  // =====================
   authObserver(async user => {
-    console.log("authObserver llamado, user:", user);
+
     if (!user) {
+      limpiarUsuarioLocal();
       window.location.href = "/pages/login.html";
       return;
     }
 
-    if (statusSpan) statusSpan.innerHTML = `Bienvenido, <strong>${user.email}</strong>`;
+    // Intentar traer usuario desde localStorage
+    let usuario = obtenerUsuarioLocal();
 
-    const { data: usuario } = await supabase
-      .from("usuarios")
-      .select("*")
-      .eq("email", user.email)
-      .single();
+    // Si no existe o cambió el email → consultar DB
+    if (!usuario || usuario.email !== user.email) {
 
-    if (!usuario) return;
+      const { data, error } = await supabase
+        .from("usuarios")
+        .select("*")
+        .eq("email", user.email)
+        .single();
 
-    console.log("Usuario obtenido de tabla usuarios:", usuario);
+      if (error || !data) {
+        console.error("Error obteniendo usuario:", error);
+        return;
+      }
 
-    await generarNotificaciones(usuario);
-    await actualizarNotificacionesBadge(usuario.id);
-    await renderNotificaciones(usuario);
+      usuario = data;
+      guardarUsuarioLocal(usuario);
+    }
+
+    usuarioActual = usuario;
+
+    // Mostrar nombre completo
+    if (statusSpan) {
+      const nombre = usuario.nombre_completo || user.email;
+      statusSpan.innerHTML = `Bienvenido/a, <strong>${nombre}</strong>`;
+    }
+
+    // Generar notificaciones una sola vez por sesión
+    await generarNotificaciones(usuarioActual);
+
+    await actualizarNotificacionesBadge(usuarioActual.id);
   });
 
-  logoutBtn?.addEventListener("click", logout);
-  reportesBtn?.addEventListener("click", () => { window.location.href = "/pages/reportes.html"; });
+  // =====================
+  // LOGOUT
+  // =====================
+  logoutBtn?.addEventListener("click", async () => {
+    limpiarUsuarioLocal();
+    await logout();
+  });
+
+  reportesBtn?.addEventListener("click", () => {
+    window.location.href = "/pages/reportes.html";
+  });
 }
-
-// =====================
-// Escucha para abrir módulo (fichaMedica)
-document.addEventListener("abrirModulo", (e) => {
-  const moduleName = e.detail;
-  console.log("Evento abrirModulo recibido:", moduleName);
-
-  const btn = Array.from(document.querySelectorAll(".tab-button"))
-                   .find(b => b.dataset.module === moduleName);
-
-  if (!btn) {
-    console.warn("No se encontró pestaña para módulo:", moduleName);
-    return;
-  }
-
-  btn.click();
-});

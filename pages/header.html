@@ -14,24 +14,30 @@
       <span id="status"></span>
 
       <div class="header-actions">
+
         <!-- Reportes -->
-        <button id="reportesBtn" title="Reportes" class="icon-btn">📊</button>
+        <button id="reportesBtn" title="Reportes" class="icon-btn">
+          📊
+        </button>
 
-    <!-- Notificaciones -->
-    <div id="notificacionesDropdownWrapper" style="position: relative;">
-      <button id="notificacionesBtn" title="Notificaciones" class="icon-btn">
-        🔔
-        <span class="badge" hidden>0</span>
-      </button>
+        <!-- Notificaciones -->
+        <div id="notificacionesDropdownWrapper" style="position: relative;">
+          <button id="notificacionesBtn" title="Notificaciones" class="icon-btn">
+            🔔
+            <span class="badge" style="display: none;">0</span>
+          </button>
 
-      <!-- Dropdown oculto por defecto -->
-      <div id="notificacionesDropdown" class="hidden">
-        <!-- Aquí se cargan las notificaciones -->
-      </div>
-    </div>
+          <!-- Dropdown -->
+          <div id="notificacionesDropdown" class="hidden">
+            <!-- Se cargan dinámicamente -->
+          </div>
+        </div>
 
         <!-- Logout -->
-        <button id="logoutBtn" class="logout-btn">Cerrar sesión</button>
+        <button id="logoutBtn" class="logout-btn">
+          Cerrar sesión
+        </button>
+
       </div>
     </div>
   </div>
