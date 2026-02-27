@@ -198,3 +198,49 @@
     justify-content: space-between;
   }
 }
+
+/* =====================
+   DROPDOWN NOTIFICACIONES
+===================== */
+
+/* Dropdown de notificaciones */
+#notificacionesDropdown {
+  position: absolute;
+  top: 40px; /* ajustar según altura de tu header */
+  right: 0;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: #1f2937; /* color fondo header oscuro */
+  color: #f9fafb;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 100;
+  display: none; /* oculto por defecto */
+}
+
+/* Oculto cuando tiene clase hidden */
+#notificacionesDropdown.hidden {
+  display: none;
+}
+
+/* Mostrar cuando NO tiene la clase hidden */
+#notificacionesDropdown:not(.hidden) {
+  display: block;
+}
+
+#notificacionesDropdown .notif-item {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#notificacionesDropdown .notif-item:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+#notificacionesDropdown .notif-item:last-child {
+  border-bottom: none;
+}

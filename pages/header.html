@@ -1,39 +1,38 @@
 <header class="app-header">
   <div class="header-inner">
 
-    <!-- IZQUIERDA -->
+    <!-- IZQUIERDA: Logo -->
     <a href="padron.html" class="header-brand">
       <img src="../assets/images/Logo_LYF.png" alt="Logo Luz y Fuerza" />
     </a>
 
     <!-- CENTRO -->
-    <div class="header-center">
-      Padrón de Afiliados
-    </div>
+    <div class="header-center">Padrón de Afiliados</div>
 
-<!-- DERECHA -->
-<div class="user-bar">
+    <!-- DERECHA: Usuario y acciones -->
+    <div class="user-bar">
+      <span id="status"></span>
 
-  <span id="status"></span>
-
-  <div class="header-actions">
-    <!-- Reportes -->
-    <button id="reportesBtn" title="Reportes" class="icon-btn">
-      📊
-    </button>
+      <div class="header-actions">
+        <!-- Reportes -->
+        <button id="reportesBtn" title="Reportes" class="icon-btn">📊</button>
 
     <!-- Notificaciones -->
-    <button id="notificacionesBtn" title="Notificaciones" class="icon-btn">
-      🔔
-      <span class="badge" hidden>0</span>
-    </button>
+    <div id="notificacionesDropdownWrapper" style="position: relative;">
+      <button id="notificacionesBtn" title="Notificaciones" class="icon-btn">
+        🔔
+        <span class="badge" hidden>0</span>
+      </button>
 
-    <!-- Logout -->
-    <button id="logoutBtn" class="logout-btn">
-      Cerrar sesión
-    </button>
+      <!-- Dropdown oculto por defecto -->
+      <div id="notificacionesDropdown" class="hidden">
+        <!-- Aquí se cargan las notificaciones -->
+      </div>
+    </div>
+
+        <!-- Logout -->
+        <button id="logoutBtn" class="logout-btn">Cerrar sesión</button>
+      </div>
+    </div>
   </div>
-
-</div>
-
 </header>

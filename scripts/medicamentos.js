@@ -1,6 +1,22 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
+import { authObserver } from "./auth.js";
+
+import { generarNotificacionesMedicamentos } from "./notificaciones.js";
+
+authObserver(async (user) => {
+  if (user) {
+  const { data: usuario, error } = await supabase
+    .from("usuarios")
+    .select("*")
+    .ilike("email", user.email)
+    .single();
+  if (error) console.error("Error usuario:", error);
+
+    await generarNotificacionesMedicamentos(usuario);
+  }
+});
 
 export async function init(afiliadoId) {
   if (!afiliadoId) {
@@ -509,6 +525,7 @@ function renderPaginacion(total) {
     });
   });
 
+ 
   /* =====================
      INIT
   ===================== */

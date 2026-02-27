@@ -1,28 +1,28 @@
 // fichaMedica.js
 import { supabase } from "./supabase.js";
 
-// =====================
-// Contenedores
-// =====================
 const container = document.getElementById("tab-container");
 const tabsContainer = document.querySelector(".tabs");
 const btnVolver = document.getElementById("btnVolver");
 const nombreAfiliadoEl = document.getElementById("nombreAfiliado");
 
-// =====================
-// Contenedores persistentes por módulo
-// =====================
 const moduleContainers = {};
 
 // =====================
-// Obtener afiliadoId
+// Obtener afiliadoId y módulo desde URL
 // =====================
-let afiliadoId = new URLSearchParams(window.location.search).get("id");
+const urlParams = new URLSearchParams(window.location.search);
+let afiliadoId = urlParams.get("id");
+const moduloInicial = urlParams.get("modulo"); // módulo a abrir desde notificación
+
+// Si no viene por URL, fallback a localStorage
 if (!afiliadoId) afiliadoId = localStorage.getItem("afiliadoId");
 if (!afiliadoId) {
   Swal.fire("Error", "Afiliado no encontrado", "error");
   throw new Error("ID afiliado faltante");
 }
+
+// Guardar en localStorage el afiliado actual
 localStorage.setItem("afiliadoId", afiliadoId);
 
 // =====================
@@ -49,28 +49,22 @@ async function cargarNombreAfiliado(id) {
 cargarNombreAfiliado(afiliadoId);
 
 // =====================
-// Cargar módulo
+// Función loadModule (igual que antes)
 // =====================
 async function loadModule(moduleName) {
-  // Ocultar todos los contenedores
   Object.values(moduleContainers).forEach(c => c.style.display = "none");
-
-  // Guardamos la pestaña activa en localStorage
   localStorage.setItem("ultimaPestana", moduleName);
 
-  // Si ya existe el contenedor, solo mostrarlo
   if (moduleContainers[moduleName]) {
     moduleContainers[moduleName].style.display = "block";
     return;
   }
 
-  // Crear contenedor nuevo
   const div = document.createElement("div");
   div.style.display = "block";
   container.appendChild(div);
   moduleContainers[moduleName] = div;
 
-  // Cargar HTML
   try {
     const html = await fetch(`./${moduleName}.html`).then(r => r.text());
     div.innerHTML = html;
@@ -80,7 +74,6 @@ async function loadModule(moduleName) {
     return;
   }
 
-  // Cargar JS del módulo
   try {
     const module = await import(`../scripts/${moduleName}.js`);
     if (typeof module.init === "function") await module.init(afiliadoId);
@@ -88,7 +81,6 @@ async function loadModule(moduleName) {
     console.error(`Error cargando ${moduleName}.js`, err);
   }
 
-  // Cargar CSS del módulo si no está
   const cssLinkId = `css-${moduleName}`;
   if (!document.getElementById(cssLinkId)) {
     const link = document.createElement("link");
@@ -100,33 +92,26 @@ async function loadModule(moduleName) {
 }
 
 // =====================
-// Delegación de pestañas
+// Delegación pestañas
 // =====================
 tabsContainer.addEventListener("click", (e) => {
   if (e.target.matches(".tab-button")) {
     const moduleName = e.target.dataset.module;
     loadModule(moduleName);
 
-    // marcar activa
     document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
     e.target.classList.add("active");
   }
 });
 
 // =====================
-// Inicializar pestaña por defecto o última activa
+// Inicializar pestaña por defecto o desde URL
 // =====================
 (function initTabs() {
-  const ultimaPestana = localStorage.getItem("ultimaPestana");
-  let defaultModule = tabsContainer.querySelector(".tab-button").dataset.module;
-
-  if (ultimaPestana) {
-    defaultModule = ultimaPestana;
-  }
+  let defaultModule = moduloInicial || localStorage.getItem("ultimaPestana") || tabsContainer.querySelector(".tab-button").dataset.module;
 
   loadModule(defaultModule);
 
-  // marcar activa
   document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
   const btn = Array.from(document.querySelectorAll(".tab-button")).find(b => b.dataset.module === defaultModule);
   if (btn) btn.classList.add("active");
