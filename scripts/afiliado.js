@@ -1149,6 +1149,19 @@ async function guardarCambios() {
   const { data: categoriaData } = await supabase.from("categorias").select("id").eq("nombre", categoriaNombre).single();
   const { data: localidadData } = await supabase.from("localidades").select("id").eq("nombre", localidadNombre).single();
 
+  //validacion archivo cud
+  if (discapacidad) {
+  const { data: cudDocs } = await supabase
+    .from("cud_documentos")
+    .select("id")
+    .eq("afiliado_id", afiliadoId);
+
+  if (!cudDocs || cudDocs.length === 0) {
+    Swal.fire("Adjunto requerido", "Debe cargar al menos un CUD", "warning");
+    return;
+  }
+}
+
   // =========================
   // Validaciones de edad y adjuntos
   // =========================
@@ -1316,150 +1329,6 @@ if (discapacidad) {
       return;
     }
   }
-}
-
-// =========================
-// SUBIDA ARCHIVO CUD
-// =========================
-let archivo_url = null;
-const cudInput = document.getElementById("adjuntoCudInput");
-
-console.log("---- DEBUG CUD ----");
-console.log("Discapacidad:", discapacidad);
-console.log("cud_documentos:", cud_documentos);
-
-if (cudInput) {
-  console.log("Input files:", cudInput.files.length);
-}
-
-if (cudInput && cudInput.files.length > 0) {
-  try {
-    console.log("Subiendo nuevo archivo CUD...");
-    archivo_url = await subirArchivoCloudinary(
-      cudInput.files[0],
-      numero_afiliado
-    );
-    console.log("Archivo subido correctamente:", archivo_url);
-  } catch (err) {
-    console.error("Error subiendo archivo CUD:", err);
-    Swal.fire("Error", "No se pudo subir el archivo del CUD", "error");
-    return;
-  }
-}
-
-// =========================
-// GUARDAR O ACTUALIZAR CUD
-// =========================
-if (discapacidad) {
-
-  console.log("---- DEBUG CUD ----");
-  console.log("Discapacidad:", discapacidad);
-  console.log("CUD documentos actuales:", cud_documentos);
-
-  // Validación fechas
-  if (!fecha_emision) {
-    Swal.fire("Falta fecha", "Debe ingresar la fecha de emisión del CUD.", "warning");
-    return;
-  }
-
-  if (!sin_vencimiento && fecha_vencimiento) {
-    const emision = new Date(fecha_emision);
-    const venc = new Date(fecha_vencimiento);
-    emision.setHours(0, 0, 0, 0);
-    venc.setHours(0, 0, 0, 0);
-
-    if (venc < emision) {
-      Swal.fire("Fechas inválidas", "La fecha de vencimiento del CUD no puede ser anterior a la fecha de emisión.", "error");
-      return;
-    }
-  }
-
-  // Subida archivo CUD
-  let archivo_url = null;
-  const cudInput = document.getElementById("adjuntoCudInput");
-
-  if (cudInput && cudInput.files.length > 0) {
-    try {
-      archivo_url = await subirArchivoCloudinary(cudInput.files[0], numero_afiliado);
-      console.log("Archivo subido correctamente:", archivo_url);
-    } catch (err) {
-      console.error("Error subiendo archivo CUD:", err);
-      Swal.fire("Error", "No se pudo subir el archivo del CUD", "error");
-      return;
-    }
-  }
-
-  // Determinar archivo existente
-  const archivoExistente = cud_documentos.length > 0
-    ? cud_documentos[cud_documentos.length - 1].archivo_url
-    : null;
-
-  console.log("Archivo existente:", archivoExistente);
-  console.log("Archivo nuevo:", archivo_url);
-
-  if (!archivo_url && !archivoExistente) {
-    console.warn("⚠️ No hay archivo nuevo ni existente");
-    Swal.fire("Adjunto requerido", "Debe cargar el archivo del CUD", "warning");
-    return;
-  }
-
-  // Guardar o actualizar CUD
-  if (cud_documentos.length > 0) {
-    // Actualizar último CUD
-    const ultimoCud = cud_documentos[cud_documentos.length - 1];
-    const updateData = {
-      fecha_emision,
-      fecha_vencimiento: sin_vencimiento ? null : fecha_vencimiento,
-      sin_vencimiento
-    };
-    if (archivo_url) updateData.archivo_url = archivo_url;
-
-    const { error: cudUpdateError } = await supabase
-      .from("cud_documentos")
-      .update(updateData)
-      .eq("id", ultimoCud.id);
-
-    if (cudUpdateError) {
-      console.error("Error actualizando CUD:", cudUpdateError);
-      Swal.fire("Error", "No se pudo actualizar el CUD", "error");
-      return;
-    }
-    console.log("CUD actualizado correctamente:", updateData);
-
-  } else {
-    // Insertar nuevo CUD
-    const { error: cudInsertError } = await supabase
-      .from("cud_documentos")
-      .insert({
-        afiliado_id: afiliadoId,
-        fecha_emision,
-        fecha_vencimiento: sin_vencimiento ? null : fecha_vencimiento,
-        sin_vencimiento,
-        archivo_url: archivo_url || null
-      });
-
-    if (cudInsertError) {
-      console.error("Error insertando CUD:", cudInsertError);
-      Swal.fire("Error", "No se pudo guardar el CUD", "error");
-      return;
-    }
-    console.log("CUD insertado correctamente:", {
-      fecha_emision,
-      fecha_vencimiento,
-      sin_vencimiento,
-      archivo_url
-    });
-  }
-
-  // Actualizar variable local cud_documentos
-  const { data: cudData } = await supabase
-    .from("cud_documentos")
-    .select("*")
-    .eq("afiliado_id", afiliadoId)
-    .order("created_at", { ascending: true });
-
-  cud_documentos = cudData || [];
-  console.log("CUD documentos actualizados:", cud_documentos);
 }
 
   // =========================
