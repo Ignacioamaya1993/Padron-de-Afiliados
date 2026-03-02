@@ -2,6 +2,12 @@
 /* LISTA PRACTICAS */
 /* ========================= */
 
+.btn-nuevo-practicas{
+background-color: #2f80ed;
+color: white;
+margin-bottom: 1rem;
+}
+
 #listaPracticas {
   display: flex;
   flex-wrap: wrap;
@@ -129,7 +135,7 @@
   padding: 20px !important;
   margin-bottom: 20px !important;
   background: #fff !important;
-  max-width: 700px !important;
+  max-width: 50% !important;
 }
 
 /* ===================== */
@@ -138,21 +144,8 @@
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columnas fijas */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 15px;
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-  .form-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ===================== */

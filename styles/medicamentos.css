@@ -12,6 +12,24 @@ section {
   display: none !important;
 }
 
+.form-card_med{
+    width: 70%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+}
+
+.adjunto-item {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    background-color: #fff;
+    min-width: 380px;
+}
+
 /* ===================== */
 /* BOTONES */
 /* ===================== */
@@ -32,10 +50,37 @@ button:active {
   transform: scale(0.97);
 }
 
-.btn-nuevo {
+.btn-nuevo-medicamento {
   background-color: #2f80ed;
   color: white;
   margin-bottom: 1rem;
+}
+
+.adjuntos-medicamentos{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-guardar-medicamento{
+      padding: 0.5rem 1rem;
+    margin: 0.3rem 0.1rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+      background-color: #1976d2;
+    color: white;
+  }
+
+.btn-cancelar-medicamento{
+    padding: 0.5rem 1rem;
+    margin: 0.3rem 0.1rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    background-color: #e53935;
+    color: white;
 }
 
 /* Botón adjuntos */
@@ -59,17 +104,28 @@ button:active {
 /* ===================== */
 /* FORMULARIO */
 /* ===================== */
-.form-card {
+.form-card_med {
   border: 1px solid #ddd !important;
-  border-radius: 8px !important;
-  padding: 16px !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
   margin-bottom: 20px !important;
   background: #fff !important;
-  max-width: 700px !important;
+  max-width: 60% !important;
 }
 
 /* Inputs */
-form input,
+form input
+{
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  transition: border 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 form select,
 form textarea {
   padding: 8px 10px;
@@ -94,7 +150,7 @@ input[type="file"] {
 /* ===================== */
 .grid-medicamento {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.8rem;
   margin-top: 1rem;
 }
@@ -131,7 +187,6 @@ input[type="file"] {
   flex-direction: column;
   gap: 0.35rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  min-width: 350px;
   min-height: 400px;
 }
 
@@ -196,19 +251,12 @@ input[type="file"] {
     gap: 0.15rem;
 }
 
-/* Observaciones */
+/* Observaciones card */
 .med-card-section textarea {
   display: flex;
   font-size: 0.8rem;
   background: #f1f5f9;
   border: 1px solid #e5e7eb;
-  min-width: 340px;
-}
-
-/* Observaciones y adjuntos */
-.med-card-section textarea,
-.adjuntos-lista {
-  min-height: 80px; /* altura consistente para todas las cards */
 }
 
 .adjuntos-lista {

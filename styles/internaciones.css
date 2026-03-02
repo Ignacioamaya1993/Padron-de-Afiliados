@@ -2,13 +2,44 @@
 /* INTERNACIONES - Estilo */
 /* ===================== */
 
-.form-card {
+.btn-nuevo-internacion{
+background-color: #2f80ed;
+color: white;
+margin-bottom: 1rem;
+}
+
+/* ===================== */
+/* FORMULARIO */
+/* ===================== */
+.form-card_internacion {
   border: 1px solid #ddd !important;
   border-radius: 10px !important;
   padding: 20px !important;
   margin-bottom: 20px !important;
   background: #fff !important;
-  max-width: 900px !important;
+  max-width: 60% !important;
+}
+
+.adjuntos-nuevos_internacion {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    align-items: center;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    background-color: #fff;
+    min-width: 380px;
+}
+
+/* Input file */
+input[type="file"] {
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  background: #fff7ed;
+  padding: 0.4rem;
+  cursor: pointer;
+  max-width: 100%;
 }
 
 /* =====================
@@ -16,7 +47,7 @@
 ===================== */
 #formInternacion {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 columnas iguales */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1rem; /* espacio entre filas y columnas */
   align-items: start;
   margin-top: 0rem;
@@ -34,7 +65,7 @@
 #formInternacion input,
 #formInternacion select,
 #formInternacion textarea {
-  max-width: 100%;
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -92,18 +123,12 @@
   font-size: 0.9rem;
 }
 
-.btn-nuevo,
 .form-actions button {
   padding: 0.5rem 1rem;
   margin: 0.3rem 0.1rem;
   border-radius: 5px;
   border: none;
   cursor: pointer;
-}
-
-.btn-nuevo {
-  background-color: #2f80ed;
-  color: white;
 }
 
 .form-actions button.guardar {
@@ -145,7 +170,6 @@
     flex-direction: column !important;
     gap: 0.35rem !important;
     transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-    min-width: 400px !important;
     min-height: 400px !important;
 }
 

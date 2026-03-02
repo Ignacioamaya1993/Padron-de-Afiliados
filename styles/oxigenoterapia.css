@@ -2,6 +2,12 @@
 /* OXIGENOTERAPIA - Estilo */
 /* ===================== */
 
+.btn-nuevo-oxigenoterapia{
+background-color: #2f80ed;
+color: white;
+margin-bottom: 1rem;
+}
+
 .form-card {
   border: 1px solid #ddd !important;
   border-radius: 10px !important;

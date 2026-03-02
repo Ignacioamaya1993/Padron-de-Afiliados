@@ -1,6 +1,13 @@
 /* ===================== */
 /* GENERAL */
 /* ===================== */
+
+.btn-nuevo-traslado{
+background-color: #2f80ed;
+color: white;
+margin-bottom: 1rem;
+}
+
 section {
   padding: 1rem;
   max-width: 900px;
@@ -34,12 +41,6 @@ button:hover {
 
 button:active {
   transform: scale(0.97);
-}
-
-.btn-nuevo {
-  background-color: #2f80ed;
-  color: white;
-  margin-bottom: 1rem;
 }
 
 .btn-nuevoAdjunto {

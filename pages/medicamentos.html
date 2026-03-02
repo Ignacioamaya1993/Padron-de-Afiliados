@@ -14,12 +14,12 @@ main, section {
 <!-- MEDICAMENTOS -->
 <section>
 
-  <button id="btnNuevoMedicamento" class="btn-nuevo">
+  <button id="btnNuevoMedicamento" class="btn-nuevo-medicamento">
     + Nuevo Medicamento
   </button>
 
   <!-- FORMULARIO ALTA -->
-  <form id="formMedicamento" class="form-card hidden">
+  <form id="formMedicamento" class="form-card_med hidden">
     <input type="hidden" name="id">
 
     <!-- Tipo -->
@@ -40,32 +40,32 @@ main, section {
 
       <div>
         <label>Fecha de autorización</label>
-        <input type="date" name="fecha_autorizacion">
+        <input type="date" name="fecha_autorizacion" required>
       </div>
 
       <div id="campoLatas" class="hidden">
         <label>Latas entregadas</label>
-        <input type="number" name="latas_entregadas" min="1">
+        <input type="number" name="latas_entregadas" min="1" required>
       </div>
 
       <div>
         <label>Fecha de entrega</label>
-        <input type="date" name="fecha_entrega">
+        <input type="date" name="fecha_entrega" required>
       </div>
 
       <div>
         <label>Próxima entrega</label>
-        <input type="date" name="proxima_carga">
+        <input type="date" name="proxima_carga" required>
       </div>
 
       <div id="campoInicio" class="hidden">
         <label>Fecha inicio</label>
-        <input type="date" name="fecha_inicio">
+        <input type="date" name="fecha_inicio" required>
       </div>
 
       <div id="campoVencimiento" class="hidden">
         <label>Fecha vencimiento</label>
-        <input type="date" name="fecha_vencimiento">
+        <input type="date" name="fecha_vencimiento" required>
       </div>
 
       <!-- Observaciones -->
@@ -77,14 +77,14 @@ main, section {
                 <!-- Adjuntos -->
     <div class="form-row">
       <label>Adjuntar Documentos</label>
-      <div id="adjuntosContainer" class="adjuntos-nuevos"></div>
+      <div id="adjuntosContainer" class="adjuntos-medicamentos"></div>
       <button type="button" id="btnAgregarAdjunto">➕ Agregar adjunto</button>
     </div>
 
       <!-- ACCIONES -->
       <div class="full-row acciones">
-      <button type="submit" class="btn-guardar">💾 Guardar</button>
-      <button type="button" id="btnCancelarMedicamento" class="btn-cancelar">Cancelar</button>
+      <button type="submit" class="btn-guardar-medicamento">💾 Guardar</button>
+      <button type="button" id="btnCancelarMedicamento" class="btn-cancelar-medicamento">Cancelar</button>
       </div>
 
     </div>

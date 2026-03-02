@@ -15,6 +15,25 @@ section {
 /* ===================== */
 /* BOTONES */
 /* ===================== */
+
+.btn-nuevo-derivacion{
+background-color: #2f80ed;
+color: white;
+margin-bottom: 1rem;
+}
+
+.adjuntos-nuevos-derivacion {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    align-items: center;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    background-color: #fff;
+    min-width: 380px;
+}
+
 button {
   cursor: pointer;
   border: none;
@@ -30,12 +49,6 @@ button:hover {
 
 button:active {
   transform: scale(0.97);
-}
-
-.btn-nuevo {
-  background-color: #2f80ed;
-  color: white;
-  margin-bottom: 1rem;
 }
 
 /* fichaMedica.css o derivaciones.css */
@@ -68,19 +81,19 @@ button:active {
 /* ===================== */
 /* FORMULARIO */
 /* ===================== */
-.form-card {
+.form-card_derivaciones {
   border: 1px solid #ddd !important;
   border-radius: 10px !important;
   padding: 20px !important;
   margin-bottom: 20px !important;
   background: #fff !important;
-  max-width: 900px!important;
+  max-width: 80% !important;
 }
 
 /* Grid principal del formulario */
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* ⬅️ 4 columnas */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
 }
 
@@ -100,6 +113,8 @@ button:active {
 .form-group input,
 .form-group select,
 .form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
   padding: 0.6rem;
   border-radius: 6px;
   border: 1px solid #cbd5e1;
@@ -177,7 +192,7 @@ input[type="file"] {
 /* ===================== */
 #contenedorDerivaciones {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 0.6rem;
 }
 
@@ -190,7 +205,6 @@ input[type="file"] {
   flex-direction: column;
   gap: 0.35rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  min-width: 350px;
   min-height: 400px;
 }
 
@@ -261,7 +275,6 @@ input[type="file"] {
   font-size: 0.8rem;
   background: #f1f5f9;
   border: 1px solid #e5e7eb;
-  min-width: 340px;
 }
 
 /* Observaciones y adjuntos */

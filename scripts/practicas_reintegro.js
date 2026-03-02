@@ -16,7 +16,7 @@ export async function init(afiliadoId) {
   const lista = document.getElementById("listaPracticasReintegro");
   const paginacion = document.getElementById("paginacionPracticasReintegro");
   const adjuntosContainer = document.getElementById("adjuntosPracticasContainer");
-  const btnAgregarAdjunto = document.getElementById("btnAgregarAdjuntoPractica");
+  const btnAgregarAdjunto = document.getElementById("btnAgregarAdjuntoPracticaReintegro");
   const tipoSelect = document.getElementById("tipoPracticaSelect");
 
   const campoReintegro = form.querySelector(".prx-campo-reintegro");
@@ -70,8 +70,12 @@ export async function init(afiliadoId) {
       btnEliminar.type = "button";
       btnEliminar.textContent = "✖";
       btnEliminar.className = "prx-btn-eliminar-adjunto";
-      btnEliminar.onclick = () => wrapper.remove();
-      wrapper.appendChild(btnEliminar);
+      btnEliminar.onclick = () => {
+        archivosAdjuntos = archivosAdjuntos.filter(a => a !== wrapper);
+        wrapper.remove();
+};      
+
+wrapper.appendChild(btnEliminar);
     }
 
     adjuntosContainer.appendChild(wrapper);

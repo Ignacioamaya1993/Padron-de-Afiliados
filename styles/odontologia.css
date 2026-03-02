@@ -1,6 +1,20 @@
 /* ===================== */
 /* ODONTOLOGIA - Estilo   */
 /* ===================== */
+.form-card_odontologia {
+  border: 1px solid #ddd !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  margin-bottom: 20px !important;
+  background: #fff !important;
+  max-width: 50% !important;
+}
+
+.btn-nuevo-odontologia{
+background-color: #2f80ed;
+color: white;
+margin-bottom: 1rem;
+}
 
 /* Contenedor principal */
 #listaOdontologia {
@@ -21,7 +35,7 @@
 /* Grid de fechas en formulario de alta: 3 columnas x 2 filas */
 #formOdontologia .grid-fechas {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 15px;
   margin-bottom: 15px;
 }
@@ -40,7 +54,6 @@
   margin-bottom: 15px;
 }
 
-#formOdontologia input,
 #formOdontologia select,
 #formOdontologia textarea {
   width: 100%;
@@ -69,13 +82,13 @@
 }
 
 .adjunto-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.adjunto-item input[type="file"] {
-  flex: 1;
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    background-color: #fff;
+    max-width: 380px;
 }
 
 /* Campo reintegro oculto por defecto en alta */
@@ -115,11 +128,26 @@
   gap: 15px;
 }
 
-
 .campo-reintegro > div {
   flex: 1;
 }
 
 .hidden {
   display: none !important;
+}
+
+.adjuntos-nuevos_odontologia {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Input file */
+input[type="file"] {
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  background: #fff7ed;
+  padding: 0.4rem;
+  cursor: pointer;
 }

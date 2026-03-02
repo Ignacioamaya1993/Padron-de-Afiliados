@@ -10,10 +10,10 @@
 /* BOTON NUEVO */
 /* ============================= */
 
-.mo-btn-nuevo {
-  background-color: #2f80ed;
-  color: white;
-  margin-bottom: 20px;
+.btn-nuevo-materiales{
+background-color: #2f80ed;
+color: white;
+margin-bottom: 1rem;
 }
 
 /* ============================= */

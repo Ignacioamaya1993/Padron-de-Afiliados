@@ -2,6 +2,12 @@
 /* EXPEDIENTE DISCAPACIDAD */
 /* ============================== */
 
+.btn-nuevo-expediente{
+background-color: #2f80ed;
+color: white;
+margin-bottom: 1rem;
+}
+
 .form-card {
   border: 1px solid #ddd;
   border-radius: 10px;

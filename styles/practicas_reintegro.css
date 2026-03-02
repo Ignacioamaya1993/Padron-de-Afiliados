@@ -1,33 +1,26 @@
-/* ===================================== */
 /* PRACTICAS POR REINTEGRO - MODULO PRX */
-/* ===================================== */
 
 .prx-wrapper {
   max-width: 1100px;
 }
 
-/* ============================= */
 /* BOTON NUEVO */
-/* ============================= */
 
-.prx-btn-nuevo {
-    background-color: #2f80ed;
-    color: white;
-    margin-bottom: 20px;
+.btn-nuevo-practicasxreintegro{
+background-color: #2f80ed;
+color: white;
+margin-bottom: 1rem;
 }
 
-/* ============================= */
 /* FORM CARD */
-/* ============================= */
 
 .prx-form-card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  max-width: 700px;
+  border: 1px solid #ddd !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  margin-bottom: 20px !important;
+  background: #fff !important;
+  max-width: 70% !important;
 }
 
 /* ============================= */
@@ -36,7 +29,7 @@
 
 .prx-grid-fechas {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 16px;
   margin-bottom: 16px;
 }
@@ -106,7 +99,18 @@ input[type="file"] {
 /* ADJUNTOS */
 /* ============================= */
 
-.prx-adjuntos-nuevos,
+.prx-adjuntos-nuevos{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    align-items:flex-start;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    background-color: #fff;
+    min-width: 380px;
+}
+
 .prx-adjuntos-card {
   margin-top: 10px;
   display: flex;
@@ -158,8 +162,6 @@ input[type="file"] {
     flex-direction: column !important;
     gap: 0.35rem !important;
     transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-    max-width: 400px;
-
 }
 
 .prx-card input[readonly],

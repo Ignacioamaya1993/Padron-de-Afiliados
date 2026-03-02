@@ -1,6 +1,11 @@
-/* =============================== */
 /* ATENCIÓN DOMICILIARIA */
-/* =============================== */
+
+/*boton nueva atencion*/
+.btn-nuevo-atencion{
+background-color: #2f80ed;
+color: white;
+margin-bottom: 1rem;
+}
 
 /* Card del formulario */
 .form-card {

@@ -20,13 +20,17 @@ export async function init(afiliadoId) {
   // =====================
   // ELEMENTOS
   // =====================
-  const btnNuevo = document.getElementById("btnNuevaOdontologia");
-  const btnCancelar = document.getElementById("btnCancelarOdontologia");
-  const form = document.getElementById("formOdontologia");
-  const lista = document.getElementById("listaOdontologia");
-  const adjuntosContainer = document.getElementById("adjuntosContainer");
-  const btnAgregarAdjunto = document.getElementById("btnAgregarAdjunto");
-  const campoReintegro = form.querySelector(".campo-reintegro");
+    const btnNuevo = document.getElementById("btnNuevaOdontologia");
+    const btnCancelar = document.getElementById("btnCancelarOdontologia");
+    const form = document.getElementById("formOdontologia");
+    const lista = document.getElementById("listaOdontologia");
+    const adjuntosContainer = form.querySelector("#adjuntosContainer");
+    const btnAgregarAdjunto = form.querySelector("#btnAgregarAdjunto");
+    const campoReintegro = form.querySelector(".campo-reintegro");
+    
+    btnAgregarAdjunto.addEventListener("click", () => {
+      agregarAdjuntoInput(false);
+    });
 
   // =====================
   // ADJUNTOS
@@ -69,8 +73,6 @@ export async function init(afiliadoId) {
 
     adjuntosContainer.appendChild(wrapper);
   }
-
-  btnAgregarAdjunto.addEventListener("click", () => agregarAdjuntoInput(false));
 
   // =====================
   // CARGAR REGISTROS
