@@ -17,49 +17,49 @@ main, section {
   <button id="btnNuevaAtencion" class="btn-nuevo-atencion">+ Nueva Atención</button>
 
 <!-- FORMULARIO DE ALTA -->
-<form id="formAtencionDomiciliaria" class="form-card hidden">
+<form id="formAtencionDomiciliaria" class="form-card_atencion hidden">
 
-  <!-- FILA 1: TIPO y FECHA CARGA -->
-  <div class="grid-dos-columnas">
-    <div class="form-group">
+  <div class="form-grid">
+
+    <div class="campo">
       <label>Tipo</label>
       <select id="tipo_atencion_id" required>
         <option value="">Seleccionar</option>
       </select>
     </div>
-    <div>
+
+    <div class="campo">
       <label for="fecha_carga">Fecha carga</label>
       <input type="date" id="fecha_carga" name="fecha_carga" required>
     </div>
-  </div>
 
-  <!-- FILA 2: FECHA INICIO PERIODO y FECHA FIN PERIODO -->
-  <div class="grid-dos-columnas">
-    <div>
+    <div class="campo">
       <label for="fecha_inicio_periodo">Fecha inicio período</label>
       <input type="date" id="fecha_inicio_periodo" name="fecha_inicio_periodo" required>
     </div>
-    <div>
+
+    <div class="campo">
       <label for="fecha_fin_periodo">Fecha fin período</label>
       <input type="date" id="fecha_fin_periodo" name="fecha_fin_periodo" required>
     </div>
   </div>
 
-  <!-- OBSERVACIÓN -->
-  <div>
-    <label for="observacion">Observación</label>
-    <textarea id="observacion" name="observacion" rows="3"></textarea>
-  </div>
+      <div class="campo full">
+      <label for="observacion">Observación</label>
+      <textarea id="observacion" name="observacion" rows="3"></textarea>
+    </div>
 
   <!-- ADJUNTOS -->
-  <div class="form-row">
+  <div class="bloque-adjuntos">
     <label>Adjuntar Documentos</label>
-    <div id="adjuntosAtencionContainer" class="adjuntos-nuevos"></div>
-    <button type="button" id="btnAgregarAdjuntoAtencion">➕ Agregar adjunto</button>
+    <div id="adjuntosAtencionContainer" class="adjuntos-nuevos_atencion"></div>
+    <button type="button" id="btnAgregarAdjuntoAtencion">
+      ➕ Agregar adjunto
+    </button>
   </div>
 
-  <!-- REINTEGRO (solo edición, oculto por defecto) -->
-  <div class="form-group hidden full-width campo-reintegro">
+  <!-- REINTEGRO -->
+  <div class="campo-reintegro hidden">
     <div>
       <label>Reintegro</label>
       <input type="number" name="reintegro" step="0.01">
@@ -70,7 +70,6 @@ main, section {
     </div>
   </div>
 
-  <!-- BOTONES -->
   <div class="acciones-form">
     <button type="submit" class="btn-guardar">Guardar</button>
     <button type="button" id="btnCancelarAtencion" class="btn-cancelar">Cancelar</button>

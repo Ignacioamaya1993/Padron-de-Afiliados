@@ -1,12 +1,7 @@
 /* ===================== */
 /* GENERAL */
 /* ===================== */
-section {
-  padding: 1rem;
-  max-width: 900px;
-  margin: 0 auto;
-  font-family: Arial, sans-serif;
-}
+
 
 .hidden {
   display: none !important;
@@ -87,13 +82,13 @@ button:active {
   padding: 20px !important;
   margin-bottom: 20px !important;
   background: #fff !important;
-  max-width: 80% !important;
+  max-width: 60% !important;
 }
 
 /* Grid principal del formulario */
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1rem;
 }
 
