@@ -1,8 +1,8 @@
 /* ===================================== */
-/* MATERIALES ORTOPEDICOS - MODULO MO */
+/* MATERIALES ORTOPEDICOS */
 /* ===================================== */
 
-.mo-wrapper {
+.materiales-ortopedicos {
   max-width: 1100px;
 }
 
@@ -10,42 +10,45 @@
 /* BOTON NUEVO */
 /* ============================= */
 
-.btn-nuevo-materiales{
-background-color: #2f80ed;
-color: white;
-margin-bottom: 1rem;
+.btn-nuevo-materiales {
+  background-color: #2f80ed;
+  color: white;
+  margin-bottom: 1rem;
 }
 
 /* ============================= */
 /* FORM CARD */
 /* ============================= */
 
-.mo-form-card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  max-width: 700px;
+.form-card_materiales {
+  border: 1px solid #ddd !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  margin-bottom: 20px !important;
+  background: #fff !important;
+  max-width: 50% !important;
+}
+
+.form-card_materiales textarea {
+    resize: vertical;
+    min-height: 80px;
 }
 
 /* ============================= */
-/* GRID FECHAS */
+/* GRID FORM */
 /* ============================= */
 
-.mo-grid-fechas {
+.form-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-bottom: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
 }
 
 /* ============================= */
 /* CAMPOS */
 /* ============================= */
 
-.mo-field label {
+.campo label {
   display: block;
   font-size: 13px;
   margin-bottom: 4px;
@@ -53,9 +56,9 @@ margin-bottom: 1rem;
   color: #555;
 }
 
-.mo-field input,
-.mo-field select,
-.mo-field textarea {
+.campo input,
+.campo select,
+.campo textarea {
   width: 100%;
   padding: 8px 10px;
   border: 1px solid #ccc;
@@ -64,11 +67,16 @@ margin-bottom: 1rem;
   background: #fff;
 }
 
-.mo-field textarea {
+.campo textarea {
   resize: vertical;
 }
 
-.mo-form-card input[type="file"] {
+/* Campo ocupa todo el ancho */
+.campo.full {
+  grid-column: 1 / -1;
+}
+
+.form-card_materiales input[type="file"] {
   border: 1px solid #f59e0b;
   border-radius: 6px;
   background: #fff7ed;
@@ -79,59 +87,48 @@ margin-bottom: 1rem;
 }
 
 /* ============================= */
-/* REINTEGRO LADO A LADO */
+/* REINTEGRO */
 /* ============================= */
 
-.mo-campo-reintegro {
-  display: flex;
-  gap: 20px;
+#grupoReintegroMaterial {
   margin-top: 10px;
   margin-bottom: 16px;
 }
 
-.mo-campo-reintegro > .mo-field {
-  flex: 1;
-}
-
-.mo-adjuntos-edicion {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+#grupoReintegroMaterial .form-grid {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
 
 /* ============================= */
 /* ADJUNTOS */
 /* ============================= */
 
-.mo-adjuntos-nuevos,
-.mo-adjuntos-card {
+.adjuntos-nuevos_materiales,
+.adjuntos-card {
   margin-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.mo-adjunto-item {
+.adjunto-item {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
 }
 
-.mo-adjunto-item a {
+.adjunto-item a {
   text-decoration: none;
   font-size: 14px;
   color: #0077cc;
 }
 
-.mo-adjunto-item a:hover {
+.adjunto-item a:hover {
   text-decoration: underline;
 }
 
-.mo-btn-eliminar-adjunto {
+.adjunto-item button {
   background: transparent;
   border: none;
   cursor: pointer;
@@ -143,13 +140,13 @@ margin-bottom: 1rem;
 /* CARDS LISTADO */
 /* ============================= */
 
-.mo-lista-cards {
+.lista-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 0.6rem;
 }
 
-.mo-card {
+.card-material {
   background: #ffffff !important;
   border: 1px solid #e5e7eb !important;
   border-radius: 10px !important;
@@ -161,16 +158,16 @@ margin-bottom: 1rem;
   max-width: 400px;
 }
 
-.mo-card input[readonly],
-.mo-card textarea[readonly] {
+.card-material input[readonly],
+.card-material textarea[readonly] {
   background: #f5f5f5;
   border: 1px solid #ddd;
   cursor: default;
 }
 
-.mo-card.modo-edicion input,
-.mo-card.modo-edicion textarea,
-.mo-card.modo-edicion select {
+.card-material.modo-edicion input,
+.card-material.modo-edicion textarea,
+.card-material.modo-edicion select {
   border: 1px solid #f59e0b;
   border-radius: 6px;
   background: #fff7ed;
@@ -182,32 +179,21 @@ margin-bottom: 1rem;
 /* ACCIONES */
 /* ============================= */
 
-.mo-acciones,
-.mo-acciones-form {
+.acciones,
+.acciones-form {
   margin-top: 20px;
   display: flex;
   gap: 10px;
 }
 
-.mo-acciones button {
+.acciones button {
   display: flex;
   justify-content: flex-end;
   gap: 0.4rem;
   margin-top: auto;
 }
 
-.mo-editar {
-  background-color: #2563eb;
-  color: white;
-}
-
-.mo-eliminar {
-  background-color: #dc2626;
-  color: white;
-}
-
-.mo-guardar,
-.mo-btn-guardar {
+.btn-guardar {
   background-color: #1976d2;
   color: white;
   border: none;
@@ -218,8 +204,7 @@ margin-bottom: 1rem;
   transition: background 0.2s ease;
 }
 
-.mo-cancelar,
-.mo-btn-cancelar {
+.btn-cancelar {
   background-color: #e53935;
   color: white;
   border: none;
@@ -230,10 +215,10 @@ margin-bottom: 1rem;
   transition: background 0.2s ease;
 }
 
-/* Hover suave */
+/* Hover */
 
-.mo-acciones button:hover,
-.mo-acciones-form button:hover {
+.acciones button:hover,
+.acciones-form button:hover {
   opacity: 0.9;
 }
 
@@ -266,10 +251,6 @@ margin-bottom: 1rem;
   transform: translateY(-1px);
 }
 
-.paginacion button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
 .paginacion button:disabled {
   background-color: #c5c5c5;
   cursor: not-allowed;
@@ -286,7 +267,7 @@ margin-bottom: 1rem;
 /* UTILIDADES */
 /* ============================= */
 
-.mo-wrapper .hidden {
+.hidden {
   display: none !important;
 }
 
@@ -294,18 +275,8 @@ margin-bottom: 1rem;
 /* RESPONSIVE */
 /* ============================= */
 
-@media (max-width: 900px) {
-  .mo-grid-fechas {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 @media (max-width: 600px) {
-  .mo-grid-fechas {
+  #grupoReintegroMaterial .form-grid {
     grid-template-columns: 1fr;
-  }
-
-  .mo-campo-reintegro {
-    flex-direction: column;
   }
 }

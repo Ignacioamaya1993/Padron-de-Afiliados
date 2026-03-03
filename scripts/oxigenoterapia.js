@@ -27,8 +27,7 @@ export async function init(afiliadoId) {
   const btnNuevo = document.getElementById("btnNuevaOxigenoterapia");
   const btnCancelar = document.getElementById("btnCancelarOxigenoterapia");
 
-  const form = document.getElementById("formOxigenoterapiaForm");
-  const formContainer = document.getElementById("formOxigenoterapia");
+const form = document.getElementById("formOxigenoterapiaForm");
 
   const lista = document.getElementById("listaOxigenoterapia");
 
@@ -404,22 +403,22 @@ export async function init(afiliadoId) {
 
   btnNuevo.addEventListener("click", () => {
 
-    if (!formContainer.classList.contains("hidden")) {
-      form.reset();
-      resetAdjuntos();
-      formContainer.classList.add("hidden");
-      return;
-    }
-
+  if (!form.classList.contains("hidden")) {
     form.reset();
     resetAdjuntos();
-    formContainer.classList.remove("hidden");
+    form.classList.add("hidden");
+    return;
+  }
+
+  form.reset();
+  resetAdjuntos();
+  form.classList.remove("hidden");
   });
 
   btnCancelar.addEventListener("click", () => {
     form.reset();
     resetAdjuntos();
-    formContainer.classList.add("hidden");
+    form.classList.add("hidden");
   });
 
   form.addEventListener("submit", async e => {

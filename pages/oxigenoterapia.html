@@ -11,89 +11,83 @@ main, section {
 }
 </style>
 
-<!-- OXIGENOTERAPIA -->
+<section class="oxigenoterapia">
 
-<section id="oxigenoterapiaSection">
-
-  <!-- BOTÓN NUEVO -->
-      <button id="btnNuevaOxigenoterapia" class="btn-nuevo-oxigenoterapia">
+  <!-- BOTÓN NUEVA -->
+  <button id="btnNuevaOxigenoterapia" class="btn-nuevo-oxigenoterapia">
     + Nueva Oxigenoterapia
   </button>
 
+  <!-- FORMULARIO DE ALTA -->
+  <form id="formOxigenoterapiaForm" class="form-card_oxigenoterapia hidden">
 
-  <!-- FORMULARIO ALTA -->
-  <div id="formOxigenoterapia" class="form-card hidden">
-    <form id="formOxigenoterapiaForm">
+    <div class="form-grid">
 
-      <div class="grid-fechas">
-
-        <div>
-          <label for="tipoEquipoOxigenoterapia">Tipo equipo</label>
-          <select id="tipoEquipoOxigenoterapia" name="tipoequipo_id" required>
-            <option value="">Seleccione</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="fechaInicioTratamiento">Fecha inicio tratamiento</label>
-          <input 
-            type="date" 
-            id="fechaInicioTratamiento" 
-            name="fecha_inicio_tratamiento" 
-            required
-          >
-        </div>
-
-        <div>
-          <label for="fechaFinTratamiento">Fecha fin tratamiento</label>
-          <input 
-            type="date" 
-            id="fechaFinTratamiento" 
-            name="fecha_fin_tratamiento"
-          >
-        </div>
-
+      <div class="campo">
+        <label for="tipoEquipoOxigenoterapia">Tipo equipo</label>
+        <select id="tipoEquipoOxigenoterapia" name="tipoequipo_id" required>
+          <option value="">Seleccione</option>
+        </select>
       </div>
 
-      <div class="full-width">
-        <label for="observacionOxigenoterapia">Observación</label>
-        <textarea 
-          id="observacionOxigenoterapia" 
-          name="observacion"
-        ></textarea>
-      </div>
-
-      <!-- ADJUNTOS -->
-      <div>
-        <label>Adjuntos</label>
-
-        <div id="adjuntosOxigenoterapiaContainer"></div>
-
-        <button 
-          type="button" 
-          id="btnAgregarAdjuntoOxigenoterapia"
+      <div class="campo">
+        <label for="fechaInicioTratamiento">Fecha inicio tratamiento</label>
+        <input 
+          type="date" 
+          id="fechaInicioTratamiento" 
+          name="fecha_inicio_tratamiento" 
+          required
         >
-          ➕ Agregar adjunto
-        </button>
       </div>
 
-      <!-- ACCIONES -->
-
-      <div class="acciones">
-        <button type="submit">💾 Guardar</button>
-        <button 
-          type="button" 
-          id="btnCancelarOxigenoterapia"
+      <div class="campo">
+        <label for="fechaFinTratamiento">Fecha fin tratamiento</label>
+        <input 
+          type="date" 
+          id="fechaFinTratamiento" 
+          name="fecha_fin_tratamiento"
         >
-          Cancelar
-        </button>
       </div>
 
-    </form>
-  </div>
+    </div>
+
+    <div class="campo full">
+      <label for="observacionOxigenoterapia">Observación</label>
+      <textarea 
+        id="observacionOxigenoterapia" 
+        name="observacion"
+        rows="3"
+      ></textarea>
+    </div>
+
+    <!-- ADJUNTOS -->
+    <div class="bloque-adjuntos">
+      <label>Adjuntar Documentos</label>
+      <div id="adjuntosOxigenoterapiaContainer" class="adjuntos-nuevos_oxigenoterapia"></div>
+      <button 
+        type="button" 
+        id="btnAgregarAdjuntoOxigenoterapia"
+      >
+        ➕ Agregar adjunto
+      </button>
+    </div>
+
+    <!-- ACCIONES -->
+    <div class="acciones-form">
+      <button type="submit" class="btn-guardar">Guardar</button>
+      <button 
+        type="button" 
+        id="btnCancelarOxigenoterapia"
+        class="btn-cancelar"
+      >
+        Cancelar
+      </button>
+    </div>
+
+  </form>
 
   <!-- LISTADO (CARDS) -->
-  <div id="listaOxigenoterapia"></div>
+  <div id="listaOxigenoterapia" class="lista-cards"></div>
 
   <!-- PAGINACIÓN -->
   <div id="paginacionOxigenoterapia" class="paginacion"></div>

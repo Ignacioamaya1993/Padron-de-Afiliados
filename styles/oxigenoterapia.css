@@ -2,56 +2,128 @@
 /* OXIGENOTERAPIA - Estilo */
 /* ===================== */
 
+/* ===================== */
+/* OXIGENOTERAPIA */
+/* ===================== */
+
+.btn-nuevo-oxigenoterapia {
+  background-color: #2f80ed;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+/* Card del formulario */
+.form-card_oxigenoterapia {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #fff;
+  max-width: 60%;
+}
+
+/* Inputs dentro del form */
+.form-card_oxigenoterapia textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-card_oxigenoterapia textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Adjuntos nuevos */
+.adjuntos-nuevos_oxigenoterapia {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  background-color: #fff;
+  min-width: 380px;
+}
+
+/* LISTADO */
+#listaOxigenoterapia {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: flex-start;
+}
+
+/* Cards */
+#listaOxigenoterapia .card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  background: #fff;
+  width: 320px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Título card */
+.card-titulo-oxigenoterapia {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #0f172a;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Grid fechas */
+.grid-fechas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+/* Acciones card */
+#listaOxigenoterapia .acciones {
+  margin-top: 10px;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Adjuntos dentro de cards */
+.adjuntos-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.adjuntos-card a {
+  text-decoration: none;
+  color: #2f6fed;
+}
+
 .btn-nuevo-oxigenoterapia{
 background-color: #2f80ed;
 color: white;
 margin-bottom: 1rem;
 }
 
-.form-card {
+.form-card_oxigenoterapia {
   border: 1px solid #ddd !important;
   border-radius: 10px !important;
   padding: 20px !important;
   margin-bottom: 20px !important;
   background: #fff !important;
-  max-width: 900px !important;
+  max-width: 50% !important;
 }
 
 /* =====================
    Formulario Oxigenoterapia
 ===================== */
-
-#formOxigenoterapia {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  align-items: start;
-  max-width: 1100px;
-}
-
-/* Cada bloque del form */
-#formOxigenoterapia > form > div {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-/* Inputs y selects ocupan toda su celda */
-#formOxigenoterapia input,
-#formOxigenoterapia select,
-#formOxigenoterapia textarea {
-  max-width: 100%;
-  box-sizing: border-box;
-  padding: 0.4rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 0.9rem;
-}
-
-/* Textarea observación ocupa 2 columnas */
-#observacionOxigenoterapia {
-  grid-column: span 2;
-}
 
 /* Contenedor adjuntos ocupa todo el ancho */
 #adjuntosOxigenoterapiaContainer {
@@ -70,14 +142,6 @@ margin-bottom: 1rem;
   padding: 0.5rem 1rem;
   transition: opacity 0.2s ease, transform 0.1s ease;
   max-width: 180px;
-}
-
-/* Acciones del formulario */
-#formOxigenoterapia .acciones {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-start;
 }
 
 /* Botones nuevo / cancelar */
@@ -168,13 +232,8 @@ margin-bottom: 1rem;
   display: none !important;
 }
 
-/* =====================
-   PAGINACIÓN CENTRADA
-===================== */
+/* PAGINACIÓN  */
 
-/* ===================== */
-/* PAGINACIÓN DERIVACIONES */
-/* ===================== */
 .paginacion {
   display: flex;
   justify-content: center;

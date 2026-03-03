@@ -46,6 +46,15 @@ input[type="file"] {
   gap: 1rem;
 }
 
+.card-titulo-atencion {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #0f172a;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
 /* Estilos botones */
 .btn-principal,
 .btn-guardar,

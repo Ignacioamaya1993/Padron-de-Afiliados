@@ -444,8 +444,12 @@ async function buscarAfiliados(texto, token) {
 
     resultadosDiv.innerHTML = "";
     if (!afiliados.length) {
-      resultadosDiv.innerHTML = "<p style='opacity:.7'>Sin resultados</p>";
-      return;
+    resultadosDiv.innerHTML = `
+      <div class="sin-resultados">
+        🔍 No se encontraron afiliados
+      </div>
+    `;      
+    return;
     }
 
       /*

@@ -76,18 +76,18 @@ button:active {
 /* ===================== */
 /* FORMULARIO */
 /* ===================== */
-.form-card {
+.form-card_traslado {
   border: 1px solid #ddd !important;
   border-radius: 10px !important;
   padding: 20px !important;
   margin-bottom: 20px !important;
   background: #fff !important;
-  max-width: 900px !important;
+  max-width: 50% !important;
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1rem;
 }
 
@@ -121,9 +121,11 @@ button:active {
   grid-column: 1 / -1;
 }
 
-form textarea {
-  resize: vertical;
+.form-card_traslado textarea {
+    resize: vertical;
+    min-height: 80px;
 }
+
 
 /* Input file */
 input[type="file"] {
@@ -133,6 +135,7 @@ input[type="file"] {
   padding: 0.4rem;
   cursor: pointer;
   max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* ===================== */

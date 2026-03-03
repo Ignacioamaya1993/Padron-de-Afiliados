@@ -8,13 +8,23 @@ color: white;
 margin-bottom: 1rem;
 }
 
-.form-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  background: #fff;
-  max-width: 1100px;
+.form-card_expediente {
+  border: 1px solid #ddd !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  margin-bottom: 20px !important;
+  background: #fff !important;
+  max-width: 50% !important;
+}
+
+/* Input file */
+input[type="file"] {
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  background: #fff7ed;
+  padding: 0.4rem;
+  cursor: pointer;
+  max-width: 100%;
 }
 
 .form-card label {
@@ -23,38 +33,33 @@ margin-bottom: 1rem;
   font-weight: 600;
 }
 
-.form-card input,
-.form-card select,
-.form-card textarea {
-  width: 100%;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  margin-bottom: 15px;
+.form-card_expediente select,
+.form-card_expediente textarea {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
 }
 
-.form-card textarea {
-  resize: vertical;
-  min-height: 80px;
+.form-card_expediente textarea {
+    resize: vertical;
+    min-height: 80px;
 }
 
 /* ============================== */
 /* GRIDS */
 /* ============================== */
 
-.grid-2 {
+/* Grid principal del formulario */
+.form-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
 }
 
-.grid-fechas {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-}
-
-.full-width {
+.form-grid .full {
   grid-column: 1 / -1;
 }
 

@@ -18,12 +18,12 @@ export async function init(afiliadoId) {
   const adjuntosContainer = document.getElementById("adjuntosMaterialesContainer");
   const btnAgregarAdjunto = document.getElementById("btnAgregarAdjuntoMaterial");
   const tipoSelect = document.getElementById("tipoMaterialOrtopedico");
-
-  const campoReintegro = form.querySelector(".prx-campo-reintegro");
+  const grupoReintegro = document.getElementById("grupoReintegroMaterial");
 
   /* =====================
      CARGAR TIPOS
   ===================== */
+
   async function cargarTipos() {
 
     const { data } = await supabase
@@ -31,7 +31,7 @@ export async function init(afiliadoId) {
       .select("id, nombre")
       .order("nombre");
 
-    tipoSelect.innerHTML = `<option value="">Seleccione...</option>`;
+    tipoSelect.innerHTML = `<option value="">Seleccionar...</option>`;
 
     data?.forEach(t => {
       const opt = document.createElement("option");
@@ -54,7 +54,7 @@ export async function init(afiliadoId) {
   function agregarAdjuntoInput(obligatorio = false) {
 
     const wrapper = document.createElement("div");
-    wrapper.className = "prx-adjunto-item";
+    wrapper.className = "adjunto-item";
 
     const input = document.createElement("input");
     input.type = "file";
@@ -66,13 +66,13 @@ export async function init(afiliadoId) {
 
     wrapper.archivo = null;
     archivosAdjuntos.push(wrapper);
+
     wrapper.appendChild(input);
 
     if (!obligatorio) {
       const btnEliminar = document.createElement("button");
       btnEliminar.type = "button";
       btnEliminar.textContent = "✖";
-      btnEliminar.className = "prx-btn-eliminar-adjunto";
       btnEliminar.onclick = () => wrapper.remove();
       wrapper.appendChild(btnEliminar);
     }
@@ -123,99 +123,100 @@ export async function init(afiliadoId) {
       const opcionesTipo = tipoSelect.innerHTML;
 
       const card = document.createElement("div");
-      card.className = "prx-card";
+      card.className = "card";
       card.dataset.id = r.id;
 
       card.innerHTML = `
-        <div class="prx-grid-fechas">
-          <div class="prx-field">
+        <div class="grid-2">
+          <div>
             <label>Fecha carga</label>
             <input type="date" readonly value="${fISO(r.fecha_carga)}">
           </div>
-          <div class="prx-field">
+
+          <div>
             <label>Tipo</label>
-            <select class="prx-tipo-select" disabled>
+            <select class="tipo-select" disabled>
               ${opcionesTipo}
             </select>
           </div>
-        </div>
 
-        <div class="prx-campo-reintegro">
-          <div class="prx-field">
+          <div>
             <label>Reintegro</label>
             <input type="number" value="${r.reintegro ?? ''}" readonly>
           </div>
-          <div class="prx-field">
+
+          <div>
             <label>Fecha reintegro</label>
             <input type="date" value="${fISO(r.fecha_reintegro)}" readonly>
           </div>
         </div>
 
-        <div class="prx-field">
+        <div class="full-width">
           <label>Observación</label>
           <textarea readonly>${r.observacion || ""}</textarea>
         </div>
 
         ${documentos.length ? `
-        <div class="prx-adjuntos-card">
+        <div class="adjuntos-card">
           ${documentos.map(d => `
-            <div class="prx-adjunto-item" data-doc-id="${d.id}">
+            <div class="adjunto-item" data-doc-id="${d.id}">
               <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-              <button class="prx-eliminar-doc hidden">✖</button>
+              <button class="eliminar-doc hidden">✖</button>
             </div>
           `).join("")}
         </div>
 
-        <div class="prx-adjuntos-edicion hidden">
-          <button class="prx-agregar-adjunto-card">➕ Agregar adjunto</button>
-          <div class="prx-nuevos-adjuntos"></div>
+        <div class="adjuntos-edicion hidden">
+          <button class="agregar-adjunto-card">➕ Agregar adjunto</button>
+          <div class="nuevos-adjuntos"></div>
         </div>
         ` : ""}
 
         <div class="acciones">
-          <button class="prx-editar">✏️ Editar</button>
-          <button class="prx-eliminar">🗑️ Eliminar</button>
-          <button class="prx-guardar hidden">💾 Guardar</button>
-          <button class="prx-cancelar hidden">Cancelar</button>
+          <button class="editar">✏️ Editar</button>
+          <button class="eliminar">🗑️ Eliminar</button>
+          <button class="guardar hidden">💾 Guardar</button>
+          <button class="cancelar hidden">Cancelar</button>
         </div>
       `;
 
       lista.appendChild(card);
 
-      card.querySelector(".prx-tipo-select").value = r.tipo_material_id || "";
+      card.querySelector(".tipo-select").value = r.tipo_material_id || "";
 
-      const btnEditar = card.querySelector(".prx-editar");
-      const btnGuardar = card.querySelector(".prx-guardar");
-      const btnCancelarCard = card.querySelector(".prx-cancelar");
-      const btnEliminar = card.querySelector(".prx-eliminar");
+      const btnEditar = card.querySelector(".editar");
+      const btnGuardar = card.querySelector(".guardar");
+      const btnCancelarCard = card.querySelector(".cancelar");
+      const btnEliminar = card.querySelector(".eliminar");
 
       const inputs = card.querySelectorAll("input, textarea");
       const select = card.querySelector("select");
-      const adjuntosEdicion = card.querySelector(".prx-adjuntos-edicion");
-      const nuevosAdjuntosContainer = card.querySelector(".prx-nuevos-adjuntos");
+      const adjuntosEdicion = card.querySelector(".adjuntos-edicion");
+      const nuevosAdjuntosContainer = card.querySelector(".nuevos-adjuntos");
 
       let nuevosAdjuntos = [];
+
+      /* ===== EDITAR ===== */
 
       btnEditar.addEventListener("click", () => {
 
         inputs.forEach(i => i.removeAttribute("readonly"));
         select.removeAttribute("disabled");
 
-        card.querySelectorAll(".prx-eliminar-doc")
+        card.querySelectorAll(".eliminar-doc")
             .forEach(b => b.classList.remove("hidden"));
 
-        if (adjuntosEdicion)
-          adjuntosEdicion.classList.remove("hidden");
+        adjuntosEdicion?.classList.remove("hidden");
 
         btnEditar.classList.add("hidden");
         btnEliminar.classList.add("hidden");
         btnGuardar.classList.remove("hidden");
         btnCancelarCard.classList.remove("hidden");
-
-        card.classList.add("modo-edicion");
       });
 
       btnCancelarCard.addEventListener("click", () => cargarMateriales());
+
+      /* ===== ELIMINAR REGISTRO ===== */
 
       btnEliminar.addEventListener("click", async () => {
 
@@ -223,64 +224,65 @@ export async function init(afiliadoId) {
           title: '¿Está seguro?',
           text: "Se eliminará el material ortopédico y sus adjuntos.",
           icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
+          showCancelButton: true,
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar'
         });
 
         if (!ok.isConfirmed) return;
 
-        await supabase
-          .from("materiales_ortopedicos")
+        await supabase.from("materiales_ortopedicos")
           .delete()
           .eq("id", r.id);
 
         cargarMateriales();
       });
 
-      card.querySelectorAll(".prx-eliminar-doc").forEach(btn => {
+      /* ===== ELIMINAR DOCUMENTO ===== */
+
+      card.querySelectorAll(".eliminar-doc").forEach(btn => {
         btn.addEventListener("click", async () => {
 
-          const docId = btn.closest(".prx-adjunto-item").dataset.docId;
+          const docId = btn.closest(".adjunto-item").dataset.docId;
 
           await supabase
             .from("fichamedica_documentos")
             .delete()
             .eq("id", docId);
 
-          btn.closest(".prx-adjunto-item").remove();
+          btn.closest(".adjunto-item").remove();
         });
       });
 
-      if (adjuntosEdicion) {
-        card.querySelector(".prx-agregar-adjunto-card")
-          .addEventListener("click", () => {
+      /* ===== AGREGAR NUEVO ADJUNTO EN EDICIÓN ===== */
 
-            const wrapper = document.createElement("div");
-            wrapper.className = "prx-adjunto-item";
+      adjuntosEdicion?.querySelector(".agregar-adjunto-card")
+        ?.addEventListener("click", () => {
 
-            const input = document.createElement("input");
-            input.type = "file";
-            input.accept = ".pdf,.jpg,.png";
+          const wrapper = document.createElement("div");
+          wrapper.className = "adjunto-item";
 
-            input.addEventListener("change", () => {
-              wrapper.archivo = input.files[0] || null;
-            });
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = ".pdf,.jpg,.png";
 
-            wrapper.archivo = null;
-            nuevosAdjuntos.push(wrapper);
+          input.addEventListener("change", () => {
+            wrapper.archivo = input.files[0] || null;
+          });
 
-            const btnX = document.createElement("button");
-            btnX.textContent = "✖";
-            btnX.type = "button";
-            btnX.onclick = () => wrapper.remove();
+          wrapper.archivo = null;
+          nuevosAdjuntos.push(wrapper);
 
-            wrapper.append(input, btnX);
-            nuevosAdjuntosContainer.appendChild(wrapper);
-        });
-      }
+          const btnX = document.createElement("button");
+          btnX.textContent = "✖";
+          btnX.type = "button";
+          btnX.onclick = () => wrapper.remove();
+
+          wrapper.append(input, btnX);
+          nuevosAdjuntosContainer.appendChild(wrapper);
+      });
+
+      /* ===== GUARDAR EDICIÓN ===== */
 
       btnGuardar.addEventListener("click", async () => {
 
@@ -296,6 +298,8 @@ export async function init(afiliadoId) {
           .from("materiales_ortopedicos")
           .update(updated)
           .eq("id", r.id);
+
+        /* SUBIR NUEVOS ADJUNTOS */
 
         for (const adj of nuevosAdjuntos) {
           if (!adj.archivo) continue;
@@ -340,6 +344,8 @@ export async function init(afiliadoId) {
       .select()
       .single();
 
+    /* SUBIR ADJUNTOS NUEVOS */
+
     for (const adj of archivosAdjuntos) {
       if (!adj.archivo) continue;
 
@@ -365,7 +371,7 @@ export async function init(afiliadoId) {
   btnNuevo.addEventListener("click", () => {
     form.reset();
     resetAdjuntos();
-    campoReintegro.classList.add("hidden");
+    grupoReintegro?.classList.add("hidden");
     form.classList.toggle("hidden");
   });
 

@@ -142,24 +142,27 @@ export async function init(afiliadoId) {
       card.className = "card";
       card.dataset.id = r.id;
 
-        // Crear opciones del select de tipos
-  const opcionesTipo = tiposAtencion.map(t =>
-    `<option value="${t.id}" ${r.tipo_atencion_id === t.id ? "selected" : ""}>${t.nombre}</option>`
-  ).join("");
+  const tipoNombre = tiposAtencion.find(t => t.id === r.tipo_atencion_id)?.nombre || "Sin tipo";
 
-      card.innerHTML = `
-        <div class="grid-fechas">
-              <div class="form-group">
-        <label>Tipo</label>
-        <select name="tipo_atencion_id" disabled>
-          <option value="">Seleccionar</option>
-          ${opcionesTipo}
-        </select>
+    card.innerHTML = `
+      <div class="card-titulo-atencion">
+        ${tipoNombre}
       </div>
-          <div><label>Fecha carga</label><input type="date" name="fecha_carga" readonly value="${fISO(r.fecha_carga)}"></div>
-          <div><label>Fecha inicio período</label><input type="date" name="fecha_inicio_periodo" readonly value="${fISO(r.fecha_inicio_periodo)}"></div>
-          <div><label>Fecha fin período</label><input type="date" name="fecha_fin_periodo" readonly value="${fISO(r.fecha_fin_periodo)}"></div>
+
+      <div class="grid-fechas">
+        <div>
+          <label>Fecha carga</label>
+          <input type="date" name="fecha_carga" readonly value="${fISO(r.fecha_carga)}">
         </div>
+        <div>
+          <label>Fecha inicio período</label>
+          <input type="date" name="fecha_inicio_periodo" readonly value="${fISO(r.fecha_inicio_periodo)}">
+        </div>
+        <div>
+          <label>Fecha fin período</label>
+          <input type="date" name="fecha_fin_periodo" readonly value="${fISO(r.fecha_fin_periodo)}">
+        </div>
+      </div>
 
         <div class="form-group full-width campo-reintegro">
           <div>
@@ -208,9 +211,6 @@ lista.addEventListener("click", async e => {
   if (e.target.classList.contains("editar")) {
     // Habilitar inputs y textarea
     card.querySelectorAll("input, textarea").forEach(el => el.removeAttribute("readonly"));
-    // Habilitar select tipo
-    const selectTipo = card.querySelector("select[name='tipo_atencion_id']");
-    if (selectTipo) selectTipo.removeAttribute("disabled");
 
     // Mostrar botones de eliminar adjuntos existentes
     card.querySelectorAll(".btn-eliminar-adjunto").forEach(btn => btn.classList.remove("hidden"));
@@ -250,7 +250,6 @@ lista.addEventListener("click", async e => {
   // =====================
   if (e.target.classList.contains("guardar")) {
     const datosUpdate = {
-      tipo_atencion_id: card.querySelector("select[name='tipo_atencion_id']").value,
       fecha_carga: card.querySelector("[name='fecha_carga']").value,
       fecha_inicio_periodo: card.querySelector("[name='fecha_inicio_periodo']").value,
       fecha_fin_periodo: card.querySelector("[name='fecha_fin_periodo']").value,

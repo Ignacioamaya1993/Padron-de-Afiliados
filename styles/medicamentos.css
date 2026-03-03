@@ -97,10 +97,6 @@ button:active {
   max-width: 170px;
 }
 
-.grid-medicamento .acciones {
-  display: inline-block
-}
-
 /* ===================== */
 /* FORMULARIO */
 /* ===================== */
@@ -114,8 +110,7 @@ button:active {
 }
 
 /* Inputs */
-form input
-{
+form input {
   padding: 8px 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -357,6 +352,20 @@ input[type="file"] {
   font-weight: 600;
   color: #444;
   font-size: 0.95rem;
+}
+
+.grid-medicamento > div:not(.form-actions) {
+  display: flex;
+  flex-direction: column;
+}
+
+.full-row {
+  grid-column: span 1; /* NO ocupa todo el grid */
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.6rem;
 }
 
 /* ===================== */
