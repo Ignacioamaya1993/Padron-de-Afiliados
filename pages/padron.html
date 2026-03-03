@@ -20,17 +20,20 @@
 <main class="padron-home">
 
   <!-- BUSCADOR PRINCIPAL -->
-  <section class="buscador-principal">
+<section class="buscador-principal">
+  <form autocomplete="off" onsubmit="return false;">
     <input
-      type="text"
-      id="searchInput" 
-      name="buscar-afiliado"
+      type="search"
+      id="searchInput"
+      name="q_internal_padron"
       placeholder="Buscar afiliado, DNI o N° de afiliado..."
       autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
       spellcheck="false"
-      autofocus
     />
-  </section>
+  </form>
+</section>
 
   <!-- ACCIONES -->
   <section class="acciones-principales">
