@@ -192,26 +192,32 @@ async function cargarMedicamentos() {
     card._adjuntosNuevos = [];
     card._adjuntosEliminar = [];
 
-    card.innerHTML = `
-      <strong>${med.tipo_medicamentos?.nombre || "-"}</strong>
+card.innerHTML = `
+  <strong>${med.tipo_medicamentos?.nombre || "-"}</strong>
 
-      <div class="med-card-section grid-fechas">
-        <div><label>Fecha de carga</label><input type="date" name="fecha_carga" readonly value="${fISO(med.fecha_carga)}"></div>
-        <div><label>Fecha de autorización</label><input type="date" name="fecha_autorizacion" readonly value="${fISO(med.fecha_autorizacion)}"></div>
-        <div><label>Fecha de entrega</label><input type="date" name="fecha_entrega" readonly value="${fISO(med.fecha_entrega)}"></div>
-        <div><label>Próxima carga</label><input type="date" name="proxima_carga" readonly value="${fISO(med.proxima_carga)}"></div>
-      </div>
+  <div class="card-content">
 
-      ${med.latas_entregadas ? `
-      <div class="med-card-section grid-fechas">
-        <div><label>Latas entregadas</label><input name="latas_entregadas" readonly value="${med.latas_entregadas}"></div>
-      </div>` : ""}
+    <div class="med-card-section grid-fechas">
+      <div><label>Fecha de carga</label><input type="date" name="fecha_carga" readonly value="${fISO(med.fecha_carga)}"></div>
+      <div><label>Fecha de autorización</label><input type="date" name="fecha_autorizacion" readonly value="${fISO(med.fecha_autorizacion)}"></div>
+      <div><label>Fecha de entrega</label><input type="date" name="fecha_entrega" readonly value="${fISO(med.fecha_entrega)}"></div>
+      <div><label>Próxima carga</label><input type="date" name="proxima_carga" readonly value="${fISO(med.proxima_carga)}"></div>
+    </div>
 
-      ${[6,7].includes(med.tipo_medicamento_id) ? `
-      <div class="med-card-section grid-fechas">
-        <div><label>Inicio</label><input type="date" name="fecha_inicio" readonly value="${fISO(med.fecha_inicio)}"></div>
-        <div><label>Vencimiento</label><input type="date" name="fecha_vencimiento" readonly value="${fISO(med.fecha_vencimiento)}"></div>
-      </div>` : ""}
+  </div>
+
+  <div class="card-extra">
+
+    ${med.latas_entregadas ? `
+    <div class="med-card-section grid-fechas">
+      <div><label>Latas entregadas</label><input name="latas_entregadas" readonly value="${med.latas_entregadas}"></div>
+    </div>` : ""}
+
+    ${[6,7].includes(med.tipo_medicamento_id) ? `
+    <div class="med-card-section grid-fechas">
+      <div><label>Inicio</label><input type="date" name="fecha_inicio" readonly value="${fISO(med.fecha_inicio)}"></div>
+      <div><label>Vencimiento</label><input type="date" name="fecha_vencimiento" readonly value="${fISO(med.fecha_vencimiento)}"></div>
+    </div>` : ""}
 
     <div class="med-card-section grid-fechas">
       <div>
@@ -223,36 +229,40 @@ async function cargarMedicamentos() {
         <input type="date" name="fecha_reintegro" readonly value="${fISO(med.fecha_reintegro)}">
       </div>
     </div>
-      
-      <div class="med-card-section">
-        <label>Observaciones</label>
-        <textarea name="observaciones" readonly>${med.observaciones || "Sin observaciones"}</textarea>
-      </div>
 
-      ${documentos.length ? `
-      <div class="med-card-section adjuntos-card">
-        <label>Adjuntos</label>
-        <div class="adjuntos-lista">
-          ${documentos.map(d => `
-            <div class="adjunto-item" data-doc-id="${d.id}">
-              <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-              <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
-            </div>`).join("")}
-        </div>
-      </div>` : ""}
+    <div class="med-card-section">
+      <label>Observaciones</label>
+      <textarea name="observaciones" readonly>${med.observaciones || "Sin observaciones"}</textarea>
+    </div>
 
-      <div class="med-card-section hidden adjuntos-edicion">
-        <button type="button" class="btn-agregar-adjunto-card">➕ Agregar adjunto</button>
-        <div class="adjuntos-nuevos"></div>
+    ${documentos.length ? `
+    <div class="med-card-section adjuntos-card">
+      <label>Adjuntos</label>
+      <div class="adjuntos-lista">
+        ${documentos.map(d => `
+          <div class="adjunto-item" data-doc-id="${d.id}">
+            <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+            <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
+          </div>`).join("")}
       </div>
+    </div>` : ""}
 
-      <div class="acciones">
-        <button class="editar">✏️ Editar</button>
-        <button class="eliminar">🗑️ Eliminar</button>
-        <button class="guardar hidden">💾 Guardar</button>
-        <button class="cancelar hidden">Cancelar</button>
-      </div>
-    `;
+  </div>
+
+  <button class="toggle-card">Ver más</button>
+
+  <div class="med-card-section hidden adjuntos-edicion">
+    <button type="button" class="btn-agregar-adjunto-card">➕ Agregar adjunto</button>
+    <div class="adjuntos-nuevos"></div>
+  </div>
+
+  <div class="acciones">
+    <button class="editar">✏️ Editar</button>
+    <button class="eliminar">🗑️ Eliminar</button>
+    <button class="guardar hidden">💾 Guardar</button>
+    <button class="cancelar hidden">Cancelar</button>
+  </div>
+`;
 
     fragment.appendChild(card);
   }
@@ -309,6 +319,18 @@ function renderPaginacion(total) {
       Swal.fire("Atención", "Solo se puede editar una card a la vez", "warning");
       return;
     }
+
+    // TOGGLE VER MÁS
+if (e.target.classList.contains("toggle-card")) {
+  const card = e.target.closest(".card");
+  card.classList.toggle("expandida");
+
+  e.target.textContent = card.classList.contains("expandida")
+    ? "Ver menos"
+    : "Ver más";
+
+  return;
+}
 
     // EDITAR
     if (e.target.classList.contains("editar")) {

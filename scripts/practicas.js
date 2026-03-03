@@ -157,91 +157,87 @@ function actualizarCamposPorTipo() {
       docsPorPractica[d.entidad_relacion_id].push(d);
     });
 
-    const fISO = d => (d ? d.split("T")[0] : "");
+ const fISO = d => (d ? d.split("T")[0] : "");
 
-    for (const p of practicas) {
+for (const p of practicas) {
+  const documentos = docsPorPractica[p.id] || [];
 
-      const documentos = docsPorPractica[p.id] || [];
+  const card = document.createElement("div");
+  card.className = "card";
+  card.dataset.id = p.id;
+  card._adjuntosNuevos = [];
+  card._adjuntosEliminar = [];
 
-      const card = document.createElement("div");
-      card.className = "card";
-      card.dataset.id = p.id;
-      card._adjuntosNuevos = [];
-      card._adjuntosEliminar = [];
+  card.innerHTML = `
+    <strong>${p.tipo.toUpperCase()}</strong>
 
-      card.innerHTML = `
-        <strong>${p.tipo.toUpperCase()}</strong>
+    <!-- SECCIÓN PRINCIPAL -->
+    <div class="card-principal">
+      <div><label>Fecha carga</label>
+        <input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}">
+      </div>
 
-        <div class="grid-fechas">
-          <div><label>Fecha carga</label><input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}"></div>
-          <div><label>Fecha orden</label><input type="date" name="fecha_orden" readonly value="${fISO(p.fecha_orden)}"></div>
-          <div><label>Fecha recepción</label><input type="date" name="fecha_recepcion_orden" readonly value="${fISO(p.fecha_recepcion_orden)}"></div>
+      <div><label>Kinesiólogo</label>
+        <input name="nombre_kinesiologo" readonly value="${p.nombre_kinesiologo || ""}">
+      </div>
 
-        <div>
-        <label>Autorización</label>
-        <select name="autorizacion" disabled>
-            <option value="true" ${p.autorizacion ? "selected" : ""}>Sí</option>
-            <option value="false" ${!p.autorizacion ? "selected" : ""}>No</option>
-        </select>        
-        </div>
-
-          <div><label>Fecha autorización</label><input type="date" name="fecha_autorizacion" readonly value="${fISO(p.fecha_autorizacion)}"></div>
-
-        </div>
-
-        ${p.nombre_kinesiologo ? `
-        <div>
-          <label>Kinesiólogo</label>
-          <input name="nombre_kinesiologo" readonly value="${p.nombre_kinesiologo}">
-        </div>` : ""}
-
-        ${p.lugar ? `
-        <div>
-          <label>Lugar</label>
-        <select name="lugar" disabled>
-        <option value="">Seleccione</option>
-        <option value="Maria Auxiliadora" ${p.lugar === "Maria Auxiliadora" ? "selected" : ""}>Maria Auxiliadora</option>
-        <option value="CEMEDA" ${p.lugar === "CEMEDA" ? "selected" : ""}>CEMEDA</option>
-        </select>
-        </div>` : ""}
-
-        ${p.prestador ? `
-        <div>
-          <label>Prestador</label>
-          <input readonly value="${p.prestador}">
-        </div>` : ""}
-
-        <div><label>Reintegro</label><input type="number" step="0.01" name="reintegro" readonly value="${p.reintegro ?? ""}"></div>
-
-    <div class="full-width fecha-reintegro">
-      <label>Fecha reintegro</label>
-      <input type="date" name="fecha_reintegro" readonly value="${fISO(p.fecha_reintegro)}">
+      <div><label>Lugar</label>
+        <input name="lugar" readonly value="${p.lugar || ""}">
+      </div>
     </div>
 
-        <div class="med-card-section">
-          <label>Observación</label>
-          <textarea name="observacion" readonly>${p.observacion || "Sin observaciones"}</textarea>
-        </div>
+    <!-- SECCIÓN EXPANDIBLE -->
+    <div class="card-extra hidden">
+      <div><label>Fecha orden</label>
+        <input type="date" name="fecha_orden" readonly value="${fISO(p.fecha_orden)}">
+      </div>
+      <div><label>Fecha recepción</label>
+        <input type="date" name="fecha_recepcion_orden" readonly value="${fISO(p.fecha_recepcion_orden)}">
+      </div>
+      <div><label>Autorización</label>
+        <select name="autorizacion" disabled>
+          <option value="true" ${p.autorizacion ? "selected" : ""}>Sí</option>
+          <option value="false" ${!p.autorizacion ? "selected" : ""}>No</option>
+        </select>
+      </div>
+      <div><label>Fecha autorización</label>
+        <input type="date" name="fecha_autorizacion" readonly value="${fISO(p.fecha_autorizacion)}">
+      </div>
+      <div><label>Reintegro</label>
+        <input type="number" step="0.01" name="reintegro" readonly value="${p.reintegro ?? ""}">
+      </div>
+      <div><label>Fecha reintegro</label>
+        <input type="date" name="fecha_reintegro" readonly value="${fISO(p.fecha_reintegro)}">
+      </div>
+      <div><label>Observación</label>
+        <textarea name="observacion" readonly>${p.observacion || "Sin observaciones"}</textarea>
+      </div>
 
-        ${documentos.length ? `
-        <div class="adjuntos-card">
-          ${documentos.map(d => `
-            <div class="adjunto-item" data-doc-id="${d.id}">
-              <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-              <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
-            </div>`).join("")}
-        </div>` : ""}
+      ${documentos.length ? `
+      <div class="adjuntos-card">
+        ${documentos.map(d => `
+          <div class="adjunto-item" data-doc-id="${d.id}">
+            <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+            <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
+          </div>
+        `).join("")}
+      </div>` : ""}
+    </div>
 
-        <div class="acciones">
-          <button class="editar">✏️ Editar</button>
-          <button class="eliminar">🗑️ Eliminar</button>
-          <button class="guardar hidden">💾 Guardar</button>
-          <button class="cancelar hidden">Cancelar</button>
-        </div>
-      `;
+    <!-- BOTÓN VER MÁS -->
+    <button type="button" class="toggle-card">Ver más</button>
 
-      lista.appendChild(card);
-    }
+    <!-- ACCIONES -->
+    <div class="acciones">
+      <button class="editar">✏️ Editar</button>
+      <button class="eliminar">🗑️ Eliminar</button>
+      <button class="guardar hidden">💾 Guardar</button>
+      <button class="cancelar hidden">Cancelar</button>
+    </div>
+  `;
+
+  lista.appendChild(card);
+}
   }
 
   /* =====================
@@ -254,6 +250,19 @@ lista.addEventListener("click", async e => {
   if (!card) return;
 
   const id = card.dataset.id;
+  
+  //“Ver más / Ver menos”
+if (e.target.classList.contains("toggle-card")) {
+  const extra = card.querySelector(".card-extra");
+  if (!extra) return;
+
+  extra.classList.toggle("mostrar");
+
+  e.target.textContent = extra.classList.contains("mostrar")
+    ? "Ver menos"
+    : "Ver más";
+  return;
+}
 
   /* ========= EDITAR ========= */
 
@@ -427,36 +436,41 @@ for (const docId of card._adjuntosEliminar) {
 
 });
 
-  function renderPaginacion(total) {
+  /* =====================
+     PAGINACIÓN
+  ===================== */
+  
+function renderPaginacion(total) {
+  const contenedor = document.getElementById("paginacionPracticas");
+  contenedor.innerHTML = "";
 
-    const contenedor = document.getElementById("paginacionPracticas");
-    contenedor.innerHTML = "";
+  // Aseguramos que siempre haya al menos 1 página
+  const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
 
-    const totalPaginas = Math.ceil(total / POR_PAGINA);
+  // Botón anterior
+  const btnAnterior = document.createElement("button");
+  btnAnterior.textContent = "⬅ Anterior";
+  btnAnterior.disabled = paginaActual === 0;
+  btnAnterior.onclick = () => {
+    paginaActual--;
+    cargarPracticas();
+  };
 
-    const btnAnterior = document.createElement("button");
-    btnAnterior.textContent = "⬅ Anterior";
-    btnAnterior.disabled = paginaActual === 0;
+  // Botón siguiente
+  const btnSiguiente = document.createElement("button");
+  btnSiguiente.textContent = "Siguiente ➡";
+  btnSiguiente.disabled = paginaActual >= totalPaginas - 1;
+  btnSiguiente.onclick = () => {
+    paginaActual++;
+    cargarPracticas();
+  };
 
-    btnAnterior.onclick = () => {
-      paginaActual--;
-      cargarPracticas();
-    };
+  // Información de página
+  const info = document.createElement("span");
+  info.textContent = ` Página ${paginaActual + 1} de ${totalPaginas} `;
 
-    const btnSiguiente = document.createElement("button");
-    btnSiguiente.textContent = "Siguiente ➡";
-    btnSiguiente.disabled = paginaActual >= totalPaginas - 1;
-
-    btnSiguiente.onclick = () => {
-      paginaActual++;
-      cargarPracticas();
-    };
-
-    const info = document.createElement("span");
-    info.textContent = ` Página ${paginaActual + 1} de ${totalPaginas} `;
-
-    contenedor.append(btnAnterior, info, btnSiguiente);
-  }
+  contenedor.append(btnAnterior, info, btnSiguiente);
+}
 
   /* =====================
      FORM NUEVO

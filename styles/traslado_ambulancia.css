@@ -296,6 +296,18 @@ input[type="file"] {
   font-size: 0.95rem;
 }
 
+.adjuntos-nuevos_traslado {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    align-items: flex-start;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    background-color: #fff;
+    min-width: 380px;
+  }
+
 /* ===================== */
 /* RESPONSIVE */
 /* ===================== */

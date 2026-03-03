@@ -182,7 +182,6 @@ input[type="file"] {
   flex-direction: column;
   gap: 0.35rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  min-height: 400px;
 }
 
 /* Contenedor interno de la card */
@@ -366,6 +365,51 @@ input[type="file"] {
 .form-actions {
   display: flex;
   gap: 0.6rem;
+}
+
+/* ===================== */
+/* CARD COLAPSABLE */
+/* ===================== */
+
+/* ===================== */
+/* ANIMACIÓN EXPANSIÓN */
+/* ===================== */
+
+.card-extra {
+  overflow: hidden;
+  transition: 
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+/* Estado colapsado */
+.card:not(.expandida) .card-extra {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+}
+
+/* Estado expandido */
+.card.expandida .card-extra {
+  max-height: 1000px; /* suficientemente grande */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toggle-card {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.toggle-card:hover {
+  color: #1d4ed8;
 }
 
 /* ===================== */

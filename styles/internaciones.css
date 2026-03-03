@@ -2,10 +2,11 @@
 /* INTERNACIONES - Estilo */
 /* ===================== */
 
-.btn-nuevo-internacion{
-background-color: #2f80ed;
-color: white;
-margin-bottom: 1rem;
+.btn-nuevo-internacion {
+  background-color: #2f80ed;
+  color: white;
+  margin-bottom: 1rem;
+  cursor: pointer;
 }
 
 /* ===================== */
@@ -21,15 +22,15 @@ margin-bottom: 1rem;
 }
 
 .adjuntos-nuevos_internacion {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 8px;
-    align-items: center;
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    background-color: #fff;
-    min-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  background-color: #fff;
+  min-width: 380px;
 }
 
 /* Input file */
@@ -42,16 +43,15 @@ input[type="file"] {
   max-width: 100%;
 }
 
-/* =====================
-   Formulario Internaciones
-===================== */
+/* ===================== */
+/* Formulario Internaciones */
+/* ===================== */
 #formInternacion {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1rem; /* espacio entre filas y columnas */
   align-items: start;
   margin-top: 0rem;
-  max-width: 1100px;
 }
 
 /* Cada fila es una celda del grid */
@@ -62,10 +62,13 @@ input[type="file"] {
 }
 
 /* Inputs y selects ocupan todo el ancho de su celda */
-#formInternacion input,
 #formInternacion select,
 #formInternacion textarea {
   width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
   box-sizing: border-box;
 }
 
@@ -98,7 +101,6 @@ input[type="file"] {
 #btnCancelarInternacion {
   cursor: pointer;
 }
-
 
 #internacionesSection h2 {
   margin-bottom: 1rem;
@@ -160,17 +162,24 @@ input[type="file"] {
   box-sizing: border-box;
 }
 
-/* Cards */
+/* ===================== */
+/* CARDS */
+/* ===================== */
 .card {
-    background: #ffffff !important;
-    border: 1px solid #e5e7eb !important;
-    border-radius: 10px !important;
-    padding: 10px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.35rem !important;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-    min-height: 400px !important;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  background: #fff;
+  width: 320px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  min-height: auto !important;
+  position: relative;
+}
+
+.card .acciones {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 0.4rem !important;
 }
 
 .card .acciones button {
@@ -182,14 +191,40 @@ input[type="file"] {
   background-color: #eee;
 }
 
-/* Grid fechas */
-.grid-fechas {
+/* ===================== */
+/* GRID DE FECHAS Y CAMPOS EN CARD */
+/* ===================== */
+.card-extra .grid-fechas {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem 1rem;
+  align-items: start;
 }
 
-/* Adjuntos */
+.card-extra .grid-fechas > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-extra input,
+.card-extra select,
+.card-extra textarea {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+.card-extra textarea[name="observaciones"] {
+  grid-column: span 2;
+  min-height: 60px;
+}
+
+/* ===================== */
+/* ADJUNTOS CARD */
+/* ===================== */
 .adjuntos-lista, .adjuntos-nuevos {
   display: flex;
   flex-wrap: wrap;
@@ -207,8 +242,51 @@ input[type="file"] {
   background-color: #fff;
 }
 
-.card .acciones {
-    display: flex !important;
-    justify-content: flex-end !important;
-    gap: 0.4rem !important;
+
+/* CARD SUPERIOR - GRID DE 2 COLUMNAS */
+.card-internacion {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.5rem 1rem;
+  align-items: start;
+}
+
+.card-internacion > div {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.card-internacion input,
+.card-internacion select {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+/* ===================== */
+/* BOTÓN VER MÁS */
+/* ===================== */
+/* Estado expandido */
+.card.expandida .card-extra {
+  max-height: 1000px; /* suficientemente grande */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toggle-card {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.toggle-card:hover {
+  color: #1d4ed8;
 }

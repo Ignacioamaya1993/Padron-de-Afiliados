@@ -138,62 +138,114 @@ export async function init(afiliadoId) {
         diasDemora = (new Date(deriv.fecha_inicio) - new Date(deriv.fecha_autorizacion)) / (1000*60*60*24);
       }
 
-      card.innerHTML = `
-        <strong>${deriv.tipo_derivacion_id ? tipoSelect.querySelector('option[value="'+deriv.tipo_derivacion_id+'"]')?.textContent : "-"}</strong>
+card.innerHTML = `
+  <strong>
+    ${deriv.tipo_derivacion_id 
+      ? tipoSelect.querySelector('option[value="'+deriv.tipo_derivacion_id+'"]')?.textContent 
+      : "-"}
+  </strong>
 
-        <div class="med-card-section grid-fechas">
-          <div><label>Fecha Inicio</label><input type="date" name="fecha_inicio" readonly value="${fISO(deriv.fecha_inicio)}"></div>
-          <div><label>Fecha Fin</label><input type="date" name="fecha_fin" readonly value="${fISO(deriv.fecha_fin)}"></div>
-          <div><label>Lugar</label><input name="lugar" readonly value="${deriv.lugar || ""}"></div>
-          <div><label>Fecha Turno</label><input type="date" name="fecha_turno" readonly value="${fISO(deriv.fecha_turno)}"></div>
-          <div><label>Fecha Orden Médico</label><input type="date" name="fecha_orden_medico" readonly value="${fISO(deriv.fecha_orden_medico)}"></div>
-          <div><label>Fecha que trajo orden</label><input type="date" name="fecha_orden_recibida" readonly value="${fISO(deriv.fecha_orden_recibida)}"></div>
-          <div><label>Fecha Autorización</label><input type="date" name="fecha_autorizacion" readonly value="${fISO(deriv.fecha_autorizacion)}"></div>
-          <div><label>Autorizado por</label><input name="autorizado_por" readonly value="${deriv.autorizado_por || ""}"></div>
-          <div><label>Días Demora</label><input name="dias_demora" readonly value="${diasDemora !== null ? diasDemora : ""}"></div>
-          <div><label>Nro Carga</label><input name="nro_carga" readonly value="${deriv.nro_carga || ""}"></div>
-          <div><label>Estado</label><input name="estado" readonly value="${deriv.estado || ""}"></div>
-          <div>
-            <label>Reintegro</label>
-            <input type="number" step="0.01" name="reintegro" readonly value="${deriv.reintegro ?? ""}">
-          </div>
+  <!-- CONTENIDO SIEMPRE VISIBLE -->
+  <div class="card-content">
+    <div class="med-card-section grid-fechas">
+      <div><label>Fecha Inicio</label>
+        <input type="date" name="fecha_inicio" readonly value="${fISO(deriv.fecha_inicio)}">
+      </div>
 
-          <div>
-            <label>Fecha Reintegro</label>
-            <input type="date" name="fecha_reintegro" readonly value="${fISO(deriv.fecha_reintegro)}">
-          </div>
-        </div>
+      <div><label>Fecha Fin</label>
+        <input type="date" name="fecha_fin" readonly value="${fISO(deriv.fecha_fin)}">
+      </div>
 
-        <div class="med-card-section">
-          <label>Observaciones</label>
-          <textarea name="observaciones" readonly>${deriv.observaciones || "Sin observaciones"}</textarea>
-        </div>
+      <div><label>Lugar</label>
+        <input name="lugar" readonly value="${deriv.lugar || ""}">
+      </div>
 
-        ${docs.length ? `
-          <div class="med-card-section adjuntos-card">
-            <label>Adjuntos</label>
-            <div class="adjuntos-lista">
-              ${docs.length ? docs.map(d => `
-                <div class="adjunto-item" data-doc-id="${d.id}">
-                  <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-                  <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
-                </div>`).join("") : "<span class='sin-adjuntos'>Sin adjuntos</span>"}
+      <div><label>Estado</label>
+        <input name="estado" readonly value="${deriv.estado || ""}">
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENIDO EXPANDIBLE -->
+  <div class="card-extra">
+
+    <div class="med-card-section grid-fechas">
+      <div><label>Fecha Turno</label>
+        <input type="date" name="fecha_turno" readonly value="${fISO(deriv.fecha_turno)}">
+      </div>
+
+      <div><label>Fecha Orden Médico</label>
+        <input type="date" name="fecha_orden_medico" readonly value="${fISO(deriv.fecha_orden_medico)}">
+      </div>
+
+      <div><label>Fecha que trajo orden</label>
+        <input type="date" name="fecha_orden_recibida" readonly value="${fISO(deriv.fecha_orden_recibida)}">
+      </div>
+
+      <div><label>Fecha Autorización</label>
+        <input type="date" name="fecha_autorizacion" readonly value="${fISO(deriv.fecha_autorizacion)}">
+      </div>
+
+      <div><label>Autorizado por</label>
+        <input name="autorizado_por" readonly value="${deriv.autorizado_por || ""}">
+      </div>
+
+      <div><label>Días Demora</label>
+        <input name="dias_demora" readonly value="${diasDemora !== null ? diasDemora : ""}">
+      </div>
+
+      <div><label>Nro Carga</label>
+        <input name="nro_carga" readonly value="${deriv.nro_carga || ""}">
+      </div>
+
+      <div>
+        <label>Reintegro</label>
+        <input type="number" step="0.01" name="reintegro" readonly value="${deriv.reintegro ?? ""}">
+      </div>
+
+      <div>
+        <label>Fecha Reintegro</label>
+        <input type="date" name="fecha_reintegro" readonly value="${fISO(deriv.fecha_reintegro)}">
+      </div>
+    </div>
+
+    <div class="med-card-section">
+      <label>Observaciones</label>
+      <textarea name="observaciones" readonly>
+        ${deriv.observaciones || "Sin observaciones"}
+      </textarea>
+    </div>
+
+    ${docs.length ? `
+      <div class="med-card-section adjuntos-card">
+        <label>Adjuntos</label>
+        <div class="adjuntos-lista">
+          ${docs.map(d => `
+            <div class="adjunto-item" data-doc-id="${d.id}">
+              <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+              <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
             </div>
-          </div>
-        ` : ""}
-
-        <div class="med-card-section hidden adjuntos-edicion">
-          <button type="button" class="btn-agregar-adjunto-card">➕ Agregar adjunto</button>
-          <div class="adjuntos-nuevos"></div>
+          `).join("")}
         </div>
+      </div>
+    ` : ""}
 
-        <div class="acciones">
-          <button class="editar">✏️ Editar</button>
-          <button class="eliminar">🗑️ Eliminar</button>
-          <button class="guardar hidden">💾 Guardar</button>
-          <button class="cancelar hidden">Cancelar</button>
-        </div>
-      `;
+  </div>
+
+  <button class="toggle-card">Ver más</button>
+
+  <div class="med-card-section hidden adjuntos-edicion">
+    <button type="button" class="btn-agregar-adjunto-card">➕ Agregar adjunto</button>
+    <div class="adjuntos-nuevos"></div>
+  </div>
+
+  <div class="acciones">
+    <button class="editar">✏️ Editar</button>
+    <button class="eliminar">🗑️ Eliminar</button>
+    <button class="guardar hidden">💾 Guardar</button>
+    <button class="cancelar hidden">Cancelar</button>
+  </div>
+`;
 
       contenedor.appendChild(card);
     }
@@ -246,6 +298,18 @@ export async function init(afiliadoId) {
       Swal.fire("Atención", "Solo se puede editar una card a la vez", "warning");
       return;
     }
+
+    // TOGGLE VER MÁS
+if (e.target.classList.contains("toggle-card")) {
+  const card = e.target.closest(".card");
+  card.classList.toggle("expandida");
+
+  e.target.textContent = card.classList.contains("expandida")
+    ? "Ver menos"
+    : "Ver más";
+
+  return;
+}
 
     // EDITAR
     if (e.target.classList.contains("editar")) {
@@ -448,25 +512,25 @@ btnAgregarAdjuntoForm.addEventListener("click", () => crearInputAdjunto(false));
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
-  const datos = {
-    afiliado_id: afiliadoId,
-    tipo_derivacion_id: tipoSelect.value,
-    fecha_inicio: document.getElementById("fechaInicio").value,
-    fecha_fin: document.getElementById("fechaFin").value || null,
-    lugar: document.getElementById("lugar").value || null,
-    fecha_turno: document.getElementById("fechaTurno").value || null,
-    fecha_orden_medico: document.getElementById("fechaOrdenMedico").value || null,
-    fecha_orden_recibida: document.getElementById("fechaTrajoOrden").value || null,
-    fecha_autorizacion: document.getElementById("fechaAutorizacion").value || null,
-    autorizado_por: document.getElementById("autorizadoPor").value || null,
-    nro_carga: document.getElementById("nroCarga").value || null,
-    estado: document.getElementById("estado").value || null,
-    observaciones: document.getElementById("observaciones").value || null,
-    reintegro: document.getElementById("reintegro").value
-  ? parseFloat(document.getElementById("reintegro").value)
-  : null,
-  fecha_reintegro: document.getElementById("fechaReintegro").value || null,
-  };
+const datos = {
+  afiliado_id: afiliadoId,
+  tipo_derivacion_id: tipoSelect.value,
+  fecha_inicio: document.getElementById("fechaInicio").value || null,
+  fecha_fin: document.getElementById("fechaFin").value || null,
+  lugar: document.getElementById("lugar").value || null,
+  fecha_turno: document.getElementById("fechaTurno").value || null,
+  fecha_orden_medico: document.getElementById("fechaOrdenMedico").value || null,
+  fecha_orden_recibida: document.getElementById("fechaTrajoOrden").value || null,
+  fecha_autorizacion: document.getElementById("fechaAutorizacion").value || null,
+  autorizado_por: document.getElementById("autorizadoPor").value || null,
+  nro_carga: document.getElementById("nroCarga").value || null,
+  estado: document.getElementById("estado").value || null,
+  observaciones: document.getElementById("observaciones").value || null,
+  reintegro: document.querySelector("input[name='reintegro']").value
+    ? parseFloat(document.querySelector("input[name='reintegro']").value)
+    : null,
+  fecha_reintegro: document.querySelector("input[name='fecha_reintegro']").value || null,
+};
 
   const { data } = await supabase
     .from("derivaciones")

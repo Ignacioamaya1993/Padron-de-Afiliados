@@ -315,3 +315,80 @@ input[type="file"] {
     gap: 0.4rem !important;
     margin-top: 20px !important;
 }
+
+/* CARD SUPERIOR - GRID DE 2 COLUMNAS */
+.card-internacion {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.5rem 1rem;
+  align-items: start;
+}
+
+.card-internacion > div {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.card-internacion input,
+.card-internacion select {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+/* ===================== */
+/* BOTÓN VER MÁS */
+/* ===================== */
+/* Estado expandido */
+.card.expandida {
+  max-height: 1000px; /* suficientemente grande */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card-extra {
+  grid-column: 1 / -1;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.card-extra.mostrar {
+  max-height: 1000px; /* suficientemente grande */
+  opacity: 1;
+}
+
+.hidden {
+  display: none; /* Oculta completamente */
+}
+
+.toggle-card {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.toggle-card:hover {
+  color: #1d4ed8;
+}
+
+.card-extra-hidden {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.card-extra.mostrar {
+  max-height: 1000px;
+  opacity: 1;
+}

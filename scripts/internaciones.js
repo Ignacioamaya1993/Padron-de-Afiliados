@@ -138,58 +138,104 @@ export async function init(afiliadoId) {
       const cardsHTML = data.map((inter, index) => {
         const docs = docsPorInternacion[index];
 
-        return `
-        <div class="card" data-id="${inter.id}" data-index="${index}" data-lugar-id="${inter.lugar_internacion_id || ""}">
-            <strong>${inter.tipo_internacion_id ? tipoSelect.querySelector('option[value="'+inter.tipo_internacion_id+'"]')?.textContent : "-"}</strong>
+return `
+  <div class="card" data-id="${inter.id}" data-index="${index}" data-lugar-id="${inter.lugar_internacion_id || ""}">
 
-            <div class="med-card-section grid-fechas">
-              <div><label>Fecha Carga</label><input type="date" name="fecha_carga" readonly value="${fISO(inter.fecha_carga)}"></div>
-              <div><label>Fecha Orden</label><input type="date" name="fecha_orden" readonly value="${fISO(inter.fecha_orden)}"></div>
-              <div><label>Fecha Recepción Orden</label><input type="date" name="fecha_orden_recibida" readonly value="${fISO(inter.fecha_orden_recibida)}"></div>
-              <div><label>Fecha Turno</label><input type="date" name="fecha_turno" readonly value="${fISO(inter.fecha_turno)}"></div>
-              <div><label>Fecha Cirugía</label><input type="date" name="fecha_cirugia" readonly value="${fISO(inter.fecha_cirugia)}"></div>
-              <div><label>Fecha Alta</label><input type="date" name="fecha_alta" readonly value="${fISO(inter.fecha_alta)}"></div>
-              <div><label>Lugar</label><input name="lugar" readonly value="${inter.lugar_internacion_id ? lugarSelect.querySelector('option[value="'+inter.lugar_internacion_id+'"]')?.textContent : ""}"></div>
-            <div>
-              <label>Reintegro</label>
-              <input type="number" step="0.01" name="reintegro" readonly value="${inter.reintegro ?? ""}">
-            </div>
+    <strong>
+      ${inter.tipo_internacion_id 
+        ? tipoSelect.querySelector('option[value="'+inter.tipo_internacion_id+'"]')?.textContent 
+        : "-"}
+    </strong>
 
-            <div>
-              <label>Fecha Reintegro</label>
-              <input type="date" name="fecha_reintegro" readonly value="${fISO(inter.fecha_reintegro)}">
-            </div>
-            </div>
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="card-internacion">
+      <div><label>Fecha Carga</label>
+        <input type="date" name="fecha_carga" readonly value="${fISO(inter.fecha_carga)}">
+      </div>
 
-            <div class="med-card-section">
-              <label>Observaciones</label>
-              <textarea name="observaciones" readonly>${inter.observaciones || "Sin observaciones"}</textarea>
-            </div>
+      <div><label>Fecha Cirugía</label>
+        <input type="date" name="fecha_cirugia" readonly value="${fISO(inter.fecha_cirugia)}">
+      </div>
 
-            ${docs.length ? `
-            <div class="med-card-section adjuntos-card">
-              <label>Adjuntos</label>
-              <div class="adjuntos-lista">
-                ${docs.map(d => `<div class="adjunto-item" data-doc-id="${d.id}">
-                  <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-                  <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
-                </div>`).join("")}
+      <div><label>Fecha Alta</label>
+        <input type="date" name="fecha_alta" readonly value="${fISO(inter.fecha_alta)}">
+      </div>
+
+      <div><label>Lugar</label>
+        <input name="lugar" readonly 
+          value="${inter.lugar_internacion_id 
+            ? lugarSelect.querySelector('option[value="'+inter.lugar_internacion_id+'"]')?.textContent 
+            : ""}">
+      </div>
+    </div>
+
+    <!-- CONTENIDO EXPANDIBLE -->
+    <div class="card-extra">
+
+      <div class="med-card-section grid-fechas">
+        <div><label>Fecha Orden</label>
+          <input type="date" name="fecha_orden" readonly value="${fISO(inter.fecha_orden)}">
+        </div>
+
+        <div><label>Fecha Recepción Orden</label>
+          <input type="date" name="fecha_orden_recibida" readonly value="${fISO(inter.fecha_orden_recibida)}">
+        </div>
+
+        <div><label>Fecha Turno</label>
+          <input type="date" name="fecha_turno" readonly value="${fISO(inter.fecha_turno)}">
+        </div>
+
+        <div>
+          <label>Reintegro</label>
+          <input type="number" step="0.01" name="reintegro" readonly value="${inter.reintegro ?? ""}">
+        </div>
+
+        <div>
+          <label>Fecha Reintegro</label>
+          <input type="date" name="fecha_reintegro" readonly value="${fISO(inter.fecha_reintegro)}">
+        </div>
+      </div>
+
+      <div class="med-card-section">
+        <label>Observaciones</label>
+        <textarea name="observaciones" readonly>
+          ${inter.observaciones || "Sin observaciones"}
+        </textarea>
+      </div>
+
+      ${docs.length ? `
+        <div class="med-card-section adjuntos-card">
+          <label>Adjuntos</label>
+          <div class="adjuntos-lista">
+            ${docs.map(d => `
+              <div class="adjunto-item" data-doc-id="${d.id}">
+                <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+                <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
               </div>
-            </div>` : ""}
-
-            <div class="med-card-section hidden adjuntos-edicion">
-              <button type="button" class="btn-agregar-adjunto-card">➕ Agregar adjunto</button>
-              <div class="adjuntos-nuevos"></div>
-            </div>
-
-            <div class="acciones">
-              <button class="editar">✏️ Editar</button>
-              <button class="eliminar">🗑️ Eliminar</button>
-              <button class="guardar hidden">💾 Guardar</button>
-              <button class="cancelar hidden">Cancelar</button>
-            </div>
+            `).join("")}
           </div>
-        `;
+        </div>
+      ` : ""}
+
+      <div class="med-card-section hidden adjuntos-edicion">
+        <button type="button" class="btn-agregar-adjunto-card">➕ Agregar adjunto</button>
+        <div class="adjuntos-nuevos"></div>
+      </div>
+
+    </div>
+
+    <!-- BOTÓN TOGGLE -->
+    <button class="toggle-card">Ver más</button>
+
+    <div class="acciones">
+      <button class="editar">✏️ Editar</button>
+      <button class="eliminar">🗑️ Eliminar</button>
+      <button class="guardar hidden">💾 Guardar</button>
+      <button class="cancelar hidden">Cancelar</button>
+    </div>
+
+  </div>
+`;
       });
 
       contenedor.innerHTML = cardsHTML.join("");
@@ -204,33 +250,44 @@ export async function init(afiliadoId) {
   /* =====================
      PAGINACIÓN
   ===================== */
-  function renderPaginacion(total) {
-    paginacion.innerHTML = "";
-    const totalPaginas = Math.ceil(total / POR_PAGINA);
+function renderPaginacion(total) {
+  paginacion.innerHTML = "";
 
-    const btnAnterior = document.createElement("button");
-    btnAnterior.textContent = "⬅ Anterior";
-    btnAnterior.disabled = paginaActual === 0;
-    btnAnterior.addEventListener("click", () => {
-      paginaActual--;
-      cargarInternaciones();
-    });
+  const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
 
-    const btnSiguiente = document.createElement("button");
-    btnSiguiente.textContent = "Siguiente ➡";
-    btnSiguiente.disabled = paginaActual >= totalPaginas - 1;
-    btnSiguiente.addEventListener("click", () => {
-      paginaActual++;
-      cargarInternaciones();
-    });
-
+    // Si no hay registros
+  if (totalPaginas === 0) {
     const info = document.createElement("span");
-    info.textContent = ` Página ${paginaActual + 1} de ${totalPaginas} `;
-
-    paginacion.appendChild(btnAnterior);
+    info.textContent = " Página 1 de 1 ";
     paginacion.appendChild(info);
-    paginacion.appendChild(btnSiguiente);
+    return;
   }
+
+  const btnAnterior = document.createElement("button");
+  btnAnterior.textContent = "⬅ Anterior";
+  btnAnterior.disabled = paginaActual === 0;
+
+  btnAnterior.addEventListener("click", () => {
+    paginaActual--;
+    cargarInternaciones();
+  });
+
+  const btnSiguiente = document.createElement("button");
+  btnSiguiente.textContent = "Siguiente ➡";
+  btnSiguiente.disabled = paginaActual >= totalPaginas - 1;
+
+  btnSiguiente.addEventListener("click", () => {
+    paginaActual++;
+    cargarInternaciones();
+  });
+
+  const info = document.createElement("span");
+  info.textContent = ` Página ${paginaActual + 1} de ${totalPaginas} `;
+
+  paginacion.appendChild(btnAnterior);
+  paginacion.appendChild(info);
+  paginacion.appendChild(btnSiguiente);
+}
 
   /* =====================
      ACCIONES CARD
@@ -245,6 +302,17 @@ export async function init(afiliadoId) {
       Swal.fire("Atención", "Solo se puede editar una card a la vez", "warning");
       return;
     }
+
+    if (e.target.classList.contains("toggle-card")) {
+  const card = e.target.closest(".card");
+  card.classList.toggle("expandida");
+
+  e.target.textContent = card.classList.contains("expandida")
+    ? "Ver menos"
+    : "Ver más";
+
+  return;
+}
 
 if (e.target.classList.contains("editar")) {
   card.classList.add("editando");
@@ -470,12 +538,22 @@ btnCancelar.addEventListener("click", () => {
 
   btnAgregarAdjuntoForm.addEventListener("click", () => crearInputAdjunto(false));
 
-  /* =====================
-     SUBMIT FORM
-  ===================== */
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
+/* =====================
+   SUBMIT FORM
+===================== */
+form.addEventListener("submit", async e => {
+  e.preventDefault();
 
+  const btnGuardar = form.querySelector('button[type="submit"]');
+  const originalText = btnGuardar.textContent;
+
+  // Bloquear el botón y cambiar estilo/icono
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = "⌛ Guardando...";
+  btnGuardar.style.backgroundColor = "#aaa"; // Botón gris
+  btnGuardar.style.cursor = "not-allowed";
+
+  try {
     const datos = {
       afiliado_id: afiliadoId,
       tipo_internacion_id: tipoSelect.value || null,
@@ -486,39 +564,41 @@ btnCancelar.addEventListener("click", () => {
       fecha_turno: document.getElementById("fechaTurno").value || null,
       fecha_cirugia: document.getElementById("fechaCirugia").value || null,
       fecha_alta: document.getElementById("fechaAlta").value || null,
-      reintegro: document.getElementById("reintegroInternacion").value || null,
       observaciones: document.getElementById("observacionesInternacion").value || null,
-      reintegro: document.getElementById("reintegroInternacion").value
-      ? parseFloat(document.getElementById("reintegroInternacion").value)
-      : null,
-
-    fecha_reintegro: document.getElementById("fechaReintegroInternacion").value || null,
+      reintegro: document.getElementById("reintegroInternacion")?.value
+        ? parseFloat(document.getElementById("reintegroInternacion").value)
+        : null,
+      fecha_reintegro: document.getElementById("fechaReintegroInternacion")?.value || null,
     };
 
+    // Guardar la internación
     const { data } = await supabase.from("internaciones").insert(datos).select().single();
 
-    // Adjuntos
+    // Subir archivos en paralelo
     const inputs = adjuntosFormLista.querySelectorAll("input[type='file']");
-    for (const input of inputs) {
-      if (!input.files[0]) continue;
-      const archivo = input.files[0];
-      const url = await subirArchivoCloudinary(archivo);
+    await Promise.all(
+      Array.from(inputs).map(async input => {
+        if (!input.files[0]) return;
+        const archivo = input.files[0];
+        const url = await subirArchivoCloudinary(archivo);
 
-      await supabase.from("fichamedica_documentos").insert({
-        afiliado_id: afiliadoId,
-        tipo_documento: "internaciones",
-        entidad_relacion_id: data.id,
-        nombre_archivo: archivo.name,
-        url,
-        fecha_subida: new Date().toISOString()
-      });
-    }
+        await supabase.from("fichamedica_documentos").insert({
+          afiliado_id: afiliadoId,
+          tipo_documento: "internaciones",
+          entidad_relacion_id: data.id,
+          nombre_archivo: archivo.name,
+          url,
+          fecha_subida: new Date().toISOString()
+        });
+      })
+    );
 
+    // Reset y recarga
     form.reset();
     resetAdjuntos();
     form.classList.add("oculto");
     paginaActual = 0;
-    cargarInternaciones();
+    await cargarInternaciones();
 
     Swal.fire({
       icon: "success",
@@ -526,7 +606,18 @@ btnCancelar.addEventListener("click", () => {
       text: "Internación registrada correctamente",
       confirmButtonText: "OK"
     });
-  });
+
+  } catch (err) {
+    console.error(err);
+    Swal.fire("Error", "Hubo un problema al guardar la internación", "error");
+  } finally {
+    // Restaurar botón
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = originalText;
+    btnGuardar.style.backgroundColor = ""; // Restablece color original
+    btnGuardar.style.cursor = "";
+  }
+});
 
   /* =====================
      INIT
