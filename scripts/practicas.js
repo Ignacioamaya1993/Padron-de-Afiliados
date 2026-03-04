@@ -43,25 +43,16 @@ export async function init(afiliadoId) {
   /* =====================
      CAMPOS DINAMICOS
   ===================== */
-function actualizarCamposPorTipo() {
 
-  if (!tipoSelect || !campoKinesiologo || !campoLugar) return;
+  function actualizarCamposPorTipo() {
+    if (!tipoSelect || !campoKinesiologo || !campoLugar) return;
+    const tipo = tipoSelect.value;
+    campoKinesiologo.classList.add("hidden");
+    campoLugar.classList.add("hidden");
 
-  const tipo = tipoSelect.value;
-
-  // Ocultar ambos primero
-  campoKinesiologo.classList.add("hidden");
-  campoLugar.classList.add("hidden");
-
-  // Mostrar según tipo
-  if (tipo === "kinesiologia") {
-    campoKinesiologo.classList.remove("hidden");
+    if (tipo === "kinesiologia") campoKinesiologo.classList.remove("hidden");
+    if (tipo === "resonancia" || tipo === "tomografia") campoLugar.classList.remove("hidden");
   }
-
-  if (tipo === "resonancia" || tipo === "tomografia") {
-    campoLugar.classList.remove("hidden");
-  }
-}
 
   tipoSelect.addEventListener("change", actualizarCamposPorTipo);
 
@@ -76,7 +67,6 @@ function actualizarCamposPorTipo() {
   }
 
   function agregarAdjuntoInput(obligatorio = false) {
-
     const wrapper = document.createElement("div");
     wrapper.className = "adjunto-item";
 
@@ -110,16 +100,13 @@ function actualizarCamposPorTipo() {
     adjuntosContainer.appendChild(wrapper);
   }
 
-  btnAgregarAdjunto.addEventListener("click", () => {
-    agregarAdjuntoInput(false);
-  });
+  btnAgregarAdjunto.addEventListener("click", () => agregarAdjuntoInput(false));
 
   /* =====================
      LISTAR PRACTICAS
   ===================== */
 
   async function cargarPracticas() {
-
     const desde = paginaActual * POR_PAGINA;
     const hasta = desde + POR_PAGINA - 1;
 
@@ -150,334 +137,356 @@ function actualizarCamposPorTipo() {
       .in("entidad_relacion_id", ids);
 
     const docsPorPractica = {};
-    docs.forEach(d => {
-      if (!docsPorPractica[d.entidad_relacion_id]) {
-        docsPorPractica[d.entidad_relacion_id] = [];
-      }
+    (docs || []).forEach(d => {
+      if (!docsPorPractica[d.entidad_relacion_id]) docsPorPractica[d.entidad_relacion_id] = [];
       docsPorPractica[d.entidad_relacion_id].push(d);
     });
 
- const fISO = d => (d ? d.split("T")[0] : "");
+    const fISO = d => (d ? d.split("T")[0] : "");
 
-for (const p of practicas) {
-  const documentos = docsPorPractica[p.id] || [];
+    for (const p of practicas) {
+      const documentos = docsPorPractica[p.id] || [];
 
-  const card = document.createElement("div");
-  card.className = "card";
-  card.dataset.id = p.id;
-  card._adjuntosNuevos = [];
-  card._adjuntosEliminar = [];
+      const card = document.createElement("div");
+      card.className = "card";
+      card.dataset.id = p.id;
+      card._adjuntosNuevos = [];
+      card._adjuntosEliminar = [];
 
-  card.innerHTML = `
-    <strong>${p.tipo.toUpperCase()}</strong>
-
-    <!-- SECCIÓN PRINCIPAL -->
-    <div class="card-principal">
-      <div><label>Fecha carga</label>
-        <input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}">
-      </div>
-
-      <div><label>Kinesiólogo</label>
-        <input name="nombre_kinesiologo" readonly value="${p.nombre_kinesiologo || ""}">
-      </div>
-
-      <div><label>Lugar</label>
-        <input name="lugar" readonly value="${p.lugar || ""}">
-      </div>
-    </div>
-
-    <!-- SECCIÓN EXPANDIBLE -->
-    <div class="card-extra hidden">
-      <div><label>Fecha orden</label>
-        <input type="date" name="fecha_orden" readonly value="${fISO(p.fecha_orden)}">
-      </div>
-      <div><label>Fecha recepción</label>
-        <input type="date" name="fecha_recepcion_orden" readonly value="${fISO(p.fecha_recepcion_orden)}">
-      </div>
-      <div><label>Autorización</label>
-        <select name="autorizacion" disabled>
-          <option value="true" ${p.autorizacion ? "selected" : ""}>Sí</option>
-          <option value="false" ${!p.autorizacion ? "selected" : ""}>No</option>
-        </select>
-      </div>
-      <div><label>Fecha autorización</label>
-        <input type="date" name="fecha_autorizacion" readonly value="${fISO(p.fecha_autorizacion)}">
-      </div>
-      <div><label>Reintegro</label>
-        <input type="number" step="0.01" name="reintegro" readonly value="${p.reintegro ?? ""}">
-      </div>
-      <div><label>Fecha reintegro</label>
-        <input type="date" name="fecha_reintegro" readonly value="${fISO(p.fecha_reintegro)}">
-      </div>
-      <div><label>Observación</label>
-        <textarea name="observacion" readonly>${p.observacion || "Sin observaciones"}</textarea>
-      </div>
-
-      ${documentos.length ? `
-      <div class="adjuntos-card">
-        ${documentos.map(d => `
-          <div class="adjunto-item" data-doc-id="${d.id}">
-            <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-            <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
+      let primerSeccion = "";
+      if (p.tipo === "kinesiologia") {
+        primerSeccion = `
+          <div><label>Fecha carga</label>
+            <input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}">
           </div>
-        `).join("")}
-      </div>` : ""}
-    </div>
+          <div><label>Kinesiólogo</label>
+            <input name="nombre_kinesiologo" readonly value="${p.nombre_kinesiologo || ""}">
+          </div>
+          <div><label>Fecha orden</label>
+            <input type="date" name="fecha_orden" readonly value="${fISO(p.fecha_orden)}">
+          </div>
+          <div><label>Fecha recepción</label>
+            <input type="date" name="fecha_recepcion_orden" readonly value="${fISO(p.fecha_recepcion_orden)}">
+          </div>
+        `;
+      } else if (p.tipo === "resonancia" || p.tipo === "tomografia") {
+        primerSeccion = `
+          <div><label>Fecha carga</label>
+            <input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}">
+          </div>
+          <div><label>Lugar</label>
+            <input name="lugar" readonly value="${p.lugar || ""}">
+          </div>
+          <div><label>Fecha orden</label>
+            <input type="date" name="fecha_orden" readonly value="${fISO(p.fecha_orden)}">
+          </div>
+          <div><label>Fecha recepción</label>
+            <input type="date" name="fecha_recepcion_orden" readonly value="${fISO(p.fecha_recepcion_orden)}">
+          </div>
+        `;
+      }
 
-    <!-- BOTÓN VER MÁS -->
-    <button type="button" class="toggle-card">Ver más</button>
+      card.innerHTML = `
+        <strong>${p.tipo.toUpperCase()}</strong>
 
-    <!-- ACCIONES -->
-    <div class="acciones">
-      <button class="editar">✏️ Editar</button>
-      <button class="eliminar">🗑️ Eliminar</button>
-      <button class="guardar hidden">💾 Guardar</button>
-      <button class="cancelar hidden">Cancelar</button>
-    </div>
-  `;
+        <div class="card-principal card-grid">
+          ${primerSeccion}
+        </div>
 
-  lista.appendChild(card);
-}
+        <div class="card-extra card-grid">
+          <div><label>Autorización</label>
+            <select name="autorizacion" disabled>
+              <option value="true" ${p.autorizacion ? "selected" : ""}>Sí</option>
+              <option value="false" ${!p.autorizacion ? "selected" : ""}>No</option>
+            </select>
+          </div>
+          <div><label>Fecha autorización</label>
+            <input type="date" name="fecha_autorizacion" readonly value="${fISO(p.fecha_autorizacion)}">
+          </div>
+          <div><label>Reintegro</label>
+            <input type="number" step="0.01" name="reintegro" readonly value="${p.reintegro ?? ""}">
+          </div>
+          <div><label>Fecha reintegro</label>
+            <input type="date" name="fecha_reintegro" readonly value="${fISO(p.fecha_reintegro)}">
+          </div>
+          <div class="full-width"><label>Observación</label>
+            <textarea name="observacion" readonly>${p.observacion || "Sin observaciones"}</textarea>
+          </div>
+
+          ${documentos.length ? `
+          <div class="adjuntos-card full-width">
+            ${documentos.map(d => `
+              <div class="adjunto-item" data-doc-id="${d.id}">
+                <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+                <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
+              </div>
+            `).join("")}
+          </div>` : ""}
+        </div>
+
+        <button type="button" class="toggle-card">Ver más</button>
+
+        <div class="acciones">
+          <button class="editar">✏️ Editar</button>
+          <button class="eliminar">🗑️ Eliminar</button>
+          <button class="guardar hidden">💾 Guardar</button>
+          <button class="cancelar hidden">Cancelar</button>
+        </div>
+      `;
+
+      lista.appendChild(card);
+    }
   }
 
   /* =====================
-   ACCIONES CARD
-===================== */
+     ACCIONES CARD (UNIFICADO)
+  ===================== */
 
-lista.addEventListener("click", async e => {
+  if (!window._practicasListenerAgregado) {
+    window._practicasListenerAgregado = true;
 
-  const card = e.target.closest(".card");
-  if (!card) return;
+    lista.addEventListener("click", async e => {
+      const card = e.target.closest(".card");
+      if (!card) return;
+      const id = card.dataset.id;
 
-  const id = card.dataset.id;
-  
-  //“Ver más / Ver menos”
-if (e.target.classList.contains("toggle-card")) {
-  const extra = card.querySelector(".card-extra");
-  if (!extra) return;
+      // --- VER MÁS / VER MENOS ---
+      if (e.target.classList.contains("toggle-card")) {
+        const extra = card.querySelector(".card-extra");
+        if (!extra) return;
+        extra.classList.toggle("mostrar");
+        e.target.textContent = extra.classList.contains("mostrar") ? "Ver menos" : "Ver más";
+        return;
+      }
 
-  extra.classList.toggle("mostrar");
+      // --- EDITAR ---
+      if (e.target.classList.contains("editar")) {
+        const extra = card.querySelector(".card-extra");
+        if (extra) extra.classList.add("mostrar");
 
-  e.target.textContent = extra.classList.contains("mostrar")
-    ? "Ver menos"
-    : "Ver más";
-  return;
-}
+        card.querySelectorAll("input, textarea").forEach(el => el.removeAttribute("readonly"));
+        card.querySelectorAll("select").forEach(sel => sel.removeAttribute("disabled"));
 
-  /* ========= EDITAR ========= */
+        card.querySelector(".guardar").classList.remove("hidden");
+        card.querySelector(".cancelar").classList.remove("hidden");
+        card.querySelector(".editar").classList.add("hidden");
+        card.querySelector(".eliminar").classList.add("hidden");
 
-  if (e.target.classList.contains("editar")) {
+        let adjuntosCard = card.querySelector(".adjuntos-card");
+        if (!adjuntosCard) {
+          adjuntosCard = document.createElement("div");
+          adjuntosCard.className = "adjuntos-card";
+          card.insertBefore(adjuntosCard, card.querySelector(".acciones"));
+        }
 
-/* ===== ADJUNTOS EN EDICIÓN ===== */
+        adjuntosCard.querySelectorAll(".btn-eliminar-adjunto").forEach(btn => btn.classList.remove("hidden"));
 
-let adjuntosCard = card.querySelector(".adjuntos-card");
+        if (!adjuntosCard.querySelector(".btn-agregar-adjunto-card")) {
+          const btnAgregar = document.createElement("button");
+          btnAgregar.type = "button";
+          btnAgregar.textContent = "➕ Agregar adjunto";
+          btnAgregar.className = "btn-agregar-adjunto-card";
+          adjuntosCard.appendChild(btnAgregar);
+        }
 
-// Si no existe, crearlo
-if (!adjuntosCard) {
-  adjuntosCard = document.createElement("div");
-  adjuntosCard.className = "adjuntos-card";
-  card.insertBefore(adjuntosCard, card.querySelector(".acciones"));
-}
+        card._adjuntosNuevos = card._adjuntosNuevos || [];
+        card._adjuntosEliminar = card._adjuntosEliminar || [];
+        return;
+      }
 
-// Mostrar botones eliminar para existentes
-adjuntosCard.querySelectorAll(".adjunto-item").forEach(item => {
-  const btn = item.querySelector(".btn-eliminar-adjunto");
-  if (!btn) return;
-  btn.classList.remove("hidden");
+      // --- CANCELAR ---
+      if (e.target.classList.contains("cancelar")) {
+        cargarPracticas();
+        return;
+      }
 
-  btn.addEventListener("click", () => {
-    const docId = item.dataset.docId;
-    if (docId) card._adjuntosEliminar.push(docId);
-    item.remove();
-  });
-});
+      // --- GUARDAR ---
+      if (e.target.classList.contains("guardar")) {
+        const btnGuardar = e.target;
+        const originalText = btnGuardar.textContent;
 
-// Agregar botón "Agregar adjunto" si no existe
-if (!adjuntosCard.querySelector(".btn-agregar-adjunto-card")) {
-  const btnAgregar = document.createElement("button");
-  btnAgregar.type = "button";
-  btnAgregar.textContent = "➕ Agregar adjunto";
-  btnAgregar.className = "btn-agregar-adjunto-card";
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = "⌛ Guardando...";
+        btnGuardar.style.backgroundColor = "#aaa";
+        btnGuardar.style.cursor = "not-allowed";
 
-  btnAgregar.addEventListener("click", () => {
-    const wrapper = document.createElement("div");
-    wrapper.className = "adjunto-item";
+        try {
+          const datosUpdate = {
+            fecha_carga: card.querySelector("[name='fecha_carga']").value,
+            fecha_orden: card.querySelector("[name='fecha_orden']").value || null,
+            fecha_recepcion_orden: card.querySelector("[name='fecha_recepcion_orden']").value || null,
+            fecha_autorizacion: card.querySelector("[name='fecha_autorizacion']").value || null,
+            autorizacion: card.querySelector("[name='autorizacion']").value === "true",
+            nombre_kinesiologo: card.querySelector("[name='nombre_kinesiologo']")?.value || null,
+            lugar: card.querySelector("[name='lugar']")?.value || null,
+            observacion: card.querySelector("[name='observacion']").value || null,
+            reintegro: card.querySelector("[name='reintegro']").value
+              ? parseFloat(card.querySelector("[name='reintegro']").value)
+              : null,
+            fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null,
+          };
 
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".pdf,.jpg,.png";
+          console.log("Actualizando práctica ID:", id, datosUpdate);
+          await supabase.from("practicas").update(datosUpdate).eq("id", id);
 
-    input.addEventListener("change", () => {
-      wrapper.archivo = input.files[0] || null;
+          console.log("Adjuntos nuevos antes de subir:", card._adjuntosNuevos);
+          for (const wrapper of card._adjuntosNuevos || []) {
+            if (!wrapper.archivo) continue;
+            console.log("Subiendo archivo:", wrapper.archivo.name);
+            const url = await subirArchivoCloudinary(wrapper.archivo);
+            await supabase.from("fichamedica_documentos").insert({
+              afiliado_id: afiliadoId,
+              tipo_documento: "practicas",
+              entidad_relacion_id: id,
+              nombre_archivo: wrapper.archivo.name,
+              url
+            });
+          }
+
+          console.log("Adjuntos a eliminar:", card._adjuntosEliminar);
+          for (const docId of card._adjuntosEliminar || []) {
+            console.log("Eliminando adjunto ID:", docId);
+            await supabase.from("fichamedica_documentos").delete().eq("id", docId);
+          }
+
+          await Swal.fire({
+            icon: "success",
+            title: "Guardado",
+            text: "Cambios guardados correctamente",
+            confirmButtonText: "OK"
+          });
+
+          cargarPracticas();
+
+        } catch (err) {
+          console.error("Error guardando cambios:", err);
+          await Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un problema al guardar los cambios"
+          });
+        } finally {
+          btnGuardar.disabled = false;
+          btnGuardar.textContent = originalText;
+          btnGuardar.style.backgroundColor = "";
+          btnGuardar.style.cursor = "";
+        }
+
+        return;
+      }
+
+      // --- ELIMINAR PRÁCTICA ---
+      if (e.target.classList.contains("eliminar")) {
+        const confirmar = await Swal.fire({
+          title: "¿Está seguro?",
+          text: "Se eliminará esta práctica y todos sus adjuntos.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar'
+        });
+        if (!confirmar.isConfirmed) return;
+
+        await supabase.from("practicas").delete().eq("id", id);
+
+        await Swal.fire({
+          title: "Eliminado",
+          text: "La práctica se eliminó correctamente",
+          icon: "success",
+          confirmButtonText: "OK"
+        });
+
+        cargarPracticas();
+        return;
+      }
+
+      // --- AGREGAR ADJUNTO NUEVO ---
+      if (e.target.classList.contains("btn-agregar-adjunto-card")) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "adjunto-item-nuevo";
+
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".pdf,.jpg,.png";
+        input.addEventListener("change", () => wrapper.archivo = input.files[0] || null);
+        wrapper.archivo = null;
+
+        const btnEliminar = document.createElement("button");
+        btnEliminar.type = "button";
+        btnEliminar.textContent = "✖";
+        btnEliminar.className = "btn-eliminar-adjunto";
+
+        btnEliminar.addEventListener("click", () => {
+          card._adjuntosNuevos = card._adjuntosNuevos.filter(a => a !== wrapper);
+          wrapper.remove();
+        });
+
+        wrapper.appendChild(input);
+        wrapper.appendChild(btnEliminar);
+
+        card._adjuntosNuevos = card._adjuntosNuevos || [];
+        card._adjuntosNuevos.push(wrapper);
+
+        e.target.before(wrapper);
+        return;
+      }
+
+      // --- ELIMINAR ADJUNTO EXISTENTE ---
+      if (e.target.classList.contains("btn-eliminar-adjunto")) {
+        const item = e.target.closest(".adjunto-item, .adjunto-item-nuevo");
+        if (!item) return;
+
+        if (item.dataset.docId) {
+          card._adjuntosEliminar = card._adjuntosEliminar || [];
+          if (!card._adjuntosEliminar.includes(item.dataset.docId)) {
+            card._adjuntosEliminar.push(item.dataset.docId);
+          }
+        }
+
+        if (item.classList.contains("adjunto-item-nuevo")) {
+          card._adjuntosNuevos = card._adjuntosNuevos.filter(a => a !== item);
+        }
+
+        item.remove();
+        return;
+      }
+
     });
-
-    wrapper.archivo = null;
-    card._adjuntosNuevos.push(wrapper);
-
-    wrapper.appendChild(input);
-
-    const btnEliminar = document.createElement("button");
-    btnEliminar.type = "button";
-    btnEliminar.textContent = "✖";
-    btnEliminar.className = "btn-eliminar-adjunto";
-
-    btnEliminar.addEventListener("click", () => {
-      card._adjuntosNuevos = card._adjuntosNuevos.filter(a => a !== wrapper);
-      wrapper.remove();
-    });
-
-    wrapper.appendChild(btnEliminar);
-    adjuntosCard.appendChild(wrapper);
-  });
-
-  adjuntosCard.appendChild(btnAgregar);
-}
-
-    card.querySelectorAll("input, textarea").forEach(el => {
-    if (el.name !== "prestador") {
-        el.removeAttribute("readonly");
-    }
-    });
-
-    card.querySelectorAll("select").forEach(sel => {
-    sel.removeAttribute("disabled");
-    });
-
-    card.querySelector(".guardar").classList.remove("hidden");
-    card.querySelector(".cancelar").classList.remove("hidden");
-
-    card.querySelector(".editar").classList.add("hidden");
-    card.querySelector(".eliminar").classList.add("hidden");
   }
-
-  /* ========= CANCELAR ========= */
-
-  if (e.target.classList.contains("cancelar")) {
-    cargarPracticas();
-  }
-
-  /* ========= GUARDAR ========= */
-
-  if (e.target.classList.contains("guardar")) {
-
-        const datosUpdate = {
-        fecha_carga: card.querySelector("[name='fecha_carga']").value,
-        fecha_orden: card.querySelector("[name='fecha_orden']").value || null,
-        fecha_recepcion_orden: card.querySelector("[name='fecha_recepcion_orden']").value || null,
-        fecha_autorizacion: card.querySelector("[name='fecha_autorizacion']").value || null,
-        autorizacion: card.querySelector("[name='autorizacion']").value === "true",
-        nombre_kinesiologo: card.querySelector("[name='nombre_kinesiologo']")?.value || null,
-        lugar: card.querySelector("[name='lugar']")?.value || null,
-        observacion: card.querySelector("[name='observacion']").value || null,
-        reintegro: card.querySelector("[name='reintegro']").value
-          ? parseFloat(card.querySelector("[name='reintegro']").value)
-          : null,
-          fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null,
-        };
-
-    await supabase
-      .from("practicas")
-      .update(datosUpdate)
-      .eq("id", id);
-
-      /* ===== PROCESAR ADJUNTOS NUEVOS ===== */
-
-for (const adj of card._adjuntosNuevos) {
-  if (!adj.archivo) continue;
-
-  const url = await subirArchivoCloudinary(adj.archivo);
-
-  await supabase.from("fichamedica_documentos").insert({
-    afiliado_id: afiliadoId,
-    tipo_documento: "practicas",
-    entidad_relacion_id: id,
-    nombre_archivo: adj.archivo.name,
-    url
-  });
-}
-
-/* ===== ELIMINAR ADJUNTOS MARCADOS ===== */
-
-for (const docId of card._adjuntosEliminar) {
-  await supabase
-    .from("fichamedica_documentos")
-    .delete()
-    .eq("id", docId);
-}
-
-    Swal.fire("Guardado", "Cambios guardados correctamente", "success");
-    cargarPracticas();
-  }
-
-  /* ========= ELIMINAR ========= */
-
-  if (e.target.classList.contains("eliminar")) {
-
-    const confirmar = await Swal.fire({
-      title: "¿Está seguro?",
-      text: "Se eliminará esta practica y todos sus adjuntos.",
-      icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    });
-
-    if (!confirmar.isConfirmed) return;
-
-    await supabase
-      .from("practicas")
-      .delete()
-      .eq("id", id);
-
-    cargarPracticas();
-  }
-
-});
 
   /* =====================
      PAGINACIÓN
   ===================== */
   
-function renderPaginacion(total) {
-  const contenedor = document.getElementById("paginacionPracticas");
-  contenedor.innerHTML = "";
+  function renderPaginacion(total) {
+    const contenedor = document.getElementById("paginacionPracticas");
+    contenedor.innerHTML = "";
 
-  // Aseguramos que siempre haya al menos 1 página
-  const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+    const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
 
-  // Botón anterior
-  const btnAnterior = document.createElement("button");
-  btnAnterior.textContent = "⬅ Anterior";
-  btnAnterior.disabled = paginaActual === 0;
-  btnAnterior.onclick = () => {
-    paginaActual--;
-    cargarPracticas();
-  };
+    const btnAnterior = document.createElement("button");
+    btnAnterior.textContent = "⬅ Anterior";
+    btnAnterior.disabled = paginaActual === 0;
+    btnAnterior.onclick = () => { paginaActual--; cargarPracticas(); };
 
-  // Botón siguiente
-  const btnSiguiente = document.createElement("button");
-  btnSiguiente.textContent = "Siguiente ➡";
-  btnSiguiente.disabled = paginaActual >= totalPaginas - 1;
-  btnSiguiente.onclick = () => {
-    paginaActual++;
-    cargarPracticas();
-  };
+    const btnSiguiente = document.createElement("button");
+    btnSiguiente.textContent = "Siguiente ➡";
+    btnSiguiente.disabled = paginaActual >= totalPaginas - 1;
+    btnSiguiente.onclick = () => { paginaActual++; cargarPracticas(); };
 
-  // Información de página
-  const info = document.createElement("span");
-  info.textContent = ` Página ${paginaActual + 1} de ${totalPaginas} `;
+    const info = document.createElement("span");
+    info.textContent = ` Página ${paginaActual + 1} de ${totalPaginas} `;
 
-  contenedor.append(btnAnterior, info, btnSiguiente);
-}
+    contenedor.append(btnAnterior, info, btnSiguiente);
+  }
 
   /* =====================
      FORM NUEVO
   ===================== */
 
-    btnNuevo.addEventListener("click", () => {
-
+  btnNuevo.addEventListener("click", () => {
     if (!form.classList.contains("hidden")) {
         form.reset();
         resetAdjuntos();
@@ -487,81 +496,59 @@ function renderPaginacion(total) {
 
     form.reset();
     resetAdjuntos();
-    actualizarCamposPorTipo();
-    campoReintegroAlta.classList.add("hidden");
     form.classList.remove("hidden");
-    });
-
-  btnCancelar.addEventListener("click", () => {
-    form.reset();
-    resetAdjuntos();
-    form.classList.add("hidden");
+    actualizarCamposPorTipo();
   });
+
+  btnCancelar.addEventListener("click", () => form.classList.add("hidden"));
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
 
-    const tipo = form.tipo.value;
-
-    let prestador = null;
-
-    if (tipo === "resonancia") {
-      prestador = "Resonancias del Centro";
-    }
-
-    if (tipo === "tomografia") {
-      prestador = "Imagenes Azul";
-    }
-
     const datos = {
       afiliado_id: afiliadoId,
-      tipo,
+      tipo: tipoSelect.value,
       fecha_carga: form.fecha_carga.value,
       fecha_orden: form.fecha_orden.value || null,
       fecha_recepcion_orden: form.fecha_recepcion_orden.value || null,
-      autorizacion: form.autorizacion.value === "true",
       fecha_autorizacion: form.fecha_autorizacion.value || null,
-      observacion: form.observacion.value || null,
+      autorizacion: form.autorizacion.value === "true",
       nombre_kinesiologo: form.nombre_kinesiologo?.value || null,
       lugar: form.lugar?.value || null,
-      prestador,
-      reintegro: form.reintegro?.value
-      ? parseFloat(form.reintegro.value)
-      : null,
+      observacion: form.observacion.value || null,
+      reintegro: form.reintegro.value ? parseFloat(form.reintegro.value) : null,
+      fecha_reintegro: form.fecha_reintegro.value || null
     };
 
-    const { data } = await supabase
-      .from("practicas")
-      .insert(datos)
-      .select()
-      .single();
+    try {
+      const { data: nueva, error } = await supabase.from("practicas").insert(datos).select();
+      if (error) throw error;
 
-    for (const adj of archivosAdjuntos) {
-      if (!adj.archivo) continue;
+      for (const wrapper of archivosAdjuntos) {
+        if (!wrapper.archivo) continue;
+        const url = await subirArchivoCloudinary(wrapper.archivo);
+        await supabase.from("fichamedica_documentos").insert({
+          afiliado_id: afiliadoId,
+          tipo_documento: "practicas",
+          entidad_relacion_id: nueva[0].id,
+          nombre_archivo: wrapper.archivo.name,
+          url
+        });
+      }
 
-      const url = await subirArchivoCloudinary(adj.archivo);
+      await Swal.fire({ icon: "success", title: "Creado", text: "Práctica creada correctamente" });
 
-      await supabase.from("fichamedica_documentos").insert({
-        afiliado_id: afiliadoId,
-        tipo_documento: "practicas",
-        entidad_relacion_id: data.id,
-        nombre_archivo: adj.archivo.name,
-        url
-      });
+      form.classList.add("hidden");
+      cargarPracticas();
+    } catch (err) {
+      console.error(err);
+      await Swal.fire({ icon: "error", title: "Error", text: "No se pudo crear la práctica" });
     }
-
-    form.reset();
-    resetAdjuntos();
-    form.classList.add("hidden");
-    cargarPracticas();
-
-    Swal.fire("Guardado", "Práctica guardada correctamente", "success");
   });
 
   /* =====================
-     INIT
+     CARGAR INICIAL
   ===================== */
 
-  resetAdjuntos();
   cargarPracticas();
 }

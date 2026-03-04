@@ -40,11 +40,6 @@ margin-bottom: 1rem;
   grid-column: 1 / -1;
 }
 
-.practica-card textarea {
-  min-height: 50px;
-  resize: vertical;
-}
-
 /* Labels */
 .practica-card label {
   font-size: 13px;
@@ -128,7 +123,6 @@ margin-bottom: 1rem;
   background: #a71d2a;
 }
 
-
 .form-card {
   border: 1px solid #ddd !important;
   border-radius: 10px !important;
@@ -192,12 +186,6 @@ input[type="file"] {
 .form-group textarea:focus {
   outline: none;
   border-color: #1976d2;
-}
-
-/* Textarea */
-.form-group textarea {
-  resize: vertical;
-  min-height: 60px;
 }
 
 /* ===================== */
@@ -344,22 +332,29 @@ input[type="file"] {
 /* BOTÓN VER MÁS */
 /* ===================== */
 /* Estado expandido */
+
 .card.expandida {
   max-height: 1000px; /* suficientemente grande */
   opacity: 1;
   transform: translateY(0);
 }
 
-.card-extra {
-  grid-column: 1 / -1;
+#listaPracticas .card-extra {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 16px;
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease, opacity 0.3s ease;
   opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
 }
 
-.card-extra.mostrar {
-  max-height: 1000px; /* suficientemente grande */
+.card-extra .full-width {
+  grid-column: 1 / -1; /* los que deben ocupar toda la fila */
+}
+
+#listaPracticas .card-extra.mostrar {
+  max-height: 1000px;
   opacity: 1;
 }
 
@@ -391,4 +386,53 @@ input[type="file"] {
 .card-extra.mostrar {
   max-height: 1000px;
   opacity: 1;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* dos columnas iguales */
+  gap: 12px 16px; /* filas y columnas */
+  align-items: start;
+}
+
+.card-grid .full-width {
+  grid-column: 1 / -1; /* ocupa toda la fila */
+}
+
+.card-grid input,
+.card-grid select,
+.card-grid textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.card-extra.mostrar *,
+.card-extra.mostrar button {
+  pointer-events: auto;
+}
+
+.card-extra.mostrar {
+  overflow: visible;
+  pointer-events: auto;
+}
+
+#listaPracticas .card-extra .full-width {
+  grid-column: 1 / -1 !important;
+}
+
+/* ===================== */
+/* TEXTAREA CARD - ANCHO COMPLETO */
+#listaPracticas .card-extra textarea,
+#listaPracticas .card-extra textarea:read-only {
+    width: 100% !important;          /* fuerza ancho completo */
+    max-width: 100% !important;      /* evita que algún max-width lo limite */
+    box-sizing: border-box !important; /* incluye padding y borde */
+    display: block !important;
+    min-height: 60px;                /* altura mínima decente */
+    resize: vertical;                /* permite ajustar solo verticalmente */
+}
+
+.adjunto-item button,
+.adjunto-item-nuevo button {
+    cursor: pointer;
 }
