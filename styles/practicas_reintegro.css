@@ -148,20 +148,21 @@ input[type="file"] {
 /* ============================= */
 
 .prx-lista-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 0.6rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  margin-top: 1rem;
 }
 
 .prx-card {
-    background: #ffffff !important;
-    border: 1px solid #e5e7eb !important;
-    border-radius: 10px !important;
-    padding: 10px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.35rem !important;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .prx-card input[readonly],
@@ -298,22 +299,78 @@ background-color: #e53935;
   display: none !important;
 }
 
-/* ============================= */
-/* RESPONSIVE */
-/* ============================= */
+/* ===================== */
+/* GRID 2 COLUMNAS CARD */
+/* ===================== */
 
-@media (max-width: 900px) {
-  .prx-grid-fechas {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.prx-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
 
-@media (max-width: 600px) {
-  .prx-grid-fechas {
-    grid-template-columns: 1fr;
-  }
+/* Observación full width */
+.prx-full {
+  grid-column: 1 / -1;
+}
 
-  .prx-campo-reintegro {
-    flex-direction: column;
-  }
+/* ===================== */
+/* CARD COLAPSABLE */
+/* ===================== */
+
+.prx-extra {
+  overflow: hidden;
+  transition: 
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.prx-card:not(.expandida) .prx-extra {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+}
+
+.prx-card.expandida .prx-extra {
+  max-height: 1000px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.prx-toggle {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.prx-toggle:hover {
+  color: #1d4ed8;
+}
+
+.prx-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prx-titulo {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ===================== */
+/* ACCIONES CARD */
+/* ===================== */
+
+.prx-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
 }

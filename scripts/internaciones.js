@@ -315,6 +315,17 @@ function renderPaginacion(total) {
 }
 
 if (e.target.classList.contains("editar")) {
+
+  // Forzar expansión si está colapsada
+  if (!card.classList.contains("expandida")) {
+    card.classList.add("expandida");
+
+    const btnToggle = card.querySelector(".toggle-card");
+    if (btnToggle) {
+      btnToggle.textContent = "Ver menos";
+    }
+  }
+
   card.classList.add("editando");
   editandoId = id;
 

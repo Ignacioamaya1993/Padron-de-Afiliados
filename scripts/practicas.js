@@ -304,6 +304,18 @@ export async function init(afiliadoId) {
       if (e.target.classList.contains("guardar")) {
         const btnGuardar = e.target;
         const originalText = btnGuardar.textContent;
+        const autorizacionValue = card.querySelector("[name='autorizacion']").value;
+        const fechaAutorizacionValue = card.querySelector("[name='fecha_autorizacion']").value;
+
+    // VALIDACIÓN AUTORIZACIÓN EN EDICIÓN
+    if (autorizacionValue === "true" && !fechaAutorizacionValue) {
+      await Swal.fire({
+        icon: "warning",
+        title: "Falta información",
+        text: "Debe ingresar la fecha de autorización si la autorización es 'Sí'"
+      });
+      return;
+    }
 
         btnGuardar.disabled = true;
         btnGuardar.textContent = "⌛ Guardando...";
@@ -504,6 +516,16 @@ export async function init(afiliadoId) {
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
+
+    // VALIDACIÓN AUTORIZACIÓN
+if (form.autorizacion.value === "true" && !form.fecha_autorizacion.value) {
+  await Swal.fire({
+    icon: "warning",
+    title: "Falta información",
+    text: "Debe ingresar la fecha de autorización si la autorización es 'Sí'"
+  });
+  return;
+}
 
     const datos = {
       afiliado_id: afiliadoId,

@@ -186,9 +186,11 @@ input[type="file"] {
 /* CARDS DERIVACIONES */
 /* ===================== */
 #contenedorDerivaciones {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 0.6rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: start;
+    margin-top: 20px;
 }
 
 .card {

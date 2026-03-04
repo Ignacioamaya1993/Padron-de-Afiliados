@@ -72,18 +72,39 @@ export async function init(afiliadoId) {
     });
   }
 
-  function actualizarCamposPorTipo() {
-    const tipoId = Number(tipoSelect.value);
-    datosMedicamento.classList.toggle("hidden", !tipoId);
-    campoLatas.classList.add("hidden");
-    campoInicio.classList.add("hidden");
-    campoVencimiento.classList.add("hidden");
-    if (tipoId === 4) campoLatas.classList.remove("hidden");
-    if ([6, 7].includes(tipoId)) {
-      campoInicio.classList.remove("hidden");
-      campoVencimiento.classList.remove("hidden");
-    }
+function actualizarCamposPorTipo() {
+  const tipoId = Number(tipoSelect.value);
+
+  datosMedicamento.classList.toggle("hidden", !tipoId);
+
+  campoLatas.classList.add("hidden");
+  campoInicio.classList.add("hidden");
+  campoVencimiento.classList.add("hidden");
+
+  // Inputs reales
+  const inputLatas = form.querySelector("[name='latas_entregadas']");
+  const inputInicio = form.querySelector("[name='fecha_inicio']");
+  const inputVenc = form.querySelector("[name='fecha_vencimiento']");
+
+  // Quitar required por defecto
+  inputLatas?.removeAttribute("required");
+  inputInicio?.removeAttribute("required");
+  inputVenc?.removeAttribute("required");
+
+  // Tipo 4 → leche maternizada
+  if (tipoId === 4) {
+    campoLatas.classList.remove("hidden");
+    inputLatas?.setAttribute("required", "required");
   }
+
+  // Tipos 6 y 7
+  if ([6, 7].includes(tipoId)) {
+    campoInicio.classList.remove("hidden");
+    campoVencimiento.classList.remove("hidden");
+    inputInicio?.setAttribute("required", "required");
+    inputVenc?.setAttribute("required", "required");
+  }
+}
 
   tipoSelect.addEventListener("change", actualizarCamposPorTipo);
 
@@ -333,9 +354,20 @@ if (e.target.classList.contains("toggle-card")) {
 }
 
     // EDITAR
-    if (e.target.classList.contains("editar")) {
-      card.classList.add("editando");
-      editandoId = id;
+if (e.target.classList.contains("editar")) {
+
+  // Forzar expansión si está colapsada
+  if (!card.classList.contains("expandida")) {
+    card.classList.add("expandida");
+
+    const btnToggle = card.querySelector(".toggle-card");
+    if (btnToggle) {
+      btnToggle.textContent = "Ver menos";
+    }
+  }
+
+  card.classList.add("editando");
+  editandoId = id;
 
       card.querySelectorAll("input, textarea").forEach(el => {
         if (el.hasAttribute("readonly")) el.removeAttribute("readonly");
@@ -370,70 +402,93 @@ if (e.target.classList.contains("toggle-card")) {
       cargarMedicamentos();
     }
 
-    // GUARDAR
-    if (e.target.classList.contains("guardar")) {
+// GUARDAR
+if (e.target.classList.contains("guardar")) {
 
-      const datos = {};
+  const btnGuardar = e.target;
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = "⌛ Guardando...";
+  btnGuardar.style.backgroundColor = "#aaa";
+  btnGuardar.style.cursor = "not-allowed";
 
-      card.querySelectorAll("input[name], textarea[name]").forEach(el => {
+  try {
 
-        // Convertir reintegro a número real
-        if (el.name === "reintegro") {
-          datos.reintegro = el.value !== ""
-            ? parseFloat(el.value)
-            : null;
-          return;
-        }
+const datos = {};
 
-        datos[el.name] = el.value || null;
-      });
+card.querySelectorAll("input[name], textarea[name]").forEach(el => {
 
-      const { error } = await supabase
-        .from("medicamentos")
-        .update(datos)
-        .eq("id", id);
+  if (el.name === "reintegro") {
+    datos.reintegro = el.value !== ""
+      ? parseFloat(el.value)
+      : null;
+    return;
+  }
 
-      if (error) {
-        console.error("Error al actualizar medicamento:", error);
-        Swal.fire("Error", error.message, "error");
-        return;
-      }
+  if (el.name === "latas_entregadas") {
+    datos.latas_entregadas = el.value !== ""
+      ? parseInt(el.value)
+      : null;
+    return;
+  }
 
-      // 🔹 Eliminar adjuntos marcados
-      for (const docId of card._adjuntosEliminar) {
-        await supabase
-          .from("fichamedica_documentos")
-          .delete()
-          .eq("id", docId);
-      }
+  datos[el.name] = el.value || null;
+});
 
-      // 🔹 Subir nuevos adjuntos
-      for (const adj of card._adjuntosNuevos) {
-        if (!adj.archivo) continue;
+    const { error } = await supabase
+      .from("medicamentos")
+      .update(datos)
+      .eq("id", id);
 
-        const url = await subirArchivoCloudinary(adj.archivo);
+    if (error) throw error;
 
-        await supabase
-          .from("fichamedica_documentos")
-          .insert({
-            afiliado_id: afiliadoId,
-            tipo_documento: "medicamentos",
-            entidad_relacion_id: id,
-            nombre_archivo: adj.archivo.name,
-            url
-          });
-      }
-
-      editandoId = null;
-      cargarMedicamentos();
-
-      Swal.fire({
-        icon: "success",
-        title: "Guardado",
-        text: "Cambios guardados correctamente",
-        confirmButtonText: "OK"
-      });
+    // 🔹 Eliminar adjuntos marcados
+    for (const docId of card._adjuntosEliminar) {
+      await supabase
+        .from("fichamedica_documentos")
+        .delete()
+        .eq("id", docId);
     }
+
+    // 🔹 Subir nuevos adjuntos
+    for (const adj of card._adjuntosNuevos) {
+      if (!adj.archivo) continue;
+
+      const url = await subirArchivoCloudinary(adj.archivo);
+
+      await supabase
+        .from("fichamedica_documentos")
+        .insert({
+          afiliado_id: afiliadoId,
+          tipo_documento: "medicamentos",
+          entidad_relacion_id: id,
+          nombre_archivo: adj.archivo.name,
+          url
+        });
+    }
+
+    editandoId = null;
+    cargarMedicamentos();
+
+    Swal.fire({
+      icon: "success",
+      title: "Guardado",
+      text: "Cambios guardados correctamente",
+      confirmButtonText: "OK"
+    });
+
+  } catch (error) {
+    console.error("Error al actualizar medicamento:", error);
+    Swal.fire("Error", error.message || "No se pudo guardar", "error");
+  } finally {
+
+    // Restaurar botón
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = "💾 Guardar";
+    btnGuardar.style.backgroundColor = "";
+    btnGuardar.style.cursor = "";
+
+  }
+}
 
     // ELIMINAR MEDICAMENTO
     if (e.target.classList.contains("eliminar")) {
@@ -493,10 +548,19 @@ if (e.target.classList.contains("toggle-card")) {
     form.classList.add("hidden");
   });
 
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
+form.addEventListener("submit", async e => {
+  e.preventDefault();
 
-        // Validación adjunto obligatorio
+  const btnGuardar = form.querySelector(".btn-guardar");
+
+  // 🔒 Bloquear botón
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = "⌛ Guardando...";
+  btnGuardar.style.backgroundColor = "#aaa";
+  btnGuardar.style.cursor = "not-allowed";
+
+  try {
+
     if (!archivosAdjuntos[0] || !archivosAdjuntos[0].archivo) {
       Swal.fire("Atención", "Debe adjuntar al menos un archivo.", "warning");
       return;
@@ -509,20 +573,29 @@ if (e.target.classList.contains("toggle-card")) {
       fecha_autorizacion: form.fecha_autorizacion.value || null,
       fecha_entrega: form.fecha_entrega.value || null,
       proxima_carga: form.proxima_carga.value || null,
-      latas_entregadas: form.latas_entregadas.value || null,
+      latas_entregadas: form.latas_entregadas?.value
+        ? parseInt(form.latas_entregadas.value)
+        : null,
       fecha_inicio: form.fecha_inicio.value || null,
       fecha_vencimiento: form.fecha_vencimiento.value || null,
       observaciones: form.observaciones.value || null,
       reintegro: form.reintegro?.value
-      ? parseFloat(form.reintegro.value)
-      : null,
+        ? parseFloat(form.reintegro.value)
+        : null,
       fecha_reintegro: form.fecha_reintegro?.value || null,
     };
 
-    const { data } = await supabase.from("medicamentos").insert(datos).select().single();
+    const { data, error } = await supabase
+      .from("medicamentos")
+      .insert(datos)
+      .select()
+      .single();
+
+    if (error) throw error;
 
     for (const adj of archivosAdjuntos) {
       if (!adj.archivo) continue;
+
       const url = await subirArchivoCloudinary(adj.archivo);
 
       await supabase.from("fichamedica_documentos").insert({
@@ -542,11 +615,23 @@ if (e.target.classList.contains("toggle-card")) {
     Swal.fire({
       icon: 'success',
       title: 'Guardado',
-      text: 'Cambios guardados correctamente',
+      text: 'Medicamento cargado correctamente',
       confirmButtonText: 'OK'
     });
-  });
 
+  } catch (error) {
+    console.error(error);
+    Swal.fire("Error", error.message || "No se pudo guardar", "error");
+  } finally {
+
+    // 🔓 Restaurar botón SIEMPRE
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = "💾 Guardar";
+    btnGuardar.style.backgroundColor = "";
+    btnGuardar.style.cursor = "";
+
+  }
+});
  
   /* =====================
      INIT

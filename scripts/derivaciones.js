@@ -312,9 +312,20 @@ if (e.target.classList.contains("toggle-card")) {
 }
 
     // EDITAR
-    if (e.target.classList.contains("editar")) {
-      card.classList.add("editando");
-      editandoId = id;
+if (e.target.classList.contains("editar")) {
+
+  // Forzar expansión si está colapsada
+  if (!card.classList.contains("expandida")) {
+    card.classList.add("expandida");
+
+    const btnToggle = card.querySelector(".toggle-card");
+    if (btnToggle) {
+      btnToggle.textContent = "Ver menos";
+    }
+  }
+
+  card.classList.add("editando");
+  editandoId = id;
 
       card.querySelectorAll("input, textarea").forEach(el => {
         if (el.hasAttribute("readonly")) el.removeAttribute("readonly");
@@ -408,71 +419,89 @@ if (e.target.classList.contains("btn-eliminar-adjunto")) {
 }
 
     // GUARDAR
+// GUARDAR
 if (e.target.classList.contains("guardar")) {
 
-  const datos = {};
+  const btnGuardar = e.target;
 
-  card.querySelectorAll("input[name], textarea[name]").forEach(el => {
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = "⌛ Guardando...";
+  btnGuardar.style.backgroundColor = "#aaa";
+  btnGuardar.style.cursor = "not-allowed";
 
-    if (el.name === "dias_demora") return; // no enviar al update
+  try {
 
-    if (el.name === "reintegro") {
-      datos.reintegro = el.value ? parseFloat(el.value) : null;
-    } else {
-      datos[el.name] = el.value || null;
+    const datos = {};
+
+    card.querySelectorAll("input[name], textarea[name]").forEach(el => {
+
+      if (el.name === "dias_demora") return;
+
+      if (el.name === "reintegro") {
+        datos.reintegro = el.value ? parseFloat(el.value) : null;
+      } else {
+        datos[el.name] = el.value || null;
+      }
+
+    });
+
+    const { error } = await supabase
+      .from("derivaciones")
+      .update(datos)
+      .eq("id", id);
+
+    if (error) throw error;
+
+    // 🔹 Eliminar adjuntos marcados
+    for (const docId of card._adjuntosEliminar) {
+      await supabase
+        .from("fichamedica_documentos")
+        .delete()
+        .eq("id", docId);
     }
 
-  });
+    // 🔹 Subir nuevos adjuntos
+    for (const adj of card._adjuntosNuevos) {
+      const input = adj.querySelector("input");
+      if (!input || !input.files[0]) continue;
 
-  console.log("Actualizando:", datos);
+      const url = await subirArchivoCloudinary(input.files[0]);
 
-  const { error } = await supabase
-    .from("derivaciones")
-    .update(datos)
-    .eq("id", id);
+      await supabase
+        .from("fichamedica_documentos")
+        .insert({
+          afiliado_id: afiliadoId,
+          tipo_documento: "derivaciones",
+          entidad_relacion_id: id,
+          nombre_archivo: input.files[0].name,
+          url,
+          fecha_subida: new Date().toISOString()
+        });
+    }
 
-  if (error) {
-    console.error("Error update:", error);
-    Swal.fire("Error", error.message, "error");
-    return;
+    editandoId = null;
+    cargarDerivaciones();
+
+    Swal.fire({
+      icon: "success",
+      title: "Guardado",
+      text: "Cambios guardados correctamente",
+      confirmButtonText: "OK"
+    });
+
+  } catch (error) {
+
+    console.error("Error al guardar:", error);
+    Swal.fire("Error", error.message || "No se pudo guardar", "error");
+
+  } finally {
+
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = "💾 Guardar";
+    btnGuardar.style.backgroundColor = "";
+    btnGuardar.style.cursor = "";
+
   }
-
-  // 🔹 Eliminar adjuntos marcados
-  for (const docId of card._adjuntosEliminar) {
-    await supabase
-      .from("fichamedica_documentos")
-      .delete()
-      .eq("id", docId);
-  }
-
-  // 🔹 Subir nuevos adjuntos
-  for (const adj of card._adjuntosNuevos) {
-    const input = adj.querySelector("input");
-    if (!input || !input.files[0]) continue;
-
-    const url = await subirArchivoCloudinary(input.files[0]);
-
-    await supabase
-      .from("fichamedica_documentos")
-      .insert({
-        afiliado_id: afiliadoId,
-        tipo_documento: "derivaciones",
-        entidad_relacion_id: id,
-        nombre_archivo: input.files[0].name,
-        url,
-        fecha_subida: new Date().toISOString()
-      });
-  }
-
-  editandoId = null;
-  cargarDerivaciones();
-
-  Swal.fire({
-    icon: "success",
-    title: "Guardado",
-    text: "Cambios guardados correctamente",
-    confirmButtonText: "OK"
-  });
 }
 });
 
@@ -503,72 +532,94 @@ if (e.target.classList.contains("guardar")) {
 
 btnAgregarAdjuntoForm.addEventListener("click", () => crearInputAdjunto(false));
 
-  /* =====================
-     SUBMIT FORM
-  ===================== */
 /* =====================
    SUBMIT FORM
 ===================== */
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
-const datos = {
-  afiliado_id: afiliadoId,
-  tipo_derivacion_id: tipoSelect.value,
-  fecha_inicio: document.getElementById("fechaInicio").value || null,
-  fecha_fin: document.getElementById("fechaFin").value || null,
-  lugar: document.getElementById("lugar").value || null,
-  fecha_turno: document.getElementById("fechaTurno").value || null,
-  fecha_orden_medico: document.getElementById("fechaOrdenMedico").value || null,
-  fecha_orden_recibida: document.getElementById("fechaTrajoOrden").value || null,
-  fecha_autorizacion: document.getElementById("fechaAutorizacion").value || null,
-  autorizado_por: document.getElementById("autorizadoPor").value || null,
-  nro_carga: document.getElementById("nroCarga").value || null,
-  estado: document.getElementById("estado").value || null,
-  observaciones: document.getElementById("observaciones").value || null,
-  reintegro: document.querySelector("input[name='reintegro']").value
-    ? parseFloat(document.querySelector("input[name='reintegro']").value)
-    : null,
-  fecha_reintegro: document.querySelector("input[name='fecha_reintegro']").value || null,
-};
+  const btnSubmit = form.querySelector("button[type='submit']");
 
-  const { data } = await supabase
-    .from("derivaciones")
-    .insert(datos)
-    .select()
-    .single();
+  btnSubmit.disabled = true;
+  btnSubmit.textContent = "⌛ Guardando...";
+  btnSubmit.style.backgroundColor = "#aaa";
+  btnSubmit.style.cursor = "not-allowed";
 
-  // 🔹 Subir adjuntos
-  const inputs = adjuntosFormLista.querySelectorAll("input[type='file']");
+  try {
 
-  for (const input of inputs) {
-    if (!input.files[0]) continue;
-
-    const archivo = input.files[0];
-    const url = await subirArchivoCloudinary(archivo);
-
-    await supabase.from("fichamedica_documentos").insert({
+    const datos = {
       afiliado_id: afiliadoId,
-      tipo_documento: "derivaciones",
-      entidad_relacion_id: data.id,
-      nombre_archivo: archivo.name,
-      url,
-      fecha_subida: new Date().toISOString()
+      tipo_derivacion_id: tipoSelect.value,
+      fecha_inicio: document.getElementById("fechaInicio").value || null,
+      fecha_fin: document.getElementById("fechaFin").value || null,
+      lugar: document.getElementById("lugar").value || null,
+      fecha_turno: document.getElementById("fechaTurno").value || null,
+      fecha_orden_medico: document.getElementById("fechaOrdenMedico").value || null,
+      fecha_orden_recibida: document.getElementById("fechaTrajoOrden").value || null,
+      fecha_autorizacion: document.getElementById("fechaAutorizacion").value || null,
+      autorizado_por: document.getElementById("autorizadoPor").value || null,
+      nro_carga: document.getElementById("nroCarga").value || null,
+      estado: document.getElementById("estado").value || null,
+      observaciones: document.getElementById("observaciones").value || null,
+      reintegro: document.querySelector("input[name='reintegro']").value
+        ? parseFloat(document.querySelector("input[name='reintegro']").value)
+        : null,
+      fecha_reintegro: document.querySelector("input[name='fecha_reintegro']").value || null,
+    };
+
+    const { data, error } = await supabase
+      .from("derivaciones")
+      .insert(datos)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // 🔹 Subir adjuntos
+    const inputs = adjuntosFormLista.querySelectorAll("input[type='file']");
+
+    for (const input of inputs) {
+      if (!input.files[0]) continue;
+
+      const archivo = input.files[0];
+      const url = await subirArchivoCloudinary(archivo);
+
+      await supabase.from("fichamedica_documentos").insert({
+        afiliado_id: afiliadoId,
+        tipo_documento: "derivaciones",
+        entidad_relacion_id: data.id,
+        nombre_archivo: archivo.name,
+        url,
+        fecha_subida: new Date().toISOString()
+      });
+    }
+
+    form.reset();
+    resetAdjuntos();
+    form.classList.add("oculto");
+    paginaActual = 0;
+    cargarDerivaciones();
+
+    Swal.fire({
+      icon: "success",
+      title: "Guardado",
+      text: "Derivación registrada correctamente",
+      confirmButtonText: "OK"
     });
+
+  } catch (error) {
+
+    console.error("Error al crear derivación:", error);
+    Swal.fire("Error", error.message || "No se pudo guardar", "error");
+
+  } finally {
+
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = "💾 Guardar";
+    btnSubmit.style.backgroundColor = "";
+    btnSubmit.style.cursor = "";
+
   }
-
-  form.reset();
-  resetAdjuntos();
-  form.classList.add("oculto");
-  paginaActual = 0;
-  cargarDerivaciones();
-
-  Swal.fire({
-    icon: "success",
-    title: "Guardado",
-    text: "Derivación registrada correctamente",
-    confirmButtonText: "OK"
-  });
 });
 
   /* =====================

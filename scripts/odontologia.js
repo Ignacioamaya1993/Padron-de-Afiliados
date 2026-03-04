@@ -121,69 +121,129 @@ export async function init(afiliadoId) {
       card.dataset.id = r.id;
 
 card.innerHTML = `
-  <div class="grid-fechas">
-    <div><label>Fecha carga</label><input type="date" name="fecha_carga" readonly value="${fISO(r.fecha_carga)}"></div>
-    <div><label>Fecha orden</label><input type="date" name="fecha_orden" readonly value="${fISO(r.fecha_orden)}"></div>
-    <div><label>Fecha recepción orden</label><input type="date" name="fecha_recepcion_orden" readonly value="${fISO(r.fecha_recepcion_orden)}"></div>
-    <div><label>Fecha factura</label><input type="date" name="fecha_factura" readonly value="${fISO(r.fecha_factura)}"></div>
-    <div><label>Fecha firma recibo</label><input type="date" name="fecha_firma_recibo" readonly value="${fISO(r.fecha_firma_recibo)}"></div>
-    <div><label>Fecha envío recibo</label><input type="date" name="fecha_envio_recibo" readonly value="${fISO(r.fecha_envio_recibo)}"></div>
+
+  <h4 class="full-width">Odontología</h4>
+
+  <!-- PARTE SIEMPRE VISIBLE -->
+  <div>
+    <label>Fecha carga</label>
+    <input type="date" name="fecha_carga" readonly value="${fISO(r.fecha_carga)}">
   </div>
 
-  <!-- ✅ Reintegro siempre visible, aunque esté vacío -->
-<div class="form-group full-width campo-reintegro">
+  <div>
+    <label>Fecha orden</label>
+    <input type="date" name="fecha_orden" readonly value="${fISO(r.fecha_orden)}">
+  </div>
+
+  <div>
+    <label>Fecha recepción orden</label>
+    <input type="date" name="fecha_recepcion_orden" readonly value="${fISO(r.fecha_recepcion_orden)}">
+  </div>
+
+  <div>
+    <label>Fecha factura</label>
+    <input type="date" name="fecha_factura" readonly value="${fISO(r.fecha_factura)}">
+  </div>
+
+  <button type="button" class="toggle-card full-width">Ver más</button>
+
+  <!-- PARTE COLAPSABLE -->
+  <div class="card-extra full-width">
+
+    <div>
+      <label>Fecha firma recibo</label>
+      <input type="date" name="fecha_firma_recibo" readonly value="${fISO(r.fecha_firma_recibo)}">
+    </div>
+
+    <div>
+      <label>Fecha envío recibo</label>
+      <input type="date" name="fecha_envio_recibo" readonly value="${fISO(r.fecha_envio_recibo)}">
+    </div>
+
     <div>
       <label>Reintegro</label>
       <input type="number" name="reintegro" value="${r.reintegro ?? ''}" step="0.01" readonly>
     </div>
+
     <div>
       <label>Fecha reintegro</label>
-      <input type="date" name="fecha_reintegro" value="${fISO(r.fecha_reintegro)}" readonly>
+      <input type="date" name="fecha_reintegro" readonly value="${fISO(r.fecha_reintegro)}">
     </div>
+
+    <div class="full-width">
+      <label>Observación</label>
+      <textarea name="observacion" readonly>${r.observacion || "Sin observaciones"}</textarea>
+    </div>
+
+<div class="adjuntos-card full-width">
+  ${documentos.map(d => `
+    <div class="adjunto-item" data-doc-id="${d.id}">
+      <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+      <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
+    </div>
+  `).join("")}
+</div>
+
   </div>
 
-  <div class="med-card-section">
-    <label>Observación</label>
-    <textarea name="observacion" readonly>${r.observacion || "Sin observaciones"}</textarea>
+  <div class="acciones full-width">
+    <button class="editar">✏️ Editar</button>
+    <button class="eliminar">🗑️ Eliminar</button>
+    <button class="guardar hidden">💾 Guardar</button>
+    <button class="cancelar hidden">Cancelar</button>
   </div>
-
-        ${documentos.length ? `
-        <div class="adjuntos-card">
-          ${documentos.map(d => `
-            <div class="adjunto-item" data-doc-id="${d.id}">
-              <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-              <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
-            </div>`).join("")}
-        </div>` : ""}
-
-        <div class="acciones">
-          <button class="editar">✏️ Editar</button>
-          <button class="eliminar">🗑️ Eliminar</button>
-          <button class="guardar hidden">💾 Guardar</button>
-          <button class="cancelar hidden">Cancelar</button>
-        </div>
-      `;
+`;
 
       lista.appendChild(card);
     }
   }
 
-  // =====================
-  // ACCIONES CARD
-  // =====================
-  lista.addEventListener("click", async e => {
-    const card = e.target.closest(".card");
-    if (!card) return;
-    const id = card.dataset.id;
+      // =====================
+      // ACCIONES CARD
+      // =====================
+      lista.addEventListener("click", async e => {
+        const card = e.target.closest(".card");
+        if (!card) return;
+        const id = card.dataset.id;
 
-    const fISO = d => (d ? d.split("T")[0] : "");
+        const fISO = d => (d ? d.split("T")[0] : "");
+
+    // VER MAS / VER MENOS
+if (e.target.classList.contains("toggle-card")) {
+
+  const extra = card.querySelector(".card-extra");
+  const estaAbierta = extra.classList.contains("mostrar");
+
+  extra.classList.toggle("mostrar");
+  card.classList.toggle("expandida");
+
+  e.target.textContent = !estaAbierta
+    ? "Ver menos"
+    : "Ver más";
+
+  return;
+}
 
     if (e.target.classList.contains("editar")) {
       card.querySelectorAll("input, textarea").forEach(el => el.removeAttribute("readonly"));
 
+// Forzar expansión si está colapsada
+const extra = card.querySelector(".card-extra");
+const btnToggle = card.querySelector(".toggle-card");
+
+if (!card.classList.contains("expandida")) {
+  card.classList.add("expandida");
+}
+
+if (extra && !extra.classList.contains("mostrar")) {
+  extra.classList.add("mostrar");
+}
+
+if (btnToggle) {
+  btnToggle.textContent = "Ver menos";
+}
+
       // Mostrar reintegro solo en edición
-
-
       card.querySelector(".guardar").classList.remove("hidden");
       card.querySelector(".cancelar").classList.remove("hidden");
       card.querySelector(".editar").classList.add("hidden");
@@ -270,24 +330,44 @@ if (adjuntosCard) {
 
     if (e.target.classList.contains("cancelar")) cargarOdontologia();
 
-    if (e.target.classList.contains("guardar")) {
-      const reintegroVal = card.querySelector("[name='reintegro']").value;
-      const datosUpdate = {
-        fecha_carga: card.querySelector("[name='fecha_carga']").value,
-        fecha_orden: card.querySelector("[name='fecha_orden']").value || null,
-        fecha_recepcion_orden: card.querySelector("[name='fecha_recepcion_orden']").value || null,
-        fecha_factura: card.querySelector("[name='fecha_factura']").value || null,
-        reintegro: reintegroVal ? parseFloat(reintegroVal) : null,
-        fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null,
-        fecha_firma_recibo: card.querySelector("[name='fecha_firma_recibo']").value || null,
-        fecha_envio_recibo: card.querySelector("[name='fecha_envio_recibo']").value || null,
-        observacion: card.querySelector("[name='observacion']").value || null,
-      };
+if (e.target.classList.contains("guardar")) {
+  const btnGuardar = e.target;
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = "⌛ Guardando...";
+        btnGuardar.style.backgroundColor = "#aaa";
+        btnGuardar.style.cursor = "not-allowed";
 
-      await supabase.from("odontologia").update(datosUpdate).eq("id", id);
-      Swal.fire("Guardado", "Cambios guardados correctamente", "success");
-      cargarOdontologia();
-    }
+  try {
+    const reintegroVal = card.querySelector("[name='reintegro']").value;
+
+    const datosUpdate = {
+      fecha_carga: card.querySelector("[name='fecha_carga']").value,
+      fecha_orden: card.querySelector("[name='fecha_orden']").value || null,
+      fecha_recepcion_orden: card.querySelector("[name='fecha_recepcion_orden']").value || null,
+      fecha_factura: card.querySelector("[name='fecha_factura']").value || null,
+      reintegro: reintegroVal ? parseFloat(reintegroVal) : null,
+      fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null,
+      fecha_firma_recibo: card.querySelector("[name='fecha_firma_recibo']").value || null,
+      fecha_envio_recibo: card.querySelector("[name='fecha_envio_recibo']").value || null,
+      observacion: card.querySelector("[name='observacion']").value || null,
+    };
+
+    await supabase
+      .from("odontologia")
+      .update(datosUpdate)
+      .eq("id", id);
+
+    Swal.fire("Guardado", "Cambios guardados correctamente", "success");
+    cargarOdontologia();
+
+  } catch (error) {
+    console.error(error);
+    Swal.fire("Error", "No se pudo guardar", "error");
+  } finally {
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = "💾 Guardar";
+  }
+}
 
     if (e.target.classList.contains("eliminar")) {
       const confirmar = await Swal.fire({
@@ -351,6 +431,10 @@ if (adjuntosCard) {
   form.addEventListener("submit", async e => {
     e.preventDefault();
 
+    const btnSubmit = form.querySelector("button[type='submit']");
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = "Guardando...";
+
     const datos = {
       afiliado_id: afiliadoId,
       fecha_carga: form.fecha_carga.value,
@@ -385,6 +469,9 @@ if (adjuntosCard) {
     cargarOdontologia();
 
     Swal.fire("Guardado", "Registro guardado correctamente", "success");
+
+    btnSubmit.disabled = false;
+btnSubmit.textContent = "Guardar";
   });
 
   // =====================

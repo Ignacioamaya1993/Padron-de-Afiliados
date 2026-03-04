@@ -21,9 +21,8 @@ export async function init(afiliadoId) {
 
   const campoReintegro = form.querySelector(".prx-campo-reintegro");
 
-  /* =====================
-     CARGAR TIPOS
-  ===================== */
+  /* ===================== CARGAR TIPOS ===================== */
+
   async function cargarTipos() {
     const { data } = await supabase
       .from("tipo_practicasxreintegro")
@@ -39,9 +38,8 @@ export async function init(afiliadoId) {
     });
   }
 
-  /* =====================
-     ADJUNTOS
-  ===================== */
+  /* ===================== ADJUNTOS NUEVO ===================== */
+
   function resetAdjuntos() {
     archivosAdjuntos = [];
     adjuntosContainer.innerHTML = "";
@@ -69,31 +67,33 @@ export async function init(afiliadoId) {
       const btnEliminar = document.createElement("button");
       btnEliminar.type = "button";
       btnEliminar.textContent = "✖";
-      btnEliminar.className = "prx-btn-eliminar-adjunto";
       btnEliminar.onclick = () => {
         archivosAdjuntos = archivosAdjuntos.filter(a => a !== wrapper);
         wrapper.remove();
-};      
-
-wrapper.appendChild(btnEliminar);
+      };
+      wrapper.appendChild(btnEliminar);
     }
 
     adjuntosContainer.appendChild(wrapper);
   }
 
-  btnAgregarAdjunto.addEventListener("click", () => agregarAdjuntoInput(false));
+  if (btnAgregarAdjunto) {
+    btnAgregarAdjunto.addEventListener("click", () => agregarAdjuntoInput(false));
+  }
 
-  /* =====================
-     CARGAR REGISTROS
-  ===================== */
+  /* ===================== CARGAR REGISTROS ===================== */
+
   async function cargarPracticas() {
 
     const { data, count } = await supabase
       .from("practicas_reintegro")
-      .select("*", { count: "exact" })
+      .select(`*, tipo_practicasxreintegro ( nombre )`, { count: "exact" })
       .eq("afiliado_id", afiliadoId)
       .order("fecha_carga", { ascending: false })
-      .range(paginaActual * POR_PAGINA, paginaActual * POR_PAGINA + POR_PAGINA - 1);
+      .range(
+        paginaActual * POR_PAGINA,
+        paginaActual * POR_PAGINA + POR_PAGINA - 1
+      );
 
     lista.innerHTML = "";
     renderPaginacion(count);
@@ -120,255 +120,323 @@ wrapper.appendChild(btnEliminar);
     for (const r of data) {
 
       const documentos = docsPorRegistro[r.id] || [];
+      const tipoNombre = r.tipo_practicasxreintegro?.nombre || "Sin tipo";
 
       const card = document.createElement("div");
       card.className = "prx-card";
       card.dataset.id = r.id;
 
-      const opcionesTipo = tipoSelect.innerHTML;
+card.innerHTML = `
 
-      card.innerHTML = `
-        <div class="prx-grid-fechas">
-          <div class="prx-field"><label>Fecha carga</label><input type="date" readonly value="${fISO(r.fecha_carga)}"></div>
-          <div class="prx-field"><label>Fecha prescripción</label><input type="date" readonly value="${fISO(r.fecha_prescripcion)}"></div>
-          <div class="prx-field"><label>Fecha vencimiento</label><input type="date" readonly value="${fISO(r.fecha_vencimiento)}"></div>
-                      <div class="prx-field">
-      <label>Tipo</label>
-      <select class="prx-tipo-select" disabled>
-        ${opcionesTipo}
-      </select>
+  <div class="prx-header">
+    <h4 class="prx-titulo">${tipoNombre}</h4>
+  </div>
+
+  <!-- CONTENIDO SIEMPRE VISIBLE -->
+  <div class="prx-grid-fechas">
+
+    <div class="prx-field">
+      <label>Fecha carga</label>
+      <input type="date" name="fecha_carga" readonly value="${fISO(r.fecha_carga)}">
     </div>
-        </div>
 
-        <div class="prx-campo-reintegro">
-          <div class="prx-field">
-            <label>Reintegro</label>
-            <input type="number" value="${r.reintegro ?? ''}" readonly>
-          </div>
-          <div class="prx-field">
-            <label>Fecha reintegro</label>
-            <input type="date" value="${fISO(r.fecha_reintegro)}" readonly>
-          </div>
-        </div>
+    <div class="prx-field">
+      <label>Fecha prescripción</label>
+      <input type="date" name="fecha_prescripcion" readonly value="${fISO(r.fecha_prescripcion)}">
+    </div>
 
-        <div class="prx-field">
-          <label>Observación</label>
-          <textarea readonly>${r.observacion || ""}</textarea>
-        </div>
+    <div class="prx-field">
+      <label>Fecha vencimiento</label>
+      <input type="date" name="fecha_vencimiento" readonly value="${fISO(r.fecha_vencimiento)}">
+    </div>
 
-                      ${documentos.length ? `
+    <div class="prx-field">
+      <label>Reintegro</label>
+      <input type="number" name="reintegro" readonly value="${r.reintegro ?? ''}">
+    </div>
+
+  </div>
+
+  <button type="button" class="prx-toggle">Ver más</button>
+
+  <!-- EXPANDIBLE -->
+  <div class="prx-extra">
+
+    <div class="prx-grid-fechas">
+
+      <div class="prx-field">
+        <label>Fecha reintegro</label>
+        <input type="date" name="fecha_reintegro" readonly value="${fISO(r.fecha_reintegro)}">
+      </div>
+
+    </div>
+
+    <div class="prx-field prx-full">
+      <label>Observación</label>
+      <textarea name="observacion" readonly>
+${r.observacion || ""}
+      </textarea>
+    </div>
+
+    ${documentos.length ? `
       <div class="prx-adjuntos-card">
+        <label>Adjuntos</label>
         ${documentos.map(d => `
           <div class="prx-adjunto-item" data-doc-id="${d.id}">
             <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-            <button class="prx-eliminar-doc hidden">✖</button>
+            <button type="button" class="prx-btn-eliminar-adjunto hidden">✖</button>
           </div>
         `).join("")}
       </div>
+    ` : ""}
 
-              <div class="prx-adjuntos-edicion hidden">
-        <button class="prx-agregar-adjunto-card">➕ Agregar adjunto</button>
-        <div class="prx-nuevos-adjuntos"></div>
-      </div>
+  </div>
 
-        ` : ""}
+  <!-- EDICIÓN ADJUNTOS -->
+  <div class="prx-adjuntos-edicion hidden">
+    <button type="button" class="prx-btn-agregar-adjunto-card">
+      ➕ Agregar adjunto
+    </button>
+    <div class="prx-adjuntos-nuevos"></div>
+  </div>
 
-        <div class="acciones">
-          <button class="prx-editar">✏️ Editar</button>
-          <button class="prx-eliminar">🗑️ Eliminar</button>
-          <button class="prx-guardar hidden">💾 Guardar</button>
-          <button class="prx-cancelar hidden">Cancelar</button>
-        </div>
-      `;
+  <div class="prx-acciones">
+    <button class="prx-editar">✏️ Editar</button>
+    <button class="prx-eliminar">🗑️ Eliminar</button>
+    <button class="prx-guardar hidden">💾 Guardar</button>
+    <button class="prx-cancelar hidden">Cancelar</button>
+  </div>
+`;
 
       lista.appendChild(card);
 
-      const selectTipo = card.querySelector(".prx-tipo-select");
-      selectTipo.value = r.tipo_practica_id || "";
+      const btnToggle = card.querySelector(".prx-toggle");
+      const btnEditar = card.querySelector(".prx-editar");
+      const btnGuardar = card.querySelector(".prx-guardar");
+      const btnCancelarCard = card.querySelector(".prx-cancelar");
+      const btnEliminar = card.querySelector(".prx-eliminar");
+      const btnAgregarAdjuntoCard = card.querySelector(".prx-btn-agregar-adjunto-card");
+      const nuevosAdjuntosContainer = card.querySelector(".prx-adjuntos-nuevos");
 
-const btnEditar = card.querySelector(".prx-editar");
-const btnGuardar = card.querySelector(".prx-guardar");
-const btnCancelarCard = card.querySelector(".prx-cancelar");
-const btnEliminar = card.querySelector(".prx-eliminar");
+      const inputs = card.querySelectorAll("input, textarea");
 
-const inputs = card.querySelectorAll("input, textarea");
-const select = card.querySelector("select");
-const adjuntosEdicion = card.querySelector(".prx-adjuntos-edicion");
-const nuevosAdjuntosContainer = card.querySelector(".prx-nuevos-adjuntos");
+      /* VER MÁS */
+btnToggle.addEventListener("click", () => {
 
-let nuevosAdjuntos = [];
+  const expandida = card.classList.toggle("expandida");
+
+  btnToggle.textContent = expandida ? "Ver menos" : "Ver más";
+
+  const acciones = card.querySelector(".prx-acciones");
+
+  if (expandida) {
+    // mover botón arriba de acciones
+    acciones.parentNode.insertBefore(btnToggle, acciones);
+  } else {
+    // devolver botón arriba del bloque extra
+    const grid = card.querySelector(".prx-grid-fechas");
+    grid.after(btnToggle);
+  }
+});
+
+      /* EDITAR */
+      let nuevosAdjuntos = [];
 
 btnEditar.addEventListener("click", () => {
 
-  inputs.forEach(i => i.removeAttribute("readonly"));
-  select.removeAttribute("disabled");
+  // Si no está expandida, expandir
+  if (!card.classList.contains("expandida")) {
+    card.classList.add("expandida");
+  }
 
-  card.querySelectorAll(".prx-eliminar-doc")
+  // Siempre que esté expandida, asegurar posición correcta del botón
+  btnToggle.textContent = "Ver menos";
+
+  const acciones = card.querySelector(".prx-acciones");
+  acciones.parentNode.insertBefore(btnToggle, acciones);
+
+  // Habilitar campos
+  inputs.forEach(i => i.removeAttribute("readonly"));
+
+  // Mostrar eliminar adjuntos existentes
+  card.querySelectorAll(".prx-btn-eliminar-adjunto")
       .forEach(b => b.classList.remove("hidden"));
 
-  adjuntosEdicion.classList.remove("hidden");
+  // Mostrar sección agregar adjunto
+  card.querySelector(".prx-adjuntos-edicion")
+      .classList.remove("hidden");
 
+  // Cambiar botones
   btnEditar.classList.add("hidden");
   btnEliminar.classList.add("hidden");
   btnGuardar.classList.remove("hidden");
   btnCancelarCard.classList.remove("hidden");
-
-  card.classList.add("modo-edicion");
 });
+      btnCancelarCard.addEventListener("click", () => cargarPracticas());
 
-btnCancelarCard.addEventListener("click", () => cargarPracticas());
+      /* ELIMINAR CARD */
+      btnEliminar.addEventListener("click", async () => {
 
-btnEliminar.addEventListener("click", async () => {
+        const confirm = await Swal.fire({
+          title: '¿Está seguro?',
+          text: "Se eliminará esta práctica y sus adjuntos.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Sí, eliminar"
+        });
 
-  const ok = await Swal.fire({
-    title: '¿Está seguro?',
-    text: "Se eliminará esta practica por reintegro y todos sus adjuntos.",
-    icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'  });
+        if (!confirm.isConfirmed) return;
 
-  if (!ok.isConfirmed) return;
+        await supabase.from("practicas_reintegro")
+          .delete()
+          .eq("id", r.id);
 
-  await supabase.from("practicas_reintegro")
-    .delete()
-    .eq("id", r.id);
+        await Swal.fire("Eliminado", "Se ha eliminado correctamente.", "success");
 
-  cargarPracticas();
-});
+        cargarPracticas();
+      });
 
-/* =====================
-   ELIMINAR DOCUMENTO
-===================== */
-card.querySelectorAll(".prx-eliminar-doc").forEach(btn => {
-  btn.addEventListener("click", async () => {
+      /* AGREGAR NUEVO ADJUNTO */
+      btnAgregarAdjuntoCard.addEventListener("click", () => {
 
-    const docId = btn.closest(".prx-adjunto-item").dataset.docId;
+        const wrapper = document.createElement("div");
+        wrapper.className = "prx-adjunto-item";
 
-    await supabase
-      .from("fichamedica_documentos")
-      .delete()
-      .eq("id", docId);
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".pdf,.jpg,.png";
 
-    btn.closest(".prx-adjunto-item").remove();
+        input.addEventListener("change", () => {
+          wrapper.archivo = input.files[0] || null;
+        });
+
+        wrapper.archivo = null;
+        nuevosAdjuntos.push(wrapper);
+
+        const btnX = document.createElement("button");
+        btnX.textContent = "✖";
+        btnX.type = "button";
+        btnX.onclick = () => wrapper.remove();
+
+        wrapper.append(input, btnX);
+        nuevosAdjuntosContainer.appendChild(wrapper);
+      });
+
+      card.querySelectorAll(".prx-btn-eliminar-adjunto")
+  .forEach(btn => {
+    btn.addEventListener("click", async () => {
+
+      const docId = btn.closest(".prx-adjunto-item").dataset.docId;
+
+      await supabase
+        .from("fichamedica_documentos")
+        .delete()
+        .eq("id", docId);
+
+      btn.closest(".prx-adjunto-item").remove();
+    });
   });
-});
 
-/* =====================
-   AGREGAR NUEVO ADJUNTO
-===================== */
-card.querySelector(".prx-agregar-adjunto-card")
-  .addEventListener("click", () => {
+      /* GUARDAR */
+      btnGuardar.addEventListener("click", async () => {
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "prx-adjunto-item";
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = "⌛ Guardando...";
 
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".pdf,.jpg,.png";
+        try {
 
-    input.addEventListener("change", () => {
-      wrapper.archivo = input.files[0] || null;
-    });
+          const updated = {
+            fecha_carga: inputs[0].value,
+            fecha_prescripcion: inputs[1].value || null,
+            fecha_vencimiento: inputs[2].value || null,
+            reintegro: inputs[3].value || null,
+            fecha_reintegro: inputs[4].value || null,
+            observacion: card.querySelector("textarea").value || null
+          };
 
-    wrapper.archivo = null;
-    nuevosAdjuntos.push(wrapper);
+          await supabase
+            .from("practicas_reintegro")
+            .update(updated)
+            .eq("id", r.id);
 
-    const btnX = document.createElement("button");
-    btnX.textContent = "✖";
-    btnX.type = "button";
-    btnX.onclick = () => wrapper.remove();
+          for (const adj of nuevosAdjuntos) {
+            if (!adj.archivo) continue;
 
-    wrapper.append(input, btnX);
-    nuevosAdjuntosContainer.appendChild(wrapper);
-});
+            const url = await subirArchivoCloudinary(adj.archivo);
 
-/* =====================
-   GUARDAR
-===================== */
-btnGuardar.addEventListener("click", async () => {
+            await supabase.from("fichamedica_documentos").insert({
+              afiliado_id: afiliadoId,
+              tipo_documento: "practicas_reintegro",
+              entidad_relacion_id: r.id,
+              nombre_archivo: adj.archivo.name,
+              url
+            });
+          }
 
-  const updated = {
-    fecha_carga: inputs[0].value,
-    fecha_prescripcion: inputs[1].value || null,
-    fecha_vencimiento: inputs[2].value || null,
-    tipo_practica_id: select.value || null,
-    reintegro: inputs[3].value || null,
-    fecha_reintegro: inputs[4].value || null,
-    observacion: card.querySelector("textarea").value || null
-  };
+          await Swal.fire("Actualizado", "Registro actualizado correctamente", "success");
+          cargarPracticas();
 
-  await supabase
-    .from("practicas_reintegro")
-    .update(updated)
-    .eq("id", r.id);
-
-  for (const adj of nuevosAdjuntos) {
-    if (!adj.archivo) continue;
-
-    const url = await subirArchivoCloudinary(adj.archivo);
-
-    await supabase.from("fichamedica_documentos").insert({
-      afiliado_id: afiliadoId,
-      tipo_documento: "practicas_reintegro",
-      entidad_relacion_id: r.id,
-      nombre_archivo: adj.archivo.name,
-      url
-    });
-  }
-
-  Swal.fire("Actualizado", "Registro actualizado correctamente", "success");
-  cargarPracticas();
-});
-
+        } finally {
+          btnGuardar.disabled = false;
+          btnGuardar.textContent = "💾 Guardar";
+        }
+      });
     }
   }
 
-  /* =====================
-     FORM NUEVO
-  ===================== */
+  /* ===================== NUEVO ===================== */
+
   form.addEventListener("submit", async e => {
     e.preventDefault();
 
-    const datos = {
-      afiliado_id: afiliadoId,
-      fecha_carga: form.fecha_carga.value,
-      fecha_prescripcion: form.fecha_prescripcion.value || null,
-      fecha_vencimiento: form.fecha_vencimiento.value || null,
-      tipo_practica_id: tipoSelect.value || null,
-      observacion: form.observacion.value || null,
-      reintegro: null,
-      fecha_reintegro: null
-    };
+    const btn = form.querySelector("button[type='submit']");
+    btn.disabled = true;
+    btn.textContent = "Guardando...";
 
-    const { data } = await supabase
-      .from("practicas_reintegro")
-      .insert(datos)
-      .select()
-      .single();
+    try {
 
-    for (const adj of archivosAdjuntos) {
-      if (!adj.archivo) continue;
-
-      const url = await subirArchivoCloudinary(adj.archivo);
-
-      await supabase.from("fichamedica_documentos").insert({
+      const datos = {
         afiliado_id: afiliadoId,
-        tipo_documento: "practicas_reintegro",
-        entidad_relacion_id: data.id,
-        nombre_archivo: adj.archivo.name,
-        url
-      });
+        fecha_carga: form.fecha_carga.value,
+        fecha_prescripcion: form.fecha_prescripcion.value || null,
+        fecha_vencimiento: form.fecha_vencimiento.value || null,
+        tipo_practica_id: tipoSelect.value || null,
+        observacion: form.observacion.value || null,
+        reintegro: null,
+        fecha_reintegro: null
+      };
+
+      const { data } = await supabase
+        .from("practicas_reintegro")
+        .insert(datos)
+        .select()
+        .single();
+
+      for (const adj of archivosAdjuntos) {
+        if (!adj.archivo) continue;
+
+        const url = await subirArchivoCloudinary(adj.archivo);
+
+        await supabase.from("fichamedica_documentos").insert({
+          afiliado_id: afiliadoId,
+          tipo_documento: "practicas_reintegro",
+          entidad_relacion_id: data.id,
+          nombre_archivo: adj.archivo.name,
+          url
+        });
+      }
+
+      await Swal.fire("Guardado", "Registro guardado correctamente", "success");
+
+      form.reset();
+      resetAdjuntos();
+      form.classList.add("hidden");
+      cargarPracticas();
+
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "💾 Guardar";
     }
-
-    form.reset();
-    resetAdjuntos();
-    form.classList.add("hidden");
-    cargarPracticas();
-
-    Swal.fire("Guardado", "Registro guardado correctamente", "success");
   });
 
   btnNuevo.addEventListener("click", () => {
