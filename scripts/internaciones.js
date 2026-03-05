@@ -614,7 +614,7 @@ form.addEventListener("submit", async e => {
     Swal.fire({
       icon: "success",
       title: "Guardado",
-      text: "Internación registrada correctamente",
+      text: "Internación cargada correctamente",
       confirmButtonText: "OK"
     });
 

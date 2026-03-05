@@ -183,13 +183,12 @@ div#listaOdontologia > .card {
 
 /* BOTÓN VER MÁS */
 .toggle-card {
-  background: none;
-  border: none;
-  color: #2563eb;
-  font-size: 0.85rem;
-  padding: 4px 0;
-  cursor: pointer;
-  transition: color 0.2s ease;
+background: none;
+    border: none;
+    color: #2563eb;
+    font-size: 0.85rem;
+    padding: 4px 0;
+    cursor: pointer;
 }
 
 .toggle-card:hover {

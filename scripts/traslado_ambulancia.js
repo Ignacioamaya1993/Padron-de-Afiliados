@@ -102,59 +102,110 @@ export async function init(afiliadoId) {
       card.className = "card";
       card.dataset.id = traslado.id;
 
-      card.innerHTML = `
-        <strong>Traslado Ambulancia</strong>
+card.className = "card-traslado";
+card.dataset.id = traslado.id;
 
-        <div class="med-card-section grid-fechas">
-          <div>
-            <label>Fecha Carga</label>
-            <input type="date" name="fecha_carga" readonly value="${fISO(traslado.fecha_carga)}">
-          </div>
+card.innerHTML = `
+  <strong class="card-titulo">
+    Traslado Ambulancia
+  </strong>
 
-          <div>
-            <label>Lugar</label>
-            <input name="lugar_traslado" readonly value="${traslado.lugar_traslado || ""}">
-          </div>
+  <!-- SIEMPRE VISIBLE -->
+  <div class="med-card-section grid-fechas resumen">
 
-          <div>
-            <label>Reintegro</label>
-            <input type="number" step="0.01" name="reintegro" readonly value="${traslado.reintegro ?? ""}">
-          </div>
+    <div>
+      <label>Fecha Carga</label>
+      <input type="date" name="fecha_carga" readonly value="${fISO(traslado.fecha_carga)}">
+    </div>
 
-          <div>
-            <label>Fecha Reintegro</label>
-            <input type="date" name="fecha_reintegro" readonly value="${fISO(traslado.fecha_reintegro)}">
-          </div>
+    <div>
+      <label>Lugar</label>
+      <input name="lugar_traslado" readonly value="${traslado.lugar_traslado || ""}">
+    </div>
+
+    <div>
+      <label>Reintegro</label>
+      <input type="number" step="0.01" name="reintegro" readonly value="${traslado.reintegro ?? ""}">
+    </div>
+
+    <div>
+      <label>Fecha Reintegro</label>
+      <input type="date" name="fecha_reintegro" readonly value="${fISO(traslado.fecha_reintegro)}">
+    </div>
+
+      <button type="button" class="toggle-card">
+    Ver más
+  </button>
+
+  </div>
+
+  <!-- SOLO EXPANDIDO -->
+  <div class="card-extra">
+
+    <div class="med-card-section">
+      <label>Observación</label>
+      <textarea name="observacion" readonly>
+${traslado.observacion || "Sin observaciones"}
+      </textarea>
+    </div>
+
+    <div class="med-card-section adjuntos-existentes">
+      <label>Adjuntos</label>
+      ${docs?.length ? docs.map(d => `
+        <div class="adjunto-existente" data-doc-id="${d.id}">
+          <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+          <button type="button" class="eliminar-adjunto hidden">✖</button>
         </div>
+      `).join("") : "<div>Sin adjuntos</div>"}
+    </div>
 
-        <div class="med-card-section">
-          <label>Observación</label>
-          <textarea name="observacion" readonly>${traslado.observacion || ""}</textarea>
-        </div>
+    <div class="med-card-section adjuntos-edicion hidden">
+      <label>Agregar nuevos adjuntos</label>
+      <div class="lista-nuevos-adjuntos"></div>
+      <button type="button" class="agregar-adjunto-card">
+        ➕ Agregar adjunto
+      </button>
+    </div>
 
-        <div class="med-card-section adjuntos-existentes">
-          <label>Adjuntos</label>
-          ${docs?.length ? docs.map(d => `
-            <div class="adjunto-existente" data-doc-id="${d.id}">
-              <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-              <button type="button" class="eliminar-adjunto hidden">✖</button>
-            </div>
-          `).join("") : "<div>Sin adjuntos</div>"}
-        </div>
+  </div>
 
-        <div class="med-card-section adjuntos-edicion hidden">
-          <label>Agregar nuevos adjuntos</label>
-          <div class="lista-nuevos-adjuntos"></div>
-          <button type="button" class="agregar-adjunto-card">➕ Agregar adjunto</button>
-        </div>
+  <div class="acciones">
+    <button class="editar">✏️ Editar</button>
+    <button class="eliminar">🗑️ Eliminar</button>
+    <button class="guardar hidden">💾 Guardar</button>
+    <button class="cancelar hidden">Cancelar</button>
+  </div>
+`;
 
-        <div class="acciones">
-          <button class="editar">✏️ Editar</button>
-          <button class="eliminar">🗑️ Eliminar</button>
-          <button class="guardar hidden">💾 Guardar</button>
-          <button class="cancelar hidden">Cancelar</button>
-        </div>
-      `;
+const toggleBtn = card.querySelector(".toggle-card");
+
+toggleBtn.addEventListener("click", () => {
+
+  const estaExpandida = card.classList.contains("expandida");
+
+  if (estaExpandida) {
+
+    // CERRAR
+    card.classList.remove("expandida");
+    toggleBtn.textContent = "Ver más";
+
+    // mover botón arriba (debajo del resumen)
+    const resumen = card.querySelector(".resumen");
+    resumen.after(toggleBtn);
+
+  } else {
+
+    // ABRIR
+    card.classList.add("expandida");
+    toggleBtn.textContent = "Ver menos";
+
+    // mover botón abajo (antes de acciones)
+    const acciones = card.querySelector(".acciones");
+    acciones.before(toggleBtn);
+
+  }
+
+});
 
       contenedor.appendChild(card);
 
@@ -170,22 +221,35 @@ export async function init(afiliadoId) {
       const nuevosAdjuntosContainer = card.querySelector(".lista-nuevos-adjuntos");
       let nuevosAdjuntos = [];
 
-      btnEditar.addEventListener("click", () => {
-        if (editandoId && editandoId !== traslado.id) {
-          Swal.fire("Atención", "Ya hay un registro en edición", "warning");
-          return;
-        }
-        editandoId = traslado.id;
+    btnEditar.addEventListener("click", () => {
 
-        card.classList.add("editando");
-        inputs.forEach(i => i.removeAttribute("readonly"));
-        card.querySelectorAll(".eliminar-adjunto").forEach(b => b.classList.remove("hidden"));
-        adjuntosEdicion.classList.remove("hidden");
-        btnEditar.classList.add("hidden");
-        btnEliminar.classList.add("hidden");
-        btnGuardar.classList.remove("hidden");
-        btnCancelarCard.classList.remove("hidden");
-      });
+  if (editandoId && editandoId !== traslado.id) {
+    Swal.fire("Atención", "Ya hay un registro en edición", "warning");
+    return;
+  }
+
+  editandoId = traslado.id;
+
+  card.classList.add("modo-edicion");
+  card.classList.add("expandida");
+
+  const acciones = card.querySelector(".acciones");
+acciones.before(toggleBtn);
+
+  toggleBtn.textContent = "Ver menos";
+
+  inputs.forEach(i => i.removeAttribute("readonly"));
+
+  card.querySelectorAll(".eliminar-adjunto")
+      .forEach(b => b.classList.remove("hidden"));
+
+  adjuntosEdicion.classList.remove("hidden");
+
+  btnEditar.classList.add("hidden");
+  btnEliminar.classList.add("hidden");
+  btnGuardar.classList.remove("hidden");
+  btnCancelarCard.classList.remove("hidden");
+});
 
       btnCancelarCard.addEventListener("click", () => {
         editandoId = null;
@@ -253,65 +317,54 @@ export async function init(afiliadoId) {
       });
 
       /* Guardar cambios */
-      btnGuardar.addEventListener("click", async () => {
-        const updated = {
-          fecha_carga: card.querySelector("[name='fecha_carga']").value,
-          lugar_traslado: card.querySelector("[name='lugar_traslado']").value,
-          observacion: card.querySelector("[name='observacion']").value || null,
-          reintegro: card.querySelector("[name='reintegro']").value || null,
-          fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null
-        };
+btnGuardar.addEventListener("click", async () => {
 
-        const { error } = await supabase
-          .from("traslado_ambulancia")
-          .update(updated)
-          .eq("id", traslado.id);
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = "Guardando...";
 
-        if (error) {
-          console.error(error);
-          Swal.fire("Error", "No se pudo actualizar", "error");
-          return;
-        }
+  const updated = {
+    fecha_carga: card.querySelector("[name='fecha_carga']").value,
+    lugar_traslado: card.querySelector("[name='lugar_traslado']").value,
+    observacion: card.querySelector("[name='observacion']").value || null,
+    reintegro: card.querySelector("[name='reintegro']").value || null,
+    fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null
+  };
 
-        /* Subir nuevos adjuntos */
-for (const adj of nuevosAdjuntos) {
-  if (!adj.archivo) continue;
+  const { error } = await supabase
+    .from("traslado_ambulancia")
+    .update(updated)
+    .eq("id", traslado.id);
 
-  console.log("Subiendo archivo nuevo a Cloudinary:", adj.archivo.name);
-  const resultado = await subirArchivoCloudinary(adj.archivo);
-  console.log("Resultado Cloudinary:", resultado);
-
-  const url = resultado; // <-- usar directamente
-  if (!url) {
-    console.warn("No se obtuvo URL del archivo:", adj.archivo.name);
-    continue;
+  if (error) {
+    console.error(error);
+    Swal.fire("Error", "No se pudo actualizar", "error");
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = "💾 Guardar";
+    return;
   }
 
-  console.log("Insertando documento en Supabase con URL:", url);
-  const { data: docData, error: errorAdj } = await supabase
-    .from("fichamedica_documentos")
-    .insert({
+  /* SUBIR ADJUNTOS NUEVOS */
+  for (const adj of nuevosAdjuntos) {
+    if (!adj.archivo) continue;
+
+    const url = await subirArchivoCloudinary(adj.archivo);
+    if (!url) continue;
+
+    await supabase.from("fichamedica_documentos").insert({
       afiliado_id: afiliadoId,
       tipo_documento: "traslado_ambulancia",
       entidad_relacion_id: traslado.id,
       nombre_archivo: adj.archivo.name,
       url,
       fecha_subida: new Date().toISOString()
-    })
-    .select()
-    .single();
-
-  if (errorAdj) {
-    console.error("Error al insertar documento:", errorAdj);
-  } else {
-    console.log("Documento insertado correctamente:", docData);
+    });
   }
-}
 
-        editandoId = null;
-        cargarTraslados();
-        Swal.fire("Actualizado", "Registro actualizado correctamente", "success");
-      });
+  editandoId = null;
+  cargarTraslados();
+
+  Swal.fire("Actualizado", "Registro actualizado correctamente", "success");
+});
 
     }
 

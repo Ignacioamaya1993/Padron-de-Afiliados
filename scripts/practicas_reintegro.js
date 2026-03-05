@@ -300,7 +300,11 @@ btnCancelarCard.addEventListener("click", () => {
           .delete()
           .eq("id", r.id);
 
-        await Swal.fire("Eliminado", "Se ha eliminado correctamente.", "success");
+        Swal.fire(
+          'Eliminado',
+          'La practica fue eliminado correctamente.',
+          'success'
+        );
 
         cargarPracticas();
       });
@@ -382,8 +386,14 @@ btnCancelarCard.addEventListener("click", () => {
             });
           }
 
-          await Swal.fire("Actualizado", "Registro actualizado correctamente", "success");
-          cargarPracticas();
+    Swal.fire({
+      icon: "success",
+      title: "Guardado",
+      text: "Cambios guardados correctamente",
+      confirmButtonText: "OK"
+    });
+    
+    cargarPracticas();
 
         } finally {
           btnGuardar.disabled = false;
@@ -435,7 +445,12 @@ btnCancelarCard.addEventListener("click", () => {
         });
       }
 
-      await Swal.fire("Guardado", "Registro guardado correctamente", "success");
+      await     Swal.fire({
+      icon: 'success',
+      title: 'Guardado',
+      text: 'Practica reintegro cargado correctamente',
+      confirmButtonText: 'OK'
+    });
 
       form.reset();
       resetAdjuntos();

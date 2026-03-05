@@ -4,7 +4,6 @@ import { generarNotificaciones } from "./notificaciones.js";
 
 const MAX_NOTIF = 10;
 
-let headerInicializado = false;
 let usuarioActual = null;
 
 // =====================
@@ -112,26 +111,29 @@ async function renderNotificaciones() {
       </div>
     `;
 
-    item.addEventListener("click", async () => {
-      try {
-        if (!notif.leida) {
-          await supabase
-            .from("notificaciones")
-            .update({ leida: true })
-            .eq("id", notif.id);
+item.addEventListener("click", async () => {
+  try {
+    if (!notif.leida) {
+      await supabase
+        .from("notificaciones")
+        .update({ leida: true })
+        .eq("id", notif.id);
 
-          item.classList.add("leida");
-          await actualizarNotificacionesBadge(usuarioActual.id);
-        }
+      item.classList.add("leida");
+      await actualizarNotificacionesBadge(usuarioActual.id);
+    }
 
-      if (notif.afiliado_id) {
-        window.location.href =
-          `/pages/fichaMedica.html?id=${notif.afiliado_id}&modulo=${notif.tipo}`;
-      }
-      } catch (err) {
-        console.error("Error al procesar notificación:", err);
-      }
-    });
+    if (notif.afiliado_id) {
+      window.location.href =
+        `/pages/fichaMedica.html?id=${notif.afiliado_id}` +
+        `&modulo=${notif.tipo}` +
+        `&registro=${notif.registro_id}`;
+    }
+
+  } catch (err) {
+    console.error("Error al procesar notificación:", err);
+  }
+});
 
     dropdown.appendChild(item);
   }
@@ -149,10 +151,8 @@ export async function cargarHeader() {
     const html = await res.text();
     container.innerHTML = html;
 
-    if (!headerInicializado) {
-      inicializarHeader();
-      headerInicializado = true;
-    }
+    // SIEMPRE inicializar después de inyectar
+    inicializarHeader();
 
   } catch (err) {
     console.error("Error cargando header:", err);
@@ -186,11 +186,14 @@ function inicializarHeader() {
   });
 
   // Cerrar al hacer click afuera
-  document.addEventListener("click", (e) => {
-    if (!dropdown.contains(e.target) && e.target !== notificacionesBtn) {
-      dropdown.classList.add("hidden");
-    }
-  });
+document.addEventListener("click", (e) => {
+  if (
+    !dropdown.contains(e.target) &&
+    !notificacionesBtn.contains(e.target)
+  ) {
+    dropdown.classList.add("hidden");
+  }
+});
 
   // =====================
   // AUTH OBSERVER

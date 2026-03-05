@@ -369,21 +369,38 @@ if (e.target.classList.contains("guardar")) {
   }
 }
 
-    if (e.target.classList.contains("eliminar")) {
-      const confirmar = await Swal.fire({
-        title: '¿Está seguro?',
-        text: "Se eliminará esta odontología y todos sus adjuntos.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'      });
-      if (!confirmar.isConfirmed) return;
+if (e.target.classList.contains("eliminar")) {
+  const confirmar = await Swal.fire({
+    title: '¿Está seguro?',
+    text: "Se eliminará esta odontología y todos sus adjuntos.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  });
 
-      await supabase.from("odontologia").delete().eq("id", id);
-      cargarOdontologia();
-    }
+  if (!confirmar.isConfirmed) return;
+
+  const { error } = await supabase
+    .from("odontologia")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    Swal.fire("Error", "No se pudo eliminar el registro.", "error");
+    return;
+  }
+
+  await Swal.fire(
+    'Eliminado',
+    'La odontología fue eliminada correctamente.',
+    'success'
+  );
+
+  cargarOdontologia();
+}
   });
 
   // =====================
@@ -468,8 +485,13 @@ if (e.target.classList.contains("guardar")) {
     form.classList.add("hidden");
     cargarOdontologia();
 
-    Swal.fire("Guardado", "Registro guardado correctamente", "success");
-
+    Swal.fire({
+      icon: 'success',
+      title: 'Guardado',
+      text: 'Odontologia cargado correctamente',
+      confirmButtonText: 'OK'
+    });
+    
     btnSubmit.disabled = false;
 btnSubmit.textContent = "Guardar";
   });

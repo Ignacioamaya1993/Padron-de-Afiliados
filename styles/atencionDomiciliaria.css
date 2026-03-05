@@ -241,3 +241,9 @@ input[type="file"] {
     max-width: 100% !important;
     width: 100% !important;
 }
+
+.card-destacada {
+  border: 3px solid #2f80ed !important;
+  box-shadow: 0 0 18px rgba(47, 128, 237, 0.6);
+  animation: destacarAnim 1.2s ease-in-out 2;
+}

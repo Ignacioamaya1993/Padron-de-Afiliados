@@ -26,6 +26,14 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+  // =====================
+// PARAMETRO DESTACAR DESDE NOTIFICACION
+// =====================
+const params = new URLSearchParams(window.location.search);
+const registroADestacar = params.get("registro")
+  ? Number(params.get("registro"))
+  : null;
+
   /* =====================
      ESTADO
   ===================== */
@@ -285,12 +293,50 @@ card.innerHTML = `
   </div>
 `;
 
+// =====================
+// DESTACAR SI VIENE DE NOTIFICACION
+// =====================
+if (registroADestacar && med.id === registroADestacar) {
+
+  // Si el registro está en otra página,
+  // calculamos qué página debería estar
+  const indexGlobal = meds.findIndex(m => m.id === registroADestacar);
+  
+  if (indexGlobal === -1) {
+    // Puede estar en otra página
+    const posicion = await obtenerPosicionMedicamento(registroADestacar);
+    if (posicion !== null) {
+      paginaActual = Math.floor(posicion / POR_PAGINA);
+      await cargarMedicamentos();
+      return;
+    }
+  }
+
+  setTimeout(() => {
+    card.classList.add("card-destacada");
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 300);
+}
+
     fragment.appendChild(card);
   }
 
     lista.appendChild(fragment);
 
   renderPaginacion(count);
+}
+
+async function obtenerPosicionMedicamento(idBuscado) {
+
+  const { data, error } = await supabase
+    .from("medicamentos")
+    .select("id")
+    .eq("afiliado_id", afiliadoId)
+    .order("fecha_carga", { ascending: false });
+
+  if (error || !data) return null;
+
+  return data.findIndex(m => m.id === idBuscado);
 }
 
 function renderPaginacion(total) {

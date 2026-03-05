@@ -403,12 +403,3 @@ input[type="file"] {
 .toggle-card:hover {
   color: #1d4ed8;
 }
-
-/* ===================== */
-/* RESPONSIVE */
-/* ===================== */
-@media (max-width: 700px) {
-  .grid-derivacion {
-    grid-template-columns: 1fr;
-  }
-}

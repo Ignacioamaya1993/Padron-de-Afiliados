@@ -527,20 +527,22 @@ if (form.autorizacion.value === "true" && !form.fecha_autorizacion.value) {
   return;
 }
 
-    const datos = {
-      afiliado_id: afiliadoId,
-      tipo: tipoSelect.value,
-      fecha_carga: form.fecha_carga.value,
-      fecha_orden: form.fecha_orden.value || null,
-      fecha_recepcion_orden: form.fecha_recepcion_orden.value || null,
-      fecha_autorizacion: form.fecha_autorizacion.value || null,
-      autorizacion: form.autorizacion.value === "true",
-      nombre_kinesiologo: form.nombre_kinesiologo?.value || null,
-      lugar: form.lugar?.value || null,
-      observacion: form.observacion.value || null,
-      reintegro: form.reintegro.value ? parseFloat(form.reintegro.value) : null,
-      fecha_reintegro: form.fecha_reintegro.value || null
-    };
+const datos = {
+  afiliado_id: afiliadoId,
+  tipo: form.querySelector("[name='tipo']")?.value || null,
+  fecha_carga: form.querySelector("[name='fecha_carga']")?.value || null,
+  fecha_orden: form.querySelector("[name='fecha_orden']")?.value || null,
+  fecha_recepcion_orden: form.querySelector("[name='fecha_recepcion_orden']")?.value || null,
+  fecha_autorizacion: form.querySelector("[name='fecha_autorizacion']")?.value || null,
+  autorizacion: form.querySelector("[name='autorizacion']")?.value === "true",
+  nombre_kinesiologo: form.querySelector("[name='nombre_kinesiologo']")?.value || null,
+  lugar: form.querySelector("[name='lugar']")?.value || null,
+  observacion: form.querySelector("[name='observacion']")?.value || null,
+  reintegro: form.querySelector("[name='reintegro']")?.value
+    ? parseFloat(form.querySelector("[name='reintegro']").value)
+    : null,
+  fecha_reintegro: form.querySelector("[name='fecha_reintegro']")?.value || null
+};
 
     try {
       const { data: nueva, error } = await supabase.from("practicas").insert(datos).select();
@@ -558,7 +560,14 @@ if (form.autorizacion.value === "true" && !form.fecha_autorizacion.value) {
         });
       }
 
-      await Swal.fire({ icon: "success", title: "Creado", text: "Práctica creada correctamente" });
+      await     
+      
+      Swal.fire({
+      icon: 'success',
+      title: 'Guardado',
+      text: 'Practica cargada correctamente',
+      confirmButtonText: 'OK'
+    });
 
       form.classList.add("hidden");
       cargarPracticas();

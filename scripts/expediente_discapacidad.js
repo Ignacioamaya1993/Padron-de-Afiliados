@@ -11,6 +11,14 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+    // =====================
+// PARAMETRO DESTACAR DESDE NOTIFICACION
+// =====================
+const params = new URLSearchParams(window.location.search);
+const registroADestacar = params.get("registro")
+  ? Number(params.get("registro"))
+  : null;
+
   /* =======================
      ESTADO
   ======================= */
@@ -136,6 +144,23 @@ export async function init(afiliadoId) {
 
     const fISO = d => d ? d.split("T")[0] : "";
 
+        // =====================
+// SI EL REGISTRO ESTA EN OTRA PAGINA
+// =====================
+if (registroADestacar) {
+  const posicion = await obtenerPosicionexpediente(registroADestacar);
+
+  if (posicion !== null) {
+    const paginaCorrecta = Math.floor(posicion / POR_PAGINA);
+
+    if (paginaCorrecta !== paginaActual) {
+      paginaActual = paginaCorrecta;
+      await cargarExpedientes();
+      return;
+    }
+  }
+}
+
     for (const exp of data) {
 
       const documentos = docsPorId[exp.id] || [];
@@ -145,57 +170,96 @@ export async function init(afiliadoId) {
       card.dataset.id = exp.id;
       card._adjuntosEliminar = [];
 
-      card.innerHTML = `
-        <strong>${exp.tipo_expediente_discapacidad?.nombre || ""}</strong>
+card.innerHTML = `
+  <strong>${exp.tipo_expediente_discapacidad?.nombre || ""}</strong>
 
-        <div class="grid-fechas">
-          <div>
-            <label>Fecha inicio</label>
-            <input type="date" name="fecha_inicio" readonly value="${fISO(exp.fecha_inicio)}">
+  <!-- SIEMPRE VISIBLE -->
+  <div class="card-content">
+    <div class="grid-fechas grid-principal">
+      <div>
+        <label>Fecha inicio</label>
+        <input type="date" name="fecha_inicio" readonly value="${fISO(exp.fecha_inicio)}">
+      </div>
+
+      <div>
+        <label>Fecha finalización</label>
+        <input type="date" name="fecha_finalizacion" readonly value="${fISO(exp.fecha_finalizacion)}">
+      </div>
+
+      <div>
+        <label>Reintegro</label>
+        <input type="number" step="0.01" name="reintegro" readonly value="${exp.reintegro ?? ""}">
+      </div>
+
+      <div>
+        <label>Fecha reintegro</label>
+        <input type="date" name="fecha_reintegro" readonly value="${fISO(exp.fecha_reintero)}">
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPANDIBLE -->
+  <div class="card-extra">
+
+    <div class="full-width">
+      <label>Observación</label>
+      <textarea name="observacion" readonly>${exp.observacion || "Sin observaciones"}</textarea>
+    </div>
+
+    ${documentos.length ? `
+      <div class="adjuntos-card">
+        ${documentos.map(d => `
+          <div class="adjunto-item" data-doc-id="${d.id}">
+            <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+            <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
           </div>
+        `).join("")}
+      </div>
+    ` : ""}
 
-          <div>
-            <label>Fecha finalización</label>
-            <input type="date" name="fecha_finalizacion" readonly value="${fISO(exp.fecha_finalizacion)}">
-          </div>
-        </div>
+    <div class="adjuntos-edicion hidden">
+      <button type="button" class="btn-agregar-adjunto-card">➕ Agregar adjunto</button>
+      <div class="adjuntos-nuevos"></div>
+    </div>
 
-        <div class="full-width">
-          <label>Reintegro</label>
-          <input type="number" step="0.01" name="reintegro" readonly value="${exp.reintegro ?? ""}">
-        </div>
+  </div>
 
-        <div class="full-width">
-          <label>Fecha reintegro</label>
-          <input type="date" name="fecha_reintegro" readonly value="${fISO(exp.fecha_reintegro)}">
-        </div>
+  <button class="toggle-card">Ver más</button>
 
-        <div class="full-width">
-          <label>Observación</label>
-          <textarea name="observacion" readonly>${exp.observacion || "Sin observaciones"}</textarea>
-        </div>
-
-        ${documentos.length ? `
-        <div class="adjuntos-card">
-          ${documentos.map(d => `
-            <div class="adjunto-item" data-doc-id="${d.id}">
-              <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-              <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
-            </div>
-          `).join("")}
-        </div>` : ""}
-
-        <div class="acciones">
-          <button class="editar">✏️ Editar</button>
-          <button class="eliminar">🗑️ Eliminar</button>
-          <button class="guardar hidden">💾 Guardar</button>
-          <button class="cancelar hidden">Cancelar</button>
-        </div>
-      `;
+  <div class="acciones">
+    <button class="editar">✏️ Editar</button>
+    <button class="eliminar">🗑️ Eliminar</button>
+    <button class="guardar hidden">💾 Guardar</button>
+    <button class="cancelar hidden">Cancelar</button>
+  </div>
+`;
+      // =====================
+// DESTACAR SI VIENE DE NOTIFICACION
+// =====================
+if (registroADestacar && exp.id === registroADestacar) {
+  
+  setTimeout(() => {
+    card.classList.add("card-destacada");
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 300);
+}
 
       lista.appendChild(card);
     }
   }
+  
+  async function obtenerPosicionexpediente(idBuscado) {
+
+  const { data, error } = await supabase
+    .from("expediente_discapacidad")
+    .select("id")
+    .eq("afiliado_id", afiliadoId)
+    .order("fecha_inicio", { ascending: false });
+
+  if (error || !data) return null;
+
+  return data.findIndex(r => r.id === idBuscado);
+}
 
   /* =======================
      ACCIONES CARD
@@ -208,53 +272,72 @@ export async function init(afiliadoId) {
 
     const id = Number(card.dataset.id);
 
+    // TOGGLE
+if (e.target.classList.contains("toggle-card")) {
+
+  card.classList.toggle("expandida");
+
+  e.target.textContent = card.classList.contains("expandida")
+    ? "Ver menos"
+    : "Ver más";
+
+  return;
+}
+
     /* EDITAR */
 
-    if (e.target.classList.contains("editar")) {
+if (e.target.classList.contains("editar")) {
 
-      card.querySelectorAll("input, textarea").forEach(el => {
-        el.removeAttribute("readonly");
-      });
+  if (!card.classList.contains("expandida")) {
+    card.classList.add("expandida");
+    card.querySelector(".toggle-card").textContent = "Ver menos";
+  }
 
-      card.querySelector(".guardar").classList.remove("hidden");
-      card.querySelector(".cancelar").classList.remove("hidden");
-      card.querySelector(".editar").classList.add("hidden");
-      card.querySelector(".eliminar").classList.add("hidden");
-
-      const contAdjuntos = card.querySelector(".adjuntos-card");
-
-      if (contAdjuntos) {
-        contAdjuntos.querySelectorAll(".btn-eliminar-adjunto").forEach(btn => {
-          btn.classList.remove("hidden");
-          btn.onclick = () => {
-            const item = btn.closest(".adjunto-item");
-            card._adjuntosEliminar.push(item.dataset.docId);
-            item.remove();
-          };
-        });
-      }
-
-      let nuevoAdjuntoWrapper = card.querySelector(".adjuntos-nuevos");
-
-      if (!nuevoAdjuntoWrapper) {
-        nuevoAdjuntoWrapper = document.createElement("div");
-        nuevoAdjuntoWrapper.className = "adjuntos-nuevos";
-
-        const btnNuevo = document.createElement("button");
-        btnNuevo.type = "button";
-        btnNuevo.textContent = "➕ Agregar adjunto";
-
-        btnNuevo.onclick = () => {
-          const input = document.createElement("input");
-          input.type = "file";
-          input.accept = ".pdf,.jpg,.png";
-          nuevoAdjuntoWrapper.appendChild(input);
-        };
-
-        nuevoAdjuntoWrapper.appendChild(btnNuevo);
-        card.appendChild(nuevoAdjuntoWrapper);
-      }
+  card.querySelectorAll("input, textarea").forEach(el => {
+    el.removeAttribute("readonly");
+    if (el.tagName === "TEXTAREA" && el.value === "Sin observaciones") {
+      el.value = "";
     }
+  });
+
+  card.querySelector(".guardar").classList.remove("hidden");
+  card.querySelector(".cancelar").classList.remove("hidden");
+  card.querySelector(".editar").classList.add("hidden");
+  card.querySelector(".eliminar").classList.add("hidden");
+
+  // Mostrar eliminar adjuntos
+  card.querySelectorAll(".btn-eliminar-adjunto").forEach(btn => {
+    btn.classList.remove("hidden");
+    btn.onclick = () => {
+      const item = btn.closest(".adjunto-item");
+      card._adjuntosEliminar.push(item.dataset.docId);
+      item.remove();
+    };
+  });
+
+  // Adjuntos edición
+  const bloqueAdj = card.querySelector(".adjuntos-edicion");
+  bloqueAdj.classList.remove("hidden");
+
+  const btnAgregar = bloqueAdj.querySelector(".btn-agregar-adjunto-card");
+
+  btnAgregar.onclick = () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "adjunto-item";
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".pdf,.jpg,.png";
+
+    const btnEliminar = document.createElement("button");
+    btnEliminar.type = "button";
+    btnEliminar.textContent = "✖";
+    btnEliminar.onclick = () => wrapper.remove();
+
+    wrapper.append(input, btnEliminar);
+    bloqueAdj.querySelector(".adjuntos-nuevos").appendChild(wrapper);
+  };
+}
 
     /* CANCELAR */
 
@@ -288,56 +371,85 @@ export async function init(afiliadoId) {
         .delete()
         .eq("id", id);
 
-      Swal.fire("Eliminado", "", "success");
+        Swal.fire(
+          'Eliminado',
+          'El expediente fue eliminado correctamente.',
+          'success'
+        );
       cargarExpedientes();
     }
 
     /* GUARDAR */
 
-    if (e.target.classList.contains("guardar")) {
+if (e.target.classList.contains("guardar")) {
 
-      const datosUpdate = {
-        fecha_inicio: card.querySelector("[name='fecha_inicio']").value,
-        fecha_finalizacion: card.querySelector("[name='fecha_finalizacion']").value || null,
-        observacion: card.querySelector("[name='observacion']").value || null,
-        reintegro: card.querySelector("[name='reintegro']").value || null,
-        fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null
-      };
+  const btnGuardar = e.target;
 
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = "⌛ Guardando...";
+  btnGuardar.style.backgroundColor = "#aaa";
+  btnGuardar.style.cursor = "not-allowed";
+
+  try {
+
+    const datosUpdate = {
+      fecha_inicio: card.querySelector("[name='fecha_inicio']").value,
+      fecha_finalizacion: card.querySelector("[name='fecha_finalizacion']").value || null,
+      observacion: card.querySelector("[name='observacion']").value || null,
+      reintegro: card.querySelector("[name='reintegro']").value
+        ? parseFloat(card.querySelector("[name='reintegro']").value)
+        : null,
+      fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null
+    };
+
+    await supabase
+      .from("expediente_discapacidad")
+      .update(datosUpdate)
+      .eq("id", id);
+
+    if (card._adjuntosEliminar.length) {
       await supabase
-        .from("expediente_discapacidad")
-        .update(datosUpdate)
-        .eq("id", id);
-
-      if (card._adjuntosEliminar.length) {
-        await supabase
-          .from("fichamedica_documentos")
-          .delete()
-          .in("id", card._adjuntosEliminar);
-      }
-
-      const inputs = card.querySelectorAll(".adjuntos-nuevos input[type='file']");
-
-      for (const input of inputs) {
-        if (!input.files[0]) continue;
-
-        const archivo = input.files[0];
-        const url = await subirArchivoCloudinary(archivo);
-        if (!url) continue;
-
-        await supabase.from("fichamedica_documentos").insert({
-          afiliado_id: afiliadoId,
-          entidad_relacion_id: id,
-          tipo_documento: "expediente_discapacidad",
-          nombre_archivo: archivo.name,
-          url,
-          fecha_subida: new Date().toISOString()
-        });
-      }
-
-      Swal.fire("Guardado", "", "success");
-      cargarExpedientes();
+        .from("fichamedica_documentos")
+        .delete()
+        .in("id", card._adjuntosEliminar);
     }
+
+    const inputs = card.querySelectorAll(".adjuntos-nuevos input[type='file']");
+
+    for (const input of inputs) {
+      if (!input.files[0]) continue;
+
+      const archivo = input.files[0];
+      const url = await subirArchivoCloudinary(archivo);
+
+      await supabase.from("fichamedica_documentos").insert({
+        afiliado_id: afiliadoId,
+        entidad_relacion_id: id,
+        tipo_documento: "expediente_discapacidad",
+        nombre_archivo: archivo.name,
+        url,
+        fecha_subida: new Date().toISOString()
+      });
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Guardado",
+      text: "Cambios guardados correctamente",
+      confirmButtonText: "OK"
+    });
+    
+    cargarExpedientes();
+
+  } catch (err) {
+    Swal.fire("Error", "No se pudo guardar", "error");
+  } finally {
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = "💾 Guardar";
+    btnSubmit.style.backgroundColor = "";
+    btnSubmit.style.cursor = "";
+  }
+}
 
   });
 
@@ -390,9 +502,16 @@ export async function init(afiliadoId) {
     formContainer.classList.add("hidden");
   });
 
-  form.addEventListener("submit", async e => {
+ form.addEventListener("submit", async e => {
+  e.preventDefault();
 
-    e.preventDefault();
+  const btnSubmit = form.querySelector("button[type='submit']");
+  btnSubmit.disabled = true;
+  btnSubmit.textContent = "⌛ Guardando...";
+  btnSubmit.style.backgroundColor = "#aaa";
+  btnSubmit.style.cursor = "not-allowed";
+
+  try {
 
     const datos = {
       afiliado_id: afiliadoId,
@@ -408,10 +527,7 @@ export async function init(afiliadoId) {
       .select()
       .single();
 
-    if (error) {
-      Swal.fire("Error", "", "error");
-      return;
-    }
+    if (error) throw error;
 
     const inputs = adjuntosContainer.querySelectorAll("input[type='file']");
 
@@ -436,9 +552,23 @@ export async function init(afiliadoId) {
     resetAdjuntos();
     formContainer.classList.add("hidden");
 
-    Swal.fire("Guardado", "", "success");
+    Swal.fire(
+      "Guardado",
+      "Expediente de discapacidad registrado correctamente",
+      "success"
+    );
+
     cargarExpedientes();
-  });
+
+  } catch (err) {
+    Swal.fire("Error", "No se pudo guardar", "error");
+  } finally {
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = "💾 Guardar";
+    btnSubmit.style.backgroundColor = "";
+    btnSubmit.style.cursor = "";
+  }
+});
 
   /* =======================
      INIT

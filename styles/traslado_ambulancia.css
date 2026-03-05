@@ -143,7 +143,7 @@ input[type="file"] {
 /* ===================== */
 .grid-traslado {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
 }
 
@@ -159,102 +159,6 @@ input[type="file"] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 0.6rem;
-}
-
-/* ===================== */
-/* CARD */
-/* ===================== */
-.card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  min-width: 350px;
-  min-height: 380px;
-}
-
-.card.editando {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
-  background: #f8fafc;
-}
-
-.card strong {
-  font-size: 1rem;
-  color: #0f172a;
-}
-
-.card .card-content {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  gap: 0.35rem;
-}
-
-.med-card-section {
-  padding-top: 0.4rem;
-  border-top: 1px solid #e5e7eb;
-  margin-top: 0.2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.med-card-section textarea {
-  font-size: 0.8rem;
-  background: #f1f5f9;
-  border: 1px solid #e5e7eb;
-  min-width: 340px;
-}
-
-/* Adjuntos */
-.adjuntos-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  margin-top: 0.4rem;
-  min-height: 80px;
-}
-
-/* ===================== */
-/* ACCIONES CARD */
-/* ===================== */
-.card .acciones {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.4rem;
-  margin-top: auto;
-}
-
-.card .editar {
-  background-color: #2563eb;
-  color: white;
-}
-
-.card .cancelar-edicion {
-  background-color: #e5e7eb;
-  color: #0f172a;
-}
-
-.card .eliminar {
-  background-color: #dc2626;
-  color: white;
-}
-
-.card input[readonly],
-.card textarea[readonly] {
-  background: #f5f5f5;
-  border: 1px solid #ddd;
-  cursor: default;
-}
-
-.card input[readonly][type="date"] {
-  pointer-events: none;
-  background: #f5f5f5;
 }
 
 /* ===================== */
@@ -309,14 +213,171 @@ input[type="file"] {
   }
 
 /* ===================== */
-/* RESPONSIVE */
+/* CARDS TRASLADO AMBULANCIA */
 /* ===================== */
-@media (max-width: 700px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
 
-  #contenedorTrasladoAmbulancia {
-    grid-template-columns: 1fr;
-  }
+#contenedorTrasladoAmbulancia {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: start;
+  margin-top: 20px;
+}
+
+.card-traslado {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-width: 350px;
+  max-width: 400px;
+}
+
+/* MODO EDICIÓN */
+.card-traslado.modo-edicion {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+  background: #f8fafc;
+}
+
+/* TÍTULO */
+.card-traslado .card-titulo {
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+/* BOTÓN VER MÁS */
+.toggle-card {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  cursor: pointer;
+  text-align: center;
+  transition: color 0.2s ease;
+}
+
+.toggle-card:hover {
+  color: #1d4ed8;
+}
+
+/* CONTENIDO COLAPSABLE */
+.card-traslado .card-extra {
+  overflow: hidden;
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.card-traslado:not(.expandida) .card-extra {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+}
+
+.card-traslado.expandida .card-extra {
+  max-height: 1000px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* SECCIONES */
+.card-traslado .med-card-section {
+  padding-top: 0.6rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* GRID INTERNO */
+.grid-fechas {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.4rem;
+}
+
+.grid-fechas label {
+  font-size: 0.85rem;
+  color: #000;
+}
+
+.grid-fechas input {
+  background: #f8fafc;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* OBSERVACIÓN */
+.card-traslado textarea {
+  font-size: 0.85rem;
+  background: #f1f5f9;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.6rem;
+  resize: vertical;
+  min-height: 70px;
+}
+
+/* READONLY */
+.card-traslado input[readonly],
+.card-traslado textarea[readonly] {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  cursor: default;
+}
+
+/* ADJUNTOS */
+.adjunto-existente {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.adjunto-existente a {
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: #2563eb;
+}
+
+.adjunto-existente a:hover {
+  text-decoration: underline;
+}
+
+/* ACCIONES */
+.card-traslado .acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  margin-top: auto;
+}
+
+/* BOTONES */
+.card-traslado .editar {
+  background-color: #2563eb;
+  color: white;
+}
+
+.card-traslado .eliminar {
+  background-color: #dc2626;
+  color: white;
+}
+
+.card-traslado .guardar {
+  background-color: #16a34a;
+  color: white;
+}
+
+.card-traslado .cancelar {
+  background-color: #e5e7eb;
+  color: #0f172a;
 }

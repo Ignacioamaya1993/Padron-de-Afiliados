@@ -126,63 +126,73 @@ export async function init(afiliadoId) {
       card.className = "card";
       card.dataset.id = r.id;
 
-      card.innerHTML = `
-        <div class="grid-2">
-          <div>
-            <label>Fecha carga</label>
-            <input type="date" readonly value="${fISO(r.fecha_carga)}">
+card.className = "card-material";
+card.dataset.id = r.id;
+card._adjuntosEliminar = [];
+
+card.innerHTML = `
+  <strong class="card-titulo">
+    ${tipoSelect.querySelector(`option[value="${r.tipo_material_id}"]`)?.textContent || "Material ortopédico"}
+  </strong>
+
+  <!-- SIEMPRE VISIBLE -->
+  <div class="card-content">
+    <div class="grid-2">
+      <div>
+        <label>Fecha carga</label>
+        <input type="date" name="fecha_carga" readonly value="${fISO(r.fecha_carga)}">
+      </div>
+
+      <div>
+        <label>Reintegro</label>
+        <input type="number" name="reintegro" readonly value="${r.reintegro ?? ""}">
+      </div>
+
+      <div>
+        <label>Fecha reintegro</label>
+        <input type="date" name="fecha_reintegro" readonly value="${fISO(r.fecha_reintegro)}">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EXPANDIBLE -->
+  <div class="card-extra">
+
+    <div class="full-width">
+      <label>Observación</label>
+      <textarea name="observacion" readonly>${r.observacion || "Sin observaciones"}</textarea>
+    </div>
+
+    ${documentos.length ? `
+      <div class="adjuntos-card">
+        ${documentos.map(d => `
+          <div class="adjunto-item" data-doc-id="${d.id}">
+            <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+            <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
           </div>
+        `).join("")}
+      </div>
+    ` : ""}
 
-          <div>
-            <label>Tipo</label>
-            <select class="tipo-select" disabled>
-              ${opcionesTipo}
-            </select>
-          </div>
+    <div class="adjuntos-edicion hidden">
+      <button type="button" class="btn-agregar-adjunto-card">➕ Agregar adjunto</button>
+      <div class="adjuntos-nuevos"></div>
+    </div>
 
-          <div>
-            <label>Reintegro</label>
-            <input type="number" value="${r.reintegro ?? ''}" readonly>
-          </div>
+  </div>
 
-          <div>
-            <label>Fecha reintegro</label>
-            <input type="date" value="${fISO(r.fecha_reintegro)}" readonly>
-          </div>
-        </div>
+  <button class="toggle-card">Ver más</button>
 
-        <div class="full-width">
-          <label>Observación</label>
-          <textarea readonly>${r.observacion || ""}</textarea>
-        </div>
-
-        ${documentos.length ? `
-        <div class="adjuntos-card">
-          ${documentos.map(d => `
-            <div class="adjunto-item" data-doc-id="${d.id}">
-              <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-              <button class="eliminar-doc hidden">✖</button>
-            </div>
-          `).join("")}
-        </div>
-
-        <div class="adjuntos-edicion hidden">
-          <button class="agregar-adjunto-card">➕ Agregar adjunto</button>
-          <div class="nuevos-adjuntos"></div>
-        </div>
-        ` : ""}
-
-        <div class="acciones">
-          <button class="editar">✏️ Editar</button>
-          <button class="eliminar">🗑️ Eliminar</button>
-          <button class="guardar hidden">💾 Guardar</button>
-          <button class="cancelar hidden">Cancelar</button>
-        </div>
-      `;
+  <div class="acciones">
+    <button class="editar">✏️ Editar</button>
+    <button class="eliminar">🗑️ Eliminar</button>
+    <button class="guardar hidden">💾 Guardar</button>
+    <button class="cancelar hidden">Cancelar</button>
+  </div>
+`;
 
       lista.appendChild(card);
-
-      card.querySelector(".tipo-select").value = r.tipo_material_id || "";
 
       const btnEditar = card.querySelector(".editar");
       const btnGuardar = card.querySelector(".guardar");
@@ -196,128 +206,180 @@ export async function init(afiliadoId) {
 
       let nuevosAdjuntos = [];
 
+      // TOGGLE
+card.querySelector(".toggle-card").addEventListener("click", e => {
+
+  card.classList.toggle("expandida");
+
+  e.target.textContent =
+    card.classList.contains("expandida")
+      ? "Ver menos"
+      : "Ver más";
+});
+
       /* ===== EDITAR ===== */
 
-      btnEditar.addEventListener("click", () => {
+btnEditar.addEventListener("click", () => {
 
-        inputs.forEach(i => i.removeAttribute("readonly"));
-        select.removeAttribute("disabled");
+  if (!card.classList.contains("expandida")) {
+    card.classList.add("expandida");
+    card.querySelector(".toggle-card").textContent = "Ver menos";
+  }
 
-        card.querySelectorAll(".eliminar-doc")
-            .forEach(b => b.classList.remove("hidden"));
+  card.classList.add("modo-edicion");
 
-        adjuntosEdicion?.classList.remove("hidden");
+  card.querySelectorAll("input, textarea").forEach(el => {
+    el.removeAttribute("readonly");
 
-        btnEditar.classList.add("hidden");
-        btnEliminar.classList.add("hidden");
-        btnGuardar.classList.remove("hidden");
-        btnCancelarCard.classList.remove("hidden");
-      });
+    if (el.tagName === "TEXTAREA" && el.value === "Sin observaciones") {
+      el.value = "";
+    }
+  });
 
+  card.querySelectorAll(".btn-eliminar-adjunto")
+      .forEach(b => b.classList.remove("hidden"));
+
+  card.querySelector(".adjuntos-edicion")
+      ?.classList.remove("hidden");
+
+  btnEditar.classList.add("hidden");
+  btnEliminar.classList.add("hidden");
+  btnGuardar.classList.remove("hidden");
+  btnCancelarCard.classList.remove("hidden");
+});
       btnCancelarCard.addEventListener("click", () => cargarMateriales());
 
       /* ===== ELIMINAR REGISTRO ===== */
 
-      btnEliminar.addEventListener("click", async () => {
+btnEliminar.addEventListener("click", async () => {
 
-        const ok = await Swal.fire({
-          title: '¿Está seguro?',
-          text: "Se eliminará el material ortopédico y sus adjuntos.",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: 'Sí, eliminar',
-          cancelButtonText: 'Cancelar'
-        });
+  const ok = await Swal.fire({
+    title: '¿Está seguro?',
+    text: "Se eliminará el material ortopédico y sus adjuntos.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  });
 
-        if (!ok.isConfirmed) return;
+  if (!ok.isConfirmed) return;
 
-        await supabase.from("materiales_ortopedicos")
-          .delete()
-          .eq("id", r.id);
+  const { error } = await supabase
+    .from("materiales_ortopedicos")
+    .delete()
+    .eq("id", r.id);
 
-        cargarMateriales();
-      });
+  if (error) {
+    Swal.fire("Error", "No se pudo eliminar el registro.", "error");
+    return;
+  }
+
+  await Swal.fire(
+    'Eliminado',
+    'El material ortopédico fue eliminado correctamente.',
+    'success'
+  );
+
+  cargarMateriales();
+});
 
       /* ===== ELIMINAR DOCUMENTO ===== */
+card.querySelectorAll(".btn-eliminar-adjunto").forEach(btn => {
+  btn.addEventListener("click", () => {
 
-      card.querySelectorAll(".eliminar-doc").forEach(btn => {
-        btn.addEventListener("click", async () => {
-
-          const docId = btn.closest(".adjunto-item").dataset.docId;
-
-          await supabase
-            .from("fichamedica_documentos")
-            .delete()
-            .eq("id", docId);
-
-          btn.closest(".adjunto-item").remove();
-        });
-      });
+    const item = btn.closest(".adjunto-item");
+    card._adjuntosEliminar.push(item.dataset.docId);
+    item.remove();
+  });
+});
 
       /* ===== AGREGAR NUEVO ADJUNTO EN EDICIÓN ===== */
 
-      adjuntosEdicion?.querySelector(".agregar-adjunto-card")
-        ?.addEventListener("click", () => {
+card.querySelector(".btn-agregar-adjunto-card")
+  ?.addEventListener("click", () => {
 
-          const wrapper = document.createElement("div");
-          wrapper.className = "adjunto-item";
+    const wrapper = document.createElement("div");
+    wrapper.className = "adjunto-item";
 
-          const input = document.createElement("input");
-          input.type = "file";
-          input.accept = ".pdf,.jpg,.png";
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".pdf,.jpg,.png";
 
-          input.addEventListener("change", () => {
-            wrapper.archivo = input.files[0] || null;
-          });
+    const btnX = document.createElement("button");
+    btnX.type = "button";
+    btnX.textContent = "✖";
+    btnX.onclick = () => wrapper.remove();
 
-          wrapper.archivo = null;
-          nuevosAdjuntos.push(wrapper);
-
-          const btnX = document.createElement("button");
-          btnX.textContent = "✖";
-          btnX.type = "button";
-          btnX.onclick = () => wrapper.remove();
-
-          wrapper.append(input, btnX);
-          nuevosAdjuntosContainer.appendChild(wrapper);
-      });
+    wrapper.append(input, btnX);
+    card.querySelector(".adjuntos-nuevos").appendChild(wrapper);
+});
 
       /* ===== GUARDAR EDICIÓN ===== */
 
-      btnGuardar.addEventListener("click", async () => {
+btnGuardar.addEventListener("click", async () => {
 
-        const updated = {
-          fecha_carga: inputs[0].value,
-          tipo_material_id: select.value || null,
-          reintegro: inputs[2].value || null,
-          fecha_reintegro: inputs[3].value || null,
-          observacion: card.querySelector("textarea").value || null
-        };
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = "⌛ Guardando...";
+  btnGuardar.style.backgroundColor = "#aaa";
+  btnGuardar.style.cursor = "not-allowed";
 
-        await supabase
-          .from("materiales_ortopedicos")
-          .update(updated)
-          .eq("id", r.id);
+  try {
 
-        /* SUBIR NUEVOS ADJUNTOS */
+    const updated = {
+      fecha_carga: card.querySelector("[name='fecha_carga']").value,
+      reintegro: card.querySelector("[name='reintegro']").value || null,
+      fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null,
+      observacion: card.querySelector("[name='observacion']").value || null
+    };
 
-        for (const adj of nuevosAdjuntos) {
-          if (!adj.archivo) continue;
+    await supabase
+      .from("materiales_ortopedicos")
+      .update(updated)
+      .eq("id", r.id);
 
-          const url = await subirArchivoCloudinary(adj.archivo);
+    // eliminar adjuntos marcados
+    if (card._adjuntosEliminar.length) {
+      await supabase
+        .from("fichamedica_documentos")
+        .delete()
+        .in("id", card._adjuntosEliminar);
+    }
 
-          await supabase.from("fichamedica_documentos").insert({
-            afiliado_id: afiliadoId,
-            tipo_documento: "materiales_ortopedicos",
-            entidad_relacion_id: r.id,
-            nombre_archivo: adj.archivo.name,
-            url
-          });
-        }
+    // subir nuevos
+    const nuevos = card.querySelectorAll(".adjuntos-nuevos input[type='file']");
 
-        Swal.fire("Actualizado", "Registro actualizado correctamente", "success");
-        cargarMateriales();
+    for (const input of nuevos) {
+      if (!input.files[0]) continue;
+
+      const archivo = input.files[0];
+      const url = await subirArchivoCloudinary(archivo);
+
+      await supabase.from("fichamedica_documentos").insert({
+        afiliado_id: afiliadoId,
+        tipo_documento: "materiales_ortopedicos",
+        entidad_relacion_id: r.id,
+        nombre_archivo: archivo.name,
+        url
       });
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Guardado",
+      text: "Cambios guardados correctamente",
+      confirmButtonText: "OK"
+    });
+  cargarMateriales();
+
+  } catch (err) {
+    Swal.fire("Error", "No se pudo guardar", "error");
+  } finally {
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = "💾 Guardar";
+    btnGuardar.style.backgroundColor = "";
+    btnGuardar.style.cursor = "";
+  }
+});
 
     }
   }
@@ -365,8 +427,13 @@ export async function init(afiliadoId) {
     form.classList.add("hidden");
     cargarMateriales();
 
-    Swal.fire("Guardado", "Registro guardado correctamente", "success");
-  });
+    Swal.fire({
+      icon: 'success',
+      title: 'Guardado',
+      text: 'Material ortopedico cargado correctamente',
+      confirmButtonText: 'OK'
+    });
+});
 
   btnNuevo.addEventListener("click", () => {
     form.reset();

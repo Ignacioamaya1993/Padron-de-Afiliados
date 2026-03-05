@@ -368,10 +368,6 @@ input[type="file"] {
 }
 
 /* ===================== */
-/* CARD COLAPSABLE */
-/* ===================== */
-
-/* ===================== */
 /* ANIMACIÓN EXPANSIÓN */
 /* ===================== */
 
@@ -412,12 +408,16 @@ input[type="file"] {
   color: #1d4ed8;
 }
 
-/* ===================== */
-/* RESPONSIVE */
-/* ===================== */
-@media (max-width: 700px) {
-  .grid-medicamento {
-    grid-template-columns: 1fr;
-  }
+.card-destacada {
+  border: 3px solid #2f80ed !important;
+  box-shadow: 0 0 18px rgba(47, 128, 237, 0.6);
+  animation: destacarAnim 1.2s ease-in-out 2;
 }
 
+/* Textarea readonly ocupa todo el ancho de la card */
+#listaMedicamentos .card textarea[readonly] {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  min-height: 80px !important;
+  min-width: 360px;
+}

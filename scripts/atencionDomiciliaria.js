@@ -11,6 +11,14 @@ export async function init(afiliadoId) {
   await cargarHeader();
 
   // =====================
+// PARAMETRO DESTACAR DESDE NOTIFICACION
+// =====================
+const params = new URLSearchParams(window.location.search);
+const registroADestacar = params.get("registro")
+  ? Number(params.get("registro"))
+  : null;
+
+  // =====================
   // ESTADO
   // =====================
   let paginaActual = 0;
@@ -135,6 +143,23 @@ export async function init(afiliadoId) {
 
     const fISO = d => (d ? d.split("T")[0] : "");
 
+    // =====================
+// SI EL REGISTRO ESTA EN OTRA PAGINA
+// =====================
+if (registroADestacar) {
+  const posicion = await obtenerPosicionAtencion(registroADestacar);
+
+  if (posicion !== null) {
+    const paginaCorrecta = Math.floor(posicion / POR_PAGINA);
+
+    if (paginaCorrecta !== paginaActual) {
+      paginaActual = paginaCorrecta;
+      await cargarAtenciones();
+      return;
+    }
+  }
+}
+
     for (const r of registros) {
       const documentos = docsPorRegistro[r.id] || [];
 
@@ -200,9 +225,33 @@ card.innerHTML = `
   </div>
 `;
 
+// =====================
+// DESTACAR SI VIENE DE NOTIFICACION
+// =====================
+if (registroADestacar && r.id === registroADestacar) {
+
+  setTimeout(() => {
+    card.classList.add("card-destacada");
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 300);
+}
+
       lista.appendChild(card);
     }
   }
+
+  async function obtenerPosicionAtencion(idBuscado) {
+
+  const { data, error } = await supabase
+    .from("atencion_domiciliaria")
+    .select("id")
+    .eq("afiliado_id", afiliadoId)
+    .order("fecha_inicio_periodo", { ascending: false });
+
+  if (error || !data) return null;
+
+  return data.findIndex(r => r.id === idBuscado);
+}
 
 // =====================
 // ACCIONES CARD
@@ -345,21 +394,38 @@ if (e.target.classList.contains("guardar")) {
   // =====================
   // ELIMINAR CARD
   // =====================
-  if (e.target.classList.contains("eliminar")) {
-    const confirmar = await Swal.fire({
-      title: "¿Está seguro?",
-      text: "Se eliminará esta atencion domiciliaria y todos sus adjuntos.",
-      icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'    });
-    if (!confirmar.isConfirmed) return;
+// =====================
+// ELIMINAR CARD
+// =====================
+if (e.target.classList.contains("eliminar")) {
 
-    await supabase.from("atencion_domiciliaria").delete().eq("id", id);
-    cargarAtenciones();
-  }
+  const confirmar = await Swal.fire({
+    title: "¿Está seguro?",
+    text: "Se eliminará esta atención domiciliaria y todos sus adjuntos.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (!confirmar.isConfirmed) return;
+
+  await supabase
+    .from("atencion_domiciliaria")
+    .delete()
+    .eq("id", id);
+
+  await Swal.fire({
+    icon: "success",
+    title: "Eliminado",
+    text: "Atención domiciliaria fue eliminada correctamente",
+    confirmButtonText: "OK"
+  });
+
+  cargarAtenciones();
+}
 
   // =====================
   // AGREGAR ADJUNTO NUEVO EN EDICIÓN
@@ -480,13 +546,13 @@ btnSubmit.style.cursor = "not-allowed";
     campoReintegro.classList.add("hidden");
     form.classList.add("hidden");
     cargarAtenciones();
-    Swal.fire("Guardado", "Registro guardado correctamente", "success");
+    Swal.fire("Guardado", "Atencion domiciliaria guardado correctamente", "success");
 
     btnSubmit.disabled = false;
-btnSubmit.textContent = "Guardar";
-btnSubmit.style.backgroundColor = "";
-btnSubmit.style.cursor = "";
-  });
+    btnSubmit.textContent = "Guardar";
+    btnSubmit.style.backgroundColor = "";
+    btnSubmit.style.cursor = "";
+      });
 
   // =====================
   // INIT

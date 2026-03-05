@@ -186,3 +186,44 @@ input[type="file"] {
 .hidden {
   display: none !important;
 }
+
+.card-destacada {
+  border: 3px solid #2f80ed !important;
+  box-shadow: 0 0 18px rgba(47, 128, 237, 0.6);
+  animation: destacarAnim 1.2s ease-in-out 2;
+}
+
+/* ===================== */
+/* CARD COLAPSABLE */
+/* ===================== */
+
+.card-extra {
+  overflow: hidden;
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.card:not(.expandida) .card-extra {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+}
+
+.card.expandida .card-extra {
+  max-height: 1000px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toggle-card {
+  background: none;
+  border: none;
+  color: #2f80ed;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  cursor: pointer;
+  margin-top: 6px;
+}

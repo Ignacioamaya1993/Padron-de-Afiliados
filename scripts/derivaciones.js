@@ -603,7 +603,7 @@ form.addEventListener("submit", async e => {
     Swal.fire({
       icon: "success",
       title: "Guardado",
-      text: "Derivación registrada correctamente",
+      text: "Derivación cargada correctamente",
       confirmButtonText: "OK"
     });
 

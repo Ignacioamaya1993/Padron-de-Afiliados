@@ -74,7 +74,7 @@ async function eliminarNotificacionesObsoletas(usuario, tipo, registrosValidos) 
 // =====================================================
 function generarMensajeVencimiento(nombre, apellido, tipoTexto, diasRestantes) {
   if (diasRestantes < 0) {
-    return `⚠️ El/la afiliado/a ${nombre} ${apellido} tiene ${tipoTexto} vencida`;
+    return `⚠️ El/la afiliado/a ${nombre} ${apellido} tiene ${tipoTexto} vencido`;
   } else {
     return `El/la afiliado/a ${nombre} ${apellido} tiene ${tipoTexto} que vence en ${diasRestantes} días`;
   }
