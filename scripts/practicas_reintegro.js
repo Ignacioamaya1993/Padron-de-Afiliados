@@ -171,12 +171,12 @@ card.innerHTML = `
 
     </div>
 
-    <div class="prx-field prx-full">
-      <label>Observación</label>
-      <textarea name="observacion" readonly>
-${r.observacion || ""}
+      <div class="prx-field prx-full">
+        <label>Observación</label>
+      <textarea name="observacion" readonly placeholder="Sin observaciones">
+      ${r.observacion || ""}
       </textarea>
-    </div>
+          </div>
 
     ${documentos.length ? `
       <div class="prx-adjuntos-card">

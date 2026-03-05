@@ -163,10 +163,17 @@ input[type="file"] {
     pointer-events: none;
     background: #f5f5f5;
 }
+
 .prx-card textarea[readonly] {
     background: #f5f5f5;
     border: 1px solid #ddd;
     cursor: default;
+    min-height: 80px;
+}
+
+/* Textarea en modo edición */
+.prx-card.modo-edicion textarea {
+   min-height: 80px;
 }
 
 .prx-card.modo-edicion input {
