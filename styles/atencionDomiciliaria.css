@@ -14,7 +14,7 @@ margin-bottom: 1rem;
   padding: 20px !important;
   margin-bottom: 20px !important;
   background: #fff !important;
-  max-width: 60% !important;
+  max-width: 40% !important;
 }
 
 .adjuntos-nuevos_atencion {
@@ -199,4 +199,45 @@ input[type="file"] {
 .form-card_atencion textarea {
   resize: vertical;
   min-height: 80px;
+}
+
+/* ===================== */
+/* CARD COLAPSABLE */
+/* ===================== */
+
+.card-extra {
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.25s ease;
+  max-height: 0;
+  opacity: 0;
+}
+
+.card:not(.expandida) .card-extra {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card.expandida .card-extra {
+  max-height: 2000px;
+  opacity: 1;
+}
+
+.toggle-card {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+.toggle-card:hover {
+  color: #1d4ed8;
+}
+
+.card textarea[name="observacion"] {
+    max-width: 100% !important;
+    width: 100% !important;
 }

@@ -144,53 +144,61 @@ export async function init(afiliadoId) {
 
   const tipoNombre = tiposAtencion.find(t => t.id === r.tipo_atencion_id)?.nombre || "Sin tipo";
 
-    card.innerHTML = `
-      <div class="card-titulo-atencion">
-        ${tipoNombre}
-      </div>
+card.innerHTML = `
+  <div class="card-titulo-atencion">
+    ${tipoNombre}
+  </div>
 
-      <div class="grid-fechas">
-        <div>
-          <label>Fecha carga</label>
-          <input type="date" name="fecha_carga" readonly value="${fISO(r.fecha_carga)}">
-        </div>
-        <div>
-          <label>Fecha inicio período</label>
-          <input type="date" name="fecha_inicio_periodo" readonly value="${fISO(r.fecha_inicio_periodo)}">
-        </div>
-        <div>
-          <label>Fecha fin período</label>
-          <input type="date" name="fecha_fin_periodo" readonly value="${fISO(r.fecha_fin_periodo)}">
-        </div>
-      </div>
+  <div class="grid-fechas">
+    <div>
+      <label>Fecha carga</label>
+      <input type="date" name="fecha_carga" readonly value="${fISO(r.fecha_carga)}">
+    </div>
+    <div>
+      <label>Fecha inicio período</label>
+      <input type="date" name="fecha_inicio_periodo" readonly value="${fISO(r.fecha_inicio_periodo)}">
+    </div>
+    <div>
+      <label>Fecha fin período</label>
+      <input type="date" name="fecha_fin_periodo" readonly value="${fISO(r.fecha_fin_periodo)}">
+    </div>
+    <div>
+      <label>Reintegro</label>
+      <input type="number" name="reintegro" value="${r.reintegro ?? ''}" step="0.01" readonly>
+    </div>
+  </div>
 
-        <div class="form-group full-width campo-reintegro">
-          <div>
-            <label>Reintegro</label>
-            <input type="number" name="reintegro" value="${r.reintegro ?? ''}" step="0.01" readonly>
-          </div>
-          <div><label>Fecha reintegro</label><input type="date" name="fecha_reintegro" readonly value="${fISO(r.fecha_reintegro)}"></div>
-        </div>
+  <button type="button" class="toggle-card">Ver más</button>
 
-        <div class="med-card-section">
-          <label>Observación</label>
-          <textarea name="observacion" readonly>${r.observacion || "Sin observaciones"}</textarea>
-        </div>
+  <div class="card-extra">
 
-        ${documentos.length ? `<div class="adjuntos-card">
-          ${documentos.map(d => `<div class="adjunto-item" data-doc-id="${d.id}">
-            <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
-            <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
-          </div>`).join("")}
-        </div>` : ""}
+    <div>
+      <label>Fecha reintegro</label>
+      <input type="date" name="fecha_reintegro" readonly value="${fISO(r.fecha_reintegro)}">
+    </div>
 
-        <div class="acciones">
-          <button class="editar">✏️ Editar</button>
-          <button class="eliminar">🗑️ Eliminar</button>
-          <button class="guardar hidden">💾 Guardar</button>
-          <button class="cancelar hidden">Cancelar</button>
-        </div>
-      `;
+    <div>
+      <label>Observación</label>
+      <textarea name="observacion" readonly>${r.observacion || "Sin observaciones"}</textarea>
+    </div>
+
+    ${documentos.length ? `<div class="adjuntos-card">
+      ${documentos.map(d => `
+        <div class="adjunto-item" data-doc-id="${d.id}">
+          <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+          <button type="button" class="btn-eliminar-adjunto hidden">✖</button>
+        </div>`).join("")}
+    </div>` : ""}
+
+  </div>
+
+  <div class="acciones">
+    <button class="editar">✏️ Editar</button>
+    <button class="eliminar">🗑️ Eliminar</button>
+    <button class="guardar hidden">💾 Guardar</button>
+    <button class="cancelar hidden">Cancelar</button>
+  </div>
+`;
 
       lista.appendChild(card);
     }
@@ -205,38 +213,89 @@ lista.addEventListener("click", async e => {
   const id = card.dataset.id;
   const fISO = d => (d ? d.split("T")[0] : "");
 
-  // =====================
-  // EDITAR
-  // =====================
-  if (e.target.classList.contains("editar")) {
-    // Habilitar inputs y textarea
-    card.querySelectorAll("input, textarea").forEach(el => el.removeAttribute("readonly"));
+// =====================
+// VER MAS / MENOS
+// =====================
+if (e.target.classList.contains("toggle-card")) {
 
-    // Mostrar botones de eliminar adjuntos existentes
-    card.querySelectorAll(".btn-eliminar-adjunto").forEach(btn => btn.classList.remove("hidden"));
+  const btnToggle = e.target;
+  const extra = card.querySelector(".card-extra");
+  const acciones = card.querySelector(".acciones");
 
-    // Mostrar botones de guardar/cancelar, ocultar editar/eliminar
-    card.querySelector(".guardar").classList.remove("hidden");
-    card.querySelector(".cancelar").classList.remove("hidden");
-    card.querySelector(".editar").classList.add("hidden");
-    card.querySelector(".eliminar").classList.add("hidden");
+  const estaAbierta = card.classList.contains("expandida");
 
-    // Crear contenedor de adjuntos nuevos si no existe
-    if (!card.querySelector(".adjuntos-nuevos-card")) {
-      const contenedor = document.createElement("div");
-      contenedor.className = "adjuntos-nuevos-card";
-      card.insertBefore(contenedor, card.querySelector(".acciones"));
-    }
+  if (estaAbierta) {
+    // 🔹 Cerrar
+    card.classList.remove("expandida");
+    btnToggle.textContent = "Ver más";
 
-    // Crear botón agregar adjunto si no existe
-    if (!card.querySelector(".btn-agregar-adjunto-card")) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "btn-agregar-adjunto-card";
-      btn.textContent = "➕ Agregar adjunto";
-      card.insertBefore(btn, card.querySelector(".acciones"));
-    }
+    // 🔹 Volver el botón debajo del grid
+    const grid = card.querySelector(".grid-fechas");
+    grid.insertAdjacentElement("afterend", btnToggle);
+
+  } else {
+    // 🔹 Abrir
+    card.classList.add("expandida");
+    btnToggle.textContent = "Ver menos";
+
+    // 🔹 Mover botón arriba de acciones
+    card.insertBefore(btnToggle, acciones);
   }
+
+  return;
+}
+
+// =====================
+// EDITAR
+// =====================
+if (e.target.classList.contains("editar")) {
+
+  const btnToggle = card.querySelector(".toggle-card");
+  const acciones = card.querySelector(".acciones");
+
+  // 🔹 Forzar expansión
+  if (!card.classList.contains("expandida")) {
+    card.classList.add("expandida");
+    btnToggle.textContent = "Ver menos";
+  }
+
+  // 🔹 Habilitar campos
+  card.querySelectorAll("input, textarea").forEach(el => {
+    el.removeAttribute("readonly");
+  });
+
+  card.querySelectorAll(".btn-eliminar-adjunto")
+      .forEach(btn => btn.classList.remove("hidden"));
+
+  card.querySelector(".guardar").classList.remove("hidden");
+  card.querySelector(".cancelar").classList.remove("hidden");
+  card.querySelector(".editar").classList.add("hidden");
+  card.querySelector(".eliminar").classList.add("hidden");
+
+  // =========================
+  // ADJUNTOS NUEVOS
+  // =========================
+
+  if (!card.querySelector(".adjuntos-nuevos-card")) {
+    const contenedor = document.createElement("div");
+    contenedor.className = "adjuntos-nuevos-card";
+    card.insertBefore(contenedor, acciones);
+  }
+
+  if (!card.querySelector(".btn-agregar-adjunto-card")) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn-agregar-adjunto-card";
+    btn.textContent = "➕ Agregar adjunto";
+    card.insertBefore(btn, acciones);
+  }
+
+  // =========================
+  // MOVER TOGGLE AL FINAL
+  // =========================
+
+  card.insertBefore(btnToggle, acciones);
+}
 
   // =====================
   // CANCELAR
@@ -248,7 +307,15 @@ lista.addEventListener("click", async e => {
   // =====================
   // GUARDAR
   // =====================
-  if (e.target.classList.contains("guardar")) {
+if (e.target.classList.contains("guardar")) {
+  const btnGuardar = e.target;
+
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = "⌛ Guardando...";
+  btnGuardar.style.backgroundColor = "#aaa";
+  btnGuardar.style.cursor = "not-allowed";
+
+  try {
     const datosUpdate = {
       fecha_carga: card.querySelector("[name='fecha_carga']").value,
       fecha_inicio_periodo: card.querySelector("[name='fecha_inicio_periodo']").value,
@@ -260,30 +327,20 @@ lista.addEventListener("click", async e => {
       observacion: card.querySelector("[name='observacion']").value || null
     };
 
-    // Guardar cambios en la tabla principal
     await supabase.from("atencion_domiciliaria").update(datosUpdate).eq("id", id);
-
-    // Subir adjuntos nuevos
-    const contenedorAdjuntos = card.querySelector(".adjuntos-nuevos-card");
-    if (contenedorAdjuntos) {
-      const inputsAdjuntos = contenedorAdjuntos.querySelectorAll("input[type='file']");
-      for (const input of inputsAdjuntos) {
-        if (!input.files[0]) continue;
-        const file = input.files[0];
-        const url = await subirArchivoCloudinary(file);
-        await supabase.from("fichamedica_documentos").insert({
-          afiliado_id: afiliadoId,
-          tipo_documento: "atencionDomiciliaria",
-          entidad_relacion_id: id,
-          nombre_archivo: file.name,
-          url
-        });
-      }
-    }
 
     Swal.fire("Guardado", "Cambios guardados correctamente", "success");
     cargarAtenciones();
+
+  } catch (error) {
+    Swal.fire("Error", "No se pudo guardar", "error");
+  } finally {
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = "💾 Guardar";
+    btnGuardar.style.backgroundColor = "";
+    btnGuardar.style.cursor = "";
   }
+}
 
   // =====================
   // ELIMINAR CARD
@@ -387,6 +444,12 @@ lista.addEventListener("click", async e => {
   form.addEventListener("submit", async e => {
     e.preventDefault();
 
+    const btnSubmit = form.querySelector("button[type='submit']");
+btnSubmit.disabled = true;
+btnSubmit.textContent = "⌛ Guardando...";
+btnSubmit.style.backgroundColor = "#aaa";
+btnSubmit.style.cursor = "not-allowed";
+
     const datos = {
       afiliado_id: afiliadoId,
       tipo_atencion_id: form.tipo_atencion_id.value,
@@ -418,6 +481,11 @@ lista.addEventListener("click", async e => {
     form.classList.add("hidden");
     cargarAtenciones();
     Swal.fire("Guardado", "Registro guardado correctamente", "success");
+
+    btnSubmit.disabled = false;
+btnSubmit.textContent = "Guardar";
+btnSubmit.style.backgroundColor = "";
+btnSubmit.style.cursor = "";
   });
 
   // =====================

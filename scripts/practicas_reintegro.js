@@ -239,8 +239,8 @@ btnToggle.addEventListener("click", () => {
   }
 });
 
-      /* EDITAR */
-      let nuevosAdjuntos = [];
+/* EDITAR */
+let nuevosAdjuntos = [];
 
 btnEditar.addEventListener("click", () => {
 
@@ -251,9 +251,11 @@ btnEditar.addEventListener("click", () => {
 
   // Siempre que esté expandida, asegurar posición correcta del botón
   btnToggle.textContent = "Ver menos";
-
   const acciones = card.querySelector(".prx-acciones");
   acciones.parentNode.insertBefore(btnToggle, acciones);
+
+  // Agregar clase modo-edicion al card (para CSS)
+  card.classList.add("modo-edicion");
 
   // Habilitar campos
   inputs.forEach(i => i.removeAttribute("readonly"));
@@ -272,6 +274,13 @@ btnEditar.addEventListener("click", () => {
   btnGuardar.classList.remove("hidden");
   btnCancelarCard.classList.remove("hidden");
 });
+
+// CANCELAR: quitar clase modo-edicion
+btnCancelarCard.addEventListener("click", () => {
+  card.classList.remove("modo-edicion");
+  cargarPracticas();
+});
+
       btnCancelarCard.addEventListener("click", () => cargarPracticas());
 
       /* ELIMINAR CARD */

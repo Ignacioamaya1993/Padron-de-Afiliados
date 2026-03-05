@@ -157,27 +157,6 @@ input[type="file"] {
   max-width: 100%;
 }
 
-/* ===================== */
-/* GRID DERIVACIONES */
-/* ===================== */
-.grid-derivacion {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.8rem;
-  margin-top: 1rem;
-}
-
-.grid-derivacion > div {
-  display: flex;
-  flex-direction: column;
-}
-
-.grid-derivacion label {
-  font-weight: 500;
-  font-size: 0.85rem;
-  margin-bottom: 0.2rem;
-}
-
 .full-row {
   grid-column: 1 / -1;
 }
