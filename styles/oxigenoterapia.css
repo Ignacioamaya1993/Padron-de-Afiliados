@@ -308,3 +308,11 @@ margin-bottom: 1rem;
   padding: 4px 0;
   cursor: pointer;
 }
+
+.titulo-equipo {
+  font-size: 1rem;
+  color: #0f172a;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}

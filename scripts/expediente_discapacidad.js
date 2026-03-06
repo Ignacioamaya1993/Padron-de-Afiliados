@@ -463,12 +463,12 @@ if (e.target.classList.contains("guardar")) {
     const totalPaginas = Math.ceil(total / POR_PAGINA);
 
     const btnAnt = document.createElement("button");
-    btnAnt.textContent = "⬅";
+    btnAnt.textContent = "⬅ Anterior";
     btnAnt.disabled = paginaActual === 0;
     btnAnt.onclick = () => { paginaActual--; cargarExpedientes(); };
 
     const btnSig = document.createElement("button");
-    btnSig.textContent = "➡";
+    btnSig.textContent = "Siguiente ➡";
     btnSig.disabled = paginaActual >= totalPaginas - 1;
     btnSig.onclick = () => { paginaActual++; cargarExpedientes(); };
 

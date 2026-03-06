@@ -187,7 +187,7 @@ export async function init(afiliadoId) {
       }
 
       card.innerHTML = `
-        <strong>${p.tipo.toUpperCase()}</strong>
+<strong>${p.tipo.charAt(0).toUpperCase() + p.tipo.slice(1).toLowerCase()}</strong>
 
         <div class="card-principal card-grid">
           ${primerSeccion}

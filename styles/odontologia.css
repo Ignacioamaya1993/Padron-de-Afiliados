@@ -239,3 +239,12 @@ background: none;
   max-width: 100% !important;
   width: 100% !important;
 }
+
+/*titulo*/
+h4.full-width {
+  font-size: 1rem;
+  color: #0f172a;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}

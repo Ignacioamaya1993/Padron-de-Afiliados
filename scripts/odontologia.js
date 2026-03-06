@@ -122,7 +122,7 @@ export async function init(afiliadoId) {
 
 card.innerHTML = `
 
-  <h4 class="full-width">Odontología</h4>
+  <h4 class="full-width">Odontología</h4> 
 
   <!-- PARTE SIEMPRE VISIBLE -->
   <div>

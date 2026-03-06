@@ -359,9 +359,11 @@ background-color: #e53935;
 }
 
 .prx-titulo {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 1rem;
+  color: #0f172a;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 /* ===================== */

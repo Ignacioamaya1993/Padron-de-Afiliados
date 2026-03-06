@@ -170,9 +170,10 @@ if (registroADestacar) {
   const tipoNombre = tiposAtencion.find(t => t.id === r.tipo_atencion_id)?.nombre || "Sin tipo";
 
 card.innerHTML = `
-  <div class="card-titulo-atencion">
+  <strong <div class="card-titulo-atencion">
     ${tipoNombre}
   </div>
+  </strong>
 
   <div class="grid-fechas">
     <div>

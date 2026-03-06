@@ -209,6 +209,9 @@ input[type="file"] {
 .card strong {
   font-size: 1rem;
   color: #0f172a;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 /* Secciones */

@@ -156,8 +156,10 @@ const form = document.getElementById("formOxigenoterapiaForm");
       card._adjuntosNuevos = [];
       card._adjuntosEliminar = [];
 
-card.innerHTML = `
-  <strong>${p.tipoequipo_oxigenoterapia?.nombre || ""}</strong>
+  card.innerHTML = `
+      <strong class="titulo-equipo">
+        ${p.tipoequipo_oxigenoterapia?.nombre || ""}
+      </strong>
 
   <!-- CONTENIDO SIEMPRE VISIBLE -->
   <div class="card-content">

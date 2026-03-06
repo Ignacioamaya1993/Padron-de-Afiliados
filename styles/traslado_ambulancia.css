@@ -300,8 +300,14 @@ input[type="file"] {
 /* GRID INTERNO */
 .grid-fechas {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.4rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem 0.8rem;
+  align-items: end;
+}
+
+.grid-fechas > div {
+  display: flex;
+  flex-direction: column;
 }
 
 .grid-fechas label {
@@ -373,8 +379,8 @@ input[type="file"] {
 }
 
 .card-traslado .guardar {
-  background-color: #16a34a;
-  color: white;
+  background-color: #e5e7eb;
+  color: #0f172a;
 }
 
 .card-traslado .cancelar {

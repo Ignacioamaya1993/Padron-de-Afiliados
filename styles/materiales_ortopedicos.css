@@ -107,7 +107,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
+  width: 100%;
 }
 
 .adjunto-item a {
@@ -178,6 +178,9 @@
 .card-material .card-titulo {
   font-size: 1rem;
   color: #0f172a;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 /* Grid interno */
@@ -236,8 +239,9 @@
 }
 
 .card-material .guardar {
-  background-color: #16a34a;
-  color: white;
+  background-color: #e5e7eb;
+    color: #0f172a;
+
 }
 
 .card-material .cancelar {
@@ -290,4 +294,9 @@
   align-items: center;
   gap: 1rem;
   margin: 1.5rem 0;
+}
+
+.card-material .adjunto-item input[type="file"] {
+  flex: 1 !important;
+  width: 100% !important;
 }

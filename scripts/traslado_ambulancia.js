@@ -1,6 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
-import { subirArchivoCloudinary } from "./cloudinary.js";
+import { subirArchivoCloudinary, abrirImagenCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
 
@@ -111,31 +111,35 @@ card.innerHTML = `
   </strong>
 
   <!-- SIEMPRE VISIBLE -->
-  <div class="med-card-section grid-fechas resumen">
+<div class="med-card-section resumen">
 
-    <div>
-      <label>Fecha Carga</label>
-      <input type="date" name="fecha_carga" readonly value="${fISO(traslado.fecha_carga)}">
-    </div>
+<div class="grid-fechas">
 
-    <div>
-      <label>Lugar</label>
-      <input name="lugar_traslado" readonly value="${traslado.lugar_traslado || ""}">
-    </div>
+  <div>
+    <label>Fecha Carga</label>
+    <input type="date" name="fecha_carga" readonly value="${fISO(traslado.fecha_carga)}">
+  </div>
 
-    <div>
-      <label>Reintegro</label>
-      <input type="number" step="0.01" name="reintegro" readonly value="${traslado.reintegro ?? ""}">
-    </div>
+  <div>
+    <label>Lugar</label>
+    <input name="lugar_traslado" readonly value="${traslado.lugar_traslado || ""}">
+  </div>
 
-    <div>
-      <label>Fecha Reintegro</label>
-      <input type="date" name="fecha_reintegro" readonly value="${fISO(traslado.fecha_reintegro)}">
-    </div>
+  <div>
+    <label>Reintegro</label>
+    <input type="number" step="0.01" name="reintegro" readonly value="${traslado.reintegro ?? ""}">
+  </div>
 
-      <button type="button" class="toggle-card">
-    Ver más
-  </button>
+  <div>
+    <label>Fecha Reintegro</label>
+    <input type="date" name="fecha_reintegro" readonly value="${fISO(traslado.fecha_reintegro)}">
+  </div>
+
+</div>
+
+<button type="button" class="toggle-card">
+  Ver más
+</button>
 
   </div>
 
@@ -153,7 +157,9 @@ ${traslado.observacion || "Sin observaciones"}
       <label>Adjuntos</label>
       ${docs?.length ? docs.map(d => `
         <div class="adjunto-existente" data-doc-id="${d.id}">
-          <a href="${d.url}" target="_blank">📎 ${d.nombre_archivo}</a>
+        <a href="#" class="ver-adjunto" data-url="${d.url}">
+          📎 ${d.nombre_archivo}
+        </a>
           <button type="button" class="eliminar-adjunto hidden">✖</button>
         </div>
       `).join("") : "<div>Sin adjuntos</div>"}
@@ -176,6 +182,24 @@ ${traslado.observacion || "Sin observaciones"}
     <button class="cancelar hidden">Cancelar</button>
   </div>
 `;
+
+card.querySelectorAll(".ver-adjunto").forEach(link => {
+
+  link.addEventListener("click", e => {
+
+    e.preventDefault();
+
+    const url = link.dataset.url;
+
+    if (url.endsWith(".pdf")) {
+      window.open(url, "_blank");
+    } else {
+      abrirImagenCloudinary(url);
+    }
+
+  });
+
+});
 
 const toggleBtn = card.querySelector(".toggle-card");
 
@@ -363,8 +387,13 @@ btnGuardar.addEventListener("click", async () => {
   editandoId = null;
   cargarTraslados();
 
-  Swal.fire("Actualizado", "Registro actualizado correctamente", "success");
-});
+    Swal.fire({
+      icon: "success",
+      title: "Guardado",
+      text: "Cambios guardados correctamente",
+      confirmButtonText: "OK"
+    });
+  });
 
     }
 
@@ -444,7 +473,7 @@ for (const adj of archivosAdjuntos) {
   const resultado = await subirArchivoCloudinary(adj.archivo);
   console.log("Resultado Cloudinary:", resultado);
 
-  const url = resultado; // <-- usar directamente
+  const url = resultado;
   if (!url) {
     console.warn("No se obtuvo URL del archivo:", adj.archivo.name);
     continue;
@@ -476,7 +505,7 @@ for (const adj of archivosAdjuntos) {
   form.classList.add("oculto");
   paginaActual = 0;
   cargarTraslados();
-  Swal.fire("Guardado", "Traslado registrado correctamente", "success");
+  Swal.fire("Guardado", "Traslado cargado correctamente", "success");
 });
 
   /* ===================== */
