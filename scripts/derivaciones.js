@@ -135,7 +135,9 @@ export async function init(afiliadoId) {
       // Calcular días de demora
       let diasDemora = null;
       if (deriv.fecha_inicio && deriv.fecha_autorizacion) {
-        diasDemora = (new Date(deriv.fecha_inicio) - new Date(deriv.fecha_autorizacion)) / (1000*60*60*24);
+      diasDemora = Math.floor(
+        (new Date(deriv.fecha_inicio) - new Date(deriv.fecha_autorizacion)) / (1000*60*60*24)
+      );
       }
 
 card.innerHTML = `
@@ -328,8 +330,13 @@ if (e.target.classList.contains("editar")) {
   editandoId = id;
 
       card.querySelectorAll("input, textarea").forEach(el => {
-        if (el.hasAttribute("readonly")) el.removeAttribute("readonly");
-        if (el.tagName === "TEXTAREA" && el.value === "Sin observaciones") el.value = "";
+
+        if (el.name === "dias_demora") return; // nunca editable
+
+        if (el.hasAttribute("readonly")) {
+          el.removeAttribute("readonly");
+        }
+
       });
 
       card.querySelectorAll(".btn-eliminar-adjunto").forEach(b => b.classList.remove("hidden"));

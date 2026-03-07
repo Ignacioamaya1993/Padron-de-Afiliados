@@ -307,6 +307,12 @@ input[type="file"] {
   max-width: 150px;
 }
 
+.card textarea[name="observaciones"] {
+  max-width: none;
+  width: 100%;
+  min-height: 80px;
+}
+
 .card .editando {
   background: #fff;
   border: 1px solid #aaa;
