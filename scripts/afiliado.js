@@ -1,6 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
-import { subirArchivoCloudinary, abrirArchivoCloudinary } from "./cloudinary.js";
+import { subirArchivoCloudinary } from "./cloudinary.js";
 
 /* =====================
    AVISO IMPORTANTE SOBRE PLAN MATERNO
@@ -433,7 +433,7 @@ if (parentescoNombre === "Hijos" && cumplio21 && !cumplio26) {
       .getElementById("verAdjuntoEstudios")
       .addEventListener("click", (e) => {
         e.preventDefault();
-        abrirArchivoCloudinary(afiliado.adjuntoEstudios);
+      window.open(afiliado.adjuntoEstudios, "_blank");
       });
 
   } else {
@@ -772,7 +772,7 @@ row.innerHTML = `
 
 row.querySelector(".ver-doc").addEventListener("click", (e) => {
   e.preventDefault();
-  abrirArchivoCloudinary(doc.archivo_url);
+  window.open(doc.archivo_url, "_blank");
 });
 
     if (modoEdicion) {
