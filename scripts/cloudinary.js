@@ -81,14 +81,87 @@ export async function subirArchivoCloudinary(file, carpeta = "") {
   return data.secure_url;
 }
 
-export function abrirImagenCloudinary(url) {
+export function abrirArchivoCloudinary(url) {
 
-  // genera una versión optimizada de la imagen
-  const visorUrl = url.replace(
-    "/upload/",
-    "/upload/q_auto,f_auto/"
-  );
+  const esPdf = url.toLowerCase().endsWith(".pdf");
 
-  window.open(visorUrl, "_blank");
+  const visorUrl = esPdf
+    ? url
+    : url.replace("/upload/", "/upload/q_auto,f_auto/");
+
+  const ventana = window.open("", "_blank");
+
+  ventana.document.write(`
+    <html>
+      <head>
+        <title>Visor de archivo</title>
+
+        <style>
+
+          body{
+            margin:0;
+            background:#f5f5f5;
+            display:flex;
+            flex-direction:column;
+            height:100vh;
+          }
+
+          .barra{
+            background:#222;
+            padding:10px;
+            display:flex;
+            gap:10px;
+          }
+
+          button{
+            padding:8px 14px;
+            border:none;
+            background:#4CAF50;
+            color:white;
+            cursor:pointer;
+            border-radius:4px;
+            font-size:14px;
+          }
+
+          button:hover{
+            background:#45a049;
+          }
+
+          .visor{
+            flex:1;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:white;
+          }
+
+          img,iframe{
+            max-width:100%;
+            max-height:100%;
+          }
+
+        </style>
+
+      </head>
+
+      <body>
+
+        <div class="barra">
+          <button onclick="window.print()">🖨 Imprimir</button>
+        </div>
+
+        <div class="visor">
+
+          ${
+            esPdf
+              ? `<iframe src="${visorUrl}" width="100%" height="100%"></iframe>`
+              : `<img src="${visorUrl}">`
+          }
+
+        </div>
+
+      </body>
+    </html>
+  `);
 
 }
