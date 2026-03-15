@@ -92,76 +92,116 @@ export function abrirArchivoCloudinary(url) {
   const ventana = window.open("", "_blank");
 
   ventana.document.write(`
-    <html>
-      <head>
-        <title>Visor de archivo</title>
+  <html>
+  <head>
+  <title>Visor</title>
 
-        <style>
+  <style>
 
-          body{
-            margin:0;
-            background:#f5f5f5;
-            display:flex;
-            flex-direction:column;
-            height:100vh;
-          }
+  body{
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    background:#111;
+    font-family:Arial;
+  }
 
-          .barra{
-            background:#222;
-            padding:10px;
-            display:flex;
-            gap:10px;
-          }
+  .barra{
+    background:#222;
+    padding:10px;
+    display:flex;
+    gap:10px;
+  }
 
-          button{
-            padding:8px 14px;
-            border:none;
-            background:#4CAF50;
-            color:white;
-            cursor:pointer;
-            border-radius:4px;
-            font-size:14px;
-          }
+  button{
+    padding:8px 14px;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:14px;
+  }
 
-          button:hover{
-            background:#45a049;
-          }
+  .imprimir{
+    background:#4CAF50;
+    color:white;
+  }
 
-          .visor{
-            flex:1;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            background:white;
-          }
+  .descargar{
+    background:#2196F3;
+    color:white;
+  }
 
-          img,iframe{
-            max-width:100%;
-            max-height:100%;
-          }
+  .visor{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
 
-        </style>
+  img{
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+  }
 
-      </head>
+  iframe{
+    width:100%;
+    height:100%;
+    border:none;
+  }
 
-      <body>
+  </style>
 
-        <div class="barra">
-          <button onclick="window.print()">🖨 Imprimir</button>
-        </div>
+  </head>
 
-        <div class="visor">
+  <body>
 
-          ${
-            esPdf
-              ? `<iframe src="${visorUrl}" width="100%" height="100%"></iframe>`
-              : `<img src="${visorUrl}">`
-          }
+  <div class="barra">
+    <button class="imprimir" onclick="imprimirArchivo()">🖨 Imprimir</button>
+    <button class="descargar" onclick="descargarArchivo()">⬇ Descargar</button>
+  </div>
 
-        </div>
+  <div class="visor">
+    ${
+      esPdf
+        ? `<iframe src="${visorUrl}" id="archivo"></iframe>`
+        : `<img src="${visorUrl}" id="archivo">`
+    }
+  </div>
 
-      </body>
-    </html>
+  <script>
+
+  const url = "${visorUrl}";
+
+  function descargarArchivo(){
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function imprimirArchivo(){
+
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = url;
+
+    document.body.appendChild(iframe);
+
+    iframe.onload = function(){
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    }
+
+  }
+
+  </script>
+
+  </body>
+  </html>
   `);
 
 }

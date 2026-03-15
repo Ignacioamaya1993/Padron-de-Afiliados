@@ -1,6 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
-import { subirArchivoCloudinary } from "./cloudinary.js";
+import { subirArchivoCloudinary, abrirArchivoCloudinary } from "./cloudinary.js";
 
 /* =====================
    AVISO IMPORTANTE SOBRE PLAN MATERNO
@@ -415,18 +415,39 @@ if (alertaCud) {
     estudiosSpan.textContent = "-";
   }
 
-  // Adjuntos
-  const adjEstudiosField = document.getElementById("adjuntoEstudiosField");
-  const adjEstudiosContenido = document.getElementById("adjuntoEstudiosContenido");
-  if(parentescoNombre === "Hijos" && cumplio21 && !cumplio26){
-    adjEstudiosField.style.display = "block";
-    adjEstudiosContenido.innerHTML = afiliado.adjuntoEstudios
-      ? `<a href="${afiliado.adjuntoEstudios}" target="_blank">📎 Ver adjunto</a>`
-      : "No hay adjunto cargado";
+// Adjuntos
+const adjEstudiosField = document.getElementById("adjuntoEstudiosField");
+const adjEstudiosContenido = document.getElementById("adjuntoEstudiosContenido");
+
+if (parentescoNombre === "Hijos" && cumplio21 && !cumplio26) {
+
+  adjEstudiosField.style.display = "block";
+
+  if (afiliado.adjuntoEstudios) {
+
+    adjEstudiosContenido.innerHTML = `
+      <a href="#" id="verAdjuntoEstudios">📎 Ver adjunto</a>
+    `;
+
+    document
+      .getElementById("verAdjuntoEstudios")
+      .addEventListener("click", (e) => {
+        e.preventDefault();
+        abrirArchivoCloudinary(afiliado.adjuntoEstudios);
+      });
+
   } else {
-    adjEstudiosField.style.display = "none";
-    adjEstudiosContenido.innerHTML = "";
-  }  
+
+    adjEstudiosContenido.innerHTML = "No hay adjunto cargado";
+
+  }
+
+} else {
+
+  adjEstudiosField.style.display = "none";
+  adjEstudiosContenido.innerHTML = "";
+
+}
 
   // Estado
   mostrarEstado(afiliado.activo);
@@ -743,9 +764,16 @@ if (!cudDocs || cudDocs.length === 0) {
   const row = document.createElement("div");
   row.classList.add("cud-item");
 
-    row.innerHTML = `
-      📎 <a href="${doc.archivo_url}" target="_blank">${doc.nombre_archivo || "Documento CUD"}</a>
-    `;
+row.innerHTML = `
+  📎 <a href="#" class="ver-doc">
+  ${doc.nombre_archivo || "Documento CUD"}
+  </a>
+`;
+
+row.querySelector(".ver-doc").addEventListener("click", (e) => {
+  e.preventDefault();
+  abrirArchivoCloudinary(doc.archivo_url);
+});
 
     if (modoEdicion) {
       const btnEliminar = document.createElement("button");
