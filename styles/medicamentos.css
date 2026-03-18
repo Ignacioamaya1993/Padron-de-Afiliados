@@ -425,3 +425,43 @@ input[type="file"] {
   min-height: 80px !important;
   min-width: 360px;
 }
+
+/* ===================== */
+/* MOBILE */
+/* ===================== */
+
+@media (max-width: 600px) {
+
+  section {
+    padding: 0.7rem;
+  }
+
+  .grid-medicamento {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-fechas {
+    grid-template-columns: 1fr;
+  }
+
+  #listaMedicamentos {
+    grid-template-columns: 1fr;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+
+  .acciones button {
+    width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+}

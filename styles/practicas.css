@@ -428,7 +428,7 @@ input[type="file"] {
     max-width: 100% !important;      /* evita que algún max-width lo limite */
     box-sizing: border-box !important; /* incluye padding y borde */
     display: block !important;
-    min-height: 60px;                /* altura mínima decente */
+    min-height: 80px;                /* altura mínima decente */
     resize: vertical;                /* permite ajustar solo verticalmente */
 }
 

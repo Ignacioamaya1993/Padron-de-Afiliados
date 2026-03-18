@@ -581,8 +581,8 @@ background: #ffffff;
   /* Botón volver deja de flotar */
   #btnVolver {
     position: static;
-    width: 30%;
-    min-width: 140px; 
+    width: 50%;
+    height: 40px;
     margin-left: auto;
     justify-content: center;
     margin-bottom: 0.6rem;

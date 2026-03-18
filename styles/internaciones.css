@@ -219,7 +219,7 @@ input[type="file"] {
 
 .card-extra textarea[name="observaciones"] {
   grid-column: span 2;
-  min-height: 60px;
+  min-height: 80px;
 }
 
 /* ===================== */

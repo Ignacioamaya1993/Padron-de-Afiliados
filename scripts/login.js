@@ -67,7 +67,7 @@ async function ejecutarLogin() {
     if (!emailValido(identificador)) {
 
       const { data: usuario, error } = await supabase
-        .from("usuarios")
+        .from("usuarios_login")
         .select("email")
         .ilike("username", identificador)
         .limit(1)
