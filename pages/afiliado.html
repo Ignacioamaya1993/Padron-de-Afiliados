@@ -8,6 +8,7 @@
   <title>Ficha de Afiliado</title>
 
   <!-- CSS -->
+  <link rel="stylesheet" href="../styles/footer.css" />
   <link rel="stylesheet" href="../styles/header.css" />
   <link rel="stylesheet" href="../styles/afiliado.css" />
 
@@ -146,5 +147,17 @@
   </section>
 
   <script type="module" src="../scripts/afiliado.js"></script>
+
+  <!-- FOOTER -->
+<div id="footer"></div>
+
+<script>
+fetch("footer.html")
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById("footer").innerHTML = data;
+  });
+</script>
+
 </body>
 </html>

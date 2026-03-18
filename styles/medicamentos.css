@@ -1,11 +1,12 @@
 /* ===================== */
 /* GENERAL */
 /* ===================== */
+
 section {
-  padding: 1rem;
-  max-width: 900px;
-  margin: 0 auto;
-  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 55vh;
+  align-items: flex-start;
 }
 
 .hidden {
@@ -169,8 +170,10 @@ input[type="file"] {
 /* ===================== */
 #listaMedicamentos {
   display: grid;
+  flex: 1;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 0.6rem;
+  width: 100%;
 }
 
 .card {
@@ -317,8 +320,9 @@ input[type="file"] {
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  margin: 2rem 0;
+  margin-bottom: 0px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .paginacion button {

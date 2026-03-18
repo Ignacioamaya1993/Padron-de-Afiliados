@@ -473,7 +473,7 @@ if (e.target.classList.contains("eliminar")) {
     const contenedor = document.getElementById("paginacionAtencionDomiciliaria");
     contenedor.innerHTML = "";
 
-    const totalPaginas = Math.ceil(total / POR_PAGINA);
+const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
 
     const btnAnterior = document.createElement("button");
     btnAnterior.textContent = "⬅ Anterior";

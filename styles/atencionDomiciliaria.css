@@ -91,11 +91,19 @@ input[type="file"] {
 /* LISTADO DE CARDS */
 /* =============================== */
 
+.atencion-domiciliaria {
+  display: flex;
+  max-width: none;
+  flex-direction: column;
+  flex: 1;
+}
+
 #listaAtencionDomiciliaria {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
   justify-content: flex-start;
+  flex: 1;
 }
 
 /* Card individual */
@@ -161,10 +169,10 @@ input[type="file"] {
 
 .paginacion {
   display: flex;
-  justify-content: center;   /* centra horizontal */
-  align-items: center;
+  justify-content: center;
   gap: 1rem;
-  margin: 1.5rem 0;
+  margin-top: auto;
+
 }
 
 .campo label {

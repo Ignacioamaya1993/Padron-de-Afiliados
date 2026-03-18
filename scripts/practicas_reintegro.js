@@ -478,7 +478,7 @@ btnCancelarCard.addEventListener("click", () => {
 
   function renderPaginacion(total) {
     paginacion.innerHTML = "";
-    const totalPaginas = Math.ceil(total / POR_PAGINA);
+const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
 
     const btnAnterior = document.createElement("button");
     btnAnterior.textContent = "⬅ Anterior";

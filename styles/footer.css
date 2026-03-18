@@ -1,0 +1,42 @@
+/* FOOTER */
+
+.app-footer {
+  width: 100%;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: #e5e7eb;
+  font-size: 13px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.app-footer .footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px;
+  flex-wrap: wrap;
+}
+
+/* izquierda */
+.app-footer .footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* derecha */
+.app-footer .footer-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* logos */
+.app-footer .footer-logo {
+  height: 45px;
+  width: auto;
+}
+
+.app-footer .footer-logo-ia {
+  height: 45px;
+  width: auto;
+}

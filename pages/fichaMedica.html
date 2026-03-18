@@ -8,6 +8,7 @@
   <link rel="icon" type="image/png" href="../assets/images/Solo_logo.png">
 
   <!-- CSS -->
+  <link rel="stylesheet" href="../styles/footer.css" />
   <link rel="stylesheet" href="../styles/header.css" />
   <link rel="stylesheet" href="../styles/fichaMedica.css" />
   <link rel="stylesheet" href="../styles/medicamentos.css" />
@@ -59,6 +60,17 @@
 </main>
 
 <script type="module" src="../scripts/fichaMedica.js"></script>
+
+<!-- FOOTER -->
+<div id="footer"></div>
+
+<script>
+fetch("footer.html")
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById("footer").innerHTML = data;
+  });
+</script>
 
 </body>
 </html>

@@ -7,11 +7,15 @@
   <title>Padrón de Afiliados – Luz y Fuerza Olavarría</title>
     <link rel="icon" type="image/png" href="../assets/images/Solo_logo.png">
 
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/footer.css" />
   <link rel="stylesheet" href="../styles/header.css" />
   <link rel="stylesheet" href="../styles/padron.css" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
+
+  <div class="page-wrapper">
 
 <header>
   <div id="header-container"></div>
@@ -228,5 +232,21 @@
 </main>
 
 <script type="module" src="../scripts/padron.js"></script>
+
+<!-- FOOTER -->
+<footer id="footer"></footer>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("footer.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("footer").innerHTML = data;
+    });
+});
+</script>
+
 </body>
 </html>

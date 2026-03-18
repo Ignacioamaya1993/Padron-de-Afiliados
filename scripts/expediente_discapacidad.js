@@ -460,7 +460,7 @@ if (e.target.classList.contains("guardar")) {
   function renderPaginacion(total) {
 
     paginacion.innerHTML = "";
-    const totalPaginas = Math.ceil(total / POR_PAGINA);
+const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
 
     const btnAnt = document.createElement("button");
     btnAnt.textContent = "⬅ Anterior";

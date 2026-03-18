@@ -321,12 +321,12 @@ input[type="file"] {
 /* PAGINACIÓN DERIVACIONES */
 /* ===================== */
 .paginacion {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin: 2rem 0;
-  flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
 }
 
 .paginacion button {
