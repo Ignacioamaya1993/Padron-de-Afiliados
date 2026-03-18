@@ -1,6 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
-import { subirArchivoCloudinary, abrirImagenCloudinary } from "./cloudinary.js";
+import { subirArchivoCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
 
