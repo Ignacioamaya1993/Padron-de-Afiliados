@@ -406,51 +406,51 @@ async function buscarAfiliados(texto, token) {
   try {
     const palabras = texto.split(" ");
 
-    let query = supabase
-      .from("afiliados")
-      .select(`
-        id,
-        nombre,
-        apellido,
-        nombre_completo,
-        dni,
-        numero_afiliado,
-        parentesco_id,
-        fechaNacimiento,
-        estudios,
-        activo,
-        grupo_familiar_codigo,
-        fecha_ultimo_pago_cuota,
-        categoria_id (nombre),
-        cud_documentos (
-        fecha_vencimiento,
-        sin_vencimiento
-        )
-      `);
+let query = supabase
+  .from("afiliados")
+  .select(`
+    id,
+    nombre,
+    apellido,
+    nombre_completo,
+    dni,
+    numero_afiliado,
+    parentesco_id,
+    fechaNacimiento,
+    estudios,
+    activo,
+    grupo_familiar_codigo,
+    fecha_ultimo_pago_cuota,
+    categoria_id (nombre),
+    cud_documentos (
+      fecha_vencimiento,
+      sin_vencimiento
+    )
+  `);
 
-    const filtro = palabras
-      .map(p => 
-        `nombre_completo.ilike.%${p}%,dni.ilike.%${p}%,numero_afiliado.ilike.%${p}%`
-      )
-      .join(",");
+// 🔹 IMPORTANTE: AND entre palabras
+palabras.forEach(p => {
+  query = query.or(
+    `nombre_completo.ilike.%${p}%,dni.ilike.%${p}%,numero_afiliado.ilike.%${p}%`
+  );
+});
 
-    query = query.or(filtro);
+const { data: afiliados, error } = await query.limit(20);
+if (error) throw error;
 
-    const { data: afiliados, error } = await query.limit(20);
-    if (error) throw error;
+// si ya hubo otra búsqueda, ignoro esta
+if (token !== searchToken) return;
 
-    // si ya hubo otra búsqueda, ignoro esta
-    if (token !== searchToken) return;
+resultadosDiv.innerHTML = "";
 
-    resultadosDiv.innerHTML = "";
-    if (!afiliados.length) {
-    resultadosDiv.innerHTML = `
-      <div class="sin-resultados">
-        🔍 No se encontraron afiliados
-      </div>
-    `;      
-    return;
-    }
+if (!afiliados.length) {
+  resultadosDiv.innerHTML = `
+    <div class="sin-resultados">
+      🔍 No se encontraron afiliados
+    </div>
+  `;
+  return;
+}
 
       /*
       Obtiene los titulares de cada grupo familiar
