@@ -10,6 +10,17 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+  // 🔹 Obtener número de afiliado para carpeta
+const { data: afiliado } = await supabase
+  .from("afiliados")
+  .select("numero_afiliado")
+  .eq("id", afiliadoId)
+  .single();
+
+const carpetaAfiliado = afiliado?.numero_afiliado
+  ? `afiliados/${afiliado.numero_afiliado}/atencion_domiciliaria`
+  : "afiliados/sin_numero/atencion_domiciliaria";
+
   // =====================
 // PARAMETRO DESTACAR DESDE NOTIFICACION
 // =====================
@@ -379,6 +390,25 @@ if (e.target.classList.contains("guardar")) {
 
     await supabase.from("atencion_domiciliaria").update(datosUpdate).eq("id", id);
 
+      // 🔹 Subir nuevos adjuntos (edición)
+  const nuevosAdjuntos = card.querySelectorAll(".adjuntos-nuevos-card input[type='file']");
+
+  for (const input of nuevosAdjuntos) {
+    if (!input.files[0]) continue;
+
+    const archivo = input.files[0];
+
+    const url = await subirArchivoCloudinary(archivo, carpetaAfiliado);
+
+    await supabase.from("fichamedica_documentos").insert({
+      afiliado_id: afiliadoId,
+      tipo_documento: "atencionDomiciliaria",
+      entidad_relacion_id: id,
+      nombre_archivo: archivo.name,
+      url
+    });
+  }
+
     Swal.fire("Guardado", "Cambios guardados correctamente", "success");
     cargarAtenciones();
 
@@ -532,7 +562,7 @@ btnSubmit.style.cursor = "not-allowed";
 
     for (const adj of archivosAdjuntos) {
       if (!adj.archivo) continue;
-      const url = await subirArchivoCloudinary(adj.archivo);
+      const url = await subirArchivoCloudinary(adj.archivo, carpetaAfiliado);
       await supabase.from("fichamedica_documentos").insert({
         afiliado_id: afiliadoId,
         tipo_documento: "atencionDomiciliaria",

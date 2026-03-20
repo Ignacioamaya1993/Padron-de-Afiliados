@@ -11,6 +11,17 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+  // 🔹 Obtener número de afiliado para carpeta
+const { data: afiliado } = await supabase
+  .from("afiliados")
+  .select("numero_afiliado")
+  .eq("id", afiliadoId)
+  .single();
+
+const carpetaAfiliado = afiliado?.numero_afiliado
+  ? `afiliados/${afiliado.numero_afiliado}/expediente_discapacidad`
+  : "afiliados/sin_numero/expediente_discapacidad";
+
     // =====================
 // PARAMETRO DESTACAR DESDE NOTIFICACION
 // =====================
@@ -420,7 +431,7 @@ if (e.target.classList.contains("guardar")) {
       if (!input.files[0]) continue;
 
       const archivo = input.files[0];
-      const url = await subirArchivoCloudinary(archivo);
+      const url = await subirArchivoCloudinary(archivo, carpetaAfiliado);
 
       await supabase.from("fichamedica_documentos").insert({
         afiliado_id: afiliadoId,
@@ -443,11 +454,11 @@ if (e.target.classList.contains("guardar")) {
 
   } catch (err) {
     Swal.fire("Error", "No se pudo guardar", "error");
-  } finally {
-    btnSubmit.disabled = false;
-    btnSubmit.textContent = "💾 Guardar";
-    btnSubmit.style.backgroundColor = "";
-    btnSubmit.style.cursor = "";
+    } finally {
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = "💾 Guardar";
+    btnGuardar.style.backgroundColor = "";
+    btnGuardar.style.cursor = "";
   }
 }
 
@@ -535,7 +546,7 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
       if (!input.files[0]) continue;
 
       const archivo = input.files[0];
-      const url = await subirArchivoCloudinary(archivo);
+      const url = await subirArchivoCloudinary(archivo, carpetaAfiliado);
       if (!url) continue;
 
       await supabase.from("fichamedica_documentos").insert({

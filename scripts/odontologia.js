@@ -10,6 +10,17 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+  // 🔹 Obtener número de afiliado para carpeta
+const { data: afiliado } = await supabase
+  .from("afiliados")
+  .select("numero_afiliado")
+  .eq("id", afiliadoId)
+  .single();
+
+const carpetaAfiliado = afiliado?.numero_afiliado
+  ? `afiliados/${afiliado.numero_afiliado}/odontologia`
+  : "afiliados/sin_numero/odontologia";
+
   // =====================
   // ESTADO
   // =====================
@@ -294,7 +305,7 @@ if (adjuntosCard) {
         const file = input.files[0];
         if (!file) return;
 
-        const url = await subirArchivoCloudinary(file);
+        const url = await subirArchivoCloudinary(file, carpetaAfiliado);
 
         await supabase.from("fichamedica_documentos").insert({
           afiliado_id: afiliadoId,
@@ -469,7 +480,7 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
 
     for (const adj of archivosAdjuntos) {
       if (!adj.archivo) continue;
-      const url = await subirArchivoCloudinary(adj.archivo);
+      const url = await subirArchivoCloudinary(adj.archivo, carpetaAfiliado);
       await supabase.from("fichamedica_documentos").insert({
         afiliado_id: afiliadoId,
         tipo_documento: "odontologia",

@@ -10,6 +10,17 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+  // 🔹 Obtener número de afiliado para carpeta
+const { data: afiliado } = await supabase
+  .from("afiliados")
+  .select("numero_afiliado")
+  .eq("id", afiliadoId)
+  .single();
+
+const carpetaAfiliado = afiliado?.numero_afiliado
+  ? `afiliados/${afiliado.numero_afiliado}/derivaciones`
+  : "afiliados/sin_numero/derivaciones";
+
   /* =====================
      ESTADO
   ===================== */
@@ -472,7 +483,7 @@ if (e.target.classList.contains("guardar")) {
       const input = adj.querySelector("input");
       if (!input || !input.files[0]) continue;
 
-      const url = await subirArchivoCloudinary(input.files[0]);
+const url = await subirArchivoCloudinary(input.files[0], carpetaAfiliado);
 
       await supabase
         .from("fichamedica_documentos")
@@ -589,7 +600,7 @@ form.addEventListener("submit", async e => {
       if (!input.files[0]) continue;
 
       const archivo = input.files[0];
-      const url = await subirArchivoCloudinary(archivo);
+      const url = await subirArchivoCloudinary(archivo, carpetaAfiliado)
 
       await supabase.from("fichamedica_documentos").insert({
         afiliado_id: afiliadoId,

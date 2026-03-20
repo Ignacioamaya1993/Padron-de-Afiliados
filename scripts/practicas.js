@@ -11,6 +11,17 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+  // 🔹 Obtener número de afiliado para carpeta
+const { data: afiliado } = await supabase
+  .from("afiliados")
+  .select("numero_afiliado")
+  .eq("id", afiliadoId)
+  .single();
+
+const carpetaBase = afiliado?.numero_afiliado
+  ? `afiliados/${afiliado.numero_afiliado}/practicas`
+  : "afiliados/sin_numero/practicas";
+
   /* =====================
      ESTADO
   ===================== */
@@ -345,7 +356,7 @@ export async function init(afiliadoId) {
           for (const wrapper of card._adjuntosNuevos || []) {
             if (!wrapper.archivo) continue;
             console.log("Subiendo archivo:", wrapper.archivo.name);
-            const url = await subirArchivoCloudinary(wrapper.archivo);
+            const url = await subirArchivoCloudinary(wrapper.archivo, carpetaBase);
             await supabase.from("fichamedica_documentos").insert({
               afiliado_id: afiliadoId,
               tipo_documento: "practicas",
@@ -550,7 +561,7 @@ const datos = {
 
       for (const wrapper of archivosAdjuntos) {
         if (!wrapper.archivo) continue;
-        const url = await subirArchivoCloudinary(wrapper.archivo);
+        const url = await subirArchivoCloudinary(wrapper.archivo, carpetaBase);
         await supabase.from("fichamedica_documentos").insert({
           afiliado_id: afiliadoId,
           tipo_documento: "practicas",

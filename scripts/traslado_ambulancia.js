@@ -11,6 +11,17 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+  // 🔹 Obtener número de afiliado para carpeta
+const { data: afiliado } = await supabase
+  .from("afiliados")
+  .select("numero_afiliado")
+  .eq("id", afiliadoId)
+  .single();
+
+const carpetaBase = afiliado?.numero_afiliado
+  ? `afiliados/${afiliado.numero_afiliado}/traslado_ambulancia`
+  : "afiliados/sin_numero/traslado_ambulancia";
+
   /* ===================== */
   /* ESTADO */
   /* ===================== */
@@ -371,7 +382,7 @@ btnGuardar.addEventListener("click", async () => {
   for (const adj of nuevosAdjuntos) {
     if (!adj.archivo) continue;
 
-    const url = await subirArchivoCloudinary(adj.archivo);
+    const url = await subirArchivoCloudinary(adj.archivo, carpetaBase);
     if (!url) continue;
 
     await supabase.from("fichamedica_documentos").insert({
@@ -470,7 +481,7 @@ for (const adj of archivosAdjuntos) {
   if (!adj.archivo) continue;
 
   console.log("Subiendo archivo a Cloudinary:", adj.archivo.name);
-  const resultado = await subirArchivoCloudinary(adj.archivo);
+  const resultado = await subirArchivoCloudinary(adj.archivo, carpetaBase);
   console.log("Resultado Cloudinary:", resultado);
 
   const url = resultado;

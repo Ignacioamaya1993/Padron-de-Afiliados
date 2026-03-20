@@ -8,15 +8,6 @@ color: white;
 margin-bottom: 1rem;
 }
 
-.form-card_expediente {
-  border: 1px solid #ddd !important;
-  border-radius: 10px !important;
-  padding: 20px !important;
-  margin-bottom: 20px !important;
-  background: #fff !important;
-  max-width: 50% !important;
-}
-
 /* Input file */
 input[type="file"] {
   border: 1px solid #f59e0b;
@@ -25,6 +16,15 @@ input[type="file"] {
   padding: 0.4rem;
   cursor: pointer;
   max-width: 100%;
+}
+
+.form-card_expediente {
+  border: 1px solid #ddd !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  margin-bottom: 20px !important;
+  background: #fff !important;
+  max-width: 100% !important;
 }
 
 .form-card label {

@@ -26,6 +26,19 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+    const { data: afiliado } = await supabase
+    .from("afiliados")
+    .select("numero_afiliado")
+    .eq("id", afiliadoId)
+    .single();
+
+  if (!afiliado) {
+    Swal.fire("Error", "No se pudo obtener el afiliado", "error");
+    return;
+  }
+
+  const numeroAfiliado = afiliado.numero_afiliado;
+
   // =====================
 // PARAMETRO DESTACAR DESDE NOTIFICACION
 // =====================
@@ -499,7 +512,10 @@ card.querySelectorAll("input[name], textarea[name]").forEach(el => {
     for (const adj of card._adjuntosNuevos) {
       if (!adj.archivo) continue;
 
-      const url = await subirArchivoCloudinary(adj.archivo);
+    const url = await subirArchivoCloudinary(
+      adj.archivo,
+      `afiliados/${numeroAfiliado}/medicamentos`
+    );
 
       await supabase
         .from("fichamedica_documentos")
@@ -642,8 +658,11 @@ form.addEventListener("submit", async e => {
     for (const adj of archivosAdjuntos) {
       if (!adj.archivo) continue;
 
-      const url = await subirArchivoCloudinary(adj.archivo);
-
+      const url = await subirArchivoCloudinary(
+        adj.archivo,
+        `afiliados/${numeroAfiliado}/medicamentos`
+      );
+      
       await supabase.from("fichamedica_documentos").insert({
         afiliado_id: afiliadoId,
         tipo_documento: "medicamentos",

@@ -11,6 +11,17 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+  // 🔹 Obtener número de afiliado para carpeta
+const { data: afiliado } = await supabase
+  .from("afiliados")
+  .select("numero_afiliado")
+  .eq("id", afiliadoId)
+  .single();
+
+const carpetaBase = afiliado?.numero_afiliado
+  ? `afiliados/${afiliado.numero_afiliado}/oxigenoterapia`
+  : "afiliados/sin_numero/oxigenoterapia";
+
   /* =====================
      ESTADO
   ===================== */
@@ -380,13 +391,16 @@ if (e.target.classList.contains("guardar")) {
     for (const input of inputs) {
       if (!input.files[0]) continue;
 
-      const url = await subirArchivoCloudinary(input.files[0]);
+      const archivo = input.files[0];
+
+      const carpeta = carpetaBase;
+      const url = await subirArchivoCloudinary(archivo, carpeta);
 
       await supabase.from("fichamedica_documentos").insert({
         afiliado_id: afiliadoId,
         entidad_relacion_id: id,
         tipo_documento: "oxigenoterapia",
-        nombre_archivo: input.files[0].name,
+        nombre_archivo: archivo.name,
         url,
         fecha_subida: new Date().toISOString()
       });
@@ -404,10 +418,10 @@ if (e.target.classList.contains("guardar")) {
   } catch (err) {
     Swal.fire("Error", "No se pudo guardar", "error");
   } finally {
-    btnSubmit.disabled = false;
-    btnSubmit.textContent = "💾 Guardar";
-    btnSubmit.style.backgroundColor = "";
-    btnSubmit.style.cursor = "";
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = "💾 Guardar";
+    btnGuardar.style.backgroundColor = "";
+    btnGuardar.style.cursor = "";
   }
 }
   });
@@ -472,11 +486,11 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
-  const btnSubmit = form.querySelector("button[type='submit']");
-  btnSubmit.disabled = true;
-  btnSubmit.textContent = "⌛ Guardando...";
-  btnSubmit.style.backgroundColor = "#aaa";
-  btnSubmit.style.cursor = "not-allowed";
+  const btnGuardar = form.querySelector("button[type='submit']");
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = "⌛ Guardando...";
+  btnGuardar.style.backgroundColor = "#aaa";
+  btnGuardar.style.cursor = "not-allowed";
 
   try {
 
@@ -502,7 +516,9 @@ form.addEventListener("submit", async e => {
       if (!input.files[0]) continue;
 
       const archivo = input.files[0];
-      const url = await subirArchivoCloudinary(archivo);
+
+      const carpeta = carpetaBase;
+      const url = await subirArchivoCloudinary(archivo, carpeta);
 
       await supabase.from("fichamedica_documentos").insert({
         afiliado_id: afiliadoId,
@@ -525,11 +541,10 @@ form.addEventListener("submit", async e => {
   } catch (err) {
     Swal.fire("Error", "No se pudo guardar", "error");
   } finally {
-
-    btnSubmit.disabled = false;
-    btnSubmit.textContent = "💾 Guardar";
-    btnSubmit.style.backgroundColor = "";
-    btnSubmit.style.cursor = "";
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = "💾 Guardar";
+    btnGuardar.style.backgroundColor = "";
+    btnGuardar.style.cursor = "";
   }
 });
 
