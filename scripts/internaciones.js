@@ -543,10 +543,7 @@ if (e.target.classList.contains("guardar")) {
    TOGGLE FORM NUEVO
 ===================== */
 
-console.log("Internaciones init cargado");
-
 btnNuevo.addEventListener("click", () => {
-    console.log("CLICK DETECTADO");
 
   editandoId = null;
   form.reset();

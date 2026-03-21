@@ -220,13 +220,24 @@ async function cargarAfiliado() {
   afiliado = data;
   afiliado.grupo_familiar_codigo = calcularGrupoFamiliar(afiliado.numero_afiliado);
 
-  // 🔥 ESTA ES LA FORMA CORRECTA
   cud_documentos = data.cud_documentos || [];
-
-  console.log("CUD al cargar afiliado:", cud_documentos);
 
   renderFicha(cud_documentos);
   cargarGrupoFamiliar();
+}
+
+function getCarpetaBase() {
+  return afiliado?.numero_afiliado
+    ? `afiliados/${afiliado.numero_afiliado}`
+    : "afiliados/sin_numero";
+}
+
+function getCarpetaCUD() {
+  return `${getCarpetaBase()}/cud`;
+}
+
+function getCarpetaAlumnoRegular() {
+  return `${getCarpetaBase()}/alumno_regular`;
 }
 
 /* =====================
@@ -765,15 +776,10 @@ if (!cudDocs || cudDocs.length === 0) {
   row.classList.add("cud-item");
 
 row.innerHTML = `
-  📎 <a href="#" class="ver-doc">
-  ${doc.nombre_archivo || "Documento CUD"}
-  </a>
+📎 <a href="${doc.archivo_url}" target="_blank">
+  ${doc.nombre_archivo}
+</a>
 `;
-
-row.querySelector(".ver-doc").addEventListener("click", (e) => {
-  e.preventDefault();
-  window.open(doc.archivo_url, "_blank");
-});
 
     if (modoEdicion) {
       const btnEliminar = document.createElement("button");
@@ -811,7 +817,7 @@ if (modoEdicion) {
       if (!file) return;
 
       try {
-        const url = await subirArchivoCloudinary(file, afiliado.numero_afiliado);
+        const url = await subirArchivoCloudinary(file, getCarpetaCUD());
         if (!url) {
           Swal.fire("Error", "No se pudo subir el archivo", "error");
           return;
@@ -1214,7 +1220,7 @@ async function guardarCambios() {
     }
     if (adjEstudiosInput && adjEstudiosInput.files.length > 0) {
       const file = adjEstudiosInput.files[0];
-      adjuntoEstudiosUrl = await subirArchivoCloudinary(file, numero_afiliado);
+adjuntoEstudiosUrl = await subirArchivoCloudinary(file, getCarpetaAlumnoRegular());
     }
   } else {
     adjuntoEstudiosUrl = null;

@@ -356,13 +356,10 @@ const carpetaBase = afiliado?.numero_afiliado
             fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null,
           };
 
-          console.log("Actualizando práctica ID:", id, datosUpdate);
           await supabase.from("practicas").update(datosUpdate).eq("id", id);
 
-          console.log("Adjuntos nuevos antes de subir:", card._adjuntosNuevos);
           for (const wrapper of card._adjuntosNuevos || []) {
             if (!wrapper.archivo) continue;
-            console.log("Subiendo archivo:", wrapper.archivo.name);
             const url = await subirArchivoCloudinary(wrapper.archivo, carpetaBase);
             await supabase.from("fichamedica_documentos").insert({
               afiliado_id: afiliadoId,
@@ -373,9 +370,7 @@ const carpetaBase = afiliado?.numero_afiliado
             });
           }
 
-          console.log("Adjuntos a eliminar:", card._adjuntosEliminar);
           for (const docId of card._adjuntosEliminar || []) {
-            console.log("Eliminando adjunto ID:", docId);
             await supabase.from("fichamedica_documentos").delete().eq("id", docId);
           }
 

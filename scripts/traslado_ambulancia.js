@@ -463,7 +463,6 @@ form.addEventListener("submit", async e => {
     fecha_reintegro: document.getElementById("fechaReintegroTraslado").value || null
   };
 
-  console.log("Datos a insertar en traslado_ambulancia:", datos);
 
   const { data, error } = await supabase
     .from("traslado_ambulancia")
@@ -477,14 +476,11 @@ form.addEventListener("submit", async e => {
     return;
   }
 
-  console.log("Traslado guardado con ID:", data.id);
 
 for (const adj of archivosAdjuntos) {
   if (!adj.archivo) continue;
 
-  console.log("Subiendo archivo a Cloudinary:", adj.archivo.name);
   const resultado = await subirArchivoCloudinary(adj.archivo, carpetaBase);
-  console.log("Resultado Cloudinary:", resultado);
 
   const url = resultado;
   if (!url) {
@@ -492,7 +488,6 @@ for (const adj of archivosAdjuntos) {
     continue;
   }
 
-  console.log("Insertando documento en Supabase con URL:", url);
   const { data: docData, error: errorAdj } = await supabase
     .from("fichamedica_documentos")
     .insert({
@@ -509,7 +504,6 @@ for (const adj of archivosAdjuntos) {
   if (errorAdj) {
     console.error("Error al insertar documento:", errorAdj);
   } else {
-    console.log("Documento insertado correctamente:", docData);
   }
 }
 
