@@ -164,6 +164,14 @@ return `
         <input type="date" name="fecha_carga" readonly value="${fISO(inter.fecha_carga)}">
       </div>
 
+      <div><label>N° Autorización</label>
+        <input name="nro_autorizacion" readonly value="${inter.nro_autorizacion || ""}">
+      </div>
+
+      <div><label>N° Carga</label>
+        <input name="nro_carga" readonly value="${inter.nro_carga || ""}">
+      </div>
+
       <div><label>Fecha Cirugía</label>
         <input type="date" name="fecha_cirugia" readonly value="${fISO(inter.fecha_cirugia)}">
       </div>
@@ -591,7 +599,10 @@ form.addEventListener("submit", async e => {
         ? parseFloat(document.getElementById("reintegroInternacion").value)
         : null,
       fecha_reintegro: document.getElementById("fechaReintegroInternacion")?.value || null,
+      nro_autorizacion: document.getElementById("nroAutorizacion").value || null,
+      nro_carga: document.getElementById("nroCarga").value || null,
     };
+    
 
     // Guardar la internación
     const { data } = await supabase.from("internaciones").insert(datos).select().single();

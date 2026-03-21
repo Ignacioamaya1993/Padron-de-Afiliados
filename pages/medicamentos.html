@@ -77,10 +77,20 @@ main, section {
         <input type="date" name="fecha_vencimiento" required>
       </div>
 
+          <div>
+      <label>Reintegro</label>
+      <input type="number" step="0.01" name="reintegro" placeholder="Opcional">
+    </div>
+
+    <div>
+      <label>Fecha reintegro</label>
+      <input type="date" name="fecha_reintegro">
+    </div>
+
       <!-- Observaciones -->
       <div class="form-group full-width">
         <label>Observaciones</label>
-        <textarea id="observaciones" rows="3"></textarea>
+      <textarea name="observaciones" rows="3"></textarea>
       </div>
 
                 <!-- Adjuntos -->

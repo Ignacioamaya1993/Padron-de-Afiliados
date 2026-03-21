@@ -407,8 +407,10 @@ btnGuardar.addEventListener("click", async () => {
       fecha_carga: form.fecha_carga.value,
       tipo_material_id: tipoSelect.value || null,
       observacion: form.observacion.value || null,
-      reintegro: null,
-      fecha_reintegro: null
+      reintegro: form.reintegro.value
+        ? parseFloat(form.reintegro.value)
+        : null,
+      fecha_reintegro: form.fecha_reintegro.value || null
     };
 
     const { data } = await supabase
@@ -446,12 +448,11 @@ btnGuardar.addEventListener("click", async () => {
     });
 });
 
-  btnNuevo.addEventListener("click", () => {
-    form.reset();
-    resetAdjuntos();
-    grupoReintegro?.classList.add("hidden");
-    form.classList.toggle("hidden");
-  });
+btnNuevo.addEventListener("click", () => {
+  form.reset();
+  resetAdjuntos();
+  form.classList.toggle("hidden");
+});
 
   btnCancelar.addEventListener("click", () => {
     form.reset();

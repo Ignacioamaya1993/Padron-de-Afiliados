@@ -499,7 +499,11 @@ form.addEventListener("submit", async e => {
       tipoequipo_id: form.tipoequipo_id.value,
       fecha_inicio_tratamiento: form.fecha_inicio_tratamiento.value,
       fecha_fin_tratamiento: form.fecha_fin_tratamiento.value || null,
-      observacion: form.observacion.value || null
+      observacion: form.observacion.value || null,
+      reintegro: form.reintegro.value
+        ? parseFloat(form.reintegro.value)
+        : null,
+      fecha_reintegro: form.fecha_reintegro.value || null
     };
 
     const { data: nuevaOxigeno, error } = await supabase

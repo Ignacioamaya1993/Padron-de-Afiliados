@@ -37,6 +37,31 @@ main, section {
         </select>
       </div>
 
+            <!-- REINTEGRO-->
+      <div id="grupoReintegroMaterial"
+           class="campo full">
+
+        <div class="form-grid">
+
+          <div class="campo">
+            <label>Reintegro</label>
+            <input type="number"
+                   name="reintegro"
+                   step="0.01"
+                   placeholder="Opcional">
+          </div>
+
+          <div class="campo">
+            <label>Fecha reintegro</label>
+            <input type="date"
+                   name="fecha_reintegro">
+                   
+          </div>
+
+        </div>
+
+      </div>
+
       <div class="campo full">
         <label>Observación</label>
         <textarea name="observacion"></textarea>
@@ -54,29 +79,6 @@ main, section {
                 class="adjuntos-nuevos_materiales">
           ➕ Agregar adjunto
         </button>
-      </div>
-
-      <!-- REINTEGRO SOLO EN EDICIÓN -->
-      <div id="grupoReintegroMaterial"
-           class="campo full hidden">
-
-        <div class="form-grid">
-
-          <div class="campo">
-            <label>Reintegro</label>
-            <input type="number"
-                   name="reintegro"
-                   step="0.01">
-          </div>
-
-          <div class="campo">
-            <label>Fecha reintegro</label>
-            <input type="date"
-                   name="fecha_reintegro">
-          </div>
-
-        </div>
-
       </div>
 
     </div>

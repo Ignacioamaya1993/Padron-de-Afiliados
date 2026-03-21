@@ -28,6 +28,16 @@ main, section {
       <input type="date" id="fechaCarga" required>
     </div>
 
+        <div class="form-row">
+      <label for="nroAutorizacion">N° de Autorización</label>
+      <input type="text" id="nroAutorizacion">
+    </div>
+
+    <div class="form-row">
+      <label for="nroCarga">N° de Carga</label>
+      <input type="text" id="nroCarga">
+    </div>
+
     <div class="form-row">
       <label for="fechaOrden">Fecha Orden</label>
       <input type="date" id="fechaOrden">
@@ -64,16 +74,15 @@ main, section {
     </div>
 
       <!-- REINTEGRO (solo para edición) -->
-  <div class="campo-reintegro hidden">
-    <div>
+      <div>
       <label>Reintegro</label>
-      <input type="number" name="reintegro" step="0.01">
+      <input type="number" step="0.01" name="reintegro" placeholder="Opcional">
     </div>
+
     <div>
       <label>Fecha reintegro</label>
       <input type="date" name="fecha_reintegro">
     </div>
-  </div>
 
     <div class="form-row full-width">
       <label for="observacionesInternacion">Observaciones</label>

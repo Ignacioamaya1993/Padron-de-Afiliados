@@ -316,3 +316,7 @@ margin-bottom: 1rem;
   padding-bottom: 6px;
   margin-bottom: 8px;
 }
+
+.campo-reintegro {
+  display: contents; 
+}

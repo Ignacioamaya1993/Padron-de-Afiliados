@@ -171,7 +171,7 @@ card.innerHTML = `
       <input type="date" name="fecha_envio_recibo" readonly value="${fISO(r.fecha_envio_recibo)}">
     </div>
 
-    <div>
+        <div>
       <label>Reintegro</label>
       <input type="number" name="reintegro" value="${r.reintegro ?? ''}" step="0.01" readonly>
     </div>
@@ -445,14 +445,14 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
   btnNuevo.addEventListener("click", () => {
     form.reset();
     resetAdjuntos();
-    campoReintegro.classList.add("hidden");
+    campoReintegro.classList.remove("hidden");
     form.classList.toggle("hidden");
   });
 
   btnCancelar.addEventListener("click", () => {
     form.reset();
     resetAdjuntos();
-    campoReintegro.classList.add("hidden");
+    campoReintegro.classList.remove("hidden");
     form.classList.add("hidden");
   });
 
@@ -463,14 +463,19 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
     btnSubmit.disabled = true;
     btnSubmit.textContent = "Guardando...";
 
+    const inputReintegro = form.querySelector("[name='reintegro']");
+    const inputFechaReintegro = form.querySelector("[name='fecha_reintegro']");
+
     const datos = {
       afiliado_id: afiliadoId,
       fecha_carga: form.fecha_carga.value,
       fecha_orden: form.fecha_orden.value || null,
       fecha_recepcion_orden: form.fecha_recepcion_orden.value || null,
       fecha_factura: form.fecha_factura.value || null,
-      reintegro: null,
-      fecha_reintegro: null,
+      reintegro: inputReintegro?.value
+        ? parseFloat(inputReintegro.value)
+        : null,
+      fecha_reintegro: inputFechaReintegro?.value || null,
       fecha_firma_recibo: form.fecha_firma_recibo.value || null,
       fecha_envio_recibo: form.fecha_envio_recibo.value || null,
       observacion: form.observacion.value || null
@@ -492,7 +497,7 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
 
     form.reset();
     resetAdjuntos();
-    campoReintegro.classList.add("hidden");
+    campoReintegro.classList.remove("hidden");
     form.classList.add("hidden");
     cargarOdontologia();
 
@@ -504,7 +509,7 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
     });
     
     btnSubmit.disabled = false;
-btnSubmit.textContent = "Guardar";
+    btnSubmit.textContent = "Guardar";
   });
 
   // =====================

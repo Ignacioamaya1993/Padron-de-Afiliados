@@ -170,6 +170,13 @@ const carpetaBase = afiliado?.numero_afiliado
           <div><label>Fecha carga</label>
             <input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}">
           </div>
+          <div><label>N° Autorización</label>
+          <input name="nro_autorizacion" readonly value="${p.nro_autorizacion || ""}">
+        </div>
+
+        <div><label>N° Carga</label>
+          <input name="nro_carga" readonly value="${p.nro_carga || ""}">
+        </div>
           <div><label>Kinesiólogo</label>
             <input name="nombre_kinesiologo" readonly value="${p.nombre_kinesiologo || ""}">
           </div>
@@ -552,7 +559,9 @@ const datos = {
   reintegro: form.querySelector("[name='reintegro']")?.value
     ? parseFloat(form.querySelector("[name='reintegro']").value)
     : null,
-  fecha_reintegro: form.querySelector("[name='fecha_reintegro']")?.value || null
+  fecha_reintegro: form.querySelector("[name='fecha_reintegro']")?.value || null,
+  nro_autorizacion: form.querySelector("[name='nro_autorizacion']")?.value || null,
+  nro_carga: form.querySelector("[name='nro_carga']")?.value || null,  
 };
 
     try {

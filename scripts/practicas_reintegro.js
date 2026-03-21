@@ -425,6 +425,9 @@ btnCancelarCard.addEventListener("click", () => {
 
     try {
 
+      const inputReintegro = form.querySelector("[name='reintegro']");
+      const inputFechaReintegro = form.querySelector("[name='fecha_reintegro']");
+
       const datos = {
         afiliado_id: afiliadoId,
         fecha_carga: form.fecha_carga.value,
@@ -432,8 +435,10 @@ btnCancelarCard.addEventListener("click", () => {
         fecha_vencimiento: form.fecha_vencimiento.value || null,
         tipo_practica_id: tipoSelect.value || null,
         observacion: form.observacion.value || null,
-        reintegro: null,
-        fecha_reintegro: null
+        reintegro: inputReintegro?.value
+          ? parseFloat(inputReintegro.value)
+          : null,
+        fecha_reintegro: inputFechaReintegro?.value || null
       };
 
       const { data } = await supabase
@@ -477,7 +482,7 @@ btnCancelarCard.addEventListener("click", () => {
   btnNuevo.addEventListener("click", () => {
     form.reset();
     resetAdjuntos();
-    campoReintegro.classList.add("hidden");
+    campoReintegro.classList.remove("hidden");
     form.classList.toggle("hidden");
   });
 

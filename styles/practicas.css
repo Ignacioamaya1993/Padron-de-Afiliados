@@ -129,7 +129,7 @@ margin-bottom: 1rem;
   padding: 20px !important;
   margin-bottom: 20px !important;
   background: #fff !important;
-  max-width: 50% !important;
+  width: 450px !important;
 }
 
 /* ===================== */
@@ -138,7 +138,7 @@ margin-bottom: 1rem;
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 15px;
 }
 

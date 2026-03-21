@@ -527,14 +527,12 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
   btnNuevo.addEventListener("click", () => {
     form.reset();
     resetAdjuntos();
-    campoReintegro.classList.add("hidden");
     form.classList.toggle("hidden");
   });
 
   btnCancelar.addEventListener("click", () => {
     form.reset();
     resetAdjuntos();
-    campoReintegro.classList.add("hidden");
     form.classList.add("hidden");
   });
 
@@ -542,10 +540,13 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
     e.preventDefault();
 
     const btnSubmit = form.querySelector("button[type='submit']");
-btnSubmit.disabled = true;
-btnSubmit.textContent = "⌛ Guardando...";
-btnSubmit.style.backgroundColor = "#aaa";
-btnSubmit.style.cursor = "not-allowed";
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = "⌛ Guardando...";
+    btnSubmit.style.backgroundColor = "#aaa";
+    btnSubmit.style.cursor = "not-allowed";
+
+    const inputReintegro = form.querySelector("[name='reintegro']");
+    const inputFechaReintegro = form.querySelector("[name='fecha_reintegro']");
 
     const datos = {
       afiliado_id: afiliadoId,
@@ -554,8 +555,10 @@ btnSubmit.style.cursor = "not-allowed";
       fecha_inicio_periodo: form.fecha_inicio_periodo.value,
       fecha_fin_periodo: form.fecha_fin_periodo.value,
       observacion: form.observacion.value || null,
-      reintegro: null,
-      fecha_reintegro: null
+      reintegro: inputReintegro?.value
+        ? parseFloat(inputReintegro.value)
+        : null,
+      fecha_reintegro: inputFechaReintegro?.value || null
     };
 
     const { data } = await supabase.from("atencion_domiciliaria").insert(datos).select().single();

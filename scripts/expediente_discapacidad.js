@@ -204,7 +204,7 @@ card.innerHTML = `
 
       <div>
         <label>Fecha reintegro</label>
-        <input type="date" name="fecha_reintegro" readonly value="${fISO(exp.fecha_reintero)}">
+        <input type="date" name="fecha_reintegro" readonly value="${fISO(exp.fecha_reintegro)}">
       </div>
     </div>
   </div>
@@ -529,7 +529,11 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
       tipo_expediente_id: form.tipo_expediente_id.value,
       fecha_inicio: form.fecha_inicio.value,
       fecha_finalizacion: form.fecha_finalizacion.value || null,
-      observacion: form.observacion.value || null
+      observacion: form.observacion.value || null,
+      reintegro: form.reintegro.value
+        ? parseFloat(form.reintegro.value)
+        : null,
+      fecha_reintegro: form.fecha_reintegro.value || null
     };
 
     const { data: nuevo, error } = await supabase

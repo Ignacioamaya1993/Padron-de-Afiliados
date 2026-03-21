@@ -82,7 +82,7 @@ button:active {
   padding: 20px !important;
   margin-bottom: 20px !important;
   background: #fff !important;
-  max-width: 50% !important;
+  max-width: 100% !important;
 }
 
 .form-grid {
@@ -386,4 +386,10 @@ input[type="file"] {
 .card-traslado .cancelar {
   background-color: #e5e7eb;
   color: #0f172a;
+}
+
+#campoReintegroTraslado {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 }

@@ -457,8 +457,10 @@ form.addEventListener("submit", async e => {
     fecha_carga: document.getElementById("fechaCarga").value,
     lugar_traslado: document.getElementById("lugarTraslado").value,
     observacion: document.getElementById("observacionTraslado").value || null,
-    reintegro: null,
-    fecha_reintegro: null
+    reintegro: document.getElementById("reintegroTraslado").value
+      ? parseFloat(document.getElementById("reintegroTraslado").value)
+      : null,
+    fecha_reintegro: document.getElementById("fechaReintegroTraslado").value || null
   };
 
   console.log("Datos a insertar en traslado_ambulancia:", datos);
