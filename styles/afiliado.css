@@ -269,6 +269,7 @@ background: #ffffff;
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
+  margin-bottom: 29px;
 }
 
 #tablaGrupoFamiliar thead {

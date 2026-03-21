@@ -35,12 +35,12 @@ section {
 /* BOTONES */
 /* ===================== */
 button {
-  cursor: pointer;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-  transition: opacity 0.2s ease, transform 0.1s ease;
+  cursor: pointer !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 0.9rem !important;
+  padding: 0.5rem 1rem !important;
+  transition: opacity 0.2s ease, transform 0.1s ease !important;
 }
 
 button:hover {
