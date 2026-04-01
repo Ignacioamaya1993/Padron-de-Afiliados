@@ -1,6 +1,4 @@
-/* ===================== */
 /* INTERNACIONES - Estilo */
-/* ===================== */
 
 .btn-nuevo-internacion {
   background-color: #2f80ed;
@@ -9,9 +7,7 @@
   cursor: pointer;
 }
 
-/* ===================== */
 /* FORMULARIO */
-/* ===================== */
 .form-card_internacion {
   border: 1px solid #ddd !important;
   border-radius: 10px !important;
@@ -43,9 +39,7 @@ input[type="file"] {
   max-width: 100%;
 }
 
-/* ===================== */
 /* Formulario Internaciones */
-/* ===================== */
 #formInternacion {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -96,7 +90,7 @@ input[type="file"] {
   justify-content: flex-start;
 }
 
-/* Opcional: estilo de botón nuevo / cancelar */
+/* estilo de botón nuevo / cancelar */
 #btnNuevaInternacion,
 #btnCancelarInternacion {
   cursor: pointer;
@@ -147,10 +141,10 @@ input[type="file"] {
   display: none !important;
 }
 
-#contenedorInternaciones {
+.form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
 }
 
 .card select[name="lugar_internacion_id"] {
@@ -162,18 +156,23 @@ input[type="file"] {
   box-sizing: border-box;
 }
 
-/* ===================== */
 /* CARDS */
-/* ===================== */
+#contenedorInternaciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  width: 100%;        /* 🔥 clave */
+}
+
 .card {
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 15px;
   background: #fff;
-  width: 320px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   min-height: auto !important;
   position: relative;
+  width: 100%;
 }
 
 .card .acciones {
@@ -191,9 +190,7 @@ input[type="file"] {
   background-color: #eee;
 }
 
-/* ===================== */
 /* GRID DE FECHAS Y CAMPOS EN CARD */
-/* ===================== */
 .card-extra .grid-fechas {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -222,9 +219,7 @@ input[type="file"] {
   min-height: 80px;
 }
 
-/* ===================== */
 /* ADJUNTOS CARD */
-/* ===================== */
 .adjuntos-lista, .adjuntos-nuevos {
   display: flex;
   flex-wrap: wrap;
@@ -267,12 +262,10 @@ input[type="file"] {
   box-sizing: border-box;
 }
 
-/* ===================== */
 /* BOTÓN VER MÁS */
-/* ===================== */
 /* Estado expandido */
 .card.expandida .card-extra {
-  max-height: 1000px; /* suficientemente grande */
+  max-height: 1000px;
   opacity: 1;
   transform: translateY(0);
 }
