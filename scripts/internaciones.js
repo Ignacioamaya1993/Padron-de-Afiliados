@@ -184,6 +184,10 @@ return `
         <input type="date" name="fecha_alta" readonly value="${fISO(inter.fecha_alta)}">
       </div>
 
+    <div><label>Fecha Ingreso</label>
+      <input type="date" name="fecha_ingreso" readonly value="${fISO(inter.fecha_ingreso)}">
+    </div>
+
       <div><label>Lugar</label>
         <input name="lugar" readonly 
           value="${inter.lugar_internacion_id 
@@ -603,6 +607,7 @@ form.addEventListener("submit", async e => {
       nro_autorizacion: document.getElementById("nroAutorizacion").value || null,
       nro_carga: document.getElementById("nroCarga").value || null,
       fecha_autorizacion: document.getElementById("fechaAutorizacion").value || null,
+      fecha_ingreso: document.getElementById("fechaIngreso").value || null,
     };
     
 
