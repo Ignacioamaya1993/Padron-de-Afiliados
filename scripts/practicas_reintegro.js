@@ -6,6 +6,16 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+                const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  
+    const { data: usuarioLogin } = await supabase
+    .from("usuarios_login")
+    .select("username")
+    .eq("email", user.email)
+    .single();
+
   // 🔹 Obtener número de afiliado para carpeta
 const { data: afiliado } = await supabase
   .from("afiliados")
@@ -438,7 +448,8 @@ btnCancelarCard.addEventListener("click", () => {
         reintegro: inputReintegro?.value
           ? parseFloat(inputReintegro.value)
           : null,
-        fecha_reintegro: inputFechaReintegro?.value || null
+        fecha_reintegro: inputFechaReintegro?.value || null,
+        created_by: usuarioLogin?.username || "Desconocido"
       };
 
       const { data } = await supabase

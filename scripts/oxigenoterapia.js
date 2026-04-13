@@ -11,6 +11,16 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+              const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  
+    const { data: usuarioLogin } = await supabase
+    .from("usuarios_login")
+    .select("username")
+    .eq("email", user.email)
+    .single();
+
   // 🔹 Obtener número de afiliado para carpeta
 const { data: afiliado } = await supabase
   .from("afiliados")
@@ -365,17 +375,26 @@ if (e.target.classList.contains("guardar")) {
 
   try {
 
-    const datosUpdate = {
-      fecha_inicio_tratamiento: card.querySelector("[name='fecha_inicio_tratamiento']").value,
-      fecha_fin_tratamiento: card.querySelector("[name='fecha_fin_tratamiento']").value || null,
-      observacion: card.querySelector("[name='observacion']").value || null,
-      reintegro: card.querySelector("[name='reintegro']").value
-        ? parseFloat(card.querySelector("[name='reintegro']").value)
-        : null,
-      fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null
-    };
+const datosUpdate = {
+  fecha_inicio_tratamiento: card.querySelector("[name='fecha_inicio_tratamiento']").value,
+  fecha_fin_tratamiento: card.querySelector("[name='fecha_fin_tratamiento']").value || null,
+  observacion: card.querySelector("[name='observacion']").value || null,
+  reintegro: card.querySelector("[name='reintegro']").value
+    ? parseFloat(card.querySelector("[name='reintegro']").value)
+    : null,
+  fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null,
+};
 
-    await supabase.from("oxigenoterapia").update(datosUpdate).eq("id", id);
+const { data, error } = await supabase
+  .from("oxigenoterapia")
+  .update(datosUpdate)
+  .eq("id", Number(id))
+  .select();
+
+  console.log("USER ID:", user.id);
+console.log("TYPE:", typeof user.id);
+
+      console.log(datosUpdate);
 
     // eliminar adjuntos
     if (card._adjuntosEliminar?.length) {
@@ -503,7 +522,8 @@ form.addEventListener("submit", async e => {
       reintegro: form.reintegro.value
         ? parseFloat(form.reintegro.value)
         : null,
-      fecha_reintegro: form.fecha_reintegro.value || null
+      fecha_reintegro: form.fecha_reintegro.value || null,
+      created_by: usuarioLogin?.username || "Desconocido"
     };
 
     const { data: nuevaOxigeno, error } = await supabase

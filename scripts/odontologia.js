@@ -10,6 +10,16 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+            const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  
+    const { data: usuarioLogin } = await supabase
+    .from("usuarios_login")
+    .select("username")
+    .eq("email", user.email)
+    .single();
+
   // 🔹 Obtener número de afiliado para carpeta
 const { data: afiliado } = await supabase
   .from("afiliados")
@@ -478,7 +488,8 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
       fecha_reintegro: inputFechaReintegro?.value || null,
       fecha_firma_recibo: form.fecha_firma_recibo.value || null,
       fecha_envio_recibo: form.fecha_envio_recibo.value || null,
-      observacion: form.observacion.value || null
+      observacion: form.observacion.value || null,
+      created_by: usuarioLogin?.username || "Desconocido"
     };
 
     const { data } = await supabase.from("odontologia").insert(datos).select().single();

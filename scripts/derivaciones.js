@@ -10,6 +10,17 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+  
+const {
+  data: { user }
+} = await supabase.auth.getUser();
+
+  const { data: usuarioLogin } = await supabase
+  .from("usuarios_login")
+  .select("username")
+  .eq("email", user.email)
+  .single();
+
   // 🔹 Obtener número de afiliado para carpeta
 const { data: afiliado } = await supabase
   .from("afiliados")
@@ -583,6 +594,7 @@ form.addEventListener("submit", async e => {
         ? parseFloat(document.querySelector("input[name='reintegro']").value)
         : null,
       fecha_reintegro: document.querySelector("input[name='fecha_reintegro']").value || null,
+      created_by: usuarioLogin?.username || "Desconocido"
     };
 
     const { data, error } = await supabase

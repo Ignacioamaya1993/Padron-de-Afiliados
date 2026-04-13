@@ -26,6 +26,16 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+          const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  
+    const { data: usuarioLogin } = await supabase
+    .from("usuarios_login")
+    .select("username")
+    .eq("email", user.email)
+    .single();
+
     const { data: afiliado } = await supabase
     .from("afiliados")
     .select("numero_afiliado")
@@ -645,6 +655,7 @@ form.addEventListener("submit", async e => {
         ? parseFloat(form.reintegro.value)
         : null,
       fecha_reintegro: form.fecha_reintegro?.value || null,
+      created_by: usuarioLogin?.username || "Desconocido"
     };
 
     const { data, error } = await supabase

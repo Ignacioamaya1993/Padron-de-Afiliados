@@ -10,6 +10,16 @@ export async function init(afiliadoId) {
 
   await cargarHeader();
 
+      const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  
+    const { data: usuarioLogin } = await supabase
+    .from("usuarios_login")
+    .select("username")
+    .eq("email", user.email)
+    .single();
+
   // 🔹 Obtener número de afiliado para carpeta
 const { data: afiliado } = await supabase
   .from("afiliados")
@@ -608,6 +618,7 @@ form.addEventListener("submit", async e => {
       nro_carga: document.getElementById("nroCarga").value || null,
       fecha_autorizacion: document.getElementById("fechaAutorizacion").value || null,
       fecha_ingreso: document.getElementById("fechaIngreso").value || null,
+      created_by: usuarioLogin?.username || "Desconocido"
     };
     
 
