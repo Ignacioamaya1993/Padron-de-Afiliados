@@ -67,9 +67,15 @@ body {
 
 #btnNuevoAfiliado {
   background: #2563eb;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
   color: white;
   border: none;
-  padding: 0.7rem 1.2rem;
   font-size: 1rem;
   border-radius: 8px;
   cursor: pointer;
@@ -275,6 +281,19 @@ body {
 
 .titular-grupo::before {
   content: "👤 ";
+}
+
+.btn-cartilla {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #2563eb;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 /* =========================
