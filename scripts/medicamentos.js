@@ -251,6 +251,7 @@ card.innerHTML = `
 
     <div class="med-card-section grid-fechas">
       <div><label>Fecha de carga</label><input type="date" name="fecha_carga" readonly value="${fISO(med.fecha_carga)}"></div>
+      <div class="med-card-section"><label>Estado</label><input name="estado" readonly value="${med.estado ?? ""}"></div>
       <div><label>Fecha de autorización</label><input type="date" name="fecha_autorizacion" readonly value="${fISO(med.fecha_autorizacion)}"></div>
       <div><label>Fecha de entrega</label><input type="date" name="fecha_entrega" readonly value="${fISO(med.fecha_entrega)}"></div>
       <div><label>Próxima carga</label><input type="date" name="proxima_carga" readonly value="${fISO(med.proxima_carga)}"></div>
@@ -655,7 +656,8 @@ form.addEventListener("submit", async e => {
         ? parseFloat(form.reintegro.value)
         : null,
       fecha_reintegro: form.fecha_reintegro?.value || null,
-      created_by: usuarioLogin?.username || "Desconocido"
+      created_by: usuarioLogin?.username || "Desconocido",
+      estado: form.estado?.value || null,
     };
 
     const { data, error } = await supabase

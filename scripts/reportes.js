@@ -47,6 +47,7 @@ reporteCards.forEach(card => {
     if (tipo === "discapacidad-sin-cud") await cargarDiscapacidadSinCud();
     if (tipo === "datos-faltantes") await cargarDatosFaltantes();
     if (tipo === "reintegros") await cargarReporteReintegros();
+    if (tipo === "insulinodependientes") await cargarReporteInsulinodependientes();
 
     // Abrir con animación
     reporteResultado.classList.remove("collapsed");
@@ -459,6 +460,132 @@ async function cargarReporteReintegros() {
         // Volver botón a estado original
         btnGenerarNuevo.textContent = "Generar";
         btnGenerarNuevo.disabled = false;
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    Swal.fire("Error", "No se pudo cargar el reporte", "error");
+  }
+}
+
+/* =====================
+   REPORTE 6: INSULINODEPENDIENTES
+===================== */
+async function cargarReporteInsulinodependientes() {
+  try {
+    reporteTitulo.textContent = "Reporte de Insulinodependientes";
+
+    const resumen = document.getElementById("resumenReporte");
+
+    resumen.innerHTML = `
+      <div class="filtro-reintegros">
+        <div class="fila-filtros">
+          <div>
+            <label>Desde</label><br>
+            <input type="date" id="fechaDesdeInsulina">
+          </div>
+          <div>
+            <label>Hasta</label><br>
+            <input type="date" id="fechaHastaInsulina">
+          </div>
+          <div>
+            <button id="btnGenerarInsulina" class="btn-nuevo">
+              Generar
+            </button>
+          </div>
+        </div>
+        <hr style="margin:20px 0;">
+      </div>
+
+      <div id="resultadoReporte6"></div>
+    `;
+
+    datosReporteActual = [];
+
+    const btnGenerar = document.getElementById("btnGenerarInsulina");
+    const resultadoDiv = document.getElementById("resultadoReporte6");
+
+    btnGenerar.addEventListener("click", async () => {
+
+      const desde = document.getElementById("fechaDesdeInsulina").value;
+      const hasta = document.getElementById("fechaHastaInsulina").value;
+
+      if (!desde || !hasta) {
+        return Swal.fire("Error", "Debe seleccionar rango de fechas", "error");
+      }
+
+      btnGenerar.textContent = "Generando...";
+      btnGenerar.disabled = true;
+
+      resultadoDiv.innerHTML = "";
+
+      try {
+        const { data, error } = await supabase
+          .from("medicamentos")
+          .select(`
+            fecha_carga,
+            fecha_inicio,
+            fecha_vencimiento,
+            fecha_entrega,
+            proxima_carga,
+            latas_entregadas,
+            observaciones,
+            estado,
+            reintegro,
+            fecha_reintegro,
+            afiliados (
+              nombre_completo,
+              dni,
+              numero_afiliado
+            ),
+            tipo_medicamentos (
+              nombre
+            )
+          `)
+          .gte("fecha_inicio", desde)
+          .lte("fecha_inicio", hasta)
+          .ilike("estado", "%insulin%")
+          .order("fecha_inicio", { ascending: true });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          datosReporteActual = [];
+          Swal.fire("Sin resultados", "No se encontraron registros", "info");
+          return;
+        }
+
+        datosReporteActual = data.map(item => ({
+          "Nombre completo": item.afiliados?.nombre_completo || "",
+          "DNI": item.afiliados?.dni || "",
+          "Numero de afiliado": item.afiliados?.numero_afiliado || "",
+          "Estado": item.estado || "",
+          "Fecha carga": formatearFechaAR(item.fecha_carga),
+          "Fecha Inicio": formatearFechaAR(item.fecha_inicio),
+          "Fecha vencimiento": formatearFechaAR(item.fecha_vencimiento),
+          "Fecha entrega": formatearFechaAR(item.fecha_entrega),
+          "Latas entregadas": item.latas_entregadas || 0,
+          "Proxima carga": formatearFechaAR(item.proxima_carga),
+          "Observaciones": item.observaciones || "",
+          "Tipo medicamento": item.tipo_medicamentos?.nombre || "",
+          "Reintegro": item.reintegro ? Number(item.reintegro) : 0,
+          "Fecha reintegro": formatearFechaAR(item.fecha_reintegro)
+        }));
+
+        resultadoDiv.innerHTML = `
+          <div style="font-weight:bold; margin-bottom:15px;">
+            Periodo: ${formatearFechaAR(desde)} al ${formatearFechaAR(hasta)} <br>
+            Total registros: ${datosReporteActual.length}
+          </div>
+        `;
+
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Error", "No se pudo generar el reporte", "error");
+      } finally {
+        btnGenerar.textContent = "Generar";
+        btnGenerar.disabled = false;
       }
     });
 

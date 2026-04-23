@@ -97,7 +97,7 @@ const carpetaAfiliado = afiliado?.numero_afiliado
         const btnEliminar = document.createElement("button");
         btnEliminar.type = "button";
         btnEliminar.textContent = "✖";
-        btnEliminar.classList.add("btn-eliminar-adjunto");
+        btnEliminar.classList.add("btn-eliminar-adjunto-nuevo");
 
         btnEliminar.addEventListener("click", () => {
           wrapper.remove();
@@ -132,15 +132,18 @@ const carpetaAfiliado = afiliado?.numero_afiliado
     const fISO = d => d ? d.split("T")[0] : "";
 
     for (const deriv of data) {
+      console.log("🔄 Renderizando derivación ID:", deriv.id);
+console.log("Datos:", deriv);
       // Traer documentos desde fichamedica_documentos
       let docs = [];
       try {
-        const { data: docsData, error: docsError } = await supabase
-          .from("fichamedica_documentos")
-          .select("*")
-          .eq("tipo_documento", "derivaciones")
-          .eq("entidad_relacion_id", deriv.id);
-
+      const { data: docsData, error: docsError } = await supabase
+        .from("fichamedica_documentos")
+        .select("*")
+        .eq("tipo_documento", "derivaciones")
+        .eq("entidad_relacion_id", deriv.id)
+        .order("id", { ascending: true });
+        
         if (docsError) console.error("Error cargando documentos:", docsError);
         docs = docsData || [];
       } catch (err) {
@@ -338,6 +341,11 @@ if (e.target.classList.contains("toggle-card")) {
     // EDITAR
 if (e.target.classList.contains("editar")) {
 
+    console.log("🟢 CLICK EN EDITAR");
+  console.log("ID card:", id);
+  console.log("EditandoId actual:", editandoId);
+  console.log("Clases actuales de la card:", card.className);
+
   // Forzar expansión si está colapsada
   if (!card.classList.contains("expandida")) {
     card.classList.add("expandida");
@@ -351,13 +359,23 @@ if (e.target.classList.contains("editar")) {
   card.classList.add("editando");
   editandoId = id;
 
+    console.log("Clase editando agregada:", card.className);
+
+
       card.querySelectorAll("input, textarea").forEach(el => {
 
         if (el.name === "dias_demora") return; // nunca editable
 
+  console.log("Campo:", el.name);
+  console.log("  → Readonly antes:", el.hasAttribute("readonly"));
+
+
         if (el.hasAttribute("readonly")) {
           el.removeAttribute("readonly");
         }
+
+          console.log("  → Readonly después:", el.hasAttribute("readonly"));
+  console.log("-----------------------");
 
       });
 
@@ -380,7 +398,7 @@ if (e.target.classList.contains("editar")) {
           const btnEliminar = document.createElement("button");
           btnEliminar.type = "button";
           btnEliminar.textContent = "✖";
-          btnEliminar.classList.add("btn-eliminar-adjunto");
+          btnEliminar.classList.add("btn-eliminar-adjunto-nuevo");
 
           btnEliminar.addEventListener("click", () => {
             wrapper.remove(); // lo quita del DOM
@@ -401,10 +419,11 @@ if (e.target.classList.contains("editar")) {
     }
 
     // CANCELAR
-    if (e.target.classList.contains("cancelar")) {
-      editandoId = null;
-      cargarDerivaciones();
-    }
+if (e.target.classList.contains("cancelar")) {
+  console.log("❌ Cancelar edición ID:", id);
+  editandoId = null;
+  cargarDerivaciones();
+}
 
     // ELIMINAR
     if (e.target.classList.contains("eliminar")) {
@@ -433,23 +452,32 @@ if (e.target.classList.contains("editar")) {
       }
     }
 
-    // ELIMINAR ADJUNTO EXISTENTE (marcar para borrar)
-if (e.target.classList.contains("btn-eliminar-adjunto")) {
+// Eliminar adjunto existente
+if (e.target.classList.contains("btn-eliminar-adjunto") && e.target.closest(".adjunto-item")) {
+
   const item = e.target.closest(".adjunto-item");
   const docId = item.dataset.docId;
 
   if (docId) {
-    // Guardamos para eliminar al guardar
     card._adjuntosEliminar.push(docId);
   }
 
-  // Lo quitamos visualmente
   item.remove();
+}
+
+// Eliminar adjunto nuevo
+if (e.target.classList.contains("btn-eliminar-adjunto-nuevo")) {
+  const wrapper = e.target.closest(".adjunto-item-nuevo");
+  wrapper.remove();
+  card._adjuntosNuevos = card._adjuntosNuevos.filter(w => w !== wrapper);
 }
 
     // GUARDAR
 // GUARDAR
 if (e.target.classList.contains("guardar")) {
+
+    console.log("💾 CLICK EN GUARDAR");
+  console.log("ID card:", id);
 
   const btnGuardar = e.target;
 
@@ -466,6 +494,9 @@ if (e.target.classList.contains("guardar")) {
 
       if (el.name === "dias_demora") return;
 
+          console.log("Guardando campo:", el.name, "| Valor:", el.value);
+
+
       if (el.name === "reintegro") {
         datos.reintegro = el.value ? parseFloat(el.value) : null;
       } else {
@@ -473,6 +504,8 @@ if (e.target.classList.contains("guardar")) {
       }
 
     });
+
+      console.log("📦 Datos finales a enviar:", datos);
 
     const { error } = await supabase
       .from("derivaciones")
