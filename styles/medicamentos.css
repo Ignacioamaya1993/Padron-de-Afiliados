@@ -266,6 +266,7 @@ input[type="file"] {
 .card-extra textarea,
 .card-extra .adjuntos-lista {
   min-height: 80px;
+  min-width: 370px;
 }
 
 /* ===================== */
