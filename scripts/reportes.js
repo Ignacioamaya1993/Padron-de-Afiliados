@@ -158,7 +158,7 @@ async function cargarHijosSinCertificado() {
         fechaNacimiento,
         estudios,
         adjuntoEstudios,
-        fechaCargaEstudio,
+        fechacargaestudio,
         parentesco:parentesco_id (nombre)
       `)
       .eq("parentesco_id", PARENTESCO_HIJO_ID)
@@ -177,8 +177,8 @@ async function cargarHijosSinCertificado() {
       edad: calcularEdad(a.fechaNacimiento),
       estudios: a.estudios ? "Sí" : "No",
       certificado: a.adjuntoEstudios ? "PRESENTADO" : "NO PRESENTADO",
-      fechaCargaEstudio: a.fechaCargaEstudio
-        ? new Date(a.fechaCargaEstudio).toLocaleDateString("es-AR")
+      fechacargaestudio: a.fechacargaestudio
+        ? new Date(a.fechacargaEstudio).toLocaleDateString("es-AR")
         : "-"
     }));
 
