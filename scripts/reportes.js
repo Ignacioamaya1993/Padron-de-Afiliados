@@ -207,7 +207,8 @@ async function cargarDiscapacidadSinCud() {
         mail,
         telefono
       `)
-      .eq("discapacidad", true);
+      .eq("discapacidad", true)
+      .eq("activo", true);
 
     if (error) throw error;
 
@@ -261,7 +262,9 @@ async function cargarDatosFaltantes() {
         telefono,
         cbu_cvu,
         grupo_sanguineo:grupo_sanguineo_id (nombre)
-      `);
+      `)
+        .eq("activo", true);
+
 
     if (error) throw error;
 

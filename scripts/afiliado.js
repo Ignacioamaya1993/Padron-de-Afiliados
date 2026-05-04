@@ -463,6 +463,17 @@ if (parentescoNombre === "Hijos" && cumplio21 && !cumplio26) {
   // Estado
   mostrarEstado(afiliado.activo);
 
+  // Mostrar motivo de baja
+const motivoField = document.getElementById("motivoBajaField");
+const motivoSpan = document.getElementById("motivoBaja");
+
+if (!afiliado.activo && afiliado.motivo_baja) {
+  motivoField.style.display = "block";
+  motivoSpan.textContent = afiliado.motivo_baja;
+} else {
+  motivoField.style.display = "none";
+}
+
   // =========================
 // PLAN MATERNO (vista)
 // =========================
@@ -1388,17 +1399,37 @@ await cargarAfiliado();
    DAR DE BAJA / REACTIVAR
 ===================== */
 async function darDeBaja() {
-  const res = await Swal.fire({
+
+  const { value: motivo, isConfirmed } = await Swal.fire({
     title: "¿Dar de baja afiliado?",
     icon: "warning",
+    input: "textarea",
+    inputLabel: "Motivo de baja (opcional)",
+    inputPlaceholder: "Ej: fallecimiento, falta de pago, etc.",
+    inputAttributes: {
+      maxlength: 300
+    },
     showCancelButton: true,
     confirmButtonText: "Dar de baja",
     cancelButtonText: "Cancelar"
   });
-  if (!res.isConfirmed) return;
 
-  await supabase.from("afiliados").update({ activo: false }).eq("id", afiliadoId);
-  cargarAfiliado();
+  if (!isConfirmed) return;
+
+  const { error } = await supabase
+    .from("afiliados")
+    .update({
+      activo: false,
+      motivo_baja: motivo || null
+    })
+    .eq("id", afiliadoId);
+
+  if (error) {
+    Swal.fire("Error", "No se pudo dar de baja", "error");
+    return;
+  }
+
+  await cargarAfiliado();
 }
 
 async function reactivarAfiliado() {
