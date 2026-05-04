@@ -161,6 +161,7 @@ async function cargarHijosSinCertificado() {
         parentesco:parentesco_id (nombre)
       `)
       .eq("parentesco_id", PARENTESCO_HIJO_ID)
+      .eq("activo", true)
       .gte("fechaNacimiento", fechaMin)
       .lte("fechaNacimiento", fechaMax);
 
