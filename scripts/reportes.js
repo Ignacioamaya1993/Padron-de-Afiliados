@@ -158,6 +158,7 @@ async function cargarHijosSinCertificado() {
         fechaNacimiento,
         estudios,
         adjuntoEstudios,
+        fechaCargaEstudio,
         parentesco:parentesco_id (nombre)
       `)
       .eq("parentesco_id", PARENTESCO_HIJO_ID)
@@ -167,20 +168,21 @@ async function cargarHijosSinCertificado() {
 
     if (error) throw error;
 
-    const filtrados = data.filter(a => a.estudios && !a.adjuntoEstudios);
-
-    datosReporteActual = filtrados.map(a => ({
+    datosReporteActual = data.map(a => ({
       nombre_completo: a.nombre_completo,
       dni: a.dni,
       numero_afiliado: a.numero_afiliado,
       parentesco: a.parentesco?.nombre || "Hijo",
       fechaNacimiento: new Date(a.fechaNacimiento).toLocaleDateString("es-AR"),
       edad: calcularEdad(a.fechaNacimiento),
-      estudios: "Sí",
-      certificado: "NO PRESENTADO"
+      estudios: a.estudios ? "Sí" : "No",
+      certificado: a.adjuntoEstudios ? "PRESENTADO" : "NO PRESENTADO",
+      fechaCargaEstudio: a.fechaCargaEstudio
+        ? new Date(a.fechaCargaEstudio).toLocaleDateString("es-AR")
+        : "-"
     }));
 
-    reporteTitulo.textContent = "Hijos (21-26) sin certificado";
+    reporteTitulo.textContent = "Hijos (21-26)";
     document.getElementById("resumenReporte").innerHTML = "";
 
   } catch (err) {
