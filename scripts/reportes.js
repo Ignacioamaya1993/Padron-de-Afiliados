@@ -48,6 +48,7 @@ reporteCards.forEach(card => {
     if (tipo === "datos-faltantes") await cargarDatosFaltantes();
     if (tipo === "reintegros") await cargarReporteReintegros();
     if (tipo === "insulinodependientes") await cargarReporteInsulinodependientes();
+    if (tipo === "cuota-social") await cargarReporteCuotaSocial();
 
     // Abrir con animación
     reporteResultado.classList.remove("collapsed");
@@ -598,6 +599,107 @@ async function cargarReporteInsulinodependientes() {
   } catch (err) {
     console.error(err);
     Swal.fire("Error", "No se pudo cargar el reporte", "error");
+  }
+}
+
+/* =====================
+   REPORTE 7: CUOTA SOCIAL JUBILADOS
+===================== */
+
+async function cargarReporteCuotaSocial() {
+  try {
+
+    reporteTitulo.textContent = "Cuota Social - Jubilados";
+
+    const DIAS_VENCIMIENTO = 40;
+    const hoy = new Date();
+
+    const { data, error } = await supabase
+      .from("afiliados")
+      .select(`
+        nombre_completo,
+        dni,
+        numero_afiliado,
+        fechaNacimiento,
+        fecha_ultimo_pago_cuota,
+        categoria:categoria_id (nombre)
+      `)
+      .eq("activo", true);
+
+    if (error) throw error;
+
+    // 🔹 Filtrar solo jubilados titulares menores de 80
+    const jubiladosCuota = data.filter(a => {
+
+      const categoria = a.categoria?.nombre || "";
+
+      const esJubilado =
+        categoria === "Jubilado ANSES" ||
+        categoria === "Pensionado ANSES reparto";
+
+      if (!esJubilado) return false;
+
+      if (!a.numero_afiliado?.endsWith("/00")) return false;
+
+      if (!a.fechaNacimiento) return false;
+
+      const edad = calcularEdad(a.fechaNacimiento);
+      if (edad >= 80) return false;
+
+      return true;
+    });
+
+    let vencidos = 0;
+    let alDia = 0;
+    let sinFecha = 0;
+
+    datosReporteActual = jubiladosCuota.map(a => {
+
+      let estado = "";
+      let diasDesdePago = null;
+
+      if (!a.fecha_ultimo_pago_cuota) {
+        estado = "SIN FECHA";
+        sinFecha++;
+      } else {
+
+        const fechaPago = new Date(a.fecha_ultimo_pago_cuota);
+        diasDesdePago = Math.floor(
+          (hoy - fechaPago) / (1000 * 60 * 60 * 24)
+        );
+
+        if (diasDesdePago > DIAS_VENCIMIENTO) {
+          estado = "VENCIDO";
+          vencidos++;
+        } else {
+          estado = "AL DÍA";
+          alDia++;
+        }
+      }
+
+      return {
+        "Nombre": a.nombre_completo,
+        "DNI": a.dni,
+        "N° Afiliado": a.numero_afiliado,
+        "Edad": calcularEdad(a.fechaNacimiento),
+        "Último Pago": formatearFechaAR(a.fecha_ultimo_pago_cuota),
+        "Días desde pago": diasDesdePago ?? "-",
+        "Estado": estado
+      };
+    });
+
+    document.getElementById("resumenReporte").innerHTML = `
+      <div style="margin-bottom:15px; font-weight:bold;">
+        Total con cuota habilitada: ${jubiladosCuota.length} |
+        Al día: ${alDia} |
+        Vencidos: ${vencidos} |
+        Sin fecha: ${sinFecha}
+      </div>
+    `;
+
+  } catch (err) {
+    console.error(err);
+    Swal.fire("Error", "No se pudo generar el reporte", "error");
   }
 }
 
