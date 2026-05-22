@@ -156,6 +156,46 @@ card.innerHTML = `
     <input type="date" name="fecha_reintegro" readonly value="${fISO(traslado.fecha_reintegro)}">
   </div>
 
+  <div>
+  <label>N° Factura</label>
+  <input name="numero_factura" readonly value="${traslado.numero_factura || ""}">
+</div>
+
+<div>
+  <label>Fecha Traslado</label>
+  <input type="date" name="fecha_traslado" readonly value="${fISO(traslado.fecha_traslado)}">
+</div>
+
+<div>
+  <label>Proveedor</label>
+  <input name="proveedor" readonly value="${traslado.proveedor || ""}">
+</div>
+
+<div>
+  <label>N° Carga</label>
+  <input name="numero_carga" readonly value="${traslado.numero_carga || ""}">
+</div>
+
+<div>
+  <label>Importe</label>
+  <input type="number" step="0.01" name="importe" readonly value="${traslado.importe ?? ""}">
+</div>
+
+<div>
+  <label>Fecha Pago</label>
+  <input type="date" name="fecha_pago" readonly value="${fISO(traslado.fecha_pago)}">
+</div>
+
+<div>
+  <label>Forma Pago</label>
+  <input name="forma_pago" readonly value="${traslado.forma_pago || ""}">
+</div>
+
+<div>
+  <label>Fecha Envío Comprobante</label>
+  <input type="date" name="fecha_envio_comprobante" readonly value="${fISO(traslado.fecha_envio_comprobante)}">
+</div>
+
 </div>
 
 <button type="button" class="toggle-card">
@@ -367,13 +407,26 @@ btnGuardar.addEventListener("click", async () => {
   btnGuardar.disabled = true;
   btnGuardar.textContent = "Guardando...";
 
-  const updated = {
-    fecha_carga: card.querySelector("[name='fecha_carga']").value,
-    lugar_traslado: card.querySelector("[name='lugar_traslado']").value,
-    observacion: card.querySelector("[name='observacion']").value || null,
-    reintegro: card.querySelector("[name='reintegro']").value || null,
-    fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null
-  };
+const updated = {
+  fecha_carga: card.querySelector("[name='fecha_carga']").value || null,
+  lugar_traslado: card.querySelector("[name='lugar_traslado']").value || null,
+  observacion: card.querySelector("[name='observacion']").value || null,
+
+  reintegro: card.querySelector("[name='reintegro']").value || null,
+  fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null,
+
+  numero_factura: card.querySelector("[name='numero_factura']").value || null,
+  fecha_traslado: card.querySelector("[name='fecha_traslado']").value || null,
+  proveedor: card.querySelector("[name='proveedor']").value || null,
+  numero_carga: card.querySelector("[name='numero_carga']").value || null,
+
+  importe: card.querySelector("[name='importe']").value || null,
+  fecha_pago: card.querySelector("[name='fecha_pago']").value || null,
+  forma_pago: card.querySelector("[name='forma_pago']").value || null,
+
+  fecha_envio_comprobante:
+    card.querySelector("[name='fecha_envio_comprobante']").value || null
+};
 
   const { error } = await supabase
     .from("traslado_ambulancia")
@@ -462,17 +515,54 @@ btnGuardar.addEventListener("click", async () => {
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
-  const datos = {
-    afiliado_id: afiliadoId,
-    fecha_carga: document.getElementById("fechaCarga").value,
-    lugar_traslado: document.getElementById("lugarTraslado").value,
-    observacion: document.getElementById("observacionTraslado").value || null,
-    reintegro: document.getElementById("reintegroTraslado").value
+const datos = {
+  afiliado_id: afiliadoId,
+
+  fecha_carga:
+    document.getElementById("fechaCarga").value || null,
+
+  lugar_traslado:
+    document.getElementById("lugarTraslado").value || null,
+
+  observacion:
+    document.getElementById("observacionTraslado").value || null,
+
+  reintegro:
+    document.getElementById("reintegroTraslado").value
       ? parseFloat(document.getElementById("reintegroTraslado").value)
       : null,
-    fecha_reintegro: document.getElementById("fechaReintegroTraslado").value || null,
-    created_by: usuarioLogin?.username || "Desconocido"
-  };
+
+  fecha_reintegro:
+    document.getElementById("fechaReintegroTraslado").value || null,
+
+  numero_factura:
+    document.getElementById("numeroFacturaTraslado").value || null,
+
+  fecha_traslado:
+    document.getElementById("fechaTraslado").value || null,
+
+  proveedor:
+    document.getElementById("proveedorTraslado").value || null,
+
+  numero_carga:
+    document.getElementById("numeroCargaTraslado").value || null,
+
+  importe:
+    document.getElementById("importeTraslado").value
+      ? parseFloat(document.getElementById("importeTraslado").value)
+      : null,
+
+  fecha_pago:
+    document.getElementById("fechaPagoTraslado").value || null,
+
+  forma_pago:
+    document.getElementById("formaPagoTraslado").value || null,
+
+  fecha_envio_comprobante:
+    document.getElementById("fechaEnvioComprobanteTraslado").value || null,
+
+  created_by: usuarioLogin?.username || "Desconocido"
+};
 
 
   const { data, error } = await supabase

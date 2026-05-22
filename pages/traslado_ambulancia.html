@@ -26,54 +26,106 @@ main, section {
 
     <div class="form-grid">
 
-      <!-- Fecha carga -->
-      <div class="form-group">
-        <label>Fecha Carga</label>
-        <input type="date" id="fechaCarga" required />
-      </div>
+  <!-- Fecha carga -->
+  <div class="form-group">
+    <label>Fecha Carga</label>
+    <input type="date" id="fechaCarga" />
+  </div>
 
-      <!-- Lugar traslado -->
-      <div class="form-group">
-        <label>Lugar de Traslado</label>
-        <input type="text" id="lugarTraslado" required />
-      </div>
+  <!-- Lugar traslado -->
+  <div class="form-group">
+    <label>Lugar de Traslado</label>
+    <input type="text" id="lugarTraslado" />
+  </div>
 
-            <!-- REINTEGRO -->
-      <div id="campoReintegroTraslado" class="form-row full-width">
-        
-        <div class="form-group">
-          <label>Reintegro</label>
-          <input 
-            type="number" 
-            step="0.01" 
-            id="reintegroTraslado"
-            name="reintegro" 
-            placeholder="Opcional">
-        </div>
+  <!-- Reintegro -->
+  <div id="campoReintegroTraslado" class="form-row full-width">
 
-        <div class="form-group">
-          <label>Fecha Reintegro</label>
-          <input type="date" id="fechaReintegroTraslado" />
-        </div>
-
-      </div>
-
-      <!-- Observación -->
-      <div class="form-group full-width">
-        <label>Observación</label>
-        <textarea id="observacionTraslado" rows="3"></textarea>
-      </div>
-
-      <!-- Adjuntos -->
-      <div class="form-row full-width">
-        <label>Adjuntar Documentos</label>
-        <div id="adjuntosTrasladoLista" class="adjuntos-nuevos_traslado"></div>
-        <button type="button" id="btnAgregarAdjuntoTraslado">
-          ➕ Agregar adjunto
-        </button>
-      </div>
-
+    <div class="form-group">
+      <label>Reintegro</label>
+      <input 
+        type="number" 
+        step="0.01" 
+        id="reintegroTraslado"
+        placeholder="Opcional">
     </div>
+
+    <div class="form-group">
+      <label>Fecha Reintegro</label>
+      <input type="date" id="fechaReintegroTraslado" />
+    </div>
+
+  </div>
+
+  <!-- Número factura -->
+  <div class="form-group">
+    <label>Número de Factura</label>
+    <input type="text" id="numeroFacturaTraslado" />
+  </div>
+
+  <!-- Fecha traslado -->
+  <div class="form-group">
+    <label>Fecha del Traslado</label>
+    <input type="date" id="fechaTraslado" />
+  </div>
+
+  <!-- Proveedor -->
+  <div class="form-group">
+    <label>Proveedor</label>
+    <input type="text" id="proveedorTraslado" />
+  </div>
+
+  <!-- Número carga -->
+  <div class="form-group">
+    <label>Número de Carga</label>
+    <input type="text" id="numeroCargaTraslado" />
+  </div>
+
+  <!-- Importe -->
+  <div class="form-group">
+    <label>Importe</label>
+    <input 
+      type="number" 
+      step="0.01"
+      id="importeTraslado" />
+  </div>
+
+  <!-- Fecha pago -->
+  <div class="form-group">
+    <label>Fecha de Pago</label>
+    <input type="date" id="fechaPagoTraslado" />
+  </div>
+
+  <!-- Forma pago -->
+  <div class="form-group">
+    <label>Forma de Pago</label>
+    <input type="text" id="formaPagoTraslado" />
+  </div>
+
+  <!-- Fecha envío comprobante -->
+  <div class="form-group">
+    <label>Fecha Envío Comprobante</label>
+    <input type="date" id="fechaEnvioComprobanteTraslado" />
+  </div>
+
+  <!-- Observación -->
+  <div class="form-group full-width">
+    <label>Observación</label>
+    <textarea id="observacionTraslado" rows="3"></textarea>
+  </div>
+
+  <!-- Adjuntos -->
+  <div class="form-row full-width">
+    <label>Adjuntar Documentos</label>
+
+    <div id="adjuntosTrasladoLista" class="adjuntos-nuevos_traslado"></div>
+
+    <button type="button" id="btnAgregarAdjuntoTraslado">
+      ➕ Agregar adjunto
+    </button>
+  </div>
+
+</div>
 
     <!-- BOTONES -->
     <div class="form-actions">

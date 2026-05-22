@@ -21,67 +21,112 @@ main, section {
 
     <input type="hidden" name="id" id="materialOrtopedicoId">
 
+<div class="form-grid">
+
+  <div class="campo">
+    <label>Fecha carga</label>
+    <input type="date" name="fecha_carga">
+  </div>
+  
+<div class="campo">
+  <label>Tipo</label>
+
+  <select name="tipo_material_id"
+          id="tipoMaterialOrtopedico">
+
+    <option value="">Seleccionar...</option>
+
+  </select>
+</div>
+
+<div class="campo hidden" id="campoOtroMaterial">
+  <label>Especifique el material</label>
+
+  <input type="text"
+         name="otro_material"
+         id="otroMaterialInput">
+</div>
+
+  <!-- Número carga -->
+  <div class="campo">
+    <label>Número de carga</label>
+    <input type="text" name="numero_carga">
+  </div>
+
+  <!-- Fecha autorización -->
+  <div class="campo">
+    <label>Fecha de autorización</label>
+    <input type="date" name="fecha_autorizacion">
+  </div>
+
+  <!-- Fecha compra -->
+  <div class="campo">
+    <label>Fecha de compra</label>
+    <input type="date" name="fecha_compra">
+  </div>
+
+  <!-- Lugar compra -->
+  <div class="campo">
+    <label>Lugar donde se compra</label>
+    <input type="text" name="lugar_compra">
+  </div>
+
+  <!-- Fecha recepción -->
+  <div class="campo">
+    <label>Fecha de recepción</label>
+    <input type="date" name="fecha_recepcion">
+  </div>
+
+  <!-- REINTEGRO -->
+  <div id="grupoReintegroMaterial"
+       class="campo full">
+
     <div class="form-grid">
 
       <div class="campo">
-        <label>Fecha carga</label>
-        <input type="date" name="fecha_carga" required>
+        <label>Reintegro</label>
+
+        <input type="number"
+               name="reintegro"
+               step="0.01"
+               placeholder="Opcional">
       </div>
 
       <div class="campo">
-        <label>Tipo</label>
-        <select name="tipo_material_id"
-                id="tipoMaterialOrtopedico"
-                required>
-          <option value="">Seleccionar...</option>
-        </select>
-      </div>
+        <label>Fecha reintegro</label>
 
-            <!-- REINTEGRO-->
-      <div id="grupoReintegroMaterial"
-           class="campo full">
-
-        <div class="form-grid">
-
-          <div class="campo">
-            <label>Reintegro</label>
-            <input type="number"
-                   name="reintegro"
-                   step="0.01"
-                   placeholder="Opcional">
-          </div>
-
-          <div class="campo">
-            <label>Fecha reintegro</label>
-            <input type="date"
-                   name="fecha_reintegro">
-                   
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="campo full">
-        <label>Observación</label>
-        <textarea name="observacion"></textarea>
-      </div>
-
-      <div class="campo full">
-        <label>Adjuntar documentos</label>
-
-        <div id="adjuntosMaterialesContainer"
-             class="adjuntos-nuevos_materiales">
-        </div>
-
-        <button type="button"
-                id="btnAgregarAdjuntoMaterial"
-                class="adjuntos-nuevos_materiales">
-          ➕ Agregar adjunto
-        </button>
+        <input type="date"
+               name="fecha_reintegro">
       </div>
 
     </div>
+
+  </div>
+
+  <!-- Observación -->
+  <div class="campo full">
+    <label>Observación</label>
+    <textarea name="observacion"></textarea>
+  </div>
+
+  <!-- Adjuntos -->
+  <div class="campo full">
+
+    <label>Adjuntar documentos</label>
+
+    <div id="adjuntosMaterialesContainer"
+         class="adjuntos-nuevos_materiales">
+    </div>
+
+    <button type="button"
+            id="btnAgregarAdjuntoMaterial"
+            class="adjuntos-nuevos_materiales">
+      ➕ Agregar adjunto
+    </button>
+
+  </div>
+
+</div>
 
     <div class="acciones-form">
       <button type="submit" class="btn-guardar">

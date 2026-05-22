@@ -177,14 +177,10 @@ input[type="file"] {
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   padding: 12px;
-
   display: flex;
   flex-direction: column;
-
   gap: 0.6rem;
-
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
   height: auto;          /* importante */
   min-height: 300px;     /* podés subirlo si querés cards más altas */
   box-sizing: border-box;

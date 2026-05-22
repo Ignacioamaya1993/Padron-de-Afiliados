@@ -40,6 +40,8 @@ const carpetaAfiliado = afiliado?.numero_afiliado
   const btnAgregarAdjunto = document.getElementById("btnAgregarAdjuntoMaterial");
   const tipoSelect = document.getElementById("tipoMaterialOrtopedico");
   const grupoReintegro = document.getElementById("grupoReintegroMaterial");
+  const campoOtroMaterial = document.getElementById("campoOtroMaterial");
+  const otroMaterialInput = document.getElementById("otroMaterialInput");
 
   /* =====================
      CARGAR TIPOS
@@ -52,15 +54,36 @@ const carpetaAfiliado = afiliado?.numero_afiliado
       .select("id, nombre")
       .order("nombre");
 
-    tipoSelect.innerHTML = `<option value="">Seleccionar...</option>`;
+tipoSelect.innerHTML = `<option value="">Seleccionar...</option>`;
 
-    data?.forEach(t => {
-      const opt = document.createElement("option");
-      opt.value = t.id;
-      opt.textContent = t.nombre;
-      tipoSelect.appendChild(opt);
-    });
+data?.forEach(t => {
+  const opt = document.createElement("option");
+  opt.value = t.id;
+  opt.textContent = t.nombre;
+  tipoSelect.appendChild(opt);
+});
+
+/* OPCIÓN OTROS */
+const otros = document.createElement("option");
+otros.value = "otros";
+otros.textContent = "Otros";
+tipoSelect.appendChild(otros);
   }
+
+  tipoSelect.addEventListener("change", () => {
+
+  if (tipoSelect.value === "otros") {
+
+    campoOtroMaterial.classList.remove("hidden");
+
+  } else {
+
+    campoOtroMaterial.classList.add("hidden");
+    otroMaterialInput.value = "";
+
+  }
+
+});
 
   /* =====================
      ADJUNTOS NUEVO
@@ -152,9 +175,13 @@ card.dataset.id = r.id;
 card._adjuntosEliminar = [];
 
 card.innerHTML = `
-  <strong class="card-titulo">
-    ${tipoSelect.querySelector(`option[value="${r.tipo_material_id}"]`)?.textContent || "Material ortopédico"}
-  </strong>
+<strong class="card-titulo">
+${r.otro_material
+  ? r.otro_material
+  : tipoSelect.querySelector(`option[value="${r.tipo_material_id}"]`)?.textContent || "Material ortopédico"}
+</strong>
+
+  <div>
 
   <!-- SIEMPRE VISIBLE -->
   <div class="card-content">
@@ -173,6 +200,31 @@ card.innerHTML = `
         <label>Fecha reintegro</label>
         <input type="date" name="fecha_reintegro" readonly value="${fISO(r.fecha_reintegro)}">
       </div>
+
+      <div>
+  <label>Número carga</label>
+  <input name="numero_carga" readonly value="${r.numero_carga || ""}">
+</div>
+
+<div>
+  <label>Fecha autorización</label>
+  <input type="date" name="fecha_autorizacion" readonly value="${fISO(r.fecha_autorizacion)}">
+</div>
+
+<div>
+  <label>Fecha compra</label>
+  <input type="date" name="fecha_compra" readonly value="${fISO(r.fecha_compra)}">
+</div>
+
+<div>
+  <label>Lugar compra</label>
+  <input name="lugar_compra" readonly value="${r.lugar_compra || ""}">
+</div>
+
+<div>
+  <label>Fecha recepción</label>
+  <input type="date" name="fecha_recepcion" readonly value="${fISO(r.fecha_recepcion)}">
+</div>
 
     </div>
   </div>
@@ -346,12 +398,34 @@ btnGuardar.addEventListener("click", async () => {
 
   try {
 
-    const updated = {
-      fecha_carga: card.querySelector("[name='fecha_carga']").value,
-      reintegro: card.querySelector("[name='reintegro']").value || null,
-      fecha_reintegro: card.querySelector("[name='fecha_reintegro']").value || null,
-      observacion: card.querySelector("[name='observacion']").value || null
-    };
+const updated = {
+  fecha_carga:
+    card.querySelector("[name='fecha_carga']").value || null,
+
+  reintegro:
+    card.querySelector("[name='reintegro']").value || null,
+
+  fecha_reintegro:
+    card.querySelector("[name='fecha_reintegro']").value || null,
+
+  observacion:
+    card.querySelector("[name='observacion']").value || null,
+
+  numero_carga:
+    card.querySelector("[name='numero_carga']").value || null,
+
+  fecha_autorizacion:
+    card.querySelector("[name='fecha_autorizacion']").value || null,
+
+  fecha_compra:
+    card.querySelector("[name='fecha_compra']").value || null,
+
+  lugar_compra:
+    card.querySelector("[name='lugar_compra']").value || null,
+
+  fecha_recepcion:
+    card.querySelector("[name='fecha_recepcion']").value || null,
+};
 
     await supabase
       .from("materiales_ortopedicos")
@@ -412,23 +486,68 @@ btnGuardar.addEventListener("click", async () => {
   form.addEventListener("submit", async e => {
     e.preventDefault();
 
-    const datos = {
-      afiliado_id: afiliadoId,
-      fecha_carga: form.fecha_carga.value,
-      tipo_material_id: tipoSelect.value || null,
-      observacion: form.observacion.value || null,
-      reintegro: form.reintegro.value
-        ? parseFloat(form.reintegro.value)
-        : null,
-      fecha_reintegro: form.fecha_reintegro.value || null,
-      created_by: usuarioLogin?.username || "Desconocido"
-    };
+const datos = {
+  afiliado_id: afiliadoId,
 
-    const { data } = await supabase
-      .from("materiales_ortopedicos")
-      .insert(datos)
-      .select()
-      .single();
+  fecha_carga:
+    form.fecha_carga.value || null,
+
+tipo_material_id:
+  tipoSelect.value && tipoSelect.value !== "otros"
+    ? parseInt(tipoSelect.value)
+    : null,
+
+  observacion:
+    form.observacion.value || null,
+
+  reintegro:
+    form.reintegro.value
+      ? parseFloat(form.reintegro.value)
+      : null,
+
+  fecha_reintegro:
+    form.fecha_reintegro.value || null,
+
+  numero_carga:
+    form.numero_carga.value || null,
+
+  fecha_autorizacion:
+    form.fecha_autorizacion.value || null,
+
+  fecha_compra:
+    form.fecha_compra.value || null,
+
+  lugar_compra:
+    form.lugar_compra.value || null,
+
+  fecha_recepcion:
+    form.fecha_recepcion.value || null,
+
+  created_by: usuarioLogin?.username || "Desconocido",
+
+  otro_material:
+  tipoSelect.value === "otros"
+    ? form.otro_material.value || null
+    : null,
+};
+
+const { data, error } = await supabase
+  .from("materiales_ortopedicos")
+  .insert(datos)
+  .select()
+  .single();
+
+if (error) {
+  console.error(error);
+
+  Swal.fire(
+    "Error",
+    error.message || "No se pudo guardar",
+    "error"
+  );
+
+  return;
+}
 
     /* SUBIR ADJUNTOS NUEVOS */
 
