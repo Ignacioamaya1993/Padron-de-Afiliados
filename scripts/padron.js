@@ -142,6 +142,45 @@ const cudPermanenteCheckbox = document.getElementById("cudPermanente");
 const cudVencimientoInput = f.querySelector('[name="cud_vencimiento"]');
 const adjuntoEstudiosField = document.getElementById("adjuntoEstudiosField");
 const afiliadoObraSocialCheckbox = document.getElementById("afiliadoObraSocial");
+const camposSoloObraSocial = [
+  f.querySelector('[name="plan_id"]'),
+  f.querySelector('[name="categoria_id"]'),
+  discapacidadCheckbox,
+  nivelDiscapacidadSelect,
+  estudiosSelect,
+  cudPermanenteCheckbox,
+  cudVencimientoInput,
+  f.querySelector('[name="plan_materno_desde"]'),
+  f.querySelector('[name="plan_materno_hasta"]')
+];
+
+function actualizarCamposObraSocial() {
+
+  const esAfiliado = afiliadoObraSocialCheckbox.checked;
+
+  camposSoloObraSocial.forEach(campo => {
+    if (!campo) return;
+
+    campo.disabled = !esAfiliado;
+
+    if (!esAfiliado) {
+      if (campo.type === "checkbox") {
+        campo.checked = false;
+      } else {
+        campo.value = "";
+      }
+    }
+  });
+
+  // Ocultar secciones visuales
+  estudiosField.style.display = esAfiliado ? estudiosField.style.display : "none";
+  adjuntoEstudiosField.style.display = "none";
+  adjuntoDiscapacidadField.style.display = "none";
+  fechasDiscapacidadDiv.style.display = "none";
+  planMaternoFields.style.display = "none";
+
+  actualizarEdadYAdjunto();
+}
 
 /* =====================
    CATÁLOGOS
@@ -295,6 +334,7 @@ estudiosSelect?.addEventListener("change", actualizarEdadYAdjunto);
 discapacidadCheckbox?.addEventListener("change", actualizarEdadYAdjunto);
 nivelDiscapacidadSelect?.addEventListener("change", actualizarEdadYAdjunto);
 cudPermanenteCheckbox.addEventListener("change", actualizarEdadYAdjunto);
+afiliadoObraSocialCheckbox.addEventListener("change", actualizarCamposObraSocial);
 
 /* =====================
    TITULAR DE GRUPO
