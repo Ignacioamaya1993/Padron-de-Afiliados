@@ -141,6 +141,7 @@ const fechasDiscapacidadDiv = document.getElementById("fechasDiscapacidad");
 const cudPermanenteCheckbox = document.getElementById("cudPermanente");
 const cudVencimientoInput = f.querySelector('[name="cud_vencimiento"]');
 const adjuntoEstudiosField = document.getElementById("adjuntoEstudiosField");
+const afiliadoObraSocialCheckbox = document.getElementById("afiliadoObraSocial");
 
 /* =====================
    CATÁLOGOS
@@ -415,6 +416,7 @@ let query = supabase
     nombre_completo,
     dni,
     numero_afiliado,
+    afiliado_obra_social,
     parentesco_id,
     fechaNacimiento,
     estudios,
@@ -485,12 +487,19 @@ if (!afiliados.length) {
         ? `<span style="color:#16a34a;font-weight:600">🟢 Activo</span>`
         : `<span style="color:#dc2626;font-weight:600">🔴 Dado de baja</span>`;
 
+        const marcaObraSocial = a.afiliado_obra_social
+    ? ""
+    : `<div class="alerta-sindicato">
+           ⚠ Afiliado únicamente al Sindicato (sin cobertura de Obra Social)
+       </div>`;
+
       const div = document.createElement("div");
       div.className = "resultado-item";
       div.innerHTML = `
         <strong>${a.nombre} ${a.apellido} ${estado}</strong><br>
         DNI: ${a.dni || "-"} ${edad !== "" ? `| Edad: ${edad}` : ""}<br>
         Afiliado: ${a.numero_afiliado} | ${textoParentesco}
+        ${marcaObraSocial}
         ${alerta ? `<div class="alerta-edad">${alerta}</div>` : ""}
         ${alertaJubilado ? `<div class="alerta-edad">${alertaJubilado}</div>` : ""}
         ${alertaCud ? `<div class="alerta-cud">${alertaCud}</div>` : ""}
@@ -604,6 +613,8 @@ f.addEventListener("submit", async e => {
     btn.textContent = "Guardar";
     return;
 }
+
+
 
         /*
       Validación de formato de número de afiliado
@@ -756,6 +767,7 @@ const adjuntoDiscapacidad = adjuntoDiscapacidadInput?.files[0]
     dni: data.dni,
     telefono: data.telefono || null,
     fechaNacimiento: fechaNacimientoInput.value || null,
+    afiliado_obra_social: afiliadoObraSocialCheckbox.checked,
     numero_afiliado: data.numero_afiliado,
     grupo_familiar_codigo: match[1],
     parentesco_id: data.parentesco_id,

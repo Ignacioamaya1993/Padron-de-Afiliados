@@ -314,6 +314,17 @@ if (idSpan === "mail" && afiliado.mail) {
   }
 }
 
+// =========================
+// AFILIADO OBRA SOCIAL
+// =========================
+const esObraSocial = afiliado.afiliado_obra_social !== false;
+
+document.getElementById("afiliadoObraSocialField").style.display = "block";
+document.getElementById("afiliadoObraSocialTexto").textContent = esObraSocial ? "Sí" : "No";
+
+document.getElementById("alertaSoloSindicato").style.display =
+    esObraSocial ? "none" : "block";
+
 const pagoInput = document.getElementById("fechaUltimoPago");
 if (pagoInput && pagoInput.tagName === "INPUT") {
   const span = document.createElement("span");
@@ -540,6 +551,20 @@ if (pagaCuota) {
   alerta.style.display = "none";
 }
 
+const btnFicha = document.getElementById("btnFichaMedica");
+
+if (afiliado.afiliado_obra_social === false) {
+    btnFicha.disabled = true;
+    btnFicha.title = "Disponible únicamente para afiliados a la Obra Social";
+    btnFicha.style.opacity = "0.5";
+    btnFicha.style.cursor = "not-allowed";
+} else {
+    btnFicha.disabled = false;
+    btnFicha.title = "";
+    btnFicha.style.opacity = "1";
+    btnFicha.style.cursor = "pointer";
+}
+
   // Botones
   toggleBotones(false);
   document.getElementById("btnEditar").style.display = afiliado.activo ? "inline-block" : "none";
@@ -648,6 +673,7 @@ async function entrarModoEdicion() {
   reemplazarPorSelect("localidad", opciones.localidades, localidadNombre);
   reemplazarPorSelect("grupoSanguineo", opcionesGrupoSanguineo, afiliado.grupo_sanguineo_id?.nombre, true);
   reemplazarPorCheckbox("discapacidad", afiliado.discapacidad);
+  reemplazarPorCheckbox("afiliadoObraSocialTexto", afiliado.afiliado_obra_social);
   reemplazarPorInput("planMaternoDesde", formatoInputDate(afiliado.plan_materno_desde), "date");
   reemplazarPorInput("planMaternoHasta", formatoInputDate(afiliado.plan_materno_hasta), "date");
   reemplazarPorInput("cbuCvu", afiliado.cbu_cvu);
@@ -1089,6 +1115,15 @@ function restaurarCampos() {
     }
   });
 
+  const obra = document.getElementById("afiliadoObraSocialTexto");
+
+if (obra && obra.tagName === "INPUT") {
+    const span = document.createElement("span");
+    span.id = "afiliadoObraSocialTexto";
+    span.textContent = afiliado.afiliado_obra_social ? "Sí" : "No";
+    obra.replaceWith(span);
+}
+
   // -------- Checkbox sin vencimiento --------
   const sinV = document.getElementById("cudSinVencimiento");
   if (sinV && sinV.tagName === "INPUT") {
@@ -1176,6 +1211,7 @@ async function guardarCambios() {
   const categoriaNombre = document.getElementById("categoria")?.value || null;
   const localidadNombre = document.getElementById("localidad")?.value || null;
   const discapacidad = document.getElementById("discapacidad")?.checked || false;
+  const afiliado_obra_social = document.getElementById("afiliadoObraSocialTexto")?.checked ?? true;
   const nivel_discapacidad = (discapacidad && document.getElementById("nivelDiscapacidad")?.value) || null;
   const parentescoNombre = document.getElementById("parentesco")?.value || null;
   const grupo_familiar_real = document.getElementById("grupoFamiliarReal")?.value || null;
@@ -1312,7 +1348,8 @@ if (plan_materno_desde && plan_materno_hasta) {
     plan_materno_desde,
     plan_materno_hasta,
     cbu_cvu,
-    grupo_sanguineo_id
+    grupo_sanguineo_id,
+    afiliado_obra_social
   };
 
   const { error } = await supabase.from("afiliados").update(payload).eq("id", afiliadoId);
@@ -1519,8 +1556,19 @@ document.getElementById("btnVolver").addEventListener("click", () => {
 });
 
 document.getElementById("btnFichaMedica")?.addEventListener("click", () => {
-  if (!afiliado?.id) return;
-  window.location.href = `/pages/fichaMedica.html?id=${afiliado.id}`;
+
+    if (!afiliado?.afiliado_obra_social) {
+        Swal.fire(
+            "No disponible",
+            "La Ficha Médica sólo está disponible para afiliados a la Obra Social.",
+            "info"
+        );
+        return;
+    }
+
+    if (!afiliado?.id) return;
+
+    window.location.href = `/pages/fichaMedica.html?id=${afiliado.id}`;
 });
 
 
