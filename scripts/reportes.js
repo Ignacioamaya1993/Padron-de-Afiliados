@@ -104,6 +104,7 @@ async function cargarAfiliados() {
         nombre_completo,
         dni,
         numero_afiliado,
+        afiliado_obra_social,
         fechaNacimiento,
         mail,
         telefono,
@@ -119,19 +120,22 @@ async function cargarAfiliados() {
     if (error) throw error;
 
     datosReporteActual = data.map(a => ({
-      nombre_completo: a.nombre_completo,
-      dni: a.dni,
-      numero_afiliado: a.numero_afiliado,
-      fechaNacimiento: a.fechaNacimiento ? new Date(a.fechaNacimiento).toLocaleDateString("es-AR") : "",
-      edad: calcularEdad(a.fechaNacimiento),
-      mail: a.mail || "",
-      telefono: a.telefono || "",
-      cbu_cvu: a.cbu_cvu || "",
-      grupo_sanguineo: a.grupo_sanguineo?.nombre || "",
-      plan: a.plan?.nombre || "",
-      parentesco: a.parentesco?.nombre || "",
-      localidad: a.localidad?.nombre || "",
-      categoria: a.categoria?.nombre || ""
+      "Nombre completo": a.nombre_completo,
+      "DNI": a.dni,
+      "N° Afiliado": a.numero_afiliado,
+      "Obra Social": a.afiliado_obra_social ? "Sí" : "No",
+      "Fecha Nacimiento": a.fechaNacimiento
+        ? new Date(a.fechaNacimiento).toLocaleDateString("es-AR")
+        : "",
+      "Edad": calcularEdad(a.fechaNacimiento),
+      "Mail": a.mail || "",
+      "Teléfono": a.telefono || "",
+      "CBU / CVU": a.cbu_cvu || "",
+      "Grupo sanguíneo": a.grupo_sanguineo?.nombre || "",
+      "Plan": a.plan?.nombre || "",
+      "Parentesco": a.parentesco?.nombre || "",
+      "Localidad": a.localidad?.nombre || "",
+      "Categoría": a.categoria?.nombre || ""
     }));
 
     reporteTitulo.textContent = "Listado de Afiliados";
