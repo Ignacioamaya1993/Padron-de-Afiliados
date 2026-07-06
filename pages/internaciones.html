@@ -78,21 +78,22 @@ main, section {
       <select id="lugarInternacion" required></select>
     </div>
 
-    <div class="form-row oculto" id="rowReintegro">
-    <label for="reintegroInternacion">Reintegro</label>
-    <input type="number" step="0.01" id="reintegroInternacion">
-    </div>
-
-      <!-- REINTEGRO (solo para edición) -->
-      <div>
-      <label>Reintegro</label>
-      <input type="number" step="0.01" name="reintegro" placeholder="Opcional">
-    </div>
+      <!-- REINTEGRO -->
+<div>
+    <label>Reintegro</label>
+    <input
+        id="reintegroInternacion"
+        name="reintegro"
+        type="number"
+        step="0.01"
+        placeholder="Opcional">
+</div>
 
     <div>
       <label>Fecha reintegro</label>
-      <input type="date" name="fecha_reintegro">
-    </div>
+      <input type="date"id="fechaReintegroInternacion"
+       name="fecha_reintegro">    
+      </div>
 
     <div class="form-row full-width">
       <label for="observacionesInternacion">Observaciones</label>

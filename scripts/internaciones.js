@@ -51,7 +51,6 @@ const carpetaAfiliado = afiliado?.numero_afiliado
   const lugarSelect = document.getElementById("lugarInternacion");
   const btnAgregarAdjuntoForm = document.getElementById("btnAgregarAdjuntoFormInternacion");
   const adjuntosFormLista = document.getElementById("adjuntosFormListaInternacion");
-  const rowReintegro = document.getElementById("rowReintegro");
 
   /* =====================
      CARGAR TIPOS Y LUGARES
@@ -366,9 +365,6 @@ if (e.target.classList.contains("editar")) {
   card.classList.add("editando");
   editandoId = id;
 
-  rowReintegro.style.display = "flex";
-  rowReintegro.classList.remove("oculto");
-
   // Inputs y textarea editables
   card.querySelectorAll("input, textarea").forEach(el => {
     if (el.hasAttribute("readonly")) el.removeAttribute("readonly");
@@ -461,12 +457,6 @@ if (adjuntosEdicion) {
 if (e.target.classList.contains("cancelar")) {
     // Salir del modo edición
     editandoId = null;
-
-    // Ocultar reintegro por seguridad
-    if (rowReintegro) {
-        rowReintegro.classList.add("oculto");
-        rowReintegro.style.display = "none";
-    }
 
     // Opcional: pequeño efecto visual
     const contenedor = document.getElementById("listaInternaciones");
@@ -569,8 +559,6 @@ btnNuevo.addEventListener("click", () => {
 
   form.classList.toggle("oculto");
 
-  // Reintegro siempre oculto en alta
-  rowReintegro.classList.add("oculto");
 });
 
 btnCancelar.addEventListener("click", () => {
@@ -621,9 +609,17 @@ form.addEventListener("submit", async e => {
       created_by: usuarioLogin?.username || "Desconocido"
     };
     
+console.log("Datos a insertar:", datos);
 
     // Guardar la internación
-    const { data } = await supabase.from("internaciones").insert(datos).select().single();
+const { data, error } = await supabase
+  .from("internaciones")
+  .insert(datos)
+  .select()
+  .single();
+
+console.log("Registro insertado:", data);
+console.log("Error:", error);
 
     // Subir archivos en paralelo
     const inputs = adjuntosFormLista.querySelectorAll("input[type='file']");
