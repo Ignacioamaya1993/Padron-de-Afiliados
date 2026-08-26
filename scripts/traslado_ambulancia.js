@@ -515,6 +515,8 @@ const updated = {
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
+  const fechaCargaInput = document.getElementById("fechaCarga");
+
 const datos = {
   afiliado_id: afiliadoId,
 
@@ -563,7 +565,6 @@ const datos = {
 
   created_by: usuarioLogin?.username || "Desconocido"
 };
-
 
   const { data, error } = await supabase
     .from("traslado_ambulancia")
