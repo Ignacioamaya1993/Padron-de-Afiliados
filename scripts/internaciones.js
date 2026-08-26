@@ -497,13 +497,13 @@ if (e.target.classList.contains("guardar")) {
 
   const datos = {};
 
-  card.querySelectorAll("input[name], textarea[name], select[name]").forEach(el => {
-    if (el.name === "reintegro") {
-      datos.reintegro = el.value ? parseFloat(el.value) : null;
-    } else if (el.name !== "fecha_carga") {
-      datos[el.name] = el.value || null;
-    }
-  });
+card.querySelectorAll("input[name], textarea[name], select[name]").forEach(el => {
+  if (el.name === "reintegro") {
+    datos.reintegro = el.value ? parseFloat(el.value) : null;
+  } else {
+    datos[el.name] = el.value || null;
+  }
+});
 
   const { error } = await supabase
     .from("internaciones")
