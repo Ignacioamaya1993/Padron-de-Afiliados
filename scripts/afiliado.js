@@ -1119,8 +1119,11 @@ function restaurarCampos() {
 
 if (obra && obra.tagName === "INPUT") {
     const span = document.createElement("span");
+
     span.id = "afiliadoObraSocialTexto";
+    span.style.display = "block";
     span.textContent = afiliado.afiliado_obra_social ? "Sí" : "No";
+
     obra.replaceWith(span);
 }
 
