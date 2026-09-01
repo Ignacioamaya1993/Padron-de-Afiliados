@@ -4,12 +4,16 @@ import { actualizarNotificaciones } from "./header.js";
 
 let generandoNotificaciones = false;
 
+// ID del tipo "Insumo de diabetes"
+const TIPO_INSUMO_DIABETES = 8;
+
 // =====================================================
 // HELPERS FECHA (SOLUCION UTC / ARGENTINA)
 // =====================================================
 
 function hoyArgentina() {
   const ahora = new Date();
+
   return new Date(
     ahora.getFullYear(),
     ahora.getMonth(),
@@ -21,14 +25,17 @@ function normalizarFecha(fecha) {
 
   if (!fecha) return null;
 
-  // caso DATE de supabase "YYYY-MM-DD"
+  // Caso DATE de Supabase: "YYYY-MM-DD"
   if (typeof fecha === "string" && fecha.length === 10) {
+
     const [y, m, d] = fecha.split("-").map(Number);
+
     return new Date(y, m - 1, d);
   }
 
-  // caso TIMESTAMP
+  // Caso TIMESTAMP
   const f = new Date(fecha);
+
   return new Date(
     f.getFullYear(),
     f.getMonth(),
@@ -52,17 +59,25 @@ function calcularDiasRestantes(fechaFin) {
 // MENSAJES INTELIGENTES
 // =====================================================
 
-function generarMensajeVencimiento(nombre, apellido, tipoTexto, diasRestantes) {
+function generarMensajeVencimiento(
+  nombre,
+  apellido,
+  tipoTexto,
+  diasRestantes
+) {
 
   if (diasRestantes < 0) {
+
     return `⚠️ El/la afiliado/a ${nombre} ${apellido} tiene ${tipoTexto} vencido hace ${Math.abs(diasRestantes)} días`;
   }
 
   if (diasRestantes === 0) {
+
     return `⚠️ El/la afiliado/a ${nombre} ${apellido} tiene ${tipoTexto} que vence hoy`;
   }
 
   if (diasRestantes === 1) {
+
     return `El/la afiliado/a ${nombre} ${apellido} tiene ${tipoTexto} que vence mañana`;
   }
 
@@ -73,7 +88,13 @@ function generarMensajeVencimiento(nombre, apellido, tipoTexto, diasRestantes) {
 // CREAR O ACTUALIZAR NOTIFICACIÓN
 // =====================================================
 
-async function crearOActualizarNotificacion({ usuario, tipo, afiliado_id, registro_id, mensaje }) {
+async function crearOActualizarNotificacion({
+  usuario,
+  tipo,
+  afiliado_id,
+  registro_id,
+  mensaje
+}) {
 
   if (!usuario?.id || !tipo || !afiliado_id || !registro_id) return;
 
@@ -87,7 +108,9 @@ async function crearOActualizarNotificacion({ usuario, tipo, afiliado_id, regist
     .maybeSingle();
 
   if (error) {
+
     console.error("❌ Error verificando existente:", error);
+
     return;
   }
 
@@ -104,7 +127,9 @@ async function crearOActualizarNotificacion({ usuario, tipo, afiliado_id, regist
         })
         .eq("id", existente.id);
 
-      if (errUpdate) console.error("❌ Error actualizando:", errUpdate);
+      if (errUpdate) {
+        console.error("❌ Error actualizando:", errUpdate);
+      }
     }
 
     return;
@@ -122,16 +147,28 @@ async function crearOActualizarNotificacion({ usuario, tipo, afiliado_id, regist
       creada: new Date().toISOString(),
     });
 
-  if (errorInsert) console.error("❌ Error insertando:", errorInsert);
+  if (errorInsert) {
+    console.error("❌ Error insertando:", errorInsert);
+  }
 }
 
 // =====================================================
 // ELIMINAR NOTIFICACIONES OBSOLETAS
 // =====================================================
 
-async function eliminarNotificacionesObsoletas(usuario, tipo, registrosValidos) {
+async function eliminarNotificacionesObsoletas(
+  usuario,
+  tipo,
+  registrosValidos
+) {
 
-  if (!usuario?.id || !tipo || !Array.isArray(registrosValidos)) return;
+  if (
+    !usuario?.id ||
+    !tipo ||
+    !Array.isArray(registrosValidos)
+  ) {
+    return;
+  }
 
   if (registrosValidos.length === 0) {
 
@@ -141,7 +178,12 @@ async function eliminarNotificacionesObsoletas(usuario, tipo, registrosValidos) 
       .eq("usuario_id", usuario.id)
       .eq("tipo", tipo);
 
-    if (error) console.error("❌ Error eliminando notificaciones:", error);
+    if (error) {
+      console.error(
+        "❌ Error eliminando notificaciones:",
+        error
+      );
+    }
 
     return;
   }
@@ -151,9 +193,18 @@ async function eliminarNotificacionesObsoletas(usuario, tipo, registrosValidos) 
     .delete()
     .eq("usuario_id", usuario.id)
     .eq("tipo", tipo)
-    .not("registro_id", "in", `(${registrosValidos.join(",")})`);
+    .not(
+      "registro_id",
+      "in",
+      `(${registrosValidos.join(",")})`
+    );
 
-  if (error) console.error("❌ Error eliminando notificaciones obsoletas:", error);
+  if (error) {
+    console.error(
+      "❌ Error eliminando notificaciones obsoletas:",
+      error
+    );
+  }
 }
 
 // =====================================================
@@ -162,65 +213,230 @@ async function eliminarNotificacionesObsoletas(usuario, tipo, registrosValidos) 
 
 async function generarNotificacionesMedicamentos(usuario) {
 
-  const limite = new Date();
-  limite.setDate(limite.getDate() + 20);
-
-  const { data: meds, error } = await supabase
-    .from("medicamentos")
-    .select(`id, fecha_entrega, proxima_carga, afiliado_id, afiliados(nombre, apellido)`)
-    .lte("proxima_carga", limite.toISOString());
-
-  if (error) {
-    console.error("❌ Error medicamentos:", error);
-    return;
-  }
-
   const registrosValidos = [];
 
-  for (const med of meds || []) {
+  // =====================================================
+  // MEDICAMENTOS NORMALES
+  // Aviso por próxima carga (20 días)
+  // =====================================================
 
-    const diasRestantes = calcularDiasRestantes(med.proxima_carga);
+  const limiteProximaCarga = new Date();
 
-    if (diasRestantes >= -1) {
+  limiteProximaCarga.setDate(
+    limiteProximaCarga.getDate() + 20
+  );
 
-      const mensaje = generarMensajeVencimiento(
-        med.afiliados?.nombre || "",
-        med.afiliados?.apellido || "",
-        "medicamento",
-        diasRestantes
-      );
+  const { data: meds, error: errorMeds } = await supabase
+    .from("medicamentos")
+    .select(`
+      id,
+      fecha_entrega,
+      proxima_carga,
+      afiliado_id,
+      tipo_medicamento_id,
+      afiliados(nombre, apellido)
+    `)
+    // El tipo 8 utiliza fecha_vencimiento,
+    // no proxima_carga.
+    .neq(
+      "tipo_medicamento_id",
+      TIPO_INSUMO_DIABETES
+    )
+    .lte(
+      "proxima_carga",
+      limiteProximaCarga.toISOString()
+    );
 
-      await crearOActualizarNotificacion({
-        usuario,
-        tipo: "medicamentos",
-        afiliado_id: med.afiliado_id,
-        registro_id: med.id,
-        mensaje
-      });
+  if (errorMeds) {
 
-      registrosValidos.push(med.id);
+    console.error(
+      "❌ Error medicamentos:",
+      errorMeds
+    );
+
+  } else {
+
+    for (const med of meds || []) {
+
+      const diasRestantes =
+        calcularDiasRestantes(med.proxima_carga);
+
+      if (diasRestantes >= -1) {
+
+        const mensaje =
+          generarMensajeVencimiento(
+            med.afiliados?.nombre || "",
+            med.afiliados?.apellido || "",
+            "medicamento",
+            diasRestantes
+          );
+
+        await crearOActualizarNotificacion({
+          usuario,
+          tipo: "medicamentos",
+          afiliado_id: med.afiliado_id,
+          registro_id: med.id,
+          mensaje
+        });
+
+        registrosValidos.push(med.id);
+      }
     }
   }
 
-  await eliminarNotificacionesObsoletas(usuario, "medicamentos", registrosValidos);
+  // =====================================================
+  // INSUMOS DE DIABETES
+  // Aviso un mes antes de fecha_vencimiento
+  // =====================================================
+
+  const limiteVencimiento = new Date();
+
+  limiteVencimiento.setMonth(
+    limiteVencimiento.getMonth() + 1
+  );
+
+  const { data: insumos, error: errorInsumos } =
+    await supabase
+      .from("medicamentos")
+      .select(`
+        id,
+        insumo,
+        fecha_vencimiento,
+        afiliado_id,
+        tipo_medicamento_id,
+        afiliados(nombre, apellido)
+      `)
+      .eq(
+        "tipo_medicamento_id",
+        TIPO_INSUMO_DIABETES
+      )
+      .lte(
+        "fecha_vencimiento",
+        limiteVencimiento.toISOString()
+      );
+
+  if (errorInsumos) {
+
+    console.error(
+      "❌ Error insumos de diabetes:",
+      errorInsumos
+    );
+
+  } else {
+
+    for (const insumo of insumos || []) {
+
+      const diasRestantes =
+        calcularDiasRestantes(
+          insumo.fecha_vencimiento
+        );
+
+      // Se notifican desde un mes antes
+      // hasta un día después del vencimiento.
+      if (diasRestantes >= -1) {
+
+        const nombreCompleto =
+          `${insumo.afiliados?.nombre || ""} ${insumo.afiliados?.apellido || ""}`
+            .trim();
+
+        const nombreInsumo =
+          insumo.insumo || "sin especificar";
+
+        let mensaje;
+
+        if (diasRestantes < 0) {
+
+          mensaje =
+            `⚠️ El/la afiliado/a ${nombreCompleto} ` +
+            `tiene el insumo de diabetes "${nombreInsumo}" ` +
+            `vencido hace ${Math.abs(diasRestantes)} días`;
+
+        } else if (diasRestantes === 0) {
+
+          mensaje =
+            `⚠️ El/la afiliado/a ${nombreCompleto} ` +
+            `tiene el insumo de diabetes "${nombreInsumo}" ` +
+            `que vence hoy`;
+
+        } else if (diasRestantes === 1) {
+
+          mensaje =
+            `⚠️ El/la afiliado/a ${nombreCompleto} ` +
+            `tiene el insumo de diabetes "${nombreInsumo}" ` +
+            `que vence mañana`;
+
+        } else {
+
+          mensaje =
+            `⚠️ El/la afiliado/a ${nombreCompleto} ` +
+            `tiene el insumo de diabetes "${nombreInsumo}" ` +
+            `que vence en ${diasRestantes} días`;
+        }
+
+        await crearOActualizarNotificacion({
+          usuario,
+          // Usamos el mismo tipo para que aparezca
+          // junto con las notificaciones de medicamentos.
+          tipo: "medicamentos",
+          afiliado_id: insumo.afiliado_id,
+          registro_id: insumo.id,
+          mensaje
+        });
+
+        registrosValidos.push(insumo.id);
+      }
+    }
+  }
+
+  // =====================================================
+  // ELIMINAR NOTIFICACIONES OBSOLETAS
+  // =====================================================
+
+  await eliminarNotificacionesObsoletas(
+    usuario,
+    "medicamentos",
+    registrosValidos
+  );
 }
 
 // =====================================================
 // ATENCION DOMICILIARIA
 // =====================================================
 
-async function generarNotificacionesAtencionDomiciliaria(usuario) {
+async function generarNotificacionesAtencionDomiciliaria(
+  usuario
+) {
 
   const limite = new Date();
-  limite.setMonth(limite.getMonth() + 1);
 
-  const { data: atenciones, error } = await supabase
+  limite.setMonth(
+    limite.getMonth() + 1
+  );
+
+  const {
+    data: atenciones,
+    error
+  } = await supabase
     .from("atencion_domiciliaria")
-    .select(`id, fecha_inicio_periodo, fecha_fin_periodo, afiliado_id, afiliados(nombre, apellido)`)
-    .lte("fecha_fin_periodo", limite.toISOString());
+    .select(`
+      id,
+      fecha_inicio_periodo,
+      fecha_fin_periodo,
+      afiliado_id,
+      afiliados(nombre, apellido)
+    `)
+    .lte(
+      "fecha_fin_periodo",
+      limite.toISOString()
+    );
 
   if (error) {
-    console.error("❌ Error atención domiciliaria:", error);
+
+    console.error(
+      "❌ Error atención domiciliaria:",
+      error
+    );
+
     return;
   }
 
@@ -228,16 +444,20 @@ async function generarNotificacionesAtencionDomiciliaria(usuario) {
 
   for (const at of atenciones || []) {
 
-    const diasRestantes = calcularDiasRestantes(at.fecha_fin_periodo);
+    const diasRestantes =
+      calcularDiasRestantes(
+        at.fecha_fin_periodo
+      );
 
     if (diasRestantes >= -1) {
 
-      const mensaje = generarMensajeVencimiento(
-        at.afiliados?.nombre || "",
-        at.afiliados?.apellido || "",
-        "atención domiciliaria",
-        diasRestantes
-      );
+      const mensaje =
+        generarMensajeVencimiento(
+          at.afiliados?.nombre || "",
+          at.afiliados?.apellido || "",
+          "atención domiciliaria",
+          diasRestantes
+        );
 
       await crearOActualizarNotificacion({
         usuario,
@@ -251,25 +471,51 @@ async function generarNotificacionesAtencionDomiciliaria(usuario) {
     }
   }
 
-  await eliminarNotificacionesObsoletas(usuario, "atencionDomiciliaria", registrosValidos);
+  await eliminarNotificacionesObsoletas(
+    usuario,
+    "atencionDomiciliaria",
+    registrosValidos
+  );
 }
 
 // =====================================================
 // EXPEDIENTE DISCAPACIDAD
 // =====================================================
 
-async function generarNotificacionesExpedienteDiscapacidad(usuario) {
+async function generarNotificacionesExpedienteDiscapacidad(
+  usuario
+) {
 
   const limite = new Date();
-  limite.setMonth(limite.getMonth() + 1);
 
-  const { data: expedientes, error } = await supabase
+  limite.setMonth(
+    limite.getMonth() + 1
+  );
+
+  const {
+    data: expedientes,
+    error
+  } = await supabase
     .from("expediente_discapacidad")
-    .select(`id, fecha_inicio, fecha_finalizacion, afiliado_id, afiliados(nombre, apellido)`)
-    .lte("fecha_finalizacion", limite.toISOString());
+    .select(`
+      id,
+      fecha_inicio,
+      fecha_finalizacion,
+      afiliado_id,
+      afiliados(nombre, apellido)
+    `)
+    .lte(
+      "fecha_finalizacion",
+      limite.toISOString()
+    );
 
   if (error) {
-    console.error("❌ Error expediente discapacidad:", error);
+
+    console.error(
+      "❌ Error expediente discapacidad:",
+      error
+    );
+
     return;
   }
 
@@ -277,16 +523,20 @@ async function generarNotificacionesExpedienteDiscapacidad(usuario) {
 
   for (const ex of expedientes || []) {
 
-    const diasRestantes = calcularDiasRestantes(ex.fecha_finalizacion);
+    const diasRestantes =
+      calcularDiasRestantes(
+        ex.fecha_finalizacion
+      );
 
     if (diasRestantes >= -1) {
 
-      const mensaje = generarMensajeVencimiento(
-        ex.afiliados?.nombre || "",
-        ex.afiliados?.apellido || "",
-        "expediente de discapacidad",
-        diasRestantes
-      );
+      const mensaje =
+        generarMensajeVencimiento(
+          ex.afiliados?.nombre || "",
+          ex.afiliados?.apellido || "",
+          "expediente de discapacidad",
+          diasRestantes
+        );
 
       await crearOActualizarNotificacion({
         usuario,
@@ -300,7 +550,11 @@ async function generarNotificacionesExpedienteDiscapacidad(usuario) {
     }
   }
 
-  await eliminarNotificacionesObsoletas(usuario, "expediente_discapacidad", registrosValidos);
+  await eliminarNotificacionesObsoletas(
+    usuario,
+    "expediente_discapacidad",
+    registrosValidos
+  );
 }
 
 // =====================================================
@@ -315,29 +569,69 @@ export async function generarNotificaciones(usuario) {
 
   try {
 
-    const tiposPermitidos = usuario.notificaciones || [];
+    const tiposPermitidos =
+      usuario.notificaciones || [];
 
-    if (tiposPermitidos.includes("medicamentos"))
-      await generarNotificacionesMedicamentos(usuario);
+    if (
+      tiposPermitidos.includes("medicamentos")
+    ) {
+      await generarNotificacionesMedicamentos(
+        usuario
+      );
+    }
 
-    if (tiposPermitidos.includes("atencionDomiciliaria"))
-      await generarNotificacionesAtencionDomiciliaria(usuario);
+    if (
+      tiposPermitidos.includes(
+        "atencionDomiciliaria"
+      )
+    ) {
+      await generarNotificacionesAtencionDomiciliaria(
+        usuario
+      );
+    }
 
-    if (tiposPermitidos.includes("expediente_discapacidad"))
-      await generarNotificacionesExpedienteDiscapacidad(usuario);
+    if (
+      tiposPermitidos.includes(
+        "expediente_discapacidad"
+      )
+    ) {
+      await generarNotificacionesExpedienteDiscapacidad(
+        usuario
+      );
+    }
 
-    const { count, error } = await supabase
+    const {
+      count,
+      error
+    } = await supabase
       .from("notificaciones")
-      .select("*", { count: "exact", head: true })
+      .select("*", {
+        count: "exact",
+        head: true
+      })
       .eq("usuario_id", usuario.id)
       .eq("leida", false);
 
-    if (!error) actualizarNotificaciones(count || 0);
-    else console.error("❌ Error contando notificaciones:", error);
+    if (!error) {
+
+      actualizarNotificaciones(
+        count || 0
+      );
+
+    } else {
+
+      console.error(
+        "❌ Error contando notificaciones:",
+        error
+      );
+    }
 
   } catch (err) {
 
-    console.error("❌ Error general generarNotificaciones:", err);
+    console.error(
+      "❌ Error general generarNotificaciones:",
+      err
+    );
 
   }
 
@@ -348,19 +642,32 @@ export async function generarNotificaciones(usuario) {
 // OBTENER ULTIMAS NOTIFICACIONES
 // =====================================================
 
-export async function obtenerUltimasNotificaciones(usuario, limite = 10) {
+export async function obtenerUltimasNotificaciones(
+  usuario,
+  limite = 10
+) {
 
   if (!usuario) return [];
 
-  const { data, error } = await supabase
+  const {
+    data,
+    error
+  } = await supabase
     .from("notificaciones")
     .select("*")
     .eq("usuario_id", usuario.id)
-    .order("creada", { ascending: false })
+    .order("creada", {
+      ascending: false
+    })
     .limit(limite);
 
   if (error) {
-    console.error("❌ Error obteniendo notificaciones:", error);
+
+    console.error(
+      "❌ Error obteniendo notificaciones:",
+      error
+    );
+
     return [];
   }
 

@@ -82,6 +82,7 @@ const registroADestacar = params.get("registro")
   const campoInicio = document.getElementById("campoInicio");
   const campoVencimiento = document.getElementById("campoVencimiento");
   const adjuntosContainer = document.getElementById("adjuntosContainer");
+  const campoInsumo = document.getElementById("campoInsumo");
 
   /* =====================
      TIPOS MEDICAMENTOS
@@ -111,16 +112,19 @@ function actualizarCamposPorTipo() {
   campoLatas.classList.add("hidden");
   campoInicio.classList.add("hidden");
   campoVencimiento.classList.add("hidden");
+  campoInsumo.classList.add("hidden");
 
   // Inputs reales
   const inputLatas = form.querySelector("[name='latas_entregadas']");
   const inputInicio = form.querySelector("[name='fecha_inicio']");
   const inputVenc = form.querySelector("[name='fecha_vencimiento']");
+  const inputInsumo = form.querySelector("[name='insumo']");
 
   // Quitar required por defecto
   inputLatas?.removeAttribute("required");
   inputInicio?.removeAttribute("required");
   inputVenc?.removeAttribute("required");
+  inputInsumo?.removeAttribute("required");
 
   // Tipo 4 → leche maternizada
   if (tipoId === 4) {
@@ -128,12 +132,24 @@ function actualizarCamposPorTipo() {
     inputLatas?.setAttribute("required", "required");
   }
 
-  // Tipos 6 y 7
+  // Tipos 6 y 7 → diabetes y el otro tipo existente
   if ([6, 7].includes(tipoId)) {
     campoInicio.classList.remove("hidden");
     campoVencimiento.classList.remove("hidden");
+
     inputInicio?.setAttribute("required", "required");
     inputVenc?.setAttribute("required", "required");
+  }
+
+  // Tipo 8 → Insumo de diabetes
+  if (tipoId === 8) {
+    campoInicio.classList.remove("hidden");
+    campoVencimiento.classList.remove("hidden");
+    campoInsumo.classList.remove("hidden");
+
+    inputInicio?.setAttribute("required", "required");
+    inputVenc?.setAttribute("required", "required");
+    inputInsumo?.setAttribute("required", "required");
   }
 }
 
@@ -266,10 +282,23 @@ card.innerHTML = `
       <div><label>Latas entregadas</label><input name="latas_entregadas" readonly value="${med.latas_entregadas}"></div>
     </div>` : ""}
 
-    ${[6,7].includes(med.tipo_medicamento_id) ? `
+    ${[6, 7, 8].includes(med.tipo_medicamento_id) ? `
     <div class="med-card-section grid-fechas">
-      <div><label>Inicio</label><input type="date" name="fecha_inicio" readonly value="${fISO(med.fecha_inicio)}"></div>
-      <div><label>Vencimiento</label><input type="date" name="fecha_vencimiento" readonly value="${fISO(med.fecha_vencimiento)}"></div>
+      <div>
+        <label>Inicio</label>
+        <input type="date" name="fecha_inicio" readonly value="${fISO(med.fecha_inicio)}">
+      </div>
+
+      <div>
+        <label>Vencimiento</label>
+        <input type="date" name="fecha_vencimiento" readonly value="${fISO(med.fecha_vencimiento)}">
+      </div>
+    </div>` : ""}
+
+    ${med.tipo_medicamento_id === 8 ? `
+    <div class="med-card-section">
+      <label>Insumo</label>
+      <input type="text" name="insumo" readonly value="${med.insumo ?? ""}">
     </div>` : ""}
 
     <div class="med-card-section grid-fechas">
@@ -658,6 +687,7 @@ form.addEventListener("submit", async e => {
       fecha_reintegro: form.fecha_reintegro?.value || null,
       created_by: usuarioLogin?.username || "Desconocido",
       estado: form.estado?.value || null,
+      insumo: form.insumo?.value || null,
     };
 
     const { data, error } = await supabase
