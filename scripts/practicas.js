@@ -71,7 +71,7 @@ const carpetaBase = afiliado?.numero_afiliado
     campoKinesiologo.classList.add("hidden");
     campoLugar.classList.add("hidden");
 
-if (tipo === "kinesiologia" || tipo === "otros") {
+if (tipo === "kinesiologia") {
   campoKinesiologo.classList.remove("hidden");
 }
 
@@ -180,44 +180,78 @@ if (tipo === "resonancia" || tipo === "tomografia") {
       card._adjuntosEliminar = [];
 
       let primerSeccion = "";
-if (p.tipo === "kinesiologia" || p.tipo === "otros") {
-          primerSeccion = `
-          <div><label>Fecha carga</label>
-            <input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}">
-          </div>
-          <div><label>N° Autorización</label>
-          <input name="nro_autorizacion" readonly value="${p.nro_autorizacion || ""}">
-        </div>
+if (p.tipo === "kinesiologia") {
 
-        <div><label>N° Carga</label>
-          <input name="nro_carga" readonly value="${p.nro_carga || ""}">
-        </div>
-          <div><label>Kinesiólogo</label>
-            <input name="nombre_kinesiologo" readonly value="${p.nombre_kinesiologo || ""}">
-          </div>
-          <div><label>Fecha orden</label>
-            <input type="date" name="fecha_orden" readonly value="${fISO(p.fecha_orden)}">
-          </div>
-          <div><label>Fecha recepción</label>
-            <input type="date" name="fecha_recepcion_orden" readonly value="${fISO(p.fecha_recepcion_orden)}">
-          </div>
-        `;
-      } else if (p.tipo === "resonancia" || p.tipo === "tomografia") {
-        primerSeccion = `
-          <div><label>Fecha carga</label>
-            <input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}">
-          </div>
-          <div><label>Lugar</label>
-            <input name="lugar" readonly value="${p.lugar || ""}">
-          </div>
-          <div><label>Fecha orden</label>
-            <input type="date" name="fecha_orden" readonly value="${fISO(p.fecha_orden)}">
-          </div>
-          <div><label>Fecha recepción</label>
-            <input type="date" name="fecha_recepcion_orden" readonly value="${fISO(p.fecha_recepcion_orden)}">
-          </div>
-        `;
-      }
+  primerSeccion = `
+    <div><label>Fecha carga</label>
+      <input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}">
+    </div>
+
+    <div><label>N° Autorización</label>
+      <input name="nro_autorizacion" readonly value="${p.nro_autorizacion || ""}">
+    </div>
+
+    <div><label>N° Carga</label>
+      <input name="nro_carga" readonly value="${p.nro_carga || ""}">
+    </div>
+
+    <div><label>Kinesiólogo</label>
+      <input name="nombre_kinesiologo" readonly value="${p.nombre_kinesiologo || ""}">
+    </div>
+
+    <div><label>Fecha orden</label>
+      <input type="date" name="fecha_orden" readonly value="${fISO(p.fecha_orden)}">
+    </div>
+
+    <div><label>Fecha recepción</label>
+      <input type="date" name="fecha_recepcion_orden" readonly value="${fISO(p.fecha_recepcion_orden)}">
+    </div>
+  `;
+
+} else if (p.tipo === "otros") {
+
+  primerSeccion = `
+    <div><label>Fecha carga</label>
+      <input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}">
+    </div>
+
+    <div><label>N° Autorización</label>
+      <input name="nro_autorizacion" readonly value="${p.nro_autorizacion || ""}">
+    </div>
+
+    <div><label>N° Carga</label>
+      <input name="nro_carga" readonly value="${p.nro_carga || ""}">
+    </div>
+
+    <div><label>Fecha orden</label>
+      <input type="date" name="fecha_orden" readonly value="${fISO(p.fecha_orden)}">
+    </div>
+
+    <div><label>Fecha recepción</label>
+      <input type="date" name="fecha_recepcion_orden" readonly value="${fISO(p.fecha_recepcion_orden)}">
+    </div>
+  `;
+
+} else if (p.tipo === "resonancia" || p.tipo === "tomografia") {
+
+  primerSeccion = `
+    <div><label>Fecha carga</label>
+      <input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}">
+    </div>
+
+    <div><label>Lugar</label>
+      <input name="lugar" readonly value="${p.lugar || ""}">
+    </div>
+
+    <div><label>Fecha orden</label>
+      <input type="date" name="fecha_orden" readonly value="${fISO(p.fecha_orden)}">
+    </div>
+
+    <div><label>Fecha recepción</label>
+      <input type="date" name="fecha_recepcion_orden" readonly value="${fISO(p.fecha_recepcion_orden)}">
+    </div>
+  `;
+}
 
       card.innerHTML = `
 <strong>${p.tipo.charAt(0).toUpperCase() + p.tipo.slice(1).toLowerCase()}</strong>
