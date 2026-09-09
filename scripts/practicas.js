@@ -71,8 +71,13 @@ const carpetaBase = afiliado?.numero_afiliado
     campoKinesiologo.classList.add("hidden");
     campoLugar.classList.add("hidden");
 
-    if (tipo === "kinesiologia") campoKinesiologo.classList.remove("hidden");
-    if (tipo === "resonancia" || tipo === "tomografia") campoLugar.classList.remove("hidden");
+if (tipo === "kinesiologia" || tipo === "otros") {
+  campoKinesiologo.classList.remove("hidden");
+}
+
+if (tipo === "resonancia" || tipo === "tomografia") {
+  campoLugar.classList.remove("hidden");
+}
   }
 
   tipoSelect.addEventListener("change", actualizarCamposPorTipo);
@@ -175,8 +180,8 @@ const carpetaBase = afiliado?.numero_afiliado
       card._adjuntosEliminar = [];
 
       let primerSeccion = "";
-      if (p.tipo === "kinesiologia") {
-        primerSeccion = `
+if (p.tipo === "kinesiologia" || p.tipo === "otros") {
+          primerSeccion = `
           <div><label>Fecha carga</label>
             <input type="date" name="fecha_carga" readonly value="${fISO(p.fecha_carga)}">
           </div>
