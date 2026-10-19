@@ -1,11 +1,15 @@
 
 import { supabase } from "./supabase.js";
+
 import {
   authObserver,
   logout,
   reservarSesion,
-  renovarSesion
+  renovarSesion,
+  actualizarActividadHistorial,
+  cerrarHistorialSesion
 } from "./auth.js";
+
 import { generarNotificaciones } from "./notificaciones.js";
 
 const MAX_NOTIF = 10;
@@ -18,6 +22,7 @@ let temporizadorCierreInactividad = null;
 let avisoInactividadAbierto = false;
 let eventosActividadInstalados = false;
 let ultimaActividadMouse = 0;
+let ultimaActualizacionHistorial = 0;
 
 let usuarioActual = null;
 let heartbeatTimer = null;
@@ -163,7 +168,7 @@ async function cerrarSesionPorInactividad(
 
   try {
     // logout() libera la sesión activa y cierra Supabase Auth.
-    await logout();
+    await logout("manual");
   } catch (error) {
     console.error("Error cerrando sesión por inactividad:", error);
 
@@ -177,17 +182,26 @@ async function cerrarSesionPorInactividad(
 
 function iniciarControlInactividad() {
   if (!eventosActividadInstalados) {
-    const registrarActividad = () => {
-      if (
-        !usuarioActual ||
-        avisoInactividadAbierto ||
-        redirigiendoLogin
-      ) {
-        return;
-      }
+    
+const registrarActividad = () => {
+  if (
+    !usuarioActual ||
+    avisoInactividadAbierto ||
+    redirigiendoLogin
+  ) {
+    return;
+  }
 
-      programarTemporizadoresInactividad();
-    };
+  programarTemporizadoresInactividad();
+
+  // Actualizar el historial como máximo una vez por minuto.
+  const ahora = Date.now();
+
+  if (ahora - ultimaActualizacionHistorial >= 60000) {
+    ultimaActualizacionHistorial = ahora;
+    actualizarActividadHistorial();
+  }
+};
 
     // El movimiento del mouse se procesa como máximo una vez
     // por segundo para evitar reiniciar los temporizadores constantemente.
@@ -230,12 +244,18 @@ async function cerrarSesionPorConflicto(mensaje) {
   sessionStorage.setItem("mensajeSesion", mensaje);
 
   try {
-    await supabase.auth.signOut();
-  } catch (error) {
-    console.error("Error cerrando la sesión:", error);
-  } finally {
-    window.location.href = "/pages/login.html";
-  }
+  await cerrarHistorialSesion("otra_sesion");
+} catch (error) {
+  console.error("Error registrando el cierre por conflicto:", error);
+}
+
+try {
+  await supabase.auth.signOut();
+} catch (error) {
+  console.error("Error cerrando la sesión:", error);
+} finally {
+  window.location.href = "/pages/login.html";
+}
 }
 
 function iniciarVerificacionSesion() {
@@ -521,17 +541,13 @@ function inicializarHeader() {
           `Bienvenido/a, <strong>${nombre}</strong>`;
       }
 
-      // Mantener las notificaciones existentes.
-      await generarNotificaciones(usuarioActual);
-      await actualizarNotificacionesBadge(usuarioActual.id);
-
       // Iniciar la verificación periódica.
       iniciarVerificacionSesion();
       await generarNotificaciones(usuarioActual);
       await actualizarNotificacionesBadge(usuarioActual.id);
 
-iniciarVerificacionSesion();
-iniciarControlInactividad();
+      iniciarVerificacionSesion();
+      iniciarControlInactividad();
 
     } catch (error) {
       console.error("Error validando la sesión:", error);
@@ -553,7 +569,7 @@ iniciarControlInactividad();
   detenerControlInactividad();
   limpiarUsuarioLocal();
 
-  await logout();
+  await logout("inactividad");
 });
 
   // =====================
