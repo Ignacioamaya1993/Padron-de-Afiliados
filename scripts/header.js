@@ -564,13 +564,21 @@ function inicializarHeader() {
   // LOGOUT
   // =====================
 
-  logoutBtn?.addEventListener("click", async () => {
+
+logoutBtn?.addEventListener("click", async () => {
+  if (redirigiendoLogin) return;
+
+  // Evita que el temporizador de inactividad compita
+  // con el cierre manual.
+  redirigiendoLogin = true;
+
   detenerVerificacionSesion();
   detenerControlInactividad();
   limpiarUsuarioLocal();
 
-  await logout("inactividad");
+  await logout("manual");
 });
+
 
   // =====================
   // REPORTES
