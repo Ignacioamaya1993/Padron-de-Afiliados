@@ -1,21 +1,40 @@
+
 import { supabase } from "./supabase.js";
-import { authObserver, logout } from "./auth.js";
+import {
+  authObserver,
+  logout,
+  reservarSesion,
+  renovarSesion
+} from "./auth.js";
 import { generarNotificaciones } from "./notificaciones.js";
 
 const MAX_NOTIF = 10;
+const INTERVALO_VERIFICACION = 30000;
 
 let usuarioActual = null;
+let heartbeatTimer = null;
+let validandoSesion = false;
+let redirigiendoLogin = false;
 
 // =====================
 // UTIL STORAGE
 // =====================
+
 function guardarUsuarioLocal(usuario) {
   localStorage.setItem("usuarioSistema", JSON.stringify(usuario));
 }
 
 function obtenerUsuarioLocal() {
   const data = localStorage.getItem("usuarioSistema");
-  return data ? JSON.parse(data) : null;
+
+  if (!data) return null;
+
+  try {
+    return JSON.parse(data);
+  } catch {
+    localStorage.removeItem("usuarioSistema");
+    return null;
+  }
 }
 
 function limpiarUsuarioLocal() {
@@ -23,10 +42,59 @@ function limpiarUsuarioLocal() {
 }
 
 // =====================
+// CONTROL DE SESIÓN
+// =====================
+
+function detenerVerificacionSesion() {
+  if (heartbeatTimer) {
+    clearInterval(heartbeatTimer);
+    heartbeatTimer = null;
+  }
+}
+
+async function cerrarSesionPorConflicto(mensaje) {
+  if (redirigiendoLogin) return;
+
+  redirigiendoLogin = true;
+  detenerVerificacionSesion();
+  limpiarUsuarioLocal();
+
+  sessionStorage.setItem("mensajeSesion", mensaje);
+
+  try {
+    await supabase.auth.signOut();
+  } catch (error) {
+    console.error("Error cerrando la sesión:", error);
+  } finally {
+    window.location.href = "/pages/login.html";
+  }
+}
+
+function iniciarVerificacionSesion() {
+  if (heartbeatTimer) return;
+
+  heartbeatTimer = setInterval(async () => {
+    try {
+      const vigente = await renovarSesion();
+
+      if (!vigente) {
+        await cerrarSesionPorConflicto(
+          "Tu sesión dejó de estar activa porque la cuenta se inició en otro dispositivo. Ingresá nuevamente."
+        );
+      }
+    } catch (error) {
+      console.error("Error verificando la sesión:", error);
+    }
+  }, INTERVALO_VERIFICACION);
+}
+
+// =====================
 // ACTUALIZAR BADGE
 // =====================
+
 export function actualizarNotificaciones(cantidad) {
   const badge = document.querySelector("#notificacionesBtn .badge");
+
   if (!badge) return;
 
   if (cantidad > 0) {
@@ -40,6 +108,7 @@ export function actualizarNotificaciones(cantidad) {
 // =====================
 // CONTAR NO LEÍDAS
 // =====================
+
 async function actualizarNotificacionesBadge(usuarioId) {
   const { count, error } = await supabase
     .from("notificaciones")
@@ -48,7 +117,7 @@ async function actualizarNotificacionesBadge(usuarioId) {
     .eq("leida", false);
 
   if (error) {
-    console.error("Error contar notificaciones:", error);
+    console.error("Error contando notificaciones:", error);
     actualizarNotificaciones(0);
     return;
   }
@@ -59,10 +128,12 @@ async function actualizarNotificacionesBadge(usuarioId) {
 // =====================
 // RENDER NOTIFICACIONES
 // =====================
+
 async function renderNotificaciones() {
   if (!usuarioActual) return;
 
   const dropdown = document.getElementById("notificacionesDropdown");
+
   if (!dropdown) return;
 
   dropdown.innerHTML = "";
@@ -83,57 +154,71 @@ async function renderNotificaciones() {
   }
 
   if (!data || data.length === 0) {
-    dropdown.innerHTML = `<div class="notif-item">No hay notificaciones</div>`;
+    dropdown.innerHTML =
+      '<div class="notif-item">No hay notificaciones</div>';
     return;
+  }
+
+  function formatearFecha(fechaISO) {
+    const fecha = new Date(fechaISO);
+    return fecha.toLocaleDateString("es-AR");
   }
 
   for (const notif of data) {
     const item = document.createElement("div");
     item.classList.add("notif-item");
 
-    if (notif.leida) item.classList.add("leida");
-
-    // Formatear fecha
-    function formatearFecha(fechaISO) {
-      const fecha = new Date(fechaISO);
-      return fecha.toLocaleDateString("es-AR");
+    if (notif.leida) {
+      item.classList.add("leida");
     }
 
     const fechaFormateada = notif.creada
       ? formatearFecha(notif.creada)
       : "";
 
-    // Crear estructura interna
-    item.innerHTML = `
-      <div class="notif-contenido">
-        <div class="notif-mensaje">${notif.mensaje}</div>
-        <div class="notif-fecha">${fechaFormateada}</div>
-      </div>
-    `;
+    const contenido = document.createElement("div");
+    contenido.classList.add("notif-contenido");
 
-item.addEventListener("click", async () => {
-  try {
-    if (!notif.leida) {
-      await supabase
-        .from("notificaciones")
-        .update({ leida: true })
-        .eq("id", notif.id);
+    const mensaje = document.createElement("div");
+    mensaje.classList.add("notif-mensaje");
 
-      item.classList.add("leida");
-      await actualizarNotificacionesBadge(usuarioActual.id);
-    }
+    // Usar textContent para que el mensaje no se interprete como HTML.
+    mensaje.textContent = notif.mensaje || "";
 
-    if (notif.afiliado_id) {
-      window.location.href =
-        `/pages/fichaMedica.html?id=${notif.afiliado_id}` +
-        `&modulo=${notif.tipo}` +
-        `&registro=${notif.registro_id}`;
-    }
+    const fecha = document.createElement("div");
+    fecha.classList.add("notif-fecha");
+    fecha.textContent = fechaFormateada;
 
-  } catch (err) {
-    console.error("Error al procesar notificación:", err);
-  }
-});
+    contenido.appendChild(mensaje);
+    contenido.appendChild(fecha);
+    item.appendChild(contenido);
+
+    item.addEventListener("click", async () => {
+      try {
+        if (!notif.leida) {
+          const { error: errorActualizacion } = await supabase
+            .from("notificaciones")
+            .update({ leida: true })
+            .eq("id", notif.id);
+
+          if (errorActualizacion) {
+            throw errorActualizacion;
+          }
+
+          item.classList.add("leida");
+          await actualizarNotificacionesBadge(usuarioActual.id);
+        }
+
+        if (notif.afiliado_id) {
+          window.location.href =
+            `/pages/fichaMedica.html?id=${notif.afiliado_id}` +
+            `&modulo=${notif.tipo}` +
+            `&registro=${notif.registro_id}`;
+        }
+      } catch (err) {
+        console.error("Error al procesar notificación:", err);
+      }
+    });
 
     dropdown.appendChild(item);
   }
@@ -142,18 +227,23 @@ item.addEventListener("click", async () => {
 // =====================
 // CARGAR HEADER
 // =====================
+
 export async function cargarHeader() {
   const container = document.getElementById("header-container");
+
   if (!container) return;
 
   try {
     const res = await fetch("/pages/header.html");
+
+    if (!res.ok) {
+      throw new Error(`Error HTTP ${res.status} al cargar el encabezado`);
+    }
+
     const html = await res.text();
     container.innerHTML = html;
 
-    // SIEMPRE inicializar después de inyectar
     inicializarHeader();
-
   } catch (err) {
     console.error("Error cargando header:", err);
   }
@@ -162,6 +252,7 @@ export async function cargarHeader() {
 // =====================
 // INICIALIZAR HEADER
 // =====================
+
 function inicializarHeader() {
   const statusSpan = document.getElementById("status");
   const logoutBtn = document.getElementById("logoutBtn");
@@ -179,75 +270,120 @@ function inicializarHeader() {
 
     if (!dropdown.classList.contains("hidden")) {
       await renderNotificaciones();
+
       if (usuarioActual) {
         await actualizarNotificacionesBadge(usuarioActual.id);
       }
     }
   });
 
-  // Cerrar al hacer click afuera
-document.addEventListener("click", (e) => {
-  if (
-    !dropdown.contains(e.target) &&
-    !notificacionesBtn.contains(e.target)
-  ) {
-    dropdown.classList.add("hidden");
-  }
-});
+  // Cerrar al hacer clic afuera
+  document.addEventListener("click", (e) => {
+    if (
+      !dropdown.contains(e.target) &&
+      !notificacionesBtn.contains(e.target)
+    ) {
+      dropdown.classList.add("hidden");
+    }
+  });
 
   // =====================
-  // AUTH OBSERVER
+  // AUTH OBSERVER + SESIÓN ÚNICA
   // =====================
-  authObserver(async user => {
 
+  authObserver(async (user) => {
     if (!user) {
+      detenerVerificacionSesion();
       limpiarUsuarioLocal();
-      window.location.href = "/pages/login.html";
+      usuarioActual = null;
+
+      // Evita redirigir repetidamente si ya estamos en el login.
+      if (
+        !window.location.pathname.endsWith("/login.html") &&
+        !redirigiendoLogin
+      ) {
+        window.location.href = "/pages/login.html";
+      }
+
       return;
     }
 
-    // Intentar traer usuario desde localStorage
-    let usuario = obtenerUsuarioLocal();
+    if (validandoSesion || redirigiendoLogin) return;
 
-    // Si no existe o cambió el email → consultar DB
-    if (!usuario || usuario.email !== user.email) {
+    validandoSesion = true;
 
-      const { data, error } = await supabase
-        .from("usuarios")
-        .select("*")
-        .eq("email", user.email)
-        .single();
+    try {
+      // Confirmar que esta sesión corresponde al dispositivo autorizado.
+      const permitida = await reservarSesion();
 
-      if (error || !data) {
-        console.error("Error obteniendo usuario:", error);
+      if (!permitida) {
+        await cerrarSesionPorConflicto(
+          "Tu sesión dejó de estar activa porque la cuenta se inició en otro dispositivo. Ingresá nuevamente."
+        );
         return;
       }
 
-      usuario = data;
-      guardarUsuarioLocal(usuario);
+      // Obtener el usuario desde localStorage si corresponde.
+      let usuario = obtenerUsuarioLocal();
+
+      // Si no existe o cambió el email, consultar Supabase.
+      if (!usuario || usuario.email !== user.email) {
+        const { data, error } = await supabase
+          .from("usuarios")
+          .select("*")
+          .eq("email", user.email)
+          .single();
+
+        if (error || !data) {
+          console.error("Error obteniendo usuario:", error);
+          return;
+        }
+
+        usuario = data;
+        guardarUsuarioLocal(usuario);
+      }
+
+      usuarioActual = usuario;
+
+      // Mostrar nombre completo.
+      if (statusSpan) {
+        const nombre = usuario.nombre_completo || user.email;
+
+        statusSpan.innerHTML =
+          `Bienvenido/a, <strong>${nombre}</strong>`;
+      }
+
+      // Mantener las notificaciones existentes.
+      await generarNotificaciones(usuarioActual);
+      await actualizarNotificacionesBadge(usuarioActual.id);
+
+      // Iniciar la verificación periódica.
+      iniciarVerificacionSesion();
+
+    } catch (error) {
+      console.error("Error validando la sesión:", error);
+
+      await cerrarSesionPorConflicto(
+        "No se pudo verificar tu sesión. Ingresá nuevamente."
+      );
+    } finally {
+      validandoSesion = false;
     }
-
-    usuarioActual = usuario;
-
-    // Mostrar nombre completo
-    if (statusSpan) {
-      const nombre = usuario.nombre_completo || user.email;
-      statusSpan.innerHTML = `Bienvenido/a, <strong>${nombre}</strong>`;
-    }
-
-    // Generar notificaciones una sola vez por sesión
-    await generarNotificaciones(usuarioActual);
-
-    await actualizarNotificacionesBadge(usuarioActual.id);
   });
 
   // =====================
   // LOGOUT
   // =====================
+
   logoutBtn?.addEventListener("click", async () => {
+    detenerVerificacionSesion();
     limpiarUsuarioLocal();
     await logout();
   });
+
+  // =====================
+  // REPORTES
+  // =====================
 
   reportesBtn?.addEventListener("click", () => {
     window.location.href = "/pages/reportes.html";

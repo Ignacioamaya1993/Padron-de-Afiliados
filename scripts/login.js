@@ -1,29 +1,32 @@
-import { login, authObserver } from "./auth.js";
+
+import { login } from "./auth.js";
 import { supabase } from "./supabase.js";
 
-// Elementos
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const loginBtn = document.getElementById("loginBtn");
 const errorEl = document.getElementById("error");
-
 const togglePasswordBtn = document.getElementById("togglePassword");
 const togglePasswordIcon = document.getElementById("togglePasswordIcon");
 
 let showPassword = false;
+let procesandoLogin = false;
 
-/* =====================
-   AUTH
-===================== */
-authObserver(user => {
-  if (user) {
-    window.location.href = "/pages/padron.html";
-  }
-});
+// --------------------------------------------------
+// MENSAJES DE SESIÓN
+// --------------------------------------------------
 
-/* =====================
-   HELPERS
-===================== */
+const mensajeSesion = sessionStorage.getItem("mensajeSesion");
+
+if (mensajeSesion) {
+  errorEl.textContent = mensajeSesion;
+  sessionStorage.removeItem("mensajeSesion");
+}
+
+// --------------------------------------------------
+// VALIDACIONES Y ERRORES
+// --------------------------------------------------
+
 function emailValido(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
@@ -40,10 +43,49 @@ function limpiarErrores() {
   passwordInput.classList.remove("input-error");
 }
 
-/* =====================
-   LOGIN
-===================== */
+// --------------------------------------------------
+// VERIFICAR UNA SESIÓN QUE YA ESTABA ABIERTA
+// --------------------------------------------------
+
+async function verificarSesionExistente() {
+  const {
+    data: { session },
+    error
+  } = await supabase.auth.getSession();
+
+  if (error || !session) return;
+
+  try {
+    const { reservarSesion } = await import("./auth.js");
+    const permitida = await reservarSesion();
+
+    if (permitida) {
+      window.location.href = "/pages/padron.html";
+      return;
+    }
+
+    await supabase.auth.signOut();
+
+    errorEl.textContent =
+      "Este usuario ya tiene una sesión iniciada en otro dispositivo. " +
+      "Cerrá la otra sesión e intentá nuevamente.";
+  } catch (e) {
+    console.error("Error verificando la sesión existente:", e);
+
+    errorEl.textContent =
+      "No se pudo verificar la sesión. Intentá nuevamente.";
+  }
+}
+
+verificarSesionExistente();
+
+// --------------------------------------------------
+// INICIO DE SESIÓN
+// --------------------------------------------------
+
 async function ejecutarLogin() {
+  if (procesandoLogin) return;
+
   limpiarErrores();
 
   const identificador = emailInput.value.trim();
@@ -59,14 +101,18 @@ async function ejecutarLogin() {
     return;
   }
 
-  let emailReal = identificador;
+  procesandoLogin = true;
+  loginBtn.disabled = true;
 
   try {
+    let emailReal = identificador;
 
-    // Si NO es email → buscarlo por username (case-insensitive)
+    // Si no ingresó un email, buscar el email asociado al usuario.
     if (!emailValido(identificador)) {
-
-      const { data: usuario, error } = await supabase
+      const {
+        data: usuario,
+        error
+      } = await supabase
         .from("usuarios_login")
         .select("email")
         .ilike("username", identificador)
@@ -81,18 +127,35 @@ async function ejecutarLogin() {
       emailReal = usuario.email;
     }
 
-    // Login con email real
     await login(emailReal, password);
 
+    // El login redirige al padrón cuando la sesión es válida.
+    window.location.href = "/pages/padron.html";
+
   } catch (e) {
-    errorEl.textContent = "Usuario o contraseña incorrectos";
+    console.error("Error al iniciar sesión:", e);
+
+    if (e.code === "SESION_ACTIVA") {
+      errorEl.textContent =
+        "Este usuario ya tiene una sesión iniciada en otro dispositivo. " +
+        "Cerrá la otra sesión e intentá nuevamente.";
+    } else {
+      errorEl.textContent =
+        e.message || "Usuario o contraseña incorrectos";
+    }
+
+  } finally {
+    procesandoLogin = false;
+    loginBtn.disabled = false;
   }
 }
 
-// Click
+// --------------------------------------------------
+// EVENTOS
+// --------------------------------------------------
+
 loginBtn.addEventListener("click", ejecutarLogin);
 
-// Enter
 [emailInput, passwordInput].forEach(input => {
   input.addEventListener("keydown", e => {
     if (e.key === "Enter") {
@@ -102,13 +165,15 @@ loginBtn.addEventListener("click", ejecutarLogin);
   });
 });
 
-/* =====================
-   TOGGLE PASSWORD
-===================== */
+// --------------------------------------------------
+// MOSTRAR / OCULTAR CONTRASEÑA
+// --------------------------------------------------
+
 togglePasswordBtn.addEventListener("click", () => {
   showPassword = !showPassword;
 
   passwordInput.type = showPassword ? "text" : "password";
+
   togglePasswordIcon.src = showPassword
     ? "../assets/images/eye-open.png"
     : "../assets/images/eye-closed.png";
