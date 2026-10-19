@@ -10,6 +10,14 @@ import { generarNotificaciones } from "./notificaciones.js";
 
 const MAX_NOTIF = 10;
 const INTERVALO_VERIFICACION = 30000;
+const TIEMPO_INACTIVIDAD = 30 * 60 * 1000; // 30 minutos
+const TIEMPO_AVISO = 5 * 60 * 1000;        // Aviso a los 25 minutos
+
+let temporizadorAvisoInactividad = null;
+let temporizadorCierreInactividad = null;
+let avisoInactividadAbierto = false;
+let eventosActividadInstalados = false;
+let ultimaActividadMouse = 0;
 
 let usuarioActual = null;
 let heartbeatTimer = null;
@@ -52,11 +60,171 @@ function detenerVerificacionSesion() {
   }
 }
 
+
+function detenerControlInactividad() {
+  clearTimeout(temporizadorAvisoInactividad);
+  clearTimeout(temporizadorCierreInactividad);
+
+  temporizadorAvisoInactividad = null;
+  temporizadorCierreInactividad = null;
+  avisoInactividadAbierto = false;
+
+  if (window.Swal && window.Swal.isVisible()) {
+    window.Swal.close();
+  }
+}
+
+function programarTemporizadoresInactividad() {
+  clearTimeout(temporizadorAvisoInactividad);
+  clearTimeout(temporizadorCierreInactividad);
+
+  temporizadorAvisoInactividad = setTimeout(() => {
+    mostrarAvisoInactividad();
+  }, TIEMPO_INACTIVIDAD - TIEMPO_AVISO);
+
+  temporizadorCierreInactividad = setTimeout(() => {
+    cerrarSesionPorInactividad();
+  }, TIEMPO_INACTIVIDAD);
+}
+
+async function mostrarAvisoInactividad() {
+  if (
+    avisoInactividadAbierto ||
+    redirigiendoLogin ||
+    !usuarioActual
+  ) {
+    return;
+  }
+
+  avisoInactividadAbierto = true;
+
+  // Si SweetAlert2 no está disponible, el cierre por
+  // inactividad igualmente se ejecutará a los 30 minutos.
+  if (!window.Swal) {
+    console.error("SweetAlert2 no está disponible para mostrar el aviso.");
+    return;
+  }
+
+  const resultado = await window.Swal.fire({
+    icon: "warning",
+    title: "¿Seguís ahí?",
+    text: "Tu sesión se cerrará por inactividad en 5 minutos.",
+    confirmButtonText: "Continuar sesión",
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    timer: TIEMPO_AVISO,
+    timerProgressBar: true
+  });
+
+  // Si el cierre ya comenzó, no hacer nada más.
+  if (redirigiendoLogin) return;
+
+  if (resultado.isConfirmed) {
+    try {
+      const sesionVigente = await renovarSesion();
+
+      if (!sesionVigente) {
+        await cerrarSesionPorConflicto(
+          "Tu sesión dejó de estar activa porque la cuenta se inició en otro dispositivo. Ingresá nuevamente."
+        );
+        return;
+      }
+
+      // El usuario decidió continuar: reiniciar los 30 minutos.
+      avisoInactividadAbierto = false;
+      programarTemporizadoresInactividad();
+
+    } catch (error) {
+      console.error("Error renovando la sesión:", error);
+
+      await cerrarSesionPorInactividad(
+        "No se pudo verificar tu sesión. Ingresá nuevamente."
+      );
+    }
+
+  } else {
+    // Si se agotaron los 5 minutos del aviso, cerrar la sesión.
+    await cerrarSesionPorInactividad();
+  }
+}
+
+async function cerrarSesionPorInactividad(
+  mensaje = "Tu sesión se cerró por inactividad. Ingresá nuevamente para continuar."
+) {
+  if (redirigiendoLogin) return;
+
+  redirigiendoLogin = true;
+
+  detenerVerificacionSesion();
+  detenerControlInactividad();
+  limpiarUsuarioLocal();
+
+  sessionStorage.setItem("mensajeSesion", mensaje);
+
+  try {
+    // logout() libera la sesión activa y cierra Supabase Auth.
+    await logout();
+  } catch (error) {
+    console.error("Error cerrando sesión por inactividad:", error);
+
+    try {
+      await supabase.auth.signOut();
+    } finally {
+      window.location.href = "/pages/login.html";
+    }
+  }
+}
+
+function iniciarControlInactividad() {
+  if (!eventosActividadInstalados) {
+    const registrarActividad = () => {
+      if (
+        !usuarioActual ||
+        avisoInactividadAbierto ||
+        redirigiendoLogin
+      ) {
+        return;
+      }
+
+      programarTemporizadoresInactividad();
+    };
+
+    // El movimiento del mouse se procesa como máximo una vez
+    // por segundo para evitar reiniciar los temporizadores constantemente.
+    document.addEventListener("mousemove", () => {
+      const ahora = Date.now();
+
+      if (ahora - ultimaActividadMouse >= 1000) {
+        ultimaActividadMouse = ahora;
+        registrarActividad();
+      }
+    }, { passive: true });
+
+    [
+      "mousedown",
+      "keydown",
+      "touchstart",
+      "scroll",
+      "click"
+    ].forEach(evento => {
+      document.addEventListener(evento, registrarActividad, {
+        passive: true
+      });
+    });
+
+    eventosActividadInstalados = true;
+  }
+
+  programarTemporizadoresInactividad();
+}
+
 async function cerrarSesionPorConflicto(mensaje) {
   if (redirigiendoLogin) return;
 
   redirigiendoLogin = true;
+
   detenerVerificacionSesion();
+  detenerControlInactividad();
   limpiarUsuarioLocal();
 
   sessionStorage.setItem("mensajeSesion", mensaje);
@@ -359,6 +527,11 @@ function inicializarHeader() {
 
       // Iniciar la verificación periódica.
       iniciarVerificacionSesion();
+      await generarNotificaciones(usuarioActual);
+      await actualizarNotificacionesBadge(usuarioActual.id);
+
+iniciarVerificacionSesion();
+iniciarControlInactividad();
 
     } catch (error) {
       console.error("Error validando la sesión:", error);
@@ -376,10 +549,12 @@ function inicializarHeader() {
   // =====================
 
   logoutBtn?.addEventListener("click", async () => {
-    detenerVerificacionSesion();
-    limpiarUsuarioLocal();
-    await logout();
-  });
+  detenerVerificacionSesion();
+  detenerControlInactividad();
+  limpiarUsuarioLocal();
+
+  await logout();
+});
 
   // =====================
   // REPORTES
