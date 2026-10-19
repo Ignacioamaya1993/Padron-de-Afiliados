@@ -14,6 +14,38 @@ function obtenerSessionId() {
   return id;
 }
 
+
+function obtenerNombreNavegador() {
+  const ua = navigator.userAgent;
+  let nombre = "Navegador desconocido";
+
+  if (/Edg\//i.test(ua)) {
+    nombre = "Microsoft Edge";
+  } else if (/OPR\//i.test(ua)) {
+    nombre = "Opera";
+  } else if (/Chrome\//i.test(ua)) {
+    nombre = "Google Chrome";
+  } else if (/Firefox\//i.test(ua)) {
+    nombre = "Mozilla Firefox";
+  } else if (/Safari\//i.test(ua)) {
+    nombre = "Safari";
+  }
+
+  const version = {
+    "Google Chrome": /Chrome\/([\d.]+)/,
+    "Microsoft Edge": /Edg\/([\d.]+)/,
+    "Opera": /OPR\/([\d.]+)/,
+    "Mozilla Firefox": /Firefox\/([\d.]+)/,
+    "Safari": /Version\/([\d.]+)/
+  }[nombre];
+
+  const coincidencia = version ? ua.match(version) : null;
+
+  return coincidencia
+    ? `${nombre} ${coincidencia[1]}`
+    : nombre;
+}
+
 // VALIDAR / RESERVAR SESIÓN ÚNICA
 export async function reservarSesion() {
   const { data: { session }, error: sessionError } =
@@ -55,7 +87,7 @@ export async function renovarSesion() {
 async function registrarInicioHistorial() {
   const { error } = await supabase.rpc("registrar_inicio_historial", {
     p_session_id: obtenerSessionId(),
-    p_navegador: navigator.userAgent
+p_navegador: obtenerNombreNavegador()
   });
 
   if (error) {
