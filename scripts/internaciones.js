@@ -609,7 +609,6 @@ form.addEventListener("submit", async e => {
       created_by: usuarioLogin?.username || "Desconocido"
     };
     
-console.log("Datos a insertar:", datos);
 
     // Guardar la internación
 const { data, error } = await supabase
@@ -618,8 +617,14 @@ const { data, error } = await supabase
   .select()
   .single();
 
-console.log("Registro insertado:", data);
-console.log("Error:", error);
+if (error) {
+  console.error("ERROR AL INSERTAR INTERNACIÓN:", error);
+  throw error;
+}
+
+if (!data) {
+  throw new Error("Supabase no devolvió el registro insertado");
+}
 
     // Subir archivos en paralelo
     const inputs = adjuntosFormLista.querySelectorAll("input[type='file']");
