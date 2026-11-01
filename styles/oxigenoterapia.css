@@ -164,17 +164,17 @@ margin-bottom: 1rem;
    CARDS
 ===================== */
 
-.card {
-  background: #ffffff !important;
-  border: 1px solid #e5e7eb !important;
-  border-radius: 10px !important;
-  padding: 10px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0.35rem !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-  min-width: 400px !important;
-  min-height: 320px !important;
+#listaOxigenoterapia .card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-width: 0;
+  min-height: 320px;
 }
 
 .card input[readonly],

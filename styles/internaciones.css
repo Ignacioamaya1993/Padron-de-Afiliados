@@ -156,12 +156,29 @@ input[type="file"] {
   box-sizing: border-box;
 }
 
-/* CARDS */
+/* CONTENEDOR DE INTERNACIONES */
 #contenedorInternaciones {
-  display: grid;
+  display: grid !important;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1rem;
-  width: 100%;        /* 🔥 clave */
+  gap: 20px !important;
+  width: 100%;
+  align-items: start;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* CADA CARD */
+#contenedorInternaciones > .card {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .card {
@@ -172,7 +189,7 @@ input[type="file"] {
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   min-height: auto !important;
   position: relative;
-  width: 100%;
+  width: 100%;;
 }
 
 .card .acciones {
