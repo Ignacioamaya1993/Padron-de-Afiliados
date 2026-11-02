@@ -520,8 +520,7 @@ form.addEventListener("submit", async e => {
 const datos = {
   afiliado_id: afiliadoId,
 
-  fecha_carga:
-    document.getElementById("fechaCarga").value || null,
+  fecha_carga: fechaCargaInput.value,
 
   lugar_traslado:
     document.getElementById("lugarTraslado").value || null,
