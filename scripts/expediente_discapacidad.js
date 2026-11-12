@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { configurarPaginacionCards } from "./card-pagination.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
@@ -45,7 +46,7 @@ const registroADestacar = params.get("registro")
   ======================= */
 
   let paginaActual = 0;
-  const POR_PAGINA = 10;
+  let porPagina = 3;
 
   /* =======================
      ELEMENTOS
@@ -59,6 +60,12 @@ const registroADestacar = params.get("registro")
 
   const lista = document.getElementById("listaExpedienteDiscapacidad");
   const paginacion = document.getElementById("paginacionExpedienteDiscapacidad");
+  const obtenerPorPagina = configurarPaginacionCards(lista.closest(".module-container"), lista, cantidad => {
+    porPagina = cantidad;
+    paginaActual = 0;
+    cargarExpedientes();
+  });
+  porPagina = obtenerPorPagina();
 
   const tipoSelect = document.getElementById("tipoExpedienteDiscapacidad");
 
@@ -76,7 +83,7 @@ const registroADestacar = params.get("registro")
       .select("*")
       .order("nombre");
 
-    tipoSelect.innerHTML = `<option value="">Seleccione</option>`;
+    tipoSelect.innerHTML = `<option value="">Seleccione tipo de expediente</option>`;
 
     data.forEach(t => {
       const option = document.createElement("option");
@@ -129,8 +136,8 @@ const registroADestacar = params.get("registro")
 
   async function cargarExpedientes() {
 
-    const desde = paginaActual * POR_PAGINA;
-    const hasta = desde + POR_PAGINA - 1;
+    const desde = paginaActual * porPagina;
+    const hasta = desde + porPagina - 1;
 
     const { data, count } = await supabase
       .from("expediente_discapacidad")
@@ -172,7 +179,7 @@ if (registroADestacar) {
   const posicion = await obtenerPosicionexpediente(registroADestacar);
 
   if (posicion !== null) {
-    const paginaCorrecta = Math.floor(posicion / POR_PAGINA);
+    const paginaCorrecta = Math.floor(posicion / porPagina);
 
     if (paginaCorrecta !== paginaActual) {
       paginaActual = paginaCorrecta;
@@ -481,7 +488,7 @@ if (e.target.classList.contains("guardar")) {
   function renderPaginacion(total) {
 
     paginacion.innerHTML = "";
-const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
 
     const btnAnt = document.createElement("button");
     btnAnt.textContent = "⬅ Anterior";

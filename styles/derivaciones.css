@@ -1,154 +1,46 @@
-/* ===================== */
-/* GENERAL */
-/* ===================== */
 
-
-.hidden {
-  display: none !important;
-}
 
 /* ===================== */
 /* BOTONES */
 /* ===================== */
 
-.btn-nuevo-derivacion{
-background-color: #2f80ed;
-color: white;
-margin-bottom: 1rem;
-}
-
-.adjuntos-nuevos-derivacion {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 8px;
-    align-items: center;
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    background-color: #fff;
-    min-width: 380px;
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-  transition: opacity 0.2s ease, transform 0.1s ease;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-button:active {
-  transform: scale(0.97);
-}
-
-/* fichaMedica.css o derivaciones.css */
-.oculto {
-  display: none;
-}
-
 /* Botón adjuntos */
-.btn-nuevoAdjunto {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  padding: 6px 10px;
-  font-weight: 600;
-  color: #065f46;
-  background-color: #ecfdf5;
-  border: 1px solid #34d399;
-  max-width: 170px;
-}
-
-.btn-nuevoAdjunto:hover {
-  background-color: #d1fae5;
-}
-
-.grid-derivacion .acciones {
+.module-container--derivaciones .grid-derivacion .acciones{
   display: inline-block
 }
 
 /* ===================== */
 /* FORMULARIO */
 /* ===================== */
-.form-card_derivaciones {
-  border: 1px solid #ddd !important;
-  border-radius: 10px !important;
-  padding: 20px !important;
-  margin-bottom: 20px !important;
-  background: #fff !important;
-  width: 800px !important;
-}
-
 /* Grid principal del formulario */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 1rem;
-}
-
 /* Labels */
-.form-group label {
+.module-container--derivaciones .form-group label{
   font-size: 0.85rem;
   margin-bottom: 0.3rem;
 }
 
 /* Cada grupo */
-.form-group {
+.module-container--derivaciones .form-group{
   display: flex;
   flex-direction: column;
 }
 
 /* Inputs */
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.6rem;
-  border-radius: 6px;
-  border: 1px solid #cbd5e1;
-  background: white;
-  font-size: 0.9rem;
-}
-
 /* Acciones */
-.form-actions {
+.module-container--derivaciones .form-actions{
   display: flex;
   justify-content: flex-start;
   gap: 1rem;
   margin-top: 1.5rem;
 }
 
-.btn-secundario {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 6px;
-    padding: 6px 10px;
-    font-weight: 600;
-    color: #065f46;
-    background-color: #ecfdf5;
-    border: 1px solid #34d399;
-    max-width: 170px;
-}
-
 /* Observaciones ocupa toda la fila */
-.full-width {
+.module-container--derivaciones .full-width{
   grid-column: 1 / -1;
 }
 
-form textarea {
-  resize: vertical;
-}
-
 /* Input file */
-input[type="file"] {
+.module-container--derivaciones input[type="file"]{
   border: 1px solid #f59e0b;
   border-radius: 6px;
   background: #fff7ed;
@@ -157,22 +49,14 @@ input[type="file"] {
   max-width: 100%;
 }
 
-.full-row {
+.module-container--derivaciones .full-row{
   grid-column: 1 / -1;
 }
 
 /* ===================== */
 /* CARDS DERIVACIONES */
 /* ===================== */
-#contenedorDerivaciones {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    justify-content: start;
-    margin-top: 20px;
-}
-
-.card {
+.module-container--derivaciones .card{
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
@@ -187,7 +71,7 @@ input[type="file"] {
 }
 
 /* Contenedor interno de la card */
-.card .card-content {
+.module-container--derivaciones .card .card-content{
   display: flex;
   flex-direction: column;
   flex-grow: 1; /* ocupa todo el espacio disponible */
@@ -195,21 +79,21 @@ input[type="file"] {
 }
 
 /* Observaciones + adjuntos */
-.card .card-extra {
+.module-container--derivaciones .card .card-extra{
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
 }
 
 /* Card en edición */
-.card.editando {
+.module-container--derivaciones .card.editando{
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
   background: #f8fafc;
 }
 
 /* Título */
-.card strong {
+.module-container--derivaciones .card strong{
   font-size: 1rem;
   color: #0f172a;
   border-bottom: 1px solid #e5e7eb;
@@ -218,7 +102,7 @@ input[type="file"] {
 }
 
 /* Secciones */
-.med-card-section {
+.module-container--derivaciones .med-card-section{
   padding-top: 0.4rem;
   border-top: 1px solid #e5e7eb;
   margin-top: 0.2rem;
@@ -229,18 +113,18 @@ input[type="file"] {
 }
 
 /* Grids internos */
-.grid-fechas {
+.module-container--derivaciones .grid-fechas{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 0.3rem;
 }
 
-.grid-fechas label {
+.module-container--derivaciones .grid-fechas label{
   font-size: 0.85rem;
   color: #000000;
 }
 
-.grid-fechas input {
+.module-container--derivaciones .grid-fechas input{
     background: #f8fafc;
     padding: 0.5rem 0.7rem;
     border-radius: 8px;
@@ -251,18 +135,12 @@ input[type="file"] {
 }
 
 /* Observaciones */
-.med-card-section textarea {
-  display: flex;
-  font-size: 0.8rem;
+.module-container--derivaciones .med-card-section textarea{
   background: #f1f5f9;
   border: 1px solid #e5e7eb;
 }
 
-.med-card-section textarea {
-  min-height: 80px;
-}
-
-.adjuntos-lista {
+.module-container--derivaciones .adjuntos-lista{
   display: block;          /* como textarea */
   max-height: 120px;       /* misma altura visual que observaciones */
   overflow-y: auto;        /* scroll vertical */
@@ -273,15 +151,14 @@ input[type="file"] {
   background: #f1f5f9;     /* mismo look que textarea */
 }
 
-.card-extra textarea,
-.card-extra .adjuntos-lista {
+.module-container--derivaciones .card-extra .adjuntos-lista{
   min-height: 80px;
 }
 
 /* ===================== */
 /* ACCIONES CARD */
 /* ===================== */
-.card .acciones {
+.module-container--derivaciones .card .acciones{
   display: flex;
   justify-content: flex-end;
   gap: 0.6rem;
@@ -290,82 +167,16 @@ input[type="file"] {
 }
 
 /* Botones card */
-.card .editar {
-  background-color: #2563eb;
-  color: white;
-}
-
-.card .cancelar-edicion {
-  background-color: #e5e7eb;
-  color: #0f172a;
-}
-
-.card .eliminar {
-  background-color: #dc2626;
-  color: white;
-}
-
-.card input[readonly],
-.card textarea[readonly] {
+.module-container--derivaciones .card input[readonly], .module-container--derivaciones .card textarea[readonly]{
   background: #f5f5f5;
   border: 1px solid #ddd;
   cursor: default;
   max-width: 150px;
 }
 
-.card textarea[name="observaciones"] {
-  max-width: none;
-  width: 100%;
-  min-height: 80px;
-}
-
-.card .editando {
+.module-container--derivaciones .card .editando{
   background: #fff;
   border: 1px solid #aaa;
-}
-
-/* ===================== */
-/* PAGINACIÓN DERIVACIONES */
-/* ===================== */
-.paginacion {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin: 2rem 0;
-    flex-wrap: wrap;
-}
-
-.paginacion button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 8px;
-  background-color: #2c7be5;
-  color: #fff;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.paginacion button:hover:not(:disabled) {
-  background-color: #1a68d1;
-  transform: translateY(-1px);
-}
-
-.paginacion button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.paginacion button:disabled {
-  background-color: #c5c5c5;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.paginacion span {
-  font-weight: 600;
-  color: #444;
-  font-size: 0.95rem;
 }
 
 /* ===================== */
@@ -373,7 +184,7 @@ input[type="file"] {
 /* ===================== */
 
 /* Parte expandible */
-.card-extra {
+.module-container--derivaciones .card-extra{
   overflow: hidden;
   transition: 
     max-height 0.35s ease,
@@ -382,17 +193,17 @@ input[type="file"] {
 }
 
 /* Estado colapsado */
-.card:not(.expandida) .card-extra {
+.module-container--derivaciones .card:not(.expandida) .card-extra{
   max-height: 0;
   opacity: 0;
   transform: translateY(-4px);
 }
 
-.card.expandida .card-extra {
+.module-container--derivaciones .card.expandida .card-extra{
   overflow: visible;
 }
 
-.toggle-card {
+.module-container--derivaciones .toggle-card{
   background: none;
   border: none;
   color: #2563eb;
@@ -402,12 +213,7 @@ input[type="file"] {
   transition: color 0.2s ease;
 }
 
-.toggle-card:hover {
-  color: #1d4ed8;
-}
-
-.card.editando input,
-.card.editando textarea {
+.module-container--derivaciones .card.editando input, .module-container--derivaciones .card.editando textarea{
   pointer-events: auto !important;
   background: #ffffff !important;
   cursor: text !important;

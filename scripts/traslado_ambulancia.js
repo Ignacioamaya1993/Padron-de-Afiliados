@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { configurarPaginacionCards } from "./card-pagination.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
@@ -36,7 +37,7 @@ const carpetaBase = afiliado?.numero_afiliado
   /* ESTADO */
   /* ===================== */
   let editandoId = null;
-  const POR_PAGINA = 12;
+  let porPagina = 3;
   let paginaActual = 0;
   let archivosAdjuntos = [];
 
@@ -48,6 +49,12 @@ const carpetaBase = afiliado?.numero_afiliado
   const form = document.getElementById("formTrasladoAmbulancia");
   const contenedor = document.getElementById("contenedorTrasladoAmbulancia");
   const paginacion = document.getElementById("paginacionTrasladoAmbulancia");
+  const obtenerPorPagina = configurarPaginacionCards(contenedor.closest(".module-container"), contenedor, cantidad => {
+    porPagina = cantidad;
+    paginaActual = 0;
+    cargarTraslados();
+  });
+  porPagina = obtenerPorPagina();
   const btnAgregarAdjuntoForm = document.getElementById("btnAgregarAdjuntoTraslado");
   const adjuntosFormLista = document.getElementById("adjuntosTrasladoLista");
 
@@ -98,7 +105,7 @@ const carpetaBase = afiliado?.numero_afiliado
       .select("*", { count: "exact" })
       .eq("afiliado_id", afiliadoId)
       .order("fecha_carga", { ascending: false })
-      .range(paginaActual * POR_PAGINA, paginaActual * POR_PAGINA + POR_PAGINA - 1);
+      .range(paginaActual * porPagina, paginaActual * porPagina + porPagina - 1);
 
     if (error) return console.error(error);
 
@@ -479,7 +486,7 @@ const updated = {
   /* ===================== */
   function renderPaginacion(total) {
     paginacion.innerHTML = "";
-    const totalPaginas = Math.ceil(total / POR_PAGINA);
+    const totalPaginas = Math.ceil(total / porPagina);
 
     const btnAnterior = document.createElement("button");
     btnAnterior.textContent = "⬅ Anterior";

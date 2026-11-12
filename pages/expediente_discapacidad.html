@@ -1,23 +1,10 @@
-<style>
-/* Mover todo a la izquierda */
-main, section {
-  max-width: none;
-  margin: 0;
-}
-
-/* Lista de cards alineadas a la izquierda */
-#listaExpedienteDiscapacidad {
-  justify-content: start;
-}
-</style>
-
 <!-- ========================= -->
 <!-- EXPEDIENTE DISCAPACIDAD  -->
 <!-- ========================= -->
 
 <section>
 
-  <button id="btnNuevoExpedienteDiscapacidad" class="btn-nuevo-expediente">
+  <button id="btnNuevoExpedienteDiscapacidad" class="btn-nuevo">
     + Nuevo expediente
   </button>
 
@@ -34,7 +21,7 @@ main, section {
         <div class="campo">
           <label>Tipo expediente</label>
           <select name="tipo_expediente_id" id="tipoExpedienteDiscapacidad" required>
-            <option value="">Seleccione</option>
+            <option value="">Seleccione tipo de expediente</option>
           </select>
         </div>
 
@@ -49,8 +36,7 @@ main, section {
         </div>
 
         <!-- REINTEGRO -->
-      <div class="campo-reintegro">
-        <div>
+        <div class="form-group">
           <label>Reintegro</label>
           <input 
             type="number" 
@@ -60,18 +46,17 @@ main, section {
           >
         </div>
 
-        <div>
+        <div class="form-group">
           <label>Fecha reintegro</label>
           <input 
             type="date" 
             name="fecha_reintegro"
           >
         </div>
-      </div>
         
         <div class="campo full">
           <label>Observación</label>
-          <textarea name="observacion"></textarea>
+          <textarea name="observacion" placeholder="Ingrese observación"></textarea>
         </div>
 
         <!-- =========================
@@ -79,7 +64,7 @@ main, section {
         ========================= -->
 
           <!-- ADJUNTOS -->
-      <div class="campo full">
+      <div class="bloque-adjuntos">
         <label>Adjuntar Documentos</label>
         <div id="adjuntosExpedienteDiscapacidadContainer" class="adjuntos-nuevos_expediente"></div>
         <button type="button" id="btnAgregarAdjuntoExpedienteDiscapacidad">

@@ -19,6 +19,8 @@ const reporteResultado = document.getElementById("reporteResultado");
 const reporteTitulo = document.getElementById("reporteTitulo");
 const exportExcelBtn = document.getElementById("exportExcel");
 const exportPdfBtn = document.getElementById("exportPdf");
+const buscarReporteInput = document.getElementById("buscarReporte");
+const reporteCantidad = document.getElementById("reporteCantidad");
 
 let datosReporteActual = [];
 let tipoReporteActual = null;
@@ -29,6 +31,7 @@ let tipoReporteActual = null;
 reporteCards.forEach(card => {
   card.addEventListener("click", async () => {
     const tipo = card.dataset.reporte;
+    const boton = card.querySelector("button");
 
     const estaAbierto = reporteResultado.classList.contains("expanded");
 
@@ -36,11 +39,21 @@ reporteCards.forEach(card => {
     if (tipoReporteActual === tipo && estaAbierto) {
       reporteResultado.classList.remove("expanded");
       reporteResultado.classList.add("collapsed");
+      card.classList.remove("active");
+      boton?.setAttribute("aria-expanded", "false");
       tipoReporteActual = null;
       return;
     }
 
+    reporteCards.forEach(otraCard => {
+      otraCard.classList.toggle("active", otraCard === card);
+      otraCard.querySelector("button")?.setAttribute("aria-expanded", String(otraCard === card));
+    });
+
     tipoReporteActual = tipo;
+    datosReporteActual = [];
+    if (buscarReporteInput) buscarReporteInput.value = "";
+    renderizarTablaReporte("Generando el reporte...");
 
     if (tipo === "afiliados") await cargarAfiliados();
     if (tipo === "hijos-estudiantes") await cargarHijosSinCertificado();
@@ -50,6 +63,11 @@ reporteCards.forEach(card => {
     if (tipo === "insulinodependientes") await cargarReporteInsulinodependientes();
     if (tipo === "cuota-social") await cargarReporteCuotaSocial();
 
+    const mensajeVacio = ["reintegros", "insulinodependientes"].includes(tipo)
+      ? "Completá los filtros y generá el reporte para ver los resultados."
+      : "No hay registros para mostrar en este reporte.";
+    renderizarTablaReporte(mensajeVacio);
+
     // Abrir con animación
     reporteResultado.classList.remove("collapsed");
     reporteResultado.classList.add("expanded");
@@ -58,6 +76,179 @@ reporteCards.forEach(card => {
 
 exportExcelBtn?.addEventListener("click", exportarExcel);
 exportPdfBtn?.addEventListener("click", exportarPDF);
+
+function renderizarTablaReporte(mensajeVacio = "No hay registros para mostrar en este reporte.") {
+  const tabla = document.getElementById("tablaReporte");
+  tabla.setAttribute("aria-label", reporteTitulo.textContent || "Resultados del reporte");
+  const encabezado = tabla.tHead;
+  const cuerpo = tabla.tBodies[0] || tabla.createTBody();
+  encabezado.replaceChildren();
+  cuerpo.replaceChildren();
+
+  const columnas = datosReporteActual.length ? Object.keys(datosReporteActual[0]) : [];
+  const datosFiltrados = obtenerDatosFiltrados();
+  const consulta = normalizarTexto(buscarReporteInput?.value || "");
+
+  if (reporteCantidad) {
+    reporteCantidad.textContent = consulta
+      ? `${datosFiltrados.length} de ${datosReporteActual.length} resultados`
+      : `${datosReporteActual.length} resultados`;
+  }
+  const buscador = buscarReporteInput?.closest(".reporte-search");
+  if (buscador) buscador.hidden = tipoReporteActual === "reintegros";
+
+  if (!columnas.length) {
+    const fila = cuerpo.insertRow();
+    const celda = fila.insertCell();
+    celda.colSpan = 1;
+    celda.className = "report-empty";
+    celda.textContent = mensajeVacio;
+  } else {
+    const filaEncabezado = encabezado.insertRow();
+    columnas.forEach(columna => {
+      const celda = document.createElement("th");
+      celda.scope = "col";
+      celda.textContent = etiquetaColumna(columna);
+      celda.className = claseColumna(columna);
+      filaEncabezado.appendChild(celda);
+    });
+
+    if (!datosFiltrados.length) {
+      const fila = cuerpo.insertRow();
+      const celda = fila.insertCell();
+      celda.colSpan = columnas.length;
+      celda.className = "report-empty";
+      celda.textContent = datosReporteActual.length
+        ? "No se encontraron coincidencias. Probá con otro nombre, DNI o número de afiliado."
+        : mensajeVacio;
+    } else {
+      const fragmento = document.createDocumentFragment();
+      datosFiltrados.forEach(registro => {
+        const fila = document.createElement("tr");
+        columnas.forEach(columna => {
+          const celda = document.createElement("td");
+          const valor = registro[columna];
+          celda.textContent = valor == null ? "" : String(valor);
+          celda.className = claseColumna(columna);
+          fila.appendChild(celda);
+        });
+        fragmento.appendChild(fila);
+      });
+      cuerpo.appendChild(fragmento);
+    }
+  }
+
+  const hayDatos = datosFiltrados.length > 0;
+  if (exportExcelBtn) exportExcelBtn.disabled = !hayDatos;
+  if (exportPdfBtn) exportPdfBtn.disabled = !hayDatos;
+}
+
+function normalizarTexto(valor) {
+  return String(valor ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("es-AR")
+    .trim();
+}
+
+function normalizarClaveColumna(clave) {
+  return normalizarTexto(String(clave).replace(/([a-z0-9])([A-Z])/g, "$1 $2"))
+    .replace(/_/g, " ")
+    .replace(/[^a-z0-9 ]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function etiquetaColumna(clave) {
+  const claveNormalizada = normalizarClaveColumna(clave);
+  const etiquetas = {
+    "nombre": "Nombre",
+    "nombre completo": "Nombre completo",
+    "dni": "DNI",
+    "n afiliado": "Número de afiliado",
+    "numero afiliado": "Número de afiliado",
+    "numero de afiliado": "Número de afiliado",
+    "obra social": "Obra social",
+    "fecha nacimiento": "Fecha de nacimiento",
+    "edad": "Edad",
+    "mail": "Correo electrónico",
+    "telefono": "Teléfono",
+    "cbu cvu": "CBU / CVU",
+    "grupo sanguineo": "Grupo sanguíneo",
+    "plan": "Plan",
+    "parentesco": "Parentesco",
+    "localidad": "Localidad",
+    "categoria": "Categoría",
+    "estudios": "Estudios",
+    "certificado": "Certificado de estudios",
+    "fechacargaestudio": "Fecha de carga de estudios",
+    "fecha carga estudio": "Fecha de carga de estudios",
+    "discapacidad": "Discapacidad",
+    "nivel discapacidad": "Nivel de discapacidad",
+    "cud": "CUD",
+    "seccion": "Módulo o prestación",
+    "detalle": "Observación",
+    "fecha reintegro": "Fecha de reintegro",
+    "monto": "Monto reintegrado",
+    "estado": "Estado",
+    "fecha carga": "Fecha de carga",
+    "fecha inicio": "Fecha de inicio",
+    "fecha vencimiento": "Fecha de vencimiento",
+    "fecha entrega": "Fecha de entrega",
+    "latas entregadas": "Latas entregadas",
+    "proxima carga": "Próxima carga",
+    "observaciones": "Observaciones",
+    "tipo medicamento": "Tipo de medicamento",
+    "ultimo pago": "Último pago",
+    "dias desde pago": "Días desde el pago"
+  };
+
+  return etiquetas[claveNormalizada] || clave
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/_/g, " ")
+    .replace(/^\w/, letra => letra.toLocaleUpperCase("es-AR"));
+}
+
+function claseColumna(clave) {
+  const claveNormalizada = normalizarClaveColumna(clave);
+  if (["nombre", "nombre completo"].includes(claveNormalizada)) return "report-cell-name";
+  if (claveNormalizada === "dni") return "report-cell-dni";
+  if (claveNormalizada === "cud") return "report-cell-cud";
+  if (["n afiliado", "numero afiliado", "numero de afiliado"].includes(claveNormalizada)) {
+    return "report-cell-affiliate";
+  }
+  return "";
+}
+
+function obtenerDatosFiltrados() {
+  const consulta = normalizarTexto(buscarReporteInput?.value || "");
+  if (!consulta) return datosReporteActual;
+
+  const columnasBuscables = new Set([
+    "nombre",
+    "nombre completo",
+    "dni",
+    "n afiliado",
+    "numero afiliado",
+    "numero de afiliado"
+  ]);
+
+  const terminos = consulta.split(/\s+/).filter(Boolean);
+  return datosReporteActual.filter(registro =>
+    Object.entries(registro).some(([clave, valor]) => {
+      const claveNormalizada = normalizarClaveColumna(clave);
+      if (!columnasBuscables.has(claveNormalizada)) return false;
+
+      const valorNormalizado = normalizarTexto(valor);
+      if (["nombre", "nombre completo"].includes(claveNormalizada)) {
+        return terminos.every(termino => valorNormalizado.includes(termino));
+      }
+      return valorNormalizado.includes(consulta);
+    })
+  );
+}
+
+buscarReporteInput?.addEventListener("input", () => renderizarTablaReporte());
 
 /* =====================
    UTILIDADES
@@ -79,6 +270,16 @@ function calcularEdad(fechaNacimiento) {
 
   if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) edad--;
   return edad;
+}
+
+function escaparHTML(valor) {
+  return String(valor ?? "").replace(/[&<>"']/g, caracter => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[caracter]);
 }
 
 function obtenerRangoFechas() {
@@ -183,7 +384,7 @@ async function cargarHijosSinCertificado() {
       estudios: a.estudios ? "Sí" : "No",
       certificado: a.adjuntoEstudios ? "PRESENTADO" : "NO PRESENTADO",
       fechacargaestudio: a.fechacargaestudio
-        ? new Date(a.fechacargaEstudio).toLocaleDateString("es-AR")
+        ? new Date(a.fechacargaestudio).toLocaleDateString("es-AR")
         : "-"
     }));
 
@@ -300,7 +501,7 @@ async function cargarDatosFaltantes() {
 
     reporteTitulo.textContent = "Afiliados con Datos Faltantes";
     document.getElementById("resumenReporte").innerHTML = `
-      <div style="margin-bottom:15px; font-weight:bold;">
+      <div class="report-summary">
         Sin mail: ${sinMail} |
         Sin teléfono: ${sinTel} |
         Sin CBU/CVU: ${sinCbu} |
@@ -326,19 +527,19 @@ async function cargarReporteReintegros() {
       <div class="filtro-reintegros">
         <div class="fila-filtros">
           <div>
-            <label>DNI Afiliado</label><br>
+            <label for="dniAfiliado">DNI Afiliado</label>
             <input type="number" id="dniAfiliado" placeholder="Ingrese DNI">
           </div>
           <div>
-            <label>Nombre</label><br>
+            <label for="nombreAfiliado">Nombre</label>
             <input type="text" id="nombreAfiliado" disabled>
           </div>
           <div>
-            <label>Desde</label><br>
+            <label for="fechaDesde">Desde</label>
             <input type="date" id="fechaDesde">
           </div>
           <div>
-            <label>Hasta</label><br>
+            <label for="fechaHasta">Hasta</label>
             <input type="date" id="fechaHasta">
           </div>
           <div>
@@ -347,7 +548,7 @@ async function cargarReporteReintegros() {
             </button>
           </div>
         </div>
-        <hr style="margin:20px 0;">
+        <hr class="report-divider">
       </div>
 
       <!-- Contenedor donde se mostrarán los resultados -->
@@ -432,8 +633,7 @@ async function cargarReporteReintegros() {
               .select(`reintegro, ${t.fecha}, ${t.detalle || "null"}`)
               .eq("afiliado_id", afiliadoActual.id)
               .not("reintegro", "is", null)
-              .gte(t.fecha, desdeISO)
-              .lte(t.fecha, hastaISO);
+              .or(`${t.fecha}.is.null,and(${t.fecha}.gte.${desdeISO},${t.fecha}.lte.${hastaISO})`);
 
             if (error) {
               console.error(`Error ${t.nombre}:`, error);
@@ -443,7 +643,7 @@ async function cargarReporteReintegros() {
             return data.map(r => ({
               seccion: t.nombre,
               detalle: t.detalle ? r[t.detalle] || "" : "",
-              fecha_reintegro: formatearFechaAR(r[t.fecha]),
+              fecha_reintegro: r[t.fecha] ? formatearFechaAR(r[t.fecha]) : "Sin fecha",
               monto: Number(r.reintegro) || 0
             }));
           } catch (e) {
@@ -457,12 +657,13 @@ async function cargarReporteReintegros() {
 
         // Mostrar resultados
         resultadosContenedor.innerHTML = `
-          <div style="font-weight:bold; margin-bottom:15px;">
-            Afiliado: ${afiliadoActual.nombre_completo}<br>
+          <div class="report-summary">
+            Afiliado: ${escaparHTML(afiliadoActual.nombre_completo)}<br>
             Periodo: ${formatearFechaAR(desde)} al ${formatearFechaAR(hasta)}<br><br>
             Total Reintegro: $${totalReintegro.toLocaleString("es-AR")}
           </div>
         `;
+        renderizarTablaReporte("No se encontraron reintegros para el período indicado.");
 
       } catch (err) {
         console.error(err);
@@ -493,11 +694,11 @@ async function cargarReporteInsulinodependientes() {
       <div class="filtro-reintegros">
         <div class="fila-filtros">
           <div>
-            <label>Desde</label><br>
+            <label for="fechaDesdeInsulina">Desde</label>
             <input type="date" id="fechaDesdeInsulina">
           </div>
           <div>
-            <label>Hasta</label><br>
+            <label for="fechaHastaInsulina">Hasta</label>
             <input type="date" id="fechaHastaInsulina">
           </div>
           <div>
@@ -506,7 +707,7 @@ async function cargarReporteInsulinodependientes() {
             </button>
           </div>
         </div>
-        <hr style="margin:20px 0;">
+        <hr class="report-divider">
       </div>
 
       <div id="resultadoReporte6"></div>
@@ -563,6 +764,7 @@ async function cargarReporteInsulinodependientes() {
 
         if (!data || data.length === 0) {
           datosReporteActual = [];
+          renderizarTablaReporte("No se encontraron registros de insulinodependientes en el período indicado.");
           Swal.fire("Sin resultados", "No se encontraron registros", "info");
           return;
         }
@@ -585,11 +787,12 @@ async function cargarReporteInsulinodependientes() {
         }));
 
         resultadoDiv.innerHTML = `
-          <div style="font-weight:bold; margin-bottom:15px;">
+          <div class="report-summary">
             Periodo: ${formatearFechaAR(desde)} al ${formatearFechaAR(hasta)} <br>
             Total registros: ${datosReporteActual.length}
           </div>
         `;
+        renderizarTablaReporte("No se encontraron registros de insulinodependientes en el período indicado.");
 
       } catch (err) {
         console.error(err);
@@ -693,7 +896,7 @@ async function cargarReporteCuotaSocial() {
     });
 
     document.getElementById("resumenReporte").innerHTML = `
-      <div style="margin-bottom:15px; font-weight:bold;">
+      <div class="report-summary">
         Total con cuota habilitada: ${jubiladosCuota.length} |
         Al día: ${alDia} |
         Vencidos: ${vencidos} |
@@ -711,9 +914,10 @@ async function cargarReporteCuotaSocial() {
    EXPORTACIONES
 ===================== */
 function exportarExcel() {
-  if (!datosReporteActual.length) return Swal.fire("Sin datos", "No hay datos para exportar", "info");
+  const registros = obtenerRegistrosParaExportar();
+  if (!registros.length) return Swal.fire("Sin datos", "No hay datos para exportar", "info");
 
-  const ws = XLSX.utils.json_to_sheet(datosReporteActual);
+  const ws = XLSX.utils.json_to_sheet(registros);
   const wb = XLSX.utils.book_new();
 
   const nombreHoja = reporteTitulo.textContent.substring(0, 31);
@@ -724,7 +928,8 @@ function exportarExcel() {
 }
 
 function exportarPDF() {
-  if (!datosReporteActual.length) return Swal.fire("Sin datos", "No hay datos para exportar", "info");
+  const registros = obtenerRegistrosParaExportar();
+  if (!registros.length) return Swal.fire("Sin datos", "No hay datos para exportar", "info");
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF("landscape");
@@ -732,8 +937,8 @@ function exportarPDF() {
   doc.setFontSize(14);
   doc.text(reporteTitulo.textContent, 14, 15);
 
-  const columnas = Object.keys(datosReporteActual[0]);
-  const filas = datosReporteActual.map(obj => Object.values(obj));
+  const columnas = Object.keys(registros[0]);
+  const filas = registros.map(obj => Object.values(obj));
 
   doc.autoTable({
     head: [columnas],
@@ -744,6 +949,12 @@ function exportarPDF() {
 
   const nombreArchivo = reporteTitulo.textContent.replace(/[^\w\s-]/g, "").replace(/\s+/g, "_");
   doc.save(`${nombreArchivo}.pdf`);
+}
+
+function obtenerRegistrosParaExportar() {
+  return obtenerDatosFiltrados().map(registro =>
+    Object.fromEntries(Object.entries(registro).map(([clave, valor]) => [etiquetaColumna(clave), valor ?? ""]))
+  );
 }
 
 /* =====================

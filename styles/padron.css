@@ -1,447 +1,383 @@
-/* RESET BÁSICO */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-body {
-  background: #f5f7fa;
-  color: #222;
-  min-height: 100vh;
-}
-
-/* MAIN */
 .padron-home {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 1rem;
-}
-
-/* BUSCADOR */
-.buscador-principal {
-  margin-bottom: 2rem;
-}
-
-.buscador-principal input {
+  display: grid;
   width: 100%;
-  padding: 1rem;
-  font-size: 1.2rem;
-  border-radius: 10px;
-  border: 1px solid #cbd5e1;
+  max-width: none;
+  gap: 1.25rem;
+  margin: 0;
+  padding: clamp(1rem, 2.5vw, 2.25rem);
 }
 
-.alerta-cud {
-  margin-top: 4px;
-  font-weight: 600;
-  color: #b91c1c;
+.buscador-principal,
+#nuevoAfiliadoSection {
+  min-width: 0;
+  padding: clamp(1.1rem, 2vw, 1.75rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
 }
 
-/* RESULTADOS */
+.buscador-principal {
+  position: relative;
+}
+
+.buscador-intro,
+.nuevo-afiliado-intro {
+  margin-bottom: 1.2rem;
+}
+
+.padron-eyebrow {
+  margin-bottom: 0.3rem;
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.buscador-intro h1,
+.nuevo-afiliado-intro h2 {
+  margin-bottom: 0.35rem;
+  color: var(--color-heading);
+  font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+  line-height: 1.25;
+}
+
+.buscador-intro > p:last-child,
+.nuevo-afiliado-intro > p:last-child {
+  color: #607286;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.buscador-principal form {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.buscador-principal input[type="search"] {
+  width: 100%;
+  min-height: 52px;
+  padding: 0.8rem 1rem;
+  border: 1px solid #bdcad8;
+  border-radius: var(--radius-control);
+  background: #fff;
+  color: var(--color-text);
+  font-size: 1rem;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.buscador-principal input[type="search"]:focus,
+.form-afiliado :is(input, select):focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+#searchHelp {
+  color: #687b8e;
+  font-size: 0.82rem;
+}
+
 .resultados-busqueda {
+  max-height: min(58vh, 620px);
   margin-top: 1rem;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,.05);
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.resultados-busqueda:empty { display: none; }
+.resultados-busqueda[aria-busy="true"],
+.resultados-busqueda:not(:has(.resultado-item)):not(:empty) {
+  padding: 1rem 1.1rem;
+  color: #607286;
+  font-size: 0.9rem;
 }
 
 .resultado-item {
-  padding: 0.8rem 1rem;
-  border-bottom: 1px solid #e5e7eb;
-  cursor: pointer;
-}
-
-.resultado-item:hover {
-  background: #f1f5f9;
-}
-
-.resultado-item strong {
   display: block;
-}
-
-/* ACCIONES */
-.acciones-principales {
-  margin-bottom: 1.5rem;
-}
-
-#btnNuevoAfiliado {
-  background: #2563eb;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  color: white;
-  border: none;
-  font-size: 1rem;
-  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid #e7edf3;
+  color: var(--color-text);
   cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.16s ease;
 }
 
-/* FORMULARIO */
+.resultado-item:last-child { border-bottom: 0; }
+.resultado-item:hover,
+.resultado-item:focus-visible { background: #f3f7fc; }
+.resultado-item:focus-visible { outline: 2px solid var(--color-primary); outline-offset: -2px; }
+
+.resultado-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.resultado-encabezado strong,
+.resultado-item > strong {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: var(--color-heading);
+  font-size: 0.98rem;
+}
+
+.resultado-item > strong > span {
+  flex: 0 0 auto;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.resultado-item > strong > span[style*="#16a34a"] {
+  background: #e8f6ee;
+  color: #237447 !important;
+}
+
+.resultado-item > strong > span[style*="#dc2626"] {
+  background: #fceceb;
+  color: #a53631 !important;
+}
+
+.estado-afiliado {
+  flex: 0 0 auto;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.estado-activo { background: #e8f6ee; color: #237447; }
+.estado-baja { background: #fceceb; color: #a53631; }
+
+.resultado-datos {
+  margin-top: 0.35rem;
+  color: #526579;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.alerta-cud,
+.alerta-edad,
+.alerta-sindicato {
+  margin-top: 0.45rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.alerta-cud,
+.alerta-edad { background: #fff5e5; color: #8c5100; }
+.alerta-sindicato { background: #edf4fc; color: #345b83; }
+
+.sin-resultados {
+  padding: 1rem 1.1rem;
+  color: #607286;
+  font-size: 0.9rem;
+}
+
+.acciones-principales {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+#btnNuevoAfiliado,
+.btn-cartilla,
+.form-actions button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-size: 0.9rem;
+  font-weight: 650;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+#btnNuevoAfiliado,
+.form-actions button[type="submit"] {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+#btnNuevoAfiliado:hover,
+.form-actions button[type="submit"]:hover { background: #1b4f9f; }
+
+.btn-cartilla,
+#btnCancelarNuevo {
+  border-color: #cbd6e2;
+  background: #fff;
+  color: #27496d;
+}
+
+.btn-cartilla:hover,
+#btnCancelarNuevo:hover { background: #edf3fa; }
+
+#btnNuevoAfiliado:focus-visible,
+.btn-cartilla:focus-visible,
+.form-actions button:focus-visible {
+  outline: 3px solid rgba(36, 95, 189, 0.25);
+  outline-offset: 2px;
+}
+
 #nuevoAfiliadoSection {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.08);
-}
-
-#nuevoAfiliadoSection h2 {
-  margin-bottom: 1rem;
+  scroll-margin-top: 1rem;
 }
 
 .form-afiliado {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 235px), 1fr));
+  align-items: start;
   gap: 1rem;
 }
 
-.form-afiliado input {
-  padding: 0.6rem;
-  border-radius: 6px;
-  border: 1px solid #cbd5e1;
+.form-afiliado > :is(input, select),
+.form-afiliado .floating-field > input,
+.form-afiliado .floating-field > select,
+.form-afiliado > div:not(.checkbox-field):not(.form-actions):not(#planMaternoFields):not(#fechasDiscapacidad) > select,
+.form-afiliado > div:not(.checkbox-field):not(.form-actions):not(#planMaternoFields):not(#fechasDiscapacidad) > input {
+  width: 100%;
+  min-width: 0;
+  min-height: 43px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #cbd6e2;
+  border-radius: var(--radius-control);
+  background: #fff;
+  color: var(--color-text);
+  font-size: 0.9rem;
 }
 
-.form-actions {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
+.form-afiliado input::placeholder { color: #8998a8; }
+.form-afiliado :is(input, select):disabled { background: #f1f4f7; color: #748397; }
 
-.form-actions button {
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-}
-
-.form-actions button[type="submit"] {
-  background: #16a34a;
-  color: white;
-}
-
-#btnCancelarNuevo {
-  background: #64748b;
-  color: white;
-}
-
-#estudiosField {
-  grid-column: 1 / -1;
-}
-
-#estudiosField select {
-  border: 1px solid #f59e0b;
-  background: #fff7ed;
-}
-
-.form-afiliado input,
-.form-afiliado select {
-  padding: 0.6rem;
-  border-radius: 6px;
-  border: 1px solid #cbd5e1;
-  background: white;
-}
-
-.floating-field {
-  position: relative;
-}
-
+.floating-field { position: relative; min-width: 0; }
 .floating-field label {
   position: absolute;
-  top: -8px;
-  left: 10px;
+  z-index: 1;
+  top: -0.48rem;
+  left: 0.65rem;
+  padding: 0 0.25rem;
   background: #fff;
-  padding: 0 4px;
-  font-size: 0.75rem;
-  color: #666;
+  color: #607286;
+  font-size: 0.73rem;
 }
-
-.fila-plan-categoria {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-}
-
-/* Campos plan materno ocultos por defecto */
-.plan-materno-field {
-  display: none;
-}
-
-/* ESTADO PLAN MATERNO ACTIVO */
-.fila-plan-categoria.plan-materno-activo {
-  grid-template-columns: 1.2fr 1.2fr 0.8fr 0.8fr;
-}
-
-/* Cuando está activo, mostrar fechas */
-.fila-plan-categoria.plan-materno-activo .plan-materno-field {
-  display: block;
-}
-
-/* Localidad baja a la fila de abajo */
-.fila-plan-categoria.plan-materno-activo #localidadSelect {
-  grid-column: 1 / span 2;
-}
-
-/* =========================
-   CHECKBOX DISCAPACIDAD
-========================= */
 
 .checkbox-field {
   display: flex;
+  min-height: 43px;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: #f8fafc;
 }
 
 .checkbox-field input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  min-height: auto;
-  padding: 0;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
   margin: 0;
-  accent-color: #2563eb; /* azul consistente */
-  cursor: pointer;
+  accent-color: var(--color-primary);
 }
 
-.checkbox-field label {
-  font-size: 0.9rem;
-  cursor: pointer;
-}
+.checkbox-field label { color: #40566d; font-size: 0.86rem; }
 
-#adjuntoEstudiosField {
-  grid-column: 1 / -1; /* ocupa todo el ancho del form */
-}
+#estudiosField,
+#adjuntoEstudiosField,
+#adjuntoDiscapacidadField,
+#fechasDiscapacidad,
+#planMaternoFields,
+.form-actions { grid-column: 1 / -1; }
 
-#adjuntoEstudiosField label {
-  display: block;
-  margin-bottom: 0.3rem;
-  font-size: 0.85rem;
-  color: #f59e0b; /* mismo color que estudios */
-}
-
-#adjuntoEstudiosField input[type="file"] {
-  border: 1px solid #f59e0b;
-  border-radius: 6px;
-  background: #fff7ed;
-  padding: 0.4rem;
-  cursor: pointer;
-}
-
-/* =========================
-   VIGENCIA CUD
-========================= */
-
+#planMaternoFields,
 #fechasDiscapacidad {
-  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 1rem;
-  align-items: end;
-  margin-top: 0.5rem;
-  padding: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 0.8rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 11px;
   background: #f8fafc;
-  border: 1px dashed #cbd5e1;
-  border-radius: 8px;
 }
 
-/* Labels flotantes más chicos */
-#fechasDiscapacidad .floating-field label {
-  font-size: 0.7rem;
-  color: #475569;
+#adjuntoEstudiosField,
+#adjuntoDiscapacidadField { display: grid; gap: 0.45rem; }
+#adjuntoEstudiosField label,
+#adjuntoDiscapacidadField label { color: #526579; font-size: 0.83rem; font-weight: 600; }
+
+.form-afiliado input[type="file"] {
+  width: 100%;
+  min-width: 0;
+  padding: 0.45rem;
+  border: 1px dashed #bdcad8;
+  border-radius: var(--radius-control);
+  background: #fff;
+  color: #526579;
 }
 
-/* Cuando el CUD es permanente */
-#fechasDiscapacidad.cud-permanente {
-  grid-template-columns: 1fr;
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin-top: 0.35rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e7edf3;
 }
-
-#fechasDiscapacidad .checkbox-field {
-  align-items: center;
-  padding-bottom: 6px;
-  white-space: nowrap;
-}
-
-/* =========================
-   TITULAR GRUPO FAMILIAR
-========================= */
 
 .titular-grupo {
-  grid-column: 1 / -1;         
-  font-size: 0.85rem;
-  color: #1e40af;               
-  background: #eff6ff;        
-  border: 1px solid #bfdbfe;
-  border-radius: 6px;
-  padding: 0.5rem 0.7rem;
-  line-height: 1.4;
-}
-
-.titular-grupo::before {
-  content: "👤 ";
-}
-
-.btn-cartilla {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  background: #2563eb;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-/* =========================
-   MOBILE ≤ 599px
-========================= */
-@media (max-width: 599px) {
-
-  .padron-home {
-    padding: 1rem;
-  }
-
-  .buscador-principal input {
-    width: 100%;
-    font-size: 1rem;
-    padding: 0.8rem;
-  }
-
-  .form-afiliado {
-    grid-template-columns: 1fr;
-  }
-
-  .form-afiliado input,
-  .form-afiliado select {
-    width: 100%;
-    min-height: 42px;
-  }
-
-  .checkbox-field {
-    gap: 0.4rem;
-  }
-
-  .checkbox-field label {
-    font-size: 0.85rem;
-  }
-
-  /* Campos full width */
-  #estudiosField,
-  .form-actions {
-    grid-column: 1 / -1;
-  }
-
-  /* Botones apilados */
-  .form-actions {
-    flex-wrap: wrap;
-  }
-
-  .form-actions button {
-    flex: 1 1 100%;
-  }
-
-  /* Resultados buscador */
-  .resultados-busqueda {
-    max-height: 60vh;
-    overflow-y: auto;
-  }
-
-  /* Fecha floating */
-  .floating-field input {
-    padding-top: 0.9rem;
-  }
-
-  .floating-field label {
-    font-size: 0.7rem;
-  }
-}
-
-#adjuntoDiscapacidadField {
   grid-column: 1 / -1;
-}
-
-#adjuntoDiscapacidadField label {
-  display: block;
-  margin-bottom: 0.3rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #c8d8ea;
+  border-radius: 9px;
+  background: #eef5fc;
+  color: #345b83;
   font-size: 0.85rem;
-  color: #f59e0b;
 }
 
-#adjuntoDiscapacidadField input[type="file"] {
-  border: 1px solid #f59e0b;
-  border-radius: 6px;
-  background: #fff7ed;
-  padding: 0.4rem;
-  cursor: pointer;
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
 }
 
-.alerta-edad {
-  margin-top: 4px;
-  color: #dc2626;
-  font-weight: 600;
-  font-size: 0.9rem;
+@media (max-width: 640px) {
+  .padron-home { padding: 0.85rem; gap: 0.9rem; }
+  .buscador-principal,
+  #nuevoAfiliadoSection { padding: 1rem; }
+  .acciones-principales { align-items: stretch; }
+  #btnNuevoAfiliado,
+  .btn-cartilla { flex: 1 1 100%; }
+  .form-afiliado { grid-template-columns: 1fr; }
+  .form-actions { flex-direction: column-reverse; }
+  .form-actions button { width: 100%; }
+  .resultado-encabezado { align-items: flex-start; flex-direction: column; gap: 0.4rem; }
 }
 
-#fechasDiscapacidad {
-  grid-template-columns: 1fr;
-}
-
-/* =========================
-   MENSAJE SIN RESULTADOS
-========================= */
-
-.sin-resultados {
-  padding: 18px 20px;
-  margin-top: 8px;
-  border-radius: 10px;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #64748b;
-  font-size: 14px;
-  text-align: center;
-  animation: fadeInResultados 0.2s ease-in-out;
-}
-
-@keyframes fadeInResultados {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* =========================
-   TABLET 600px → 899px
-========================= */
-@media (min-width: 600px) and (max-width: 899px) {
-
-  .padron-home {
-    padding: 1.5rem;
-  }
-
-  .form-afiliado {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  /* Botones en línea */
-  .form-actions button {
-    flex: 0 0 auto;
-  }
-}
-
-@media (max-width: 599px) {
-  #planMaternoFields {
-    grid-template-columns: 1fr; /* apilar verticalmente */
-  }
-
-  #planMaternoFields .floating-field input {
-    width: 100%;
-  }
+@media (prefers-reduced-motion: reduce) {
+  .resultado-item,
+  #btnNuevoAfiliado,
+  .btn-cartilla,
+  .form-actions button { transition: none; }
 }

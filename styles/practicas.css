@@ -2,22 +2,8 @@
 /* LISTA PRACTICAS */
 /* ========================= */
 
-.btn-nuevo-practicas{
-background-color: #2f80ed;
-color: white;
-margin-bottom: 1rem;
-}
-
-#listaPracticas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: start; /* alineadas a la izquierda */
-  margin-top: 20px;
-}
-
 /* Card individual */
-.practica-card {
+.module-container--practicas .practica-card{
   border: 1px solid #ddd;
   border-radius: 10px;
   background: #fff;
@@ -30,18 +16,18 @@ margin-bottom: 1rem;
   transition: all 0.2s ease;
 }
 
-.practica-card:hover {
+.module-container--practicas .practica-card:hover{
   transform: translateY(-3px);
   box-shadow: 0 6px 14px rgba(0,0,0,0.1);
 }
 
 /* Campos que ocupan toda la fila */
-.practica-card .full-width {
+.module-container--practicas .practica-card .full-width{
   grid-column: 1 / -1;
 }
 
 /* Labels */
-.practica-card label {
+.module-container--practicas .practica-card label{
   font-size: 13px;
   color: #333;
   margin-bottom: 4px;
@@ -49,7 +35,7 @@ margin-bottom: 1rem;
 }
 
 /* Título */
-.practica-card h4 {
+.module-container--practicas .practica-card h4{
   margin: 0 0 8px 0;
   font-size: 15px;
   font-weight: 600;
@@ -57,14 +43,14 @@ margin-bottom: 1rem;
 }
 
 /* Texto interno */
-.practica-card p {
+.module-container--practicas .practica-card p{
   margin: 0;
   font-size: 13px;
   color: #555;
 }
 
 /* Estado tipo badge */
-.practica-badge {
+.module-container--practicas .practica-badge{
   display: inline-block;
   padding: 3px 8px;
   font-size: 11px;
@@ -73,30 +59,30 @@ margin-bottom: 1rem;
   margin-bottom: 6px;
 }
 
-.badge-pendiente {
+.module-container--practicas .badge-pendiente{
   background: #fff3cd;
   color: #856404;
 }
 
-.badge-autorizada {
+.module-container--practicas .badge-autorizada{
   background: #d4edda;
   color: #155724;
 }
 
-.badge-rechazada {
+.module-container--practicas .badge-rechazada{
   background: #f8d7da;
   color: #721c24;
 }
 
 /* Botones dentro de la card */
-.practica-card .acciones {
+.module-container--practicas .practica-card .acciones{
   grid-column: 1 / -1;
   display: flex;
   gap: 6px;
   margin-top: 10px;
 }
 
-.practica-card button {
+.module-container--practicas .practica-card button{
   padding: 6px 10px;
   font-size: 12px;
   border-radius: 6px;
@@ -105,55 +91,22 @@ margin-bottom: 1rem;
   transition: 0.2s;
 }
 
-.btn-editar {
-  background: #007bff;
-  color: #fff;
-}
-
-.btn-editar:hover {
-  background: #0056b3;
-}
-
-.btn-eliminar {
-  background: #dc3545;
-  color: #fff;
-}
-
-.btn-eliminar:hover {
-  background: #a71d2a;
-}
-
-.form-card {
-  border: 1px solid #ddd !important;
-  border-radius: 10px !important;
-  padding: 20px !important;
-  margin-bottom: 20px !important;
-  background: #fff !important;
-  width: 450px !important;
-}
-
 /* ===================== */
 /* GRID */
 /* ===================== */
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
-}
 
 /* ===================== */
 /* GRUPOS */
 /* ===================== */
 
-.form-group label {
+.module-container--practicas .form-group label{
   font-size: 14px;
   margin-bottom: 5px;
   color: #333;
 }
 
 /* Campos que ocupan toda la fila */
-.full-width {
+.module-container--practicas .full-width{
   grid-column: 1 / -1;
 }
 
@@ -161,17 +114,7 @@ margin-bottom: 1rem;
 /* INPUTS */
 /* ===================== */
 
-.form-group input,
-.form-group select,
-.form-group textarea {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 6px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-input[type="file"] {
+.module-container--practicas input[type="file"]{
   border: 1px solid #f59e0b;
   border-radius: 6px;
   background: #fff7ed;
@@ -181,74 +124,18 @@ input[type="file"] {
   box-sizing: border-box;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #1976d2;
-}
-
 /* ===================== */
 /* BOTONES */
 /* ===================== */
 
-.form-actions {
+.module-container--practicas .form-actions{
   margin-top: 20px;
   display: flex;
   gap: 10px;
 }
 
-/* Guardar */
-.btn-guardar {
-  background-color: #1976d2;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s ease;
-}
-
-.btn-guardar:hover {
-  background-color: #155fa0;
-}
-
-/* Cancelar */
-.btn-cancelar {
-  background-color: #e53935;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s ease;
-}
-
-.btn-cancelar:hover {
-  background-color: #c62828;
-}
-
-/* Secundario (Agregar adjunto, etc) */
-.btn-secundario {
-  background-color: #f5f5f5;
-  color: #333;
-  border: 1px solid #ccc;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background 0.2s ease;
-}
-
-.btn-secundario:hover {
-  background-color: #e0e0e0;
-}
-
 /* Adjuntos individuales */
-.adjunto-item,
-.adjunto-item-nuevo {
+.module-container--practicas .adjunto-item, .module-container--practicas .adjunto-item-nuevo{
   display: flex;
   align-items: center;
   gap: 0.3rem;
@@ -258,30 +145,14 @@ input[type="file"] {
   background-color: #fff;
 }
 
-/* Botón agregar adjunto */
-.practica-card .btn-agregar-adjunto-card {
-  align-self: start;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  background-color: #f5f5f5;
-  cursor: pointer;
-}
-
-.practica-card .btn-agregar-adjunto-card:hover {
-  background-color: #e0e0e0;
-}
-
 /* Fecha reintegro */
-.practica-card .fecha-reintegro {
+.module-container--practicas .practica-card .fecha-reintegro{
   grid-column: 1 / -1; /* ocupa toda la fila */
 }
 
 
 /* Adjuntos */
-.practica-card .adjuntos-card,
-.practica-card .adjuntos-nuevos-card {
+.module-container--practicas .practica-card .adjuntos-card, .module-container--practicas .practica-card .adjuntos-nuevos-card{
   grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
@@ -289,15 +160,7 @@ input[type="file"] {
   margin-top: 6px;
 }
 
-/* ===================== */
-/* UTILIDADES */
-/* ===================== */
-
-.oculto {
-  display: none !important;
-}
-
-.card .acciones {
+.module-container--practicas .card .acciones{
     display: flex !important;
     justify-content: flex-end !important;
     gap: 0.4rem !important;
@@ -305,21 +168,20 @@ input[type="file"] {
 }
 
 /* CARD SUPERIOR - GRID DE 2 COLUMNAS */
-.card-internacion {
+.module-container--practicas .card-internacion{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 0.5rem 1rem;
   align-items: start;
 }
 
-.card-internacion > div {
+.module-container--practicas .card-internacion > div{
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-.card-internacion input,
-.card-internacion select {
+.module-container--practicas .card-internacion input, .module-container--practicas .card-internacion select{
   width: 100%;
   padding: 0.35rem 0.5rem;
   border-radius: 4px;
@@ -333,14 +195,14 @@ input[type="file"] {
 /* ===================== */
 /* Estado expandido */
 
-.card.expandida {
+.module-container--practicas .card.expandida{
   max-height: 1000px; /* suficientemente grande */
   opacity: 1;
   transform: translateY(0);
   margin-left: 20px;
 }
 
-#listaPracticas .card-extra {
+.module-container--practicas #listaPracticas .card-extra{
   display: grid !important;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px 16px;
@@ -350,20 +212,16 @@ input[type="file"] {
   transition: max-height 0.3s ease, opacity 0.3s ease;
 }
 
-.card-extra .full-width {
+.module-container--practicas .card-extra .full-width{
   grid-column: 1 / -1; /* los que deben ocupar toda la fila */
 }
 
-#listaPracticas .card-extra.mostrar {
+.module-container--practicas #listaPracticas .card-extra.mostrar{
   max-height: 1000px;
   opacity: 1;
 }
 
-.hidden {
-  display: none; /* Oculta completamente */
-}
-
-.toggle-card {
+.module-container--practicas .toggle-card{
   background: none;
   border: none;
   color: #2563eb;
@@ -373,67 +231,38 @@ input[type="file"] {
   transition: color 0.2s ease;
 }
 
-.toggle-card:hover {
-  color: #1d4ed8;
-}
-
-.card-extra-hidden {
+.module-container--practicas .card-extra-hidden{
   max-height: 0;
   opacity: 0;
   overflow: hidden;
   transition: max-height 0.3s ease, opacity 0.3s ease;
 }
 
-.card-extra.mostrar {
+.module-container--practicas .card-extra.mostrar{
   max-height: 1000px;
   opacity: 1;
 }
 
-.card-grid {
+.module-container--practicas .card-grid{
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* dos columnas iguales */
   gap: 12px 16px; /* filas y columnas */
   align-items: start;
 }
 
-.card-grid .full-width {
+.module-container--practicas .card-grid .full-width{
   grid-column: 1 / -1; /* ocupa toda la fila */
 }
 
-.card-grid input,
-.card-grid select,
-.card-grid textarea {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.card-extra.mostrar *,
-.card-extra.mostrar button {
+.module-container--practicas .card-extra.mostrar *, .module-container--practicas .card-extra.mostrar button{
   pointer-events: auto;
 }
 
-.card-extra.mostrar {
+.module-container--practicas .card-extra.mostrar{
   overflow: visible;
   pointer-events: auto;
 }
 
-#listaPracticas .card-extra .full-width {
+.module-container--practicas #listaPracticas .card-extra .full-width{
   grid-column: 1 / -1 !important;
-}
-
-/* ===================== */
-/* TEXTAREA CARD - ANCHO COMPLETO */
-#listaPracticas .card-extra textarea,
-#listaPracticas .card-extra textarea:read-only {
-    width: 100% !important;          /* fuerza ancho completo */
-    max-width: 100% !important;      /* evita que algún max-width lo limite */
-    box-sizing: border-box !important; /* incluye padding y borde */
-    display: block !important;
-    min-height: 80px;                /* altura mínima decente */
-    resize: vertical;                /* permite ajustar solo verticalmente */
-}
-
-.adjunto-item button,
-.adjunto-item-nuevo button {
-    cursor: pointer;
 }

@@ -1,153 +1,11 @@
 /* INTERNACIONES - Estilo */
 
-.btn-nuevo-internacion {
-  background-color: #2f80ed;
-  color: white;
-  margin-bottom: 1rem;
-  cursor: pointer;
-}
-
 /* FORMULARIO */
-.form-card_internacion {
-  border: 1px solid #ddd !important;
-  border-radius: 10px !important;
-  padding: 20px !important;
-  margin-bottom: 20px !important;
-  background: #fff !important;
-  max-width: 40% !important;
-}
-
-.adjuntos-nuevos_internacion {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
-  align-items: center;
-  padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  background-color: #fff;
-  min-width: 380px;
-}
-
-/* Input file */
-input[type="file"] {
-  border: 1px solid #f59e0b;
-  border-radius: 6px;
-  background: #fff7ed;
-  padding: 0.4rem;
-  cursor: pointer;
-  max-width: 100%;
-}
-
-/* Formulario Internaciones */
-#formInternacion {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem; /* espacio entre filas y columnas */
-  align-items: start;
-  margin-top: 0rem;
-}
-
-/* Cada fila es una celda del grid */
-#formInternacion .form-row {
-  display: flex;
-  flex-direction: column; /* label arriba del input */
-  width: 100%;
-}
-
-/* Inputs y selects ocupan todo el ancho de su celda */
-#formInternacion select,
-#formInternacion textarea {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-
-/* Textarea grande ocupa 2 columnas */
-#observacionesInternacion {
-  grid-column: span 2;
-}
-
-/* Adjuntos ocupan todas las columnas */
-#btnAgregarAdjuntoFormInternacion {
-  cursor: pointer;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-  transition: opacity 0.2s ease, transform 0.1s ease;
-  max-width: 160px;
-}
-
-/* Botones de acción ocupan toda la fila */
-#formInternacion .form-actions {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-start;
-}
-
-/* estilo de botón nuevo / cancelar */
-#btnNuevaInternacion,
-#btnCancelarInternacion {
-  cursor: pointer;
-}
-
-#internacionesSection h2 {
+.module-container--internaciones #internacionesSection h2{
   margin-bottom: 1rem;
 }
 
-.form-row {
-  margin-bottom: 0.8rem;
-  flex-direction: column;
-}
-
-.form-row label {
-  font-size: 0.85rem;
-  margin-bottom: 0.3rem;
-}
-
-.form-row input,
-.form-row select,
-.form-row textarea {
-  padding: 0.4rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 0.9rem;
-}
-
-.form-actions button {
-  padding: 0.5rem 1rem;
-  margin: 0.3rem 0.1rem;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-}
-
-.form-actions button.guardar {
-  background-color: #27ae60;
-  color: white;
-}
-
-.form-actions button#btnCancelarInternacion {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.oculto {
-  display: none !important;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-}
-
-.card select[name="lugar_internacion_id"] {
+.module-container--internaciones .card select[name="lugar_internacion_id"]{
   width: 100%;
   padding: 4px 6px;
   font-size: 0.9rem;
@@ -157,18 +15,8 @@ input[type="file"] {
 }
 
 /* CONTENEDOR DE INTERNACIONES */
-#contenedorInternaciones {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px !important;
-  width: 100%;
-  align-items: start;
-  padding: 10px;
-  box-sizing: border-box;
-}
-
 /* CADA CARD */
-#contenedorInternaciones > .card {
+.module-container--internaciones #contenedorInternaciones > .card{
   position: relative;
   width: 100%;
   min-width: 0;
@@ -181,7 +29,7 @@ input[type="file"] {
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.card {
+.module-container--internaciones .card{
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 15px;
@@ -192,59 +40,38 @@ input[type="file"] {
   width: 100%;;
 }
 
-.card .acciones {
+.module-container--internaciones .card .acciones{
   display: flex !important;
   justify-content: flex-end !important;
   gap: 0.4rem !important;
 }
 
-.card .acciones button {
-  margin-right: 0.3rem;
-}
-
-.card input[readonly],
-.card textarea[readonly] {
+.module-container--internaciones .card input[readonly], .module-container--internaciones .card textarea[readonly]{
   background-color: #eee;
 }
 
 /* GRID DE FECHAS Y CAMPOS EN CARD */
-.card-extra .grid-fechas {
+.module-container--internaciones .card-extra .grid-fechas{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 0.5rem 1rem;
   align-items: start;
 }
 
-.card-extra .grid-fechas > div {
+.module-container--internaciones .card-extra .grid-fechas > div{
   display: flex;
   flex-direction: column;
 }
 
-.card-extra input,
-.card-extra select,
-.card-extra textarea {
-  width: 100%;
-  padding: 0.35rem 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 0.85rem;
-  box-sizing: border-box;
-}
-
-.card-extra textarea[name="observaciones"] {
-  grid-column: span 2;
-  min-height: 80px;
-}
-
 /* ADJUNTOS CARD */
-.adjuntos-lista, .adjuntos-nuevos {
+.module-container--internaciones .adjuntos-lista, .module-container--internaciones .adjuntos-nuevos{
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
   max-width: 340px;
 }
 
-.adjunto-item, .adjunto-item-nuevo {
+.module-container--internaciones .adjunto-item, .module-container--internaciones .adjunto-item-nuevo{
   display: flex;
   align-items: center;
   gap: 0.2rem;
@@ -256,38 +83,28 @@ input[type="file"] {
 
 
 /* CARD SUPERIOR - GRID DE 2 COLUMNAS */
-.card-internacion {
+.module-container--internaciones .card-internacion{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 0.5rem 1rem;
   align-items: start;
 }
 
-.card-internacion > div {
+.module-container--internaciones .card-internacion > div{
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-.card-internacion input,
-.card-internacion select {
-  width: 100%;
-  padding: 0.35rem 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 0.85rem;
-  box-sizing: border-box;
-}
-
 /* BOTÓN VER MÁS */
 /* Estado expandido */
-.card.expandida .card-extra {
+.module-container--internaciones .card.expandida .card-extra{
   max-height: 1000px;
   opacity: 1;
   transform: translateY(0);
 }
 
-.toggle-card {
+.module-container--internaciones .toggle-card{
   background: none;
   border: none;
   color: #2563eb;
@@ -295,8 +112,4 @@ input[type="file"] {
   padding: 4px 0;
   cursor: pointer;
   transition: color 0.2s ease;
-}
-
-.toggle-card:hover {
-  color: #1d4ed8;
 }

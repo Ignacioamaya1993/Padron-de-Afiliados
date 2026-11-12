@@ -1,52 +1,8 @@
 /* ATENCIÓN DOMICILIARIA */
 
 /*boton nueva atencion*/
-.btn-nuevo-atencion{
-background-color: #2f80ed;
-color: white;
-margin-bottom: 1rem;
-}
-
-/* Card del formulario */
-.form-card_atencion {
-  border: 1px solid #ddd !important;
-  border-radius: 10px !important;
-  padding: 20px !important;
-  margin-bottom: 20px !important;
-  background: #fff !important;
-  max-width: 30% !important;
-}
-
-.adjuntos-nuevos_atencion {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 8px;
-    margin-right: 400px;
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    background-color: #fff;
-    min-width: 380px;
-}
-
-/* Input file */
-input[type="file"] {
-  border: 1px solid #f59e0b;
-  border-radius: 6px;
-  background: #fff7ed;
-  padding: 0.4rem;
-  cursor: pointer;
-  max-width: 100%;
-}
-
 /* Grid principal del formulario */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-}
-
-.card-titulo-atencion {
+.module-container--atencionDomiciliaria .card-titulo-atencion{
   font-size: 1rem;
   color: #0f172a;
   border-bottom: 1px solid #e5e7eb;
@@ -55,10 +11,7 @@ input[type="file"] {
 }
 
 /* Estilos botones */
-.btn-principal,
-.btn-guardar,
-.btn-cancelar,
-.btn-eliminar-adjunto {
+.module-container--atencionDomiciliaria .btn-principal{
   padding: 8px 14px;
   border-radius: 6px;
   border: none;
@@ -66,22 +19,23 @@ input[type="file"] {
   font-size: 14px;
 }
 
-.btn-principal {
+.module-container--atencionDomiciliaria .btn-principal{
   background: #2f6fed;
   color: #fff;
 }
-.btn-principal:hover {
+
+.module-container--atencionDomiciliaria .btn-principal:hover{
   background: #2457bd;
 }
 
 /* Campo reintegro (solo edición) */
-.campo-reintegro {
+.module-container--atencionDomiciliaria .campo-reintegro{
   display: flex;
   gap: 20px;
   margin-top: 10px;
 }
 
-.campo-reintegro > div {
+.module-container--atencionDomiciliaria .campo-reintegro > div{
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -91,23 +45,15 @@ input[type="file"] {
 /* LISTADO DE CARDS */
 /* =============================== */
 
-.atencion-domiciliaria {
+.module-container--atencionDomiciliaria .atencion-domiciliaria{
   display: flex;
   max-width: none;
   flex-direction: column;
   flex: 1;
 }
 
-#listaAtencionDomiciliaria {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: flex-start;
-  flex: 1;
-}
-
 /* Card individual */
-.card {
+.module-container--atencionDomiciliaria .card{
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 15px;
@@ -117,19 +63,19 @@ input[type="file"] {
 }
 
 /* Header card */
-.card-header {
+.module-container--atencionDomiciliaria .card-header{
   font-size: 16px;
   margin-bottom: 8px;
 }
 
 /* Body */
-.card-body p {
+.module-container--atencionDomiciliaria .card-body p{
   margin: 4px 0;
   font-size: 14px;
 }
 
 /* Acciones card */
-.card .acciones {
+.module-container--atencionDomiciliaria .card .acciones{
   margin-top: 10px;
   text-align: right;
   display: flex;
@@ -137,100 +83,49 @@ input[type="file"] {
   flex-wrap: wrap;
 }
 
-/* Botones dentro de cards */
-.card .editar,
-.card .guardar,
-.card .cancelar,
-.card .eliminar {
-    cursor: pointer;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-    transition: opacity 0.2s ease, transform 0.1s ease;
-}
-
 /* Adjuntos dentro de cards */
-.adjuntos-card {
+.module-container--atencionDomiciliaria .adjuntos-card{
   display: flex;
   flex-direction: column;
   gap: 5px;
   margin-top: 8px;
 }
 
-.adjuntos-card a {
+.module-container--atencionDomiciliaria .adjuntos-card a{
   text-decoration: none;
   color: #2f6fed;
 }
 
-/* =====================
-   PAGINACIÓN CENTRADA
-===================== */
-
-.paginacion {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: auto;
-
-}
-
-.campo label {
+.module-container--atencionDomiciliaria .campo label{
   font-size: 14px;
   color: #333;
   margin-bottom: 4px;
   display: block;
 }
 
-.adjuntos-nuevos_atencion {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-    align-items: center;
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    background-color: #fff;
-    min-width: 380px;
-}
-
-.form-card_atencion select,
-.form-card_atencion textarea {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-
-.form-card_atencion textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
 /* ===================== */
 /* CARD COLAPSABLE */
 /* ===================== */
 
-.card-extra {
+.module-container--atencionDomiciliaria .card-extra{
   overflow: hidden;
   transition: max-height 0.35s ease, opacity 0.25s ease;
   max-height: 0;
   opacity: 0;
 }
 
-.card:not(.expandida) .card-extra {
+.module-container--atencionDomiciliaria .card:not(.expandida) .card-extra{
   max-height: 0;
   opacity: 0;
   pointer-events: none;
 }
 
-.card.expandida .card-extra {
+.module-container--atencionDomiciliaria .card.expandida .card-extra{
   max-height: 2000px;
   opacity: 1;
 }
 
-.toggle-card {
+.module-container--atencionDomiciliaria .toggle-card{
   background: none;
   border: none;
   color: #2563eb;
@@ -240,22 +135,7 @@ input[type="file"] {
   margin-top: 6px;
 }
 
-.toggle-card:hover {
-  color: #1d4ed8;
-}
-
-.card textarea[name="observacion"] {
-    max-width: 100% !important;
-    width: 100% !important;
-}
-
-.card-destacada {
-  border: 3px solid #2f80ed !important;
-  box-shadow: 0 0 18px rgba(47, 128, 237, 0.6);
-  animation: destacarAnim 1.2s ease-in-out 2;
-}
-
-.campo-reintegro {
+.module-container--atencionDomiciliaria .campo-reintegro{
   grid-column: span 2;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));

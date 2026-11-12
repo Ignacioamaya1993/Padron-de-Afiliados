@@ -1,18 +1,6 @@
-<style>
-/* Mover todo a la izquierda */
-main, section {
-  max-width: none;
-  margin: 0;
-}
-
-#listaMaterialesOrtopedicos {
-  justify-content: start;
-}
-</style>
-
 <section class="materiales-ortopedicos">
 
-  <button id="btnNuevoMaterialOrtopedico" class="btn-nuevo-materiales">
+  <button id="btnNuevoMaterialOrtopedico" class="btn-nuevo">
     + Nuevo Material Ortopédico
   </button>
 
@@ -34,7 +22,7 @@ main, section {
   <select name="tipo_material_id"
           id="tipoMaterialOrtopedico">
 
-    <option value="">Seleccionar...</option>
+    <option value="">Seleccione tipo de material</option>
 
   </select>
 </div>
@@ -44,13 +32,14 @@ main, section {
 
   <input type="text"
          name="otro_material"
-         id="otroMaterialInput">
+         id="otroMaterialInput"
+         placeholder="Especifique el material">
 </div>
 
   <!-- Número carga -->
   <div class="campo">
     <label>Número de carga</label>
-    <input type="text" name="numero_carga">
+    <input type="text" name="numero_carga" placeholder="Ingrese nro. de carga">
   </div>
 
   <!-- Fecha autorización -->
@@ -68,7 +57,7 @@ main, section {
   <!-- Lugar compra -->
   <div class="campo">
     <label>Lugar donde se compra</label>
-    <input type="text" name="lugar_compra">
+    <input type="text" name="lugar_compra" placeholder="Ingrese lugar de compra">
   </div>
 
   <!-- Fecha recepción -->
@@ -78,49 +67,33 @@ main, section {
   </div>
 
   <!-- REINTEGRO -->
-  <div id="grupoReintegroMaterial"
-       class="campo full">
+  <div class="campo">
+    <label>Reintegro</label>
+    <input type="number" name="reintegro" step="0.01" placeholder="Opcional">
+  </div>
 
-    <div class="form-grid">
-
-      <div class="campo">
-        <label>Reintegro</label>
-
-        <input type="number"
-               name="reintegro"
-               step="0.01"
-               placeholder="Opcional">
-      </div>
-
-      <div class="campo">
-        <label>Fecha reintegro</label>
-
-        <input type="date"
-               name="fecha_reintegro">
-      </div>
-
-    </div>
-
+  <div class="campo">
+    <label>Fecha reintegro</label>
+    <input type="date" name="fecha_reintegro">
   </div>
 
   <!-- Observación -->
-  <div class="campo full">
+  <div class="form-group full-width">
     <label>Observación</label>
-    <textarea name="observacion"></textarea>
+    <textarea name="observacion" placeholder="Ingrese observación"></textarea>
   </div>
 
   <!-- Adjuntos -->
-  <div class="campo full">
+  <div class="bloque-adjuntos">
 
     <label>Adjuntar documentos</label>
 
     <div id="adjuntosMaterialesContainer"
-         class="adjuntos-nuevos_materiales">
+         class="adjuntos-nuevos">
     </div>
 
     <button type="button"
-            id="btnAgregarAdjuntoMaterial"
-            class="adjuntos-nuevos_materiales">
+            id="btnAgregarAdjuntoMaterial">
       ➕ Agregar adjunto
     </button>
 

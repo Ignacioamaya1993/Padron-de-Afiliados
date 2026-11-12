@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { configurarPaginacionCards } from "./card-pagination.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
@@ -43,7 +44,7 @@ const registroADestacar = params.get("registro")
   // ESTADO
   // =====================
   let paginaActual = 0;
-  const POR_PAGINA = 10;
+  let porPagina = 3;
   let archivosAdjuntos = [];
 
   // =====================
@@ -53,6 +54,12 @@ const registroADestacar = params.get("registro")
   const btnNuevo = document.getElementById("btnNuevaAtencion");
   const btnCancelar = document.getElementById("btnCancelarAtencion");
   const lista = document.getElementById("listaAtencionDomiciliaria");
+  const obtenerPorPagina = configurarPaginacionCards(lista.closest(".module-container"), lista, cantidad => {
+    porPagina = cantidad;
+    paginaActual = 0;
+    cargarAtenciones();
+  });
+  porPagina = obtenerPorPagina();
   const adjuntosContainer = document.getElementById("adjuntosAtencionContainer");
   const btnAgregarAdjunto = document.getElementById("btnAgregarAdjuntoAtencion");
   const campoReintegro = form.querySelector(".campo-reintegro");
@@ -76,7 +83,7 @@ const registroADestacar = params.get("registro")
 
     // Limpiar y popular el select
     const select = form.tipo_atencion_id;
-    select.innerHTML = `<option value="">Seleccionar</option>`;
+    select.innerHTML = `<option value="">Seleccione tipo de atención</option>`;
     tiposAtencion.forEach(t => {
       const opt = document.createElement("option");
       opt.value = t.id;
@@ -129,8 +136,8 @@ const registroADestacar = params.get("registro")
   // CARGAR LISTADO
   // =====================
   async function cargarAtenciones() {
-    const desde = paginaActual * POR_PAGINA;
-    const hasta = desde + POR_PAGINA - 1;
+    const desde = paginaActual * porPagina;
+    const hasta = desde + porPagina - 1;
 
     const { data: registros, error, count } = await supabase
       .from("atencion_domiciliaria")
@@ -171,7 +178,7 @@ if (registroADestacar) {
   const posicion = await obtenerPosicionAtencion(registroADestacar);
 
   if (posicion !== null) {
-    const paginaCorrecta = Math.floor(posicion / POR_PAGINA);
+    const paginaCorrecta = Math.floor(posicion / porPagina);
 
     if (paginaCorrecta !== paginaActual) {
       paginaActual = paginaCorrecta;
@@ -513,7 +520,7 @@ if (e.target.classList.contains("eliminar")) {
     const contenedor = document.getElementById("paginacionAtencionDomiciliaria");
     contenedor.innerHTML = "";
 
-const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
 
     const btnAnterior = document.createElement("button");
     btnAnterior.textContent = "⬅ Anterior";

@@ -7,9 +7,7 @@
   <title>Padrón de Afiliados – Luz y Fuerza Olavarría</title>
     <link rel="icon" type="image/png" href="../assets/images/Solo_logo.png">
 
-  <link rel="stylesheet" href="../styles/global.css">
-  <link rel="stylesheet" href="../styles/footer.css" />
-  <link rel="stylesheet" href="../styles/header.css" />
+  <link rel="stylesheet" href="../styles/common.css">
   <link rel="stylesheet" href="../styles/padron.css" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -24,8 +22,14 @@
 <main class="padron-home">
 
   <!-- BUSCADOR PRINCIPAL -->
-<section class="buscador-principal">
-  <form autocomplete="off" onsubmit="return false;">
+<section class="buscador-principal" aria-labelledby="tituloBuscador">
+  <div class="buscador-intro">
+    <p class="padron-eyebrow">Gestión de afiliados</p>
+    <h1 id="tituloBuscador">Buscar afiliados</h1>
+    <p>Consultá por nombre, DNI o número de afiliado para abrir su ficha.</p>
+  </div>
+  <form role="search" autocomplete="off" onsubmit="return false;">
+    <label class="visually-hidden" for="searchInput">Nombre, DNI o número de afiliado</label>
     <input
       type="search"
       id="searchInput"
@@ -35,19 +39,23 @@
       autocorrect="off"
       autocapitalize="off"
       spellcheck="false"
+      aria-describedby="searchHelp"
     />
+    <small id="searchHelp">Ingresá al menos 3 caracteres. Podés combinar palabras del nombre en cualquier orden.</small>
   </form>
+  <div id="resultadosBusqueda" class="resultados-busqueda" aria-live="polite" aria-busy="false"></div>
 </section>
 
   <!-- ACCIONES -->
   <section class="acciones-principales">
-    <button id="btnNuevoAfiliado">
+    <button id="btnNuevoAfiliado" type="button" aria-controls="nuevoAfiliadoSection" aria-expanded="false">
       ➕ Nuevo afiliado
     </button>
 
       <a 
     href="https://cartilla-medica-rho.vercel.app/" 
     target="_blank" 
+    rel="noopener noreferrer"
     class="btn-cartilla"
   >
     🏥 Ver Cartilla Médica
@@ -56,8 +64,12 @@
   </section>
 
   <!-- FORMULARIO NUEVO AFILIADO -->
-  <section id="nuevoAfiliadoSection" style="display:none;">
-    <h2>Nuevo Afiliado</h2>
+  <section id="nuevoAfiliadoSection" aria-labelledby="tituloNuevoAfiliado" style="display:none;">
+    <div class="nuevo-afiliado-intro">
+      <p class="padron-eyebrow">Alta de registro</p>
+      <h2 id="tituloNuevoAfiliado">Nuevo afiliado</h2>
+      <p>Completá los datos para incorporar una persona al padrón.</p>
+    </div>
 
     <form id="PadronForm" class="form-afiliado">
 
@@ -93,7 +105,7 @@
     </div>
 
       <input
-        type="mail"
+        type="email"
         name="mail"
         placeholder="Correo electrónico"
         autocomplete="email"
@@ -146,8 +158,9 @@
       <!-- 🔹 SEXO  -->
       <select name="sexo" required>
         <option value="">Sexo</option>
-        <option value="F">F</option>
-        <option value="M">M</option>
+        <option value="F">Femenino</option>
+        <option value="M">Masculino</option>
+        <option value="NB">No binario</option>
       </select>
 
         <!-- 🔹 GRUPO SANGUÍNEO (opcional) -->

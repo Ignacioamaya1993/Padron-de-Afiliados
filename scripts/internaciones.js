@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { configurarPaginacionCards } from "./card-pagination.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
@@ -36,7 +37,7 @@ const carpetaAfiliado = afiliado?.numero_afiliado
   ===================== */
   let editandoId = null;
   let archivosAdjuntos = [];
-  const POR_PAGINA = 12;
+  let porPagina = 3;
   let paginaActual = 0;
 
   /* =====================
@@ -47,6 +48,12 @@ const carpetaAfiliado = afiliado?.numero_afiliado
   const form = document.getElementById("formInternacion");
   const contenedor = document.getElementById("contenedorInternaciones");
   const paginacion = document.getElementById("paginacionInternaciones");
+  const obtenerPorPagina = configurarPaginacionCards(contenedor.closest(".module-container"), contenedor, cantidad => {
+    porPagina = cantidad;
+    paginaActual = 0;
+    cargarInternaciones();
+  });
+  porPagina = obtenerPorPagina();
   const tipoSelect = document.getElementById("tipoInternacion");
   const lugarSelect = document.getElementById("lugarInternacion");
   const btnAgregarAdjuntoForm = document.getElementById("btnAgregarAdjuntoFormInternacion");
@@ -63,7 +70,7 @@ const carpetaAfiliado = afiliado?.numero_afiliado
       .order("nombre");
     if (errTipos) console.error(errTipos);
 
-    tipoSelect.innerHTML = `<option value="">Seleccione...</option>`;
+    tipoSelect.innerHTML = `<option value="">Seleccione tipo de internación</option>`;
     tipos?.forEach(t => {
       const opt = document.createElement("option");
       opt.value = t.id;
@@ -78,7 +85,7 @@ const carpetaAfiliado = afiliado?.numero_afiliado
       .order("nombre");
     if (errLugares) console.error(errLugares);
 
-    lugarSelect.innerHTML = `<option value="">Seleccione...</option>`;
+    lugarSelect.innerHTML = `<option value="">Seleccione lugar</option>`;
     lugares?.forEach(l => {
       const opt = document.createElement("option");
       opt.value = l.id;
@@ -129,7 +136,7 @@ const carpetaAfiliado = afiliado?.numero_afiliado
         .select("*", { count: "exact" })
         .eq("afiliado_id", afiliadoId)
         .order("fecha_carga", { ascending: false })
-        .range(paginaActual * POR_PAGINA, paginaActual * POR_PAGINA + POR_PAGINA - 1);
+        .range(paginaActual * porPagina, paginaActual * porPagina + porPagina - 1);
 
       if (error) return console.error(error);
 
@@ -289,7 +296,7 @@ return `
 function renderPaginacion(total) {
   paginacion.innerHTML = "";
 
-  const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+  const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
 
     // Si no hay registros
   if (totalPaginas === 0) {

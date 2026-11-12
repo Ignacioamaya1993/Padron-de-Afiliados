@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { configurarPaginacionCards } from "./card-pagination.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
@@ -28,7 +29,7 @@ const carpetaAfiliado = afiliado?.numero_afiliado
   : "afiliados/sin_numero/materiales_ortopedicos";
 
   let paginaActual = 0;
-  const POR_PAGINA = 10;
+  let porPagina = 3;
   let archivosAdjuntos = [];
 
   const btnNuevo = document.getElementById("btnNuevoMaterialOrtopedico");
@@ -36,10 +37,15 @@ const carpetaAfiliado = afiliado?.numero_afiliado
   const form = document.getElementById("formMaterialOrtopedico");
   const lista = document.getElementById("listaMaterialesOrtopedicos");
   const paginacion = document.getElementById("paginacionMaterialesOrtopedicos");
+  const obtenerPorPagina = configurarPaginacionCards(lista.closest(".module-container"), lista, cantidad => {
+    porPagina = cantidad;
+    paginaActual = 0;
+    cargarMateriales();
+  });
+  porPagina = obtenerPorPagina();
   const adjuntosContainer = document.getElementById("adjuntosMaterialesContainer");
   const btnAgregarAdjunto = document.getElementById("btnAgregarAdjuntoMaterial");
   const tipoSelect = document.getElementById("tipoMaterialOrtopedico");
-  const grupoReintegro = document.getElementById("grupoReintegroMaterial");
   const campoOtroMaterial = document.getElementById("campoOtroMaterial");
   const otroMaterialInput = document.getElementById("otroMaterialInput");
 
@@ -54,7 +60,7 @@ const carpetaAfiliado = afiliado?.numero_afiliado
       .select("id, nombre")
       .order("nombre");
 
-tipoSelect.innerHTML = `<option value="">Seleccionar...</option>`;
+tipoSelect.innerHTML = `<option value="">Seleccione tipo de material</option>`;
 
 data?.forEach(t => {
   const opt = document.createElement("option");
@@ -137,7 +143,7 @@ tipoSelect.appendChild(otros);
       .select("*", { count: "exact" })
       .eq("afiliado_id", afiliadoId)
       .order("fecha_carga", { ascending: false })
-      .range(paginaActual * POR_PAGINA, paginaActual * POR_PAGINA + POR_PAGINA - 1);
+      .range(paginaActual * porPagina, paginaActual * porPagina + porPagina - 1);
 
     lista.innerHTML = "";
     renderPaginacion(count);
@@ -593,7 +599,7 @@ btnNuevo.addEventListener("click", () => {
   function renderPaginacion(total) {
 
     paginacion.innerHTML = "";
-const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
 
     const btnAnterior = document.createElement("button");
     btnAnterior.textContent = "⬅ Anterior";

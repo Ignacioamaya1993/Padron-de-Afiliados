@@ -1,85 +1,78 @@
-  <style>
-/* Mover todo a la izquierda */
-main, section {
-  max-width: none;      /* quita el límite de ancho */
-  margin: 0;            /* elimina el centrado automático */
-}
-
-#lista {
-  justify-content: start; /* pega las cards al borde izquierdo */
-}
-</style>
-
 <!-- INTERNACIONES -->
 <section id="internacionesSection">
 
   <!-- Botón para nuevo registro -->
-  <button id="btnNuevaInternacion" class="btn-nuevo-internacion">+ Nueva Internación</button>
+  <button id="btnNuevaInternacion" class="btn-nuevo">+ Nueva Internación</button>
 
   <!-- Formulario oculto -->
   <form id="formInternacion" class="form-card_internacion oculto">
-    <div class="form-row">
+    <div class="form-grid">
+    <div class="form-group">
       <label for="tipoInternacion">Tipo de internación</label>
-      <select id="tipoInternacion" required></select>
+      <select id="tipoInternacion" required>
+        <option value="">Seleccione tipo de internación</option>
+      </select>
     </div>
 
-    <div class="form-row">
+    <div class="form-group">
       <label for="fechaCarga">Fecha Carga</label>
       <input type="date" id="fechaCarga" required>
     </div>
 
-        <div class="form-row">
+        <div class="form-group">
       <label for="nroAutorizacion">N° de Autorización</label>
-      <input type="text" id="nroAutorizacion">
+      <input type="text" id="nroAutorizacion" placeholder="Ingrese nro. de autorización">
     </div>
 
-        <div>
+        <div class="form-group">
       <label>Fecha Autorizacion</label>
     <input type="date" id="fechaAutorizacion" name="fecha_autorizacion">
     </div>
 
-    <div class="form-row">
+    <div class="form-group">
       <label for="nroCarga">N° de Carga</label>
-      <input type="text" id="nroCarga">
+      <input type="text" id="nroCarga" placeholder="Ingrese nro. de carga">
     </div>
 
-    <div class="form-row">
+    <div class="form-group">
       <label for="fechaOrden">Fecha Orden</label>
       <input type="date" id="fechaOrden">
     </div>
 
-    <div class="form-row">
+    <div class="form-group">
       <label for="fechaRecepcionOrden">Fecha Recepción Orden</label>
       <input type="date" id="fechaRecepcionOrden">
     </div>
 
-    <div class="form-row">
+    <div class="form-group">
       <label for="fechaTurno">Fecha Turno</label>
       <input type="date" id="fechaTurno">
     </div>
 
-    <div class="form-row">
+    <div class="form-group">
       <label for="fechaCirugia">Fecha Cirugía</label>
       <input type="date" id="fechaCirugia">
     </div>
 
-    <div class="form-row">
+    <div class="form-group">
       <label for="fechaAlta">Fecha Alta</label>
       <input type="date" id="fechaAlta">
     </div>
 
-    <div>
+    <div class="form-group">
       <label>Fecha Ingreso</label>
       <input type="date" id="fechaIngreso">
     </div>
 
-    <div class="form-row">
+    <div class="form-group">
       <label for="lugarInternacion">Lugar</label>
-      <select id="lugarInternacion" required></select>
+      <select id="lugarInternacion" required>
+        <option value="">Seleccione lugar</option>
+      </select>
     </div>
 
       <!-- REINTEGRO -->
-<div>
+<div class="form-group">
     <label>Reintegro</label>
     <input
         id="reintegroInternacion"
@@ -89,19 +82,21 @@ main, section {
         placeholder="Opcional">
 </div>
 
-    <div>
+    <div class="form-group">
       <label>Fecha reintegro</label>
       <input type="date"id="fechaReintegroInternacion"
        name="fecha_reintegro">    
       </div>
 
-    <div class="form-row full-width">
+    <div class="form-group full-width">
       <label for="observacionesInternacion">Observaciones</label>
-      <textarea id="observacionesInternacion" rows="3"></textarea>
+      <textarea id="observacionesInternacion" rows="3" placeholder="Ingrese observaciones"></textarea>
+    </div>
+
     </div>
 
     <!-- Adjuntos -->
-    <div class="form-row">
+    <div class="bloque-adjuntos">
       <label>Adjuntar Documentos</label>
       <div id="adjuntosFormListaInternacion"class="adjuntos-nuevos_internacion"></div>
       <button type="button" id="btnAgregarAdjuntoFormInternacion">➕ Agregar adjunto</button>
@@ -109,7 +104,7 @@ main, section {
 
     <div class="form-actions">
       <button type="submit" class="btn-guardar">💾 Guardar</button>
-      <button type="button" id="btnCancelarInternacion">Cancelar</button>
+      <button type="button" id="btnCancelarInternacion" class="btn-cancelar">Cancelar</button>
     </div>
   </form>
 

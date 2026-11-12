@@ -1,22 +1,7 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { configurarPaginacionCards } from "./card-pagination.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
-import { authObserver } from "./auth.js";
-
-import { generarNotificacionesMedicamentos } from "./notificaciones.js";
-
-authObserver(async (user) => {
-  if (user) {
-  const { data: usuario, error } = await supabase
-    .from("usuarios")
-    .select("*")
-    .ilike("email", user.email)
-    .single();
-  if (error) console.error("Error usuario:", error);
-
-    await generarNotificacionesMedicamentos(usuario);
-  }
-});
 
 export async function init(afiliadoId) {
   if (!afiliadoId) {
@@ -64,25 +49,35 @@ const registroADestacar = params.get("registro")
   let archivosAdjuntos = [];
 
   let paginaActual = 0;
-  const POR_PAGINA = 12;
+  let porPagina = 3;
+  let paginaNotificacionInicializada = false;
 
   /* =====================
      ELEMENTOS
   ===================== */
-  const btnNuevo = document.getElementById("btnNuevoMedicamento");
-  const btnCancelar = document.getElementById("btnCancelarMedicamento");
-  const btnAgregarAdjunto = document.getElementById("btnAgregarAdjunto");
+  const moduleRoot = document.querySelector(".module-container--medicamentos");
+  if (!moduleRoot) throw new Error("No se encontró el contenedor del módulo Medicamentos");
 
-  const form = document.getElementById("formMedicamento");
-  const lista = document.getElementById("listaMedicamentos");
+  const btnNuevo = moduleRoot.querySelector("#btnNuevoMedicamento");
+  const btnCancelar = moduleRoot.querySelector("#btnCancelarMedicamento");
+  const form = moduleRoot.querySelector("#formMedicamento");
+  const lista = moduleRoot.querySelector("#listaMedicamentos");
 
-  const tipoSelect = document.getElementById("tipoMedicamento");
-  const datosMedicamento = document.getElementById("datosMedicamento");
-  const campoLatas = document.getElementById("campoLatas");
-  const campoInicio = document.getElementById("campoInicio");
-  const campoVencimiento = document.getElementById("campoVencimiento");
-  const adjuntosContainer = document.getElementById("adjuntosContainer");
-  const campoInsumo = document.getElementById("campoInsumo");
+  const tipoSelect = moduleRoot.querySelector("#tipoMedicamento");
+  const datosMedicamento = moduleRoot.querySelector("#datosMedicamento");
+  const campoLatas = moduleRoot.querySelector("#campoLatas");
+  const campoInicio = moduleRoot.querySelector("#campoInicio");
+  const campoVencimiento = moduleRoot.querySelector("#campoVencimiento");
+  const adjuntosContainer = moduleRoot.querySelector("#adjuntosContainer");
+  const btnAgregarAdjunto = form.querySelector("#btnAgregarAdjunto");
+  const campoInsumo = moduleRoot.querySelector("#campoInsumo");
+
+  const obtenerPorPagina = configurarPaginacionCards(moduleRoot, lista, cantidad => {
+    porPagina = cantidad;
+    paginaActual = 0;
+    cargarMedicamentos();
+  });
+  porPagina = obtenerPorPagina();
 
   /* =====================
      TIPOS MEDICAMENTOS
@@ -212,14 +207,22 @@ function actualizarCamposPorTipo() {
   ===================== */
 async function cargarMedicamentos() {
 
-  const desde = paginaActual * POR_PAGINA;
-  const hasta = desde + POR_PAGINA - 1;
+  if (registroADestacar && !paginaNotificacionInicializada) {
+    paginaNotificacionInicializada = true;
+    const posicion = await obtenerPosicionMedicamento(registroADestacar);
+    if (posicion >= 0) {
+      paginaActual = Math.floor(posicion / porPagina);
+    }
+  }
+
+  const desde = paginaActual * porPagina;
+  const hasta = desde + porPagina - 1;
 
   const { data: meds, error, count } = await supabase
     .from("medicamentos")
     .select(`*, tipo_medicamentos(nombre)`, { count: "exact" })
     .eq("afiliado_id", afiliadoId)
-    .order("fecha_carga", { ascending: false })
+    .order("fecha_carga", { ascending: false, nullsFirst: false })
     .range(desde, hasta);
 
   if (error) return console.error(error);
@@ -267,7 +270,7 @@ card.innerHTML = `
 
     <div class="med-card-section grid-fechas">
       <div><label>Fecha de carga</label><input type="date" name="fecha_carga" readonly value="${fISO(med.fecha_carga)}"></div>
-      <div class="med-card-section"><label>Estado</label><input name="estado" readonly value="${med.estado ?? ""}"></div>
+      <div><label>Estado</label><input name="estado" readonly value="${med.estado ?? ""}"></div>
       <div><label>Fecha de autorización</label><input type="date" name="fecha_autorizacion" readonly value="${fISO(med.fecha_autorizacion)}"></div>
       <div><label>Fecha de entrega</label><input type="date" name="fecha_entrega" readonly value="${fISO(med.fecha_entrega)}"></div>
       <div><label>Próxima carga</label><input type="date" name="proxima_carga" readonly value="${fISO(med.proxima_carga)}"></div>
@@ -359,7 +362,7 @@ if (registroADestacar && med.id === registroADestacar) {
     // Puede estar en otra página
     const posicion = await obtenerPosicionMedicamento(registroADestacar);
     if (posicion !== null) {
-      paginaActual = Math.floor(posicion / POR_PAGINA);
+      paginaActual = Math.floor(posicion / porPagina);
       await cargarMedicamentos();
       return;
     }
@@ -385,7 +388,7 @@ async function obtenerPosicionMedicamento(idBuscado) {
     .from("medicamentos")
     .select("id")
     .eq("afiliado_id", afiliadoId)
-    .order("fecha_carga", { ascending: false });
+    .order("fecha_carga", { ascending: false, nullsFirst: false });
 
   if (error || !data) return null;
 
@@ -394,10 +397,10 @@ async function obtenerPosicionMedicamento(idBuscado) {
 
 function renderPaginacion(total) {
 
-  const contenedor = document.getElementById("paginacionMedicamentos");
+    const contenedor = moduleRoot.querySelector("#paginacionMedicamentos");
   contenedor.innerHTML = "";
 
-const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
   
   const btnAnterior = document.createElement("button");
   btnAnterior.textContent = "⬅ Anterior";
@@ -433,6 +436,11 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
     if (!card) return;
 
     const id = card.dataset.id;
+
+    if (e.target.closest(".btn-agregar-adjunto-card")) {
+      agregarAdjuntoInput(card.querySelector(".adjuntos-nuevos"), card._adjuntosNuevos);
+      return;
+    }
 
     // Bloqueo edición múltiple
     if (e.target.classList.contains("editar") && editandoId && editandoId !== id) {
@@ -476,11 +484,6 @@ if (e.target.classList.contains("editar")) {
 
       card.querySelectorAll(".btn-eliminar-adjunto").forEach(b => b.classList.remove("hidden"));
       card.querySelector(".adjuntos-edicion").classList.remove("hidden");
-
-      card.querySelector(".btn-agregar-adjunto-card")
-        .addEventListener("click", () => {
-          agregarAdjuntoInput(card.querySelector(".adjuntos-nuevos"), card._adjuntosNuevos);
-        });
 
       card.querySelector(".editar").classList.add("hidden");
       card.querySelector(".eliminar").classList.add("hidden");
@@ -718,6 +721,7 @@ form.addEventListener("submit", async e => {
     form.reset();
     resetAdjuntos();
     form.classList.add("hidden");
+    paginaActual = 0;
     cargarMedicamentos();
 
     Swal.fire({

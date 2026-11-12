@@ -2,81 +2,19 @@
 /* EXPEDIENTE DISCAPACIDAD */
 /* ============================== */
 
-.btn-nuevo-expediente{
-background-color: #2f80ed;
-color: white;
-margin-bottom: 1rem;
-}
-
-/* Input file */
-input[type="file"] {
-  border: 1px solid #f59e0b;
-  border-radius: 6px;
-  background: #fff7ed;
-  padding: 0.4rem;
-  cursor: pointer;
-  max-width: 100%;
-}
-
-.form-card_expediente {
-  border: 1px solid #ddd !important;
-  border-radius: 10px !important;
-  padding: 20px !important;
-  margin-bottom: 20px !important;
-  background: #fff !important;
-  max-width: 100% !important;
-}
-
-.form-card label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 600;
-}
-
-.form-card_expediente select,
-.form-card_expediente textarea {
-    width: 100%;
-    padding: 6px 8px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-
-.form-card_expediente textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-
-/* ============================== */
-/* GRIDS */
-/* ============================== */
-
-/* Grid principal del formulario */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-}
-
-.form-grid .full {
-  grid-column: 1 / -1;
-}
-
 /* ============================== */
 /* LISTADO CARDS */
 /* ============================== */
 
-.card {
+.module-container--expediente_discapacidad .card{
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 15px;
   background: #fff;
-  max-width: 1100px;
 }
 
-.card strong {
+.module-container--expediente_discapacidad .card strong{
   font-size: 1rem;
   color: #0f172a;
   border-bottom: 1px solid #e5e7eb;
@@ -84,45 +22,31 @@ input[type="file"] {
   margin-bottom: 8px;
 }
 
-.card label {
+.module-container--expediente_discapacidad .card label{
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 3px;
   display: block;
 }
 
-.card input,
-.card textarea {
-  width: 100%;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
-}
-
-.card textarea {
-  resize: vertical;
-  min-height: 70px;
-}
-
 /* ============================== */
 /* ACCIONES */
 /* ============================== */
 
-.acciones {
+.module-container--expediente_discapacidad .acciones{
   margin-top: 10px;
   display: flex;
   gap: 10px;
 }
 
-.acciones button {
+.module-container--expediente_discapacidad .acciones button{
   padding: 6px 10px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
 }
 
-.acciones button:hover {
+.module-container--expediente_discapacidad .acciones button:hover{
   opacity: 0.85;
 }
 
@@ -130,76 +54,32 @@ input[type="file"] {
 /* ADJUNTOS */
 /* ============================== */
 
-.adjuntos-card {
+.module-container--expediente_discapacidad .adjuntos-card{
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
-.adjunto-item {
+.module-container--expediente_discapacidad .adjunto-item{
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 5px;
 }
 
-.adjunto-item a {
+.module-container--expediente_discapacidad .adjunto-item a{
   text-decoration: none;
   color: #007bff;
 }
 
-.adjunto-item a:hover {
+.module-container--expediente_discapacidad .adjunto-item a:hover{
   text-decoration: underline;
-}
-
-.adjunto-item button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: red;
-}
-
-/* ============================== */
-/* PAGINACION */
-/* ============================== */
-
-.paginacion {
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.paginacion button {
-  padding: 5px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-}
-
-.paginacion button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ============================== */
-/* UTILIDADES */
-/* ============================== */
-
-.hidden {
-  display: none !important;
-}
-
-.card-destacada {
-  border: 3px solid #2f80ed !important;
-  box-shadow: 0 0 18px rgba(47, 128, 237, 0.6);
-  animation: destacarAnim 1.2s ease-in-out 2;
 }
 
 /* ===================== */
 /* CARD COLAPSABLE */
 /* ===================== */
 
-.card-extra {
+.module-container--expediente_discapacidad .card-extra{
   overflow: hidden;
   transition:
     max-height 0.35s ease,
@@ -207,20 +87,20 @@ input[type="file"] {
     transform 0.25s ease;
 }
 
-.card:not(.expandida) .card-extra {
+.module-container--expediente_discapacidad .card:not(.expandida) .card-extra{
   max-height: 0;
   opacity: 0;
   transform: translateY(-4px);
   pointer-events: none;
 }
 
-.card.expandida .card-extra {
+.module-container--expediente_discapacidad .card.expandida .card-extra{
   max-height: 1000px;
   opacity: 1;
   transform: translateY(0);
 }
 
-.toggle-card {
+.module-container--expediente_discapacidad .toggle-card{
   background: none;
   border: none;
   color: #2f80ed;

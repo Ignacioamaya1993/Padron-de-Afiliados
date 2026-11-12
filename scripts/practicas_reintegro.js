@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { configurarPaginacionCards } from "./card-pagination.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
@@ -28,7 +29,7 @@ const carpetaBase = afiliado?.numero_afiliado
   : "afiliados/sin_numero/practicas_reintegro";
 
   let paginaActual = 0;
-  const POR_PAGINA = 10;
+  let porPagina = 3;
   let archivosAdjuntos = [];
 
   const btnNuevo = document.getElementById("btnNuevaPracticaReintegro");
@@ -36,11 +37,15 @@ const carpetaBase = afiliado?.numero_afiliado
   const form = document.getElementById("formPracticaReintegro");
   const lista = document.getElementById("listaPracticasReintegro");
   const paginacion = document.getElementById("paginacionPracticasReintegro");
+  const obtenerPorPagina = configurarPaginacionCards(lista.closest(".module-container"), lista, cantidad => {
+    porPagina = cantidad;
+    paginaActual = 0;
+    cargarPracticas();
+  });
+  porPagina = obtenerPorPagina();
   const adjuntosContainer = document.getElementById("adjuntosPracticasContainer");
   const btnAgregarAdjunto = document.getElementById("btnAgregarAdjuntoPracticaReintegro");
   const tipoSelect = document.getElementById("tipoPracticaSelect");
-
-  const campoReintegro = form.querySelector(".prx-campo-reintegro");
 
   /* ===================== CARGAR TIPOS ===================== */
 
@@ -50,7 +55,7 @@ const carpetaBase = afiliado?.numero_afiliado
       .select("id, nombre")
       .order("nombre");
 
-    tipoSelect.innerHTML = `<option value="">Seleccione...</option>`;
+    tipoSelect.innerHTML = `<option value="">Seleccione tipo de práctica</option>`;
     data?.forEach(t => {
       const opt = document.createElement("option");
       opt.value = t.id;
@@ -112,8 +117,8 @@ const carpetaBase = afiliado?.numero_afiliado
       .eq("afiliado_id", afiliadoId)
       .order("fecha_carga", { ascending: false })
       .range(
-        paginaActual * POR_PAGINA,
-        paginaActual * POR_PAGINA + POR_PAGINA - 1
+        paginaActual * porPagina,
+        paginaActual * porPagina + porPagina - 1
       );
 
     lista.innerHTML = "";
@@ -493,7 +498,6 @@ btnCancelarCard.addEventListener("click", () => {
   btnNuevo.addEventListener("click", () => {
     form.reset();
     resetAdjuntos();
-    campoReintegro.classList.remove("hidden");
     form.classList.toggle("hidden");
   });
 
@@ -505,7 +509,7 @@ btnCancelarCard.addEventListener("click", () => {
 
   function renderPaginacion(total) {
     paginacion.innerHTML = "";
-const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
 
     const btnAnterior = document.createElement("button");
     btnAnterior.textContent = "⬅ Anterior";

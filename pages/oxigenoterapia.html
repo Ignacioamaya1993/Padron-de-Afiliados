@@ -1,20 +1,7 @@
-<style>
-/* Mover todo a la izquierda */
-main, section {
-  max-width: none;
-  margin: 0;
-}
-
-/* Lista de cards alineadas a la izquierda */
-#listaOxigenoterapia {
-  justify-content: start;
-}
-</style>
-
 <section class="oxigenoterapia">
 
   <!-- BOTÓN NUEVA -->
-  <button id="btnNuevaOxigenoterapia" class="btn-nuevo-oxigenoterapia">
+  <button id="btnNuevaOxigenoterapia" class="btn-nuevo">
     + Nueva Oxigenoterapia
   </button>
 
@@ -26,7 +13,7 @@ main, section {
       <div class="campo">
         <label for="tipoEquipoOxigenoterapia">Tipo equipo</label>
         <select id="tipoEquipoOxigenoterapia" name="tipoequipo_id" required>
-          <option value="">Seleccione</option>
+          <option value="">Seleccione tipo de equipo</option>
         </select>
       </div>
 
@@ -69,6 +56,7 @@ main, section {
         id="observacionOxigenoterapia" 
         name="observacion"
         rows="3"
+          placeholder="Ingrese observación"
       ></textarea>
     </div>
 

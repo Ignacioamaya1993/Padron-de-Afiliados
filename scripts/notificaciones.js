@@ -213,6 +213,13 @@ async function eliminarNotificacionesObsoletas(
 
 async function generarNotificacionesMedicamentos(usuario) {
 
+  // La preferencia se configura por usuario en Supabase.
+  if (
+    !usuario?.id ||
+    !Array.isArray(usuario.notificaciones) ||
+    !usuario.notificaciones.includes("medicamentos")
+  ) return;
+
   const registrosValidos = [];
 
   // =====================================================
@@ -288,6 +295,9 @@ async function generarNotificacionesMedicamentos(usuario) {
   // INSUMOS DE DIABETES
   // Aviso un mes antes de fecha_vencimiento
   // =====================================================
+
+  // No limpiar avisos con un resultado parcial si falla una consulta.
+  if (errorMeds) return;
 
   const limiteVencimiento = new Date();
 
@@ -391,6 +401,9 @@ async function generarNotificacionesMedicamentos(usuario) {
   // =====================================================
   // ELIMINAR NOTIFICACIONES OBSOLETAS
   // =====================================================
+
+  // La limpieza solo es segura si ambas consultas finalizaron bien.
+  if (errorInsumos) return;
 
   await eliminarNotificacionesObsoletas(
     usuario,
@@ -569,8 +582,9 @@ export async function generarNotificaciones(usuario) {
 
   try {
 
-    const tiposPermitidos =
-      usuario.notificaciones || [];
+    const tiposPermitidos = Array.isArray(usuario.notificaciones)
+      ? usuario.notificaciones
+      : [];
 
     if (
       tiposPermitidos.includes("medicamentos")
@@ -603,14 +617,14 @@ export async function generarNotificaciones(usuario) {
     const {
       count,
       error
-    } = await supabase
-      .from("notificaciones")
-      .select("*", {
-        count: "exact",
-        head: true
-      })
-      .eq("usuario_id", usuario.id)
-      .eq("leida", false);
+    } = tiposPermitidos.length
+      ? await supabase
+          .from("notificaciones")
+          .select("*", { count: "exact", head: true })
+          .eq("usuario_id", usuario.id)
+          .eq("leida", false)
+          .in("tipo", tiposPermitidos)
+      : { count: 0, error: null };
 
     if (!error) {
 

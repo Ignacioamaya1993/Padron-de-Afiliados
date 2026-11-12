@@ -2,69 +2,17 @@
 /* GENERAL */
 /* ===================== */
 
-section {
+.module-container--medicamentos section{
   display: flex;
   flex-direction: column;
   min-height: 55vh;
   align-items: flex-start;
 }
 
-.hidden {
-  display: none !important;
-}
-
-.form-card_med{
-    width: 70%;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-bottom: 15px;
-}
-
-.adjunto-item {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ddd;
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    background-color: #fff;
-    min-width: 380px;
-}
-
 /* ===================== */
 /* BOTONES */
 /* ===================== */
-button {
-  cursor: pointer !important;
-  border: none !important;
-  border-radius: 6px !important;
-  font-size: 0.9rem !important;
-  padding: 0.5rem 1rem !important;
-  transition: opacity 0.2s ease, transform 0.1s ease !important;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-button:active {
-  transform: scale(0.97);
-}
-
-.btn-nuevo-medicamento {
-  background-color: #2f80ed;
-  color: white;
-  margin-bottom: 1rem;
-}
-
-.adjuntos-medicamentos{
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.btn-guardar-medicamento{
+.module-container--medicamentos .btn-guardar-medicamento{
       padding: 0.5rem 1rem;
     margin: 0.3rem 0.1rem;
     border-radius: 5px;
@@ -74,7 +22,7 @@ button:active {
     color: white;
   }
 
-.btn-cancelar-medicamento{
+.module-container--medicamentos .btn-cancelar-medicamento{
     padding: 0.5rem 1rem;
     margin: 0.3rem 0.1rem;
     border-radius: 5px;
@@ -85,98 +33,37 @@ button:active {
 }
 
 /* Botón adjuntos */
-.btn-nuevoAdjunto {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  padding: 6px 10px;
-  font-weight: 600;
-  color: #065f46;
-  background-color: #ecfdf5;
-  border: 1px solid #34d399;
-  max-width: 170px;
-}
-
 /* ===================== */
 /* FORMULARIO */
 /* ===================== */
-.form-card_med {
-  border: 1px solid #ddd !important;
-  border-radius: 10px !important;
-  padding: 20px !important;
-  margin-bottom: 20px !important;
-  background: #fff !important;
-  max-width: 50% !important;
-}
-
-/* Inputs */
-form input {
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: #fff;
-  transition: border 0.2s ease;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-form select,
-form textarea {
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: #fff;
-  transition: border 0.2s ease;
-}
-
-/* Input file */
-input[type="file"] {
-  border: 1px solid #f59e0b;
-  border-radius: 6px;
-  background: #fff7ed;
-  padding: 0.4rem;
-  cursor: pointer;
-}
-
 /* ===================== */
 /* GRID MEDICAMENTO */
 /* ===================== */
-.grid-medicamento {
+.module-container--medicamentos .grid-medicamento{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.8rem;
   margin-top: 1rem;
 }
 
-.grid-medicamento > div {
+.module-container--medicamentos .grid-medicamento > div{
   display: flex;
   flex-direction: column;
 }
 
-.grid-medicamento label {
+.module-container--medicamentos .grid-medicamento label{
   font-size: 0.85rem;
   margin-bottom: 0.2rem;
 }
 
-.full-row {
+.module-container--medicamentos .full-row{
   grid-column: 1 / -1;
 }
 
 /* ===================== */
 /* CARDS MEDICAMENTOS */
 /* ===================== */
-#listaMedicamentos {
-  display: grid;
-  flex: 1;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 0.6rem;
-  width: 100%;
-}
-
-.card {
+.module-container--medicamentos .card{
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
@@ -188,7 +75,7 @@ input[type="file"] {
 }
 
 /* Contenedor interno de la card */
-.card .card-content {
+.module-container--medicamentos .card .card-content{
   display: flex;
   flex-direction: column;
   flex-grow: 1; /* ocupa todo el espacio disponible */
@@ -196,27 +83,27 @@ input[type="file"] {
 }
 
 /* Observaciones + adjuntos */
-.card .card-extra {
+.module-container--medicamentos .card .card-extra{
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
 }
 
 /* Card en edición */
-.card.editando {
+.module-container--medicamentos .card.editando{
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
   background: #f8fafc;
 }
 
 /* Título */
-.card strong {
+.module-container--medicamentos .card strong{
   font-size: 1rem;
   color: #0f172a;
 }
 
 /* Secciones */
-.med-card-section {
+.module-container--medicamentos .med-card-section{
   padding-top: 0.4rem;
   border-top: 1px solid #e5e7eb;
   margin-top: 0.2rem;
@@ -226,53 +113,16 @@ input[type="file"] {
   flex-shrink: 0;
 }
 
-/* Grids internos */
-.grid-fechas {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 0.3rem;
-}
-
-.grid-fechas label {
-  font-size: 0.85rem;
-  color: #000000;
-}
-
-.grid-fechas input {
-    background: #f8fafc;
-    padding: 0.5rem 0.7rem;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-}
-
 /* Observaciones card */
-.med-card-section textarea {
-  display: flex;
-  font-size: 0.8rem;
+.module-container--medicamentos .med-card-section textarea{
   background: #f1f5f9;
   border: 1px solid #e5e7eb;
-}
-
-.adjuntos-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  margin-top: 0.4rem;
-}
-
-.card-extra textarea,
-.card-extra .adjuntos-lista {
-  min-height: 80px;
-  min-width: 370px;
 }
 
 /* ===================== */
 /* ACCIONES CARD */
 /* ===================== */
-.card .acciones {
+.module-container--medicamentos .card .acciones{
   display: flex;
   justify-content: flex-end;
   gap: 0.4rem;
@@ -280,94 +130,32 @@ input[type="file"] {
 }
 
 /* Botones card */
-.card .editar {
-  background-color: #2563eb;
-  color: white;
-}
-
-.card .cancelar-edicion {
-  background-color: #e5e7eb;
-  color: #0f172a;
-}
-
-.card .eliminar {
-  background-color: #dc2626;
-  color: white;
-}
-
-.card input[readonly],
-.card textarea[readonly] {
+.module-container--medicamentos .card input[readonly], .module-container--medicamentos .card textarea[readonly]{
   background: #f5f5f5;
   border: 1px solid #ddd;
   cursor: default;
 }
 
-.card .editando {
+.module-container--medicamentos .card .editando{
   background: #fff;
   border: 1px solid #aaa;
 }
 
-.card input[readonly][type="date"] {
+.module-container--medicamentos .card input[readonly][type="date"]{
   pointer-events: none;
   background: #f5f5f5;
 }
 
-/* ===================== */
-/* PAGINACIÓN MEDICAMENTOS */
-/* ===================== */
-
-.paginacion {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 0px;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.paginacion button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 8px;
-  background-color: #2c7be5;
-  color: #fff;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.paginacion button:hover:not(:disabled) {
-  background-color: #1a68d1;
-  transform: translateY(-1px);
-}
-
-.paginacion button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.paginacion button:disabled {
-  background-color: #c5c5c5;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.paginacion span {
-  font-weight: 600;
-  color: #444;
-  font-size: 0.95rem;
-}
-
-.grid-medicamento > div:not(.form-actions) {
+.module-container--medicamentos .grid-medicamento > div:not(.form-actions){
   display: flex;
   flex-direction: column;
 }
 
-.full-row {
+.module-container--medicamentos .full-row{
   grid-column: span 1; /* NO ocupa todo el grid */
 }
 
-.form-actions {
+.module-container--medicamentos .form-actions{
   display: flex;
   gap: 0.6rem;
 }
@@ -376,7 +164,7 @@ input[type="file"] {
 /* ANIMACIÓN EXPANSIÓN */
 /* ===================== */
 
-.card-extra {
+.module-container--medicamentos .card-extra{
   overflow: hidden;
   transition: 
     max-height 0.35s ease,
@@ -385,7 +173,7 @@ input[type="file"] {
 }
 
 /* Estado colapsado */
-.card:not(.expandida) .card-extra {
+.module-container--medicamentos .card:not(.expandida) .card-extra{
   max-height: 0;
   opacity: 0;
   transform: translateY(-4px);
@@ -393,13 +181,13 @@ input[type="file"] {
 }
 
 /* Estado expandido */
-.card.expandida .card-extra {
+.module-container--medicamentos .card.expandida .card-extra{
   max-height: 1000px; /* suficientemente grande */
   opacity: 1;
   transform: translateY(0);
 }
 
-.toggle-card {
+.module-container--medicamentos .toggle-card{
   background: none;
   border: none;
   color: #2563eb;
@@ -409,59 +197,32 @@ input[type="file"] {
   transition: color 0.2s ease;
 }
 
-.toggle-card:hover {
-  color: #1d4ed8;
-}
-
-.card-destacada {
-  border: 3px solid #2f80ed !important;
-  box-shadow: 0 0 18px rgba(47, 128, 237, 0.6);
-  animation: destacarAnim 1.2s ease-in-out 2;
-}
-
-/* Textarea readonly ocupa todo el ancho de la card */
-#listaMedicamentos .card textarea[readonly] {
-  width: 100% !important;
-  box-sizing: border-box !important;
-  min-height: 80px !important;
-  min-width: 360px;
-}
-
 /* ===================== */
 /* MOBILE */
 /* ===================== */
 
-@media (max-width: 600px) {
-
-  section {
+@media (max-width: 600px){
+.module-container--medicamentos section{
     padding: 0.7rem;
   }
 
-  .grid-medicamento {
+.module-container--medicamentos .grid-medicamento{
     grid-template-columns: 1fr;
   }
 
-  .grid-fechas {
-    grid-template-columns: 1fr;
-  }
-
-  #listaMedicamentos {
-    grid-template-columns: 1fr;
-  }
-
-  .acciones {
+.module-container--medicamentos .acciones{
     flex-direction: column;
   }
 
-  .acciones button {
+.module-container--medicamentos .acciones button{
     width: 100%;
   }
 
-  .form-actions {
+.module-container--medicamentos .form-actions{
     flex-direction: column;
   }
 
-  .form-actions button {
+.module-container--medicamentos .form-actions button{
     width: 100%;
   }
 

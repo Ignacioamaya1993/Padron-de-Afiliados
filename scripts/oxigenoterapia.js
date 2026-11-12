@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { configurarPaginacionCards } from "./card-pagination.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
@@ -37,7 +38,7 @@ const carpetaBase = afiliado?.numero_afiliado
   ===================== */
 
   let paginaActual = 0;
-  const POR_PAGINA = 10;
+  let porPagina = 3;
 
   let archivosAdjuntos = [];
 
@@ -51,6 +52,12 @@ const carpetaBase = afiliado?.numero_afiliado
 const form = document.getElementById("formOxigenoterapiaForm");
 
   const lista = document.getElementById("listaOxigenoterapia");
+  const obtenerPorPagina = configurarPaginacionCards(lista.closest(".module-container"), lista, cantidad => {
+    porPagina = cantidad;
+    paginaActual = 0;
+    cargarOxigenoterapias();
+  });
+  porPagina = obtenerPorPagina();
 
   const tipoEquipoSelect = document.getElementById("tipoEquipoOxigenoterapia");
 
@@ -67,7 +74,7 @@ const form = document.getElementById("formOxigenoterapiaForm");
       .select("*")
       .order("nombre");
 
-    tipoEquipoSelect.innerHTML = `<option value="">Seleccione</option>`;
+    tipoEquipoSelect.innerHTML = `<option value="">Seleccione tipo de equipo</option>`;
 
     data.forEach(t => {
       const option = document.createElement("option");
@@ -131,8 +138,8 @@ const form = document.getElementById("formOxigenoterapiaForm");
 
   async function cargarOxigenoterapia() {
 
-    const desde = paginaActual * POR_PAGINA;
-    const hasta = desde + POR_PAGINA - 1;
+    const desde = paginaActual * porPagina;
+    const hasta = desde + porPagina - 1;
 
     const { data, count } = await supabase
       .from("oxigenoterapia")
@@ -454,7 +461,7 @@ console.log("TYPE:", typeof user.id);
     const contenedor = document.getElementById("paginacionOxigenoterapia");
     contenedor.innerHTML = "";
 
-const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
 
     const btnAnterior = document.createElement("button");
     btnAnterior.textContent = "⬅ Anterior";

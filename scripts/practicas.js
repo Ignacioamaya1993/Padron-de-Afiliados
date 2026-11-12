@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { configurarPaginacionCards } from "./card-pagination.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
@@ -38,7 +39,7 @@ const carpetaBase = afiliado?.numero_afiliado
 
   let editandoId = null;
   let paginaActual = 0;
-  const POR_PAGINA = 10;
+  let porPagina = 3;
 
   let archivosAdjuntos = [];
 
@@ -51,6 +52,12 @@ const carpetaBase = afiliado?.numero_afiliado
 
   const form = document.getElementById("formPractica");
   const lista = document.getElementById("listaPracticas");
+  const obtenerPorPagina = configurarPaginacionCards(lista.closest(".module-container"), lista, cantidad => {
+    porPagina = cantidad;
+    paginaActual = 0;
+    cargarPracticas();
+  });
+  porPagina = obtenerPorPagina();
 
   const tipoSelect = document.getElementById("tipoPractica");
   const campoKinesiologo = document.getElementById("grupoKinesiologo");
@@ -133,8 +140,8 @@ if (tipo === "resonancia" || tipo === "tomografia") {
   ===================== */
 
   async function cargarPracticas() {
-    const desde = paginaActual * POR_PAGINA;
-    const hasta = desde + POR_PAGINA - 1;
+    const desde = paginaActual * porPagina;
+    const hasta = desde + porPagina - 1;
 
     const { data: practicas, error, count } = await supabase
       .from("practicas")
@@ -538,7 +545,7 @@ if (p.tipo === "kinesiologia") {
     const contenedor = document.getElementById("paginacionPracticas");
     contenedor.innerHTML = "";
 
-    const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+    const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
 
     const btnAnterior = document.createElement("button");
     btnAnterior.textContent = "⬅ Anterior";

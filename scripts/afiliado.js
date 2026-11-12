@@ -307,6 +307,12 @@ if (idSpan === "mail" && afiliado.mail) {
   continue;
 }
 
+  if (idSpan === "sexo") {
+    const etiquetasSexo = { F: "Femenino", M: "Masculino", NB: "No binario" };
+    span.textContent = etiquetasSexo[afiliado.sexo] || afiliado.sexo || "-";
+    continue;
+  }
+
   if (columna.endsWith("_id")) {
     span.textContent = afiliado[columna]?.nombre || "-";
   } else {
@@ -667,7 +673,11 @@ async function entrarModoEdicion() {
   reemplazarPorInput("mail", afiliado.mail, "email");
   reemplazarPorInput("grupoFamiliarReal", afiliado.grupo_familiar_real);
   reemplazarPorSelect("parentesco", opciones.parentescos, parentescoNombre);
-  reemplazarPorSelect("sexo", ["F", "M"], afiliado.sexo);
+  reemplazarPorSelect("sexo", [
+    { value: "F", label: "F = Femenino" },
+    { value: "M", label: "M = Masculino" },
+    { value: "NB", label: "No binario" }
+  ], afiliado.sexo);
   reemplazarPorSelect("plan", opciones.planes, planNombre);
   reemplazarPorSelect("categoria", opciones.categorias, categoriaNombre);
   reemplazarPorSelect("localidad", opciones.localidades, localidadNombre);
@@ -1023,9 +1033,11 @@ function reemplazarPorSelect(id, opciones, valorActual, permitirVacio = false) {
 
   opciones.forEach(op => {
     const o = document.createElement("option");
-    o.value = op;
-    o.textContent = op;
-    if (valorActual === op) o.selected = true;
+    const value = typeof op === "string" ? op : op.value;
+    const label = typeof op === "string" ? op : op.label;
+    o.value = value;
+    o.textContent = label;
+    if (valorActual === value) o.selected = true;
     select.appendChild(o);
   });
 

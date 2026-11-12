@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { configurarPaginacionCards } from "./card-pagination.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
@@ -35,7 +36,7 @@ const carpetaAfiliado = afiliado?.numero_afiliado
   // ESTADO
   // =====================
   let paginaActual = 0;
-  const POR_PAGINA = 10;
+  let porPagina = 3;
   let archivosAdjuntos = [];
 
   // =====================
@@ -45,10 +46,14 @@ const carpetaAfiliado = afiliado?.numero_afiliado
     const btnCancelar = document.getElementById("btnCancelarOdontologia");
     const form = document.getElementById("formOdontologia");
     const lista = document.getElementById("listaOdontologia");
+    const obtenerPorPagina = configurarPaginacionCards(lista.closest(".module-container"), lista, cantidad => {
+      porPagina = cantidad;
+      paginaActual = 0;
+      cargarOdontologia();
+    });
+    porPagina = obtenerPorPagina();
     const adjuntosContainer = form.querySelector("#adjuntosContainer");
     const btnAgregarAdjunto = form.querySelector("#btnAgregarAdjunto");
-    const campoReintegro = form.querySelector(".campo-reintegro");
-    
     btnAgregarAdjunto.addEventListener("click", () => {
       agregarAdjuntoInput(false);
     });
@@ -99,8 +104,8 @@ const carpetaAfiliado = afiliado?.numero_afiliado
   // CARGAR REGISTROS
   // =====================
   async function cargarOdontologia() {
-    const desde = paginaActual * POR_PAGINA;
-    const hasta = desde + POR_PAGINA - 1;
+    const desde = paginaActual * porPagina;
+    const hasta = desde + porPagina - 1;
 
     const { data: registros, error, count } = await supabase
       .from("odontologia")
@@ -431,7 +436,7 @@ if (e.target.classList.contains("eliminar")) {
     const contenedor = document.getElementById("paginacionOdontologia");
     contenedor.innerHTML = "";
 
-const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
 
     const btnAnterior = document.createElement("button");
     btnAnterior.textContent = "⬅ Anterior";
@@ -455,14 +460,12 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
   btnNuevo.addEventListener("click", () => {
     form.reset();
     resetAdjuntos();
-    campoReintegro.classList.remove("hidden");
     form.classList.toggle("hidden");
   });
 
   btnCancelar.addEventListener("click", () => {
     form.reset();
     resetAdjuntos();
-    campoReintegro.classList.remove("hidden");
     form.classList.add("hidden");
   });
 
@@ -508,7 +511,6 @@ const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
 
     form.reset();
     resetAdjuntos();
-    campoReintegro.classList.remove("hidden");
     form.classList.add("hidden");
     cargarOdontologia();
 

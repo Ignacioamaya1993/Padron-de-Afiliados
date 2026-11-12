@@ -1,21 +1,8 @@
-  <style>
-/* Mover todo a la izquierda */
-main, section {
-  max-width: none;      /* quita el límite de ancho */
-  margin: 0;            /* elimina el centrado automático */
-}
-
-/* Lista de medicamentos (cards) alineadas a la izquierda */
-#listaDerivaciones {
-  justify-content: start; /* pega las cards al borde izquierdo */
-}
-</style>
-
 <!-- DERIVACIONES -->
 <section id="seccionDerivaciones">
 
   <!-- BOTÓN NUEVO -->
-  <button id="btnNuevaDerivacion" class="btn-nuevo-derivacion">
+  <button id="btnNuevaDerivacion" class="btn-nuevo">
     + Nueva Derivación
   </button>
 
@@ -32,7 +19,7 @@ main, section {
       <div class="form-group">
         <label>Tipo de Derivación</label>
         <select id="tipoDerivacion" required>
-          <option value="">Seleccione...</option>
+          <option value="">Seleccione tipo de derivación</option>
         </select>
       </div>
 
@@ -49,7 +36,7 @@ main, section {
 
       <div class="form-group">
         <label>Lugar</label>
-        <input type="text" id="lugar" />
+        <input type="text" id="lugar" placeholder="Ingrese lugar" />
       </div>
 
       <!-- Orden médica -->
@@ -87,7 +74,7 @@ main, section {
       <!-- Carga -->
       <div class="form-group">
         <label>N° Carga</label>
-        <input type="text" id="nroCarga" />
+        <input type="text" id="nroCarga" placeholder="Ingrese nro. de carga" />
       </div>
 
       <!-- Estado -->
@@ -109,7 +96,7 @@ main, section {
       <!-- Observaciones -->
       <div class="form-group full-width">
         <label>Observaciones</label>
-        <textarea id="observaciones" rows="3"></textarea>
+        <textarea id="observaciones" rows="3" placeholder="Ingrese observaciones"></textarea>
       </div>
 
           <!-- Adjuntos -->

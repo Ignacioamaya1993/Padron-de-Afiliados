@@ -1,5 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
+import { configurarPaginacionCards } from "./card-pagination.js";
 import { subirArchivoCloudinary } from "./cloudinary.js";
 
 export async function init(afiliadoId) {
@@ -37,7 +38,7 @@ const carpetaAfiliado = afiliado?.numero_afiliado
   ===================== */
   let editandoId = null;
   let archivosAdjuntos = [];
-  const POR_PAGINA = 12;
+  let porPagina = 3;
   let paginaActual = 0;
 
   /* =====================
@@ -48,6 +49,12 @@ const carpetaAfiliado = afiliado?.numero_afiliado
   const form = document.getElementById("formDerivacion");
   const contenedor = document.getElementById("contenedorDerivaciones");
   const paginacion = document.getElementById("paginacionDerivaciones");
+  const obtenerPorPagina = configurarPaginacionCards(contenedor.closest(".module-container"), contenedor, cantidad => {
+    porPagina = cantidad;
+    paginaActual = 0;
+    cargarDerivaciones();
+  });
+  porPagina = obtenerPorPagina();
   const tipoSelect = document.getElementById("tipoDerivacion");
   const btnAgregarAdjuntoForm = document.getElementById("btnAgregarAdjuntoForm");
   const adjuntosFormLista = document.getElementById("adjuntosFormLista");
@@ -63,7 +70,7 @@ const carpetaAfiliado = afiliado?.numero_afiliado
 
     if (error) return console.error(error);
 
-    tipoSelect.innerHTML = `<option value="">Seleccione...</option>`;
+    tipoSelect.innerHTML = `<option value="">Seleccione tipo de derivación</option>`;
     data.forEach(t => {
       const opt = document.createElement("option");
       opt.value = t.id;
@@ -118,7 +125,7 @@ const carpetaAfiliado = afiliado?.numero_afiliado
       .select("*", { count: "exact" })
       .eq("afiliado_id", afiliadoId)
       .order("fecha_inicio", { ascending: false })
-      .range(paginaActual * POR_PAGINA, paginaActual * POR_PAGINA + POR_PAGINA - 1);
+      .range(paginaActual * porPagina, paginaActual * porPagina + porPagina - 1);
 
     if (error) return console.error(error);
 
@@ -285,7 +292,7 @@ card.innerHTML = `
   ===================== */
   function renderPaginacion(total) {
     paginacion.innerHTML = "";
-const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
 
     const btnAnterior = document.createElement("button");
     btnAnterior.textContent = "⬅ Anterior";

@@ -4,7 +4,6 @@ import { subirArchivoCloudinary } from "./cloudinary.js";
 
 await cargarHeader();
 
-let buscando = false;
 let searchToken = 0;
 
 /* =====================
@@ -23,6 +22,16 @@ function calcularEdad(fechaNacimiento) {
   const m = hoy.getMonth() - fn.getMonth();
   if (m < 0 || (m === 0 && hoy.getDate() < fn.getDate())) edad--;
   return edad;
+}
+
+function escaparHTML(valor) {
+  return String(valor ?? "").replace(/[&<>"']/g, caracter => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[caracter]);
 }
 
 function obtenerAlertaCud(cuds) {
@@ -142,45 +151,6 @@ const cudPermanenteCheckbox = document.getElementById("cudPermanente");
 const cudVencimientoInput = f.querySelector('[name="cud_vencimiento"]');
 const adjuntoEstudiosField = document.getElementById("adjuntoEstudiosField");
 const afiliadoObraSocialCheckbox = document.getElementById("afiliadoObraSocial");
-const camposSoloObraSocial = [
-  f.querySelector('[name="plan_id"]'),
-  f.querySelector('[name="categoria_id"]'),
-  discapacidadCheckbox,
-  nivelDiscapacidadSelect,
-  estudiosSelect,
-  cudPermanenteCheckbox,
-  cudVencimientoInput,
-  f.querySelector('[name="plan_materno_desde"]'),
-  f.querySelector('[name="plan_materno_hasta"]')
-];
-
-function actualizarCamposObraSocial() {
-
-  const esAfiliado = afiliadoObraSocialCheckbox.checked;
-
-  camposSoloObraSocial.forEach(campo => {
-    if (!campo) return;
-
-    campo.disabled = !esAfiliado;
-
-    if (!esAfiliado) {
-      if (campo.type === "checkbox") {
-        campo.checked = false;
-      } else {
-        campo.value = "";
-      }
-    }
-  });
-
-  // Ocultar secciones visuales
-  estudiosField.style.display = esAfiliado ? estudiosField.style.display : "none";
-  adjuntoEstudiosField.style.display = "none";
-  adjuntoDiscapacidadField.style.display = "none";
-  fechasDiscapacidadDiv.style.display = "none";
-  planMaternoFields.style.display = "none";
-
-  actualizarEdadYAdjunto();
-}
 
 /* =====================
    CATÁLOGOS
@@ -281,7 +251,7 @@ function actualizarEdadYAdjunto() {
   // Manejo de discapacidad
     if (discapacidadCheckbox.checked && nivelDiscapacidadSelect.value) {
       adjuntoDiscapacidadField.style.display = "block";
-      fechasDiscapacidadDiv.style.display = "flex";
+      fechasDiscapacidadDiv.style.display = "grid";
       adjuntoDiscapacidadInput.required = true;
 
       // Si es permanente y tilda "sin vencimiento"
@@ -319,7 +289,7 @@ function actualizarPlanMaterno() {
     categoriaSelect.options[categoriaSelect.selectedIndex]?.text;
 
   if (selectedText === "Plan Materno") {
-    planMaternoFields.style.display = "flex";
+    planMaternoFields.style.display = "grid";
   } else {
     planMaternoFields.style.display = "none";
     f.plan_materno_desde.value = "";
@@ -334,7 +304,6 @@ estudiosSelect?.addEventListener("change", actualizarEdadYAdjunto);
 discapacidadCheckbox?.addEventListener("change", actualizarEdadYAdjunto);
 nivelDiscapacidadSelect?.addEventListener("change", actualizarEdadYAdjunto);
 cudPermanenteCheckbox.addEventListener("change", actualizarEdadYAdjunto);
-afiliadoObraSocialCheckbox.addEventListener("change", actualizarCamposObraSocial);
 
 /* =====================
    TITULAR DE GRUPO
@@ -402,9 +371,7 @@ numeroAfiliadoInput.addEventListener("input", async () => {
   - Muestra alertas de edad y jubilados
 */
 const searchInput = document.getElementById("searchInput");
-const resultadosDiv = document.createElement("div");
-resultadosDiv.className = "resultados-busqueda";
-searchInput.after(resultadosDiv);
+const resultadosDiv = document.getElementById("resultadosBusqueda");
 
 let debounce;
 
@@ -418,15 +385,19 @@ function manejarBusqueda() {
   const texto = searchInput.value
     .trim()
     .replace(/\s+/g, " ");
+  const token = ++searchToken;
 
   resultadosDiv.innerHTML = "";
+  resultadosDiv.setAttribute("aria-busy", "false");
 
   if (texto.length < 3) {
-    searchToken++;
+    if (texto.length > 0) resultadosDiv.textContent = "Ingresá al menos 3 caracteres para buscar.";
     return;
   }
 
-  debounce = setTimeout(() => buscarAfiliados(texto, ++searchToken), 300);
+  resultadosDiv.textContent = "Buscando afiliados…";
+  resultadosDiv.setAttribute("aria-busy", "true");
+  debounce = setTimeout(() => buscarAfiliados(texto, token), 300);
 }
 
 // Escucha TODOS los posibles disparadores
@@ -441,9 +412,6 @@ searchInput.addEventListener("input", manejarBusqueda);
   - Alertas por jubilación impaga
 */
 async function buscarAfiliados(texto, token) {
-  if (buscando) return;
-  buscando = true;
-
   try {
     const palabras = texto.split(" ");
 
@@ -498,12 +466,18 @@ if (!afiliados.length) {
       Obtiene los titulares de cada grupo familiar
       para poder mostrar relaciones correctamente
     */
-    const grupos = [...new Set(afiliados.map(a => a.grupo_familiar_codigo))];
-    const { data: titulares } = await supabase
-      .from("afiliados")
-      .select("nombre, apellido, grupo_familiar_codigo")
-      .in("grupo_familiar_codigo", grupos)
-      .ilike("numero_afiliado", "%/00");
+    const grupos = [...new Set(afiliados.map(a => a.grupo_familiar_codigo).filter(Boolean))];
+    let titulares = [];
+    if (grupos.length) {
+      const { data, error: errorTitulares } = await supabase
+        .from("afiliados")
+        .select("nombre, apellido, grupo_familiar_codigo")
+        .in("grupo_familiar_codigo", grupos)
+        .ilike("numero_afiliado", "%/00");
+      if (!errorTitulares && data) titulares = data;
+    }
+
+    if (token !== searchToken) return;
 
     const dicTitulares = {};
     titulares.forEach(t => {
@@ -518,7 +492,8 @@ if (!afiliados.length) {
       - Link a ficha del afiliado
     */
     afiliados.forEach(a => {
-      const textoParentesco = a.numero_afiliado.endsWith("/00") ? "Titular" : (dicParentescos[a.parentesco_id] || "N/A");
+      const numeroAfiliado = String(a.numero_afiliado || "");
+      const textoParentesco = numeroAfiliado.endsWith("/00") ? "Titular" : (dicParentescos[a.parentesco_id] || "N/A");
       const alertaCud = obtenerAlertaCud(a.cud_documentos);
       const alerta = obtenerAlertaHijo(a.fechaNacimiento, textoParentesco, a.estudios);
       const alertaJubilado = obtenerAlertaJubilado(a.categoria_id?.nombre, a.fecha_ultimo_pago_cuota, a.fechaNacimiento);      
@@ -536,22 +511,33 @@ if (!afiliados.length) {
       const div = document.createElement("div");
       div.className = "resultado-item";
       div.innerHTML = `
-        <strong>${a.nombre} ${a.apellido} ${estado}</strong><br>
-        DNI: ${a.dni || "-"} ${edad !== "" ? `| Edad: ${edad}` : ""}<br>
-        Afiliado: ${a.numero_afiliado} | ${textoParentesco}
+        <strong>${escaparHTML(a.nombre)} ${escaparHTML(a.apellido)} ${estado}</strong><br>
+        DNI: ${escaparHTML(a.dni || "-")} ${edad !== "" ? `| Edad: ${edad}` : ""}<br>
+        Afiliado: ${escaparHTML(numeroAfiliado)} | ${escaparHTML(textoParentesco)}
         ${marcaObraSocial}
-        ${alerta ? `<div class="alerta-edad">${alerta}</div>` : ""}
-        ${alertaJubilado ? `<div class="alerta-edad">${alertaJubilado}</div>` : ""}
-        ${alertaCud ? `<div class="alerta-cud">${alertaCud}</div>` : ""}
+        ${alerta ? `<div class="alerta-edad">${escaparHTML(alerta)}</div>` : ""}
+        ${alertaJubilado ? `<div class="alerta-edad">${escaparHTML(alertaJubilado)}</div>` : ""}
+        ${alertaCud ? `<div class="alerta-cud">${escaparHTML(alertaCud)}</div>` : ""}
       `;
-      div.onclick = () => location.href = `/pages/afiliado.html?id=${a.id}`;
+      div.setAttribute("role", "link");
+      div.tabIndex = 0;
+      const abrirFicha = () => location.href = `./afiliado.html?id=${encodeURIComponent(a.id)}`;
+      div.onclick = abrirFicha;
+      div.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          abrirFicha();
+        }
+      });
       resultadosDiv.appendChild(div);
     });
   } catch (e) {
     console.error(e);
-    Swal.fire("Error", "No se pudo buscar el afiliado", "error");
+    if (token === searchToken) {
+      resultadosDiv.textContent = "No se pudo realizar la búsqueda. Intentá nuevamente.";
+    }
   } finally {
-    buscando = false;
+    if (token === searchToken) resultadosDiv.setAttribute("aria-busy", "false");
   }
 }
 
@@ -879,8 +865,13 @@ const nuevoSection = document.getElementById("nuevoAfiliadoSection");
 btnNuevo.onclick = () => {
   nuevoSection.style.display = "block";
   btnNuevo.style.display = "none";
+  btnNuevo.setAttribute("aria-expanded", "true");
+  nuevoSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  f.querySelector('[name="nombre"]')?.focus({ preventScroll: true });
 };
 btnCancelar.onclick = () => {
   nuevoSection.style.display = "none";
-  btnNuevo.style.display = "inline-block";
+  btnNuevo.style.display = "inline-flex";
+  btnNuevo.setAttribute("aria-expanded", "false");
+  btnNuevo.focus();
 };

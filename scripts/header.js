@@ -297,12 +297,23 @@ export function actualizarNotificaciones(cantidad) {
 // CONTAR NO LEÍDAS
 // =====================
 
-async function actualizarNotificacionesBadge(usuarioId) {
+function obtenerTiposNotificacionPermitidos(usuario) {
+  return Array.isArray(usuario?.notificaciones) ? usuario.notificaciones : [];
+}
+
+async function actualizarNotificacionesBadge(usuario) {
+  const tiposPermitidos = obtenerTiposNotificacionPermitidos(usuario);
+  if (!usuario?.id || tiposPermitidos.length === 0) {
+    actualizarNotificaciones(0);
+    return;
+  }
+
   const { count, error } = await supabase
     .from("notificaciones")
     .select("*", { count: "exact", head: true })
-    .eq("usuario_id", usuarioId)
-    .eq("leida", false);
+    .eq("usuario_id", usuario.id)
+    .eq("leida", false)
+    .in("tipo", tiposPermitidos);
 
   if (error) {
     console.error("Error contando notificaciones:", error);
@@ -326,7 +337,12 @@ async function renderNotificaciones() {
 
   dropdown.innerHTML = "";
 
-  const tiposPermitidos = usuarioActual.notificaciones || [];
+  const tiposPermitidos = obtenerTiposNotificacionPermitidos(usuarioActual);
+
+  if (tiposPermitidos.length === 0) {
+    dropdown.innerHTML = '<div class="notif-item">No hay notificaciones</div>';
+    return;
+  }
 
   const { data, error } = await supabase
     .from("notificaciones")
@@ -394,7 +410,7 @@ async function renderNotificaciones() {
           }
 
           item.classList.add("leida");
-          await actualizarNotificacionesBadge(usuarioActual.id);
+          await actualizarNotificacionesBadge(usuarioActual);
         }
 
         if (notif.afiliado_id) {
@@ -416,25 +432,37 @@ async function renderNotificaciones() {
 // CARGAR HEADER
 // =====================
 
+let cargaHeaderEnCurso = null;
+
 export async function cargarHeader() {
   const container = document.getElementById("header-container");
 
   if (!container) return;
+  if (container.dataset.headerLoaded === "true") return;
+  if (cargaHeaderEnCurso) return cargaHeaderEnCurso;
 
-  try {
-    const res = await fetch("/pages/header.html");
+  cargaHeaderEnCurso = (async () => {
+    try {
+      const urlHeader = new URL("../pages/header.html", import.meta.url);
+      const res = await fetch(urlHeader);
 
-    if (!res.ok) {
-      throw new Error(`Error HTTP ${res.status} al cargar el encabezado`);
+      if (!res.ok) {
+        throw new Error(`Error HTTP ${res.status} al cargar el encabezado`);
+      }
+
+      const html = await res.text();
+      container.innerHTML = html;
+      container.dataset.headerLoaded = "true";
+
+      inicializarHeader();
+    } catch (err) {
+      console.error("Error cargando header:", err);
+    } finally {
+      cargaHeaderEnCurso = null;
     }
+  })();
 
-    const html = await res.text();
-    container.innerHTML = html;
-
-    inicializarHeader();
-  } catch (err) {
-    console.error("Error cargando header:", err);
-  }
+  return cargaHeaderEnCurso;
 }
 
 // =====================
@@ -460,7 +488,7 @@ function inicializarHeader() {
       await renderNotificaciones();
 
       if (usuarioActual) {
-        await actualizarNotificacionesBadge(usuarioActual.id);
+        await actualizarNotificacionesBadge(usuarioActual);
       }
     }
   });
@@ -544,7 +572,7 @@ function inicializarHeader() {
       // Iniciar la verificación periódica.
       iniciarVerificacionSesion();
       await generarNotificaciones(usuarioActual);
-      await actualizarNotificacionesBadge(usuarioActual.id);
+      await actualizarNotificacionesBadge(usuarioActual);
 
       iniciarVerificacionSesion();
       iniciarControlInactividad();

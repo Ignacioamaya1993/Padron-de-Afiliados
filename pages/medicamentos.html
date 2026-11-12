@@ -1,16 +1,3 @@
-  <style>
-/* Mover todo a la izquierda */
-main, section {
-  max-width: none;      /* quita el límite de ancho */
-  margin: 0;            /* elimina el centrado automático */
-}
-
-/* Lista de medicamentos (cards) alineadas a la izquierda */
-#listaMedicamentos {
-  justify-content: start; /* pega las cards al borde izquierdo */
-}
-</style>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -23,7 +10,7 @@ main, section {
 <!-- MEDICAMENTOS -->
 <section>
 
-  <button id="btnNuevoMedicamento" class="btn-nuevo-medicamento">
+  <button id="btnNuevoMedicamento" class="btn-nuevo">
     + Nuevo Medicamento
   </button>
 
@@ -59,7 +46,7 @@ main, section {
 
       <div id="campoLatas" class="hidden">
         <label>Latas entregadas</label>
-        <input type="number" name="latas_entregadas" min="1" required>
+        <input type="number" name="latas_entregadas" min="1" required placeholder="Ingrese cantidad de latas">
       </div>
 
       <div>
@@ -100,16 +87,16 @@ main, section {
       <!-- Observaciones -->
       <div class="form-group full-width">
         <label>Observaciones</label>
-      <textarea name="observaciones" rows="3"></textarea>
+      <textarea name="observaciones" rows="3" placeholder="Ingrese observaciones"></textarea>
       </div>
 
-                <!-- Adjuntos -->
-    <div class="form-row">
-      <label>Adjuntar Documentos</label>
-      <div id="adjuntosContainer" class="adjuntos-medicamentos"></div>
-      <button type="button" id="btnAgregarAdjunto">➕ Agregar adjunto</button>
     </div>
 
+    <!-- Adjuntos: visibles al abrir el formulario, independientemente del tipo. -->
+    <div class="form-row">
+      <label>Adjuntar Documentos</label>
+      <div id="adjuntosContainer" class="adjuntos-nuevos"></div>
+      <button type="button" id="btnAgregarAdjunto">➕ Agregar adjunto</button>
     </div>
 
       <!-- ACCIONES -->

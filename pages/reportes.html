@@ -9,26 +9,29 @@
   <link rel="icon" type="image/png" href="../assets/images/Solo_logo.png">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="../styles/footer.css" />
-  <link rel="stylesheet" href="../styles/header.css" />
+  <link rel="stylesheet" href="../styles/common.css" />
   <link rel="stylesheet" href="../styles/reportes.css" />
 
   <!-- SweetAlert -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body>
+<body class="page-wrapper page-reportes">
 
   <!-- HEADER -->
   <div id="header-container"></div>
 
   <main class="reportes-container">
 
-    <button id="btnVolver" class="volver-btn">
+    <header class="reportes-header">
+    <button id="btnVolver" class="volver-btn" type="button">
       ⬅️ Volver al buscador
     </button>
 
+    <p class="reportes-eyebrow">GESTIÓN DE AFILIADOS</p>
     <h1>Reportes</h1>
     <p class="subtitle">Reporte general del padrón de afiliados</p>
+
+    </header>
 
     <section class="reportes-grid">
 
@@ -36,49 +39,49 @@
       <div class="reporte-card" data-reporte="afiliados">
         <h3>Afiliados</h3>
         <p>Listado completo de todos los afiliados</p>
-        <button type="button">Ver reporte</button>
+        <button type="button" aria-expanded="false" aria-controls="reporteResultado">Ver reporte</button>
       </div>
 
       <!-- REPORTE 2 -->
       <div class="reporte-card" data-reporte="hijos-estudiantes">
         <h3>Hijos estudiantes entre 21 y 26 años</h3>
         <p>Hijos entre 21 y 26 años que estudian</p>
-        <button type="button">Ver reporte</button>
+        <button type="button" aria-expanded="false" aria-controls="reporteResultado">Ver reporte</button>
       </div>
 
       <!-- REPORTE 3 -->
       <div class="reporte-card" data-reporte="discapacidad-sin-cud">
         <h3>Discapacidad sin CUD</h3>
         <p>Afiliados con discapacidad que no tienen CUD cargado</p>
-        <button type="button">Ver reporte</button>
+        <button type="button" aria-expanded="false" aria-controls="reporteResultado">Ver reporte</button>
       </div>
 
       <!-- REPORTE 4 -->
       <div class="reporte-card" data-reporte="datos-faltantes">
         <h3>Datos Faltantes</h3>
         <p>Afiliados sin mail, teléfono, CBU/CVU/Alias o grupo sanguíneo</p>
-        <button type="button">Ver reporte</button>
+        <button type="button" aria-expanded="false" aria-controls="reporteResultado">Ver reporte</button>
       </div>
 
       <!-- REPORTE 5 -->
       <div class="reporte-card" data-reporte="reintegros">
         <h3>Reintegro Individual por DNI</h3>
         <p>Historial de Reintegro completo de un afiliado</p>
-        <button type="button">Generar reporte</button>
+        <button type="button" aria-expanded="false" aria-controls="reporteResultado">Generar reporte</button>
       </div>
 
       <!-- REPORTE 6 -->
     <div class="reporte-card" data-reporte="insulinodependientes">
       <h3>Insulinodependientes</h3>
       <p>Afiliados que requieren tratamiento con insulina</p>
-      <button type="button">Ver reporte</button>
+      <button type="button" aria-expanded="false" aria-controls="reporteResultado">Ver reporte</button>
     </div>
 
     <!-- REPORTE 7 -->
 <div class="reporte-card" data-reporte="cuota-social">
   <h3>Cuota Social Jubilados</h3>
   <p>Jubilados y pensionados con cuota social habilitada (estado de pago)</p>
-  <button type="button">Ver reporte</button>
+  <button type="button" aria-expanded="false" aria-controls="reporteResultado">Ver reporte</button>
 </div>
 
     </section>
@@ -89,14 +92,21 @@
       <h2 id="reporteTitulo">Reporte</h2>
 
       <!-- 🔹 RESUMEN -->
-      <div id="resumenReporte"></div>
+      <div id="resumenReporte" aria-live="polite"></div>
 
-      <div class="reporte-actions">
-        <button id="exportExcel" type="button">Exportar Excel</button>
-        <button id="exportPdf" type="button">Exportar PDF</button>
+      <div class="reporte-toolbar">
+        <div class="reporte-search">
+          <label for="buscarReporte">Buscar en los resultados</label>
+          <input id="buscarReporte" type="search" placeholder="Nombre, DNI o número de afiliado">
+        </div>
+        <div class="reporte-actions">
+          <span id="reporteCantidad" aria-live="polite">0 resultados</span>
+        <button id="exportExcel" type="button" disabled>Exportar Excel</button>
+        <button id="exportPdf" type="button" disabled>Exportar PDF</button>
+        </div>
       </div>
 
-      <div class="tabla-container">
+      <div class="tabla-container" aria-live="polite">
         <table id="tablaReporte">
           <thead></thead>
           <tbody></tbody>

@@ -1,23 +1,10 @@
-  <style>
-/* Mover todo a la izquierda */
-main, section {
-  max-width: none;      /* quita el límite de ancho */
-  margin: 0;            /* elimina el centrado automático */
-}
-
-/* Lista de medicamentos (cards) alineadas a la izquierda */
-#listaPracticas {
-  justify-content: start; /* pega las cards al borde izquierdo */
-}
-</style>
-
 <!-- ===================== -->
 <!-- PRACTICAS -->
 <!-- ===================== -->
 
 <section id="practicasSection">
 
-  <button id="btnNuevaPractica" class="btn-nuevo-practicas">
+  <button id="btnNuevaPractica" class="btn-nuevo">
     + Nueva Práctica
   </button>
 
@@ -42,7 +29,7 @@ main, section {
 
           <div class="form-group">
       <label>N° de Carga</label>
-      <input type="text" name="nro_carga" id="nroCarga">
+      <input type="text" name="nro_carga" id="nroCarga" placeholder="Ingrese nro. de carga">
     </div>
 
       <div class="form-group">
@@ -71,7 +58,7 @@ main, section {
 
             <div class="form-group">
       <label>N° de Autorización</label>
-      <input type="text" name="nro_autorizacion" id="nroAutorizacion">
+      <input type="text" name="nro_autorizacion" id="nroAutorizacion" placeholder="Ingrese nro. de autorización">
     </div>
 
       <div class="form-group">
@@ -81,7 +68,7 @@ main, section {
 
       <div class="form-group hidden" id="grupoKinesiologo">
         <label>Nombre Kinesiólogo</label>
-        <input type="text" id="nombreKinesiologo" name="nombre_kinesiologo">
+        <input type="text" id="nombreKinesiologo" name="nombre_kinesiologo" placeholder="Ingrese nombre del kinesiólogo">
       </div>
 
       <div class="form-group hidden" id="grupoLugar">
@@ -109,7 +96,8 @@ main, section {
         <label>Observaciones</label>
         <textarea id="observacionesPractica"
                   name="observacion"
-                  rows="3"></textarea>
+                  rows="3"
+                  placeholder="Ingrese observaciones"></textarea>
       </div>
 
     <!-- Adjuntos -->
