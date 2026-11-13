@@ -3,53 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login – Afiliados Luz y Fuerza Olavarría</title>
+  <meta name="theme-color" content="#102a43">
+  <title>Ingresar · Padrón de Afiliados</title>
   <link rel="icon" type="image/png" href="../assets/images/Solo_logo.png">
-
   <link rel="stylesheet" href="../styles/common.css" />
   <link rel="stylesheet" href="../styles/login.css" />
 </head>
-<body>
-
-  <div class="login-wrapper">
-
-    <h1 class="app-title">
-      Padrón de Afiliados<br />
-      <span>Luz y Fuerza Olavarría</span>
-    </h1>
-
-    <div class="login-container">
-
-      <h2>Iniciar sesión</h2>
-
-      <input type="email" id="email" placeholder="Email" required />
-
-      <div class="password-wrapper">
-        <input type="password" id="password" placeholder="Contraseña" required />
-        <button
-          type="button"
-          id="togglePassword"
-          class="toggle-password"
-          aria-label="Mostrar u ocultar contraseña"
-        >
-          <img
-            id="togglePasswordIcon"
-            src="../assets/images/eye-closed.png"
-            alt="Mostrar contraseña"
-          />
-        </button>
-
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-brand" aria-label="Padrón de Afiliados Luz y Fuerza Olavarría">
+      <div class="brand-content">
+        <img class="brand-logo" src="../assets/images/Solo_logo.png" alt="Logo de Luz y Fuerza Olavarría">
+        <p class="brand-kicker">Sistema de gestión</p>
+        <h1>Padrón de<br>Afiliados</h1>
+        <p class="brand-description">Luz y Fuerza Olavarría</p>
       </div>
+      <div class="brand-footer"><span class="brand-mark"></span><span>Acceso para personal autorizado</span></div>
+    </section>
 
-      <button id="loginBtn" class="btn-primary">Ingresar</button>
-      <p id="error"></p>
+    <section class="login-main" aria-labelledby="loginTitle">
+      <div class="login-card">
+        <div class="login-heading">
+          <span class="login-eyebrow">Bienvenido/a</span>
+          <h2 id="loginTitle">Ingresar al sistema</h2>
+          <p>Usá tu usuario o correo electrónico para continuar.</p>
+        </div>
 
-    </div>
+        <form id="loginForm" novalidate>
+          <div class="login-field">
+            <label for="email">Usuario o correo electrónico</label>
+            <input type="text" id="email" name="username" placeholder="Ingresá tu usuario" autocomplete="username" autocapitalize="none" spellcheck="false" required aria-describedby="error">
+          </div>
 
-  </div>
+          <div class="login-field">
+            <label for="password">Contraseña</label>
+            <div class="password-wrapper">
+              <input type="password" id="password" name="password" placeholder="Ingresá tu contraseña" autocomplete="current-password" required aria-describedby="error">
+              <button type="button" id="togglePassword" class="toggle-password" aria-label="Mostrar contraseña" aria-pressed="false">
+                <img id="togglePasswordIcon" src="../assets/images/eye-closed.png" alt="">
+              </button>
+            </div>
+          </div>
 
-  <!-- JS -->
+          <p id="error" role="alert" aria-live="polite"></p>
+          <button id="loginBtn" class="btn-primary" type="submit"><span class="login-btn-label">Ingresar</span><span class="login-spinner" aria-hidden="true"></span></button>
+        </form>
+
+        <p class="login-security">Tu sesión está protegida y limitada a un dispositivo a la vez.</p>
+      </div>
+      <footer class="login-footer">Luz y Fuerza Olavarría <span>·</span> Padrón de Afiliados</footer>
+    </section>
+  </main>
   <script type="module" src="../scripts/login.js"></script>
-
 </body>
 </html>

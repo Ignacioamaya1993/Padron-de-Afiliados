@@ -5,6 +5,7 @@ import { supabase } from "./supabase.js";
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const loginBtn = document.getElementById("loginBtn");
+const loginForm = document.getElementById("loginForm");
 const errorEl = document.getElementById("error");
 const togglePasswordBtn = document.getElementById("togglePassword");
 const togglePasswordIcon = document.getElementById("togglePasswordIcon");
@@ -33,6 +34,7 @@ function emailValido(email) {
 
 function marcarError(input, mensaje) {
   input.classList.add("input-error");
+  input.setAttribute("aria-invalid", "true");
   errorEl.textContent = mensaje;
   input.focus();
 }
@@ -41,6 +43,8 @@ function limpiarErrores() {
   errorEl.textContent = "";
   emailInput.classList.remove("input-error");
   passwordInput.classList.remove("input-error");
+  emailInput.removeAttribute("aria-invalid");
+  passwordInput.removeAttribute("aria-invalid");
 }
 
 // --------------------------------------------------
@@ -103,6 +107,7 @@ async function ejecutarLogin() {
 
   procesandoLogin = true;
   loginBtn.disabled = true;
+  loginBtn.setAttribute("aria-busy", "true");
 
   try {
     let emailReal = identificador;
@@ -147,6 +152,7 @@ async function ejecutarLogin() {
   } finally {
     procesandoLogin = false;
     loginBtn.disabled = false;
+    loginBtn.removeAttribute("aria-busy");
   }
 }
 
@@ -154,15 +160,9 @@ async function ejecutarLogin() {
 // EVENTOS
 // --------------------------------------------------
 
-loginBtn.addEventListener("click", ejecutarLogin);
-
-[emailInput, passwordInput].forEach(input => {
-  input.addEventListener("keydown", e => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      ejecutarLogin();
-    }
-  });
+loginForm.addEventListener("submit", event => {
+  event.preventDefault();
+  ejecutarLogin();
 });
 
 // --------------------------------------------------
@@ -173,6 +173,8 @@ togglePasswordBtn.addEventListener("click", () => {
   showPassword = !showPassword;
 
   passwordInput.type = showPassword ? "text" : "password";
+  togglePasswordBtn.setAttribute("aria-pressed", String(showPassword));
+  togglePasswordBtn.setAttribute("aria-label", showPassword ? "Ocultar contraseña" : "Mostrar contraseña");
 
   togglePasswordIcon.src = showPassword
     ? "../assets/images/eye-open.png"

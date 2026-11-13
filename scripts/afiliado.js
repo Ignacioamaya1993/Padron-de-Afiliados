@@ -1,6 +1,6 @@
 import { cargarHeader } from "./header.js";
 import { supabase } from "./supabase.js";
-import { subirArchivoCloudinary } from "./cloudinary.js";
+import { subirArchivoCloudinary, subirImagenPerfilCloudinary } from "./cloudinary.js";
 
 /* =====================
    AVISO IMPORTANTE SOBRE PLAN MATERNO
@@ -173,15 +173,48 @@ function calcularGrupoFamiliar(numeroAfiliado) {
 function mostrarEstado(activo) {
   const estadoSpan = document.getElementById("estadoAfiliado");
   if (!estadoSpan) return;
+  estadoSpan.classList.toggle("estado-inactivo", !activo);
   if (activo) {
     estadoSpan.textContent = "Activo";
-    estadoSpan.style.color = "";
-    estadoSpan.style.fontWeight = "normal";
   } else {
     estadoSpan.textContent = "Dado de baja";
-    estadoSpan.style.color = "#dc2626";
-    estadoSpan.style.fontWeight = "700";
   }
+}
+
+function renderizarFotoPerfil(url = null) {
+  const imagen = document.getElementById("avatarImagen");
+  const iniciales = document.getElementById("avatarIniciales");
+  const quitar = document.getElementById("btnQuitarFoto");
+  if (!imagen || !iniciales) return;
+
+  if (url) {
+    imagen.src = url;
+    imagen.hidden = false;
+    iniciales.hidden = true;
+    if (quitar) quitar.hidden = false;
+    imagen.onerror = () => {
+      imagen.hidden = true;
+      iniciales.hidden = false;
+      if (quitar) quitar.hidden = true;
+    };
+    return;
+  }
+
+  imagen.removeAttribute("src");
+  imagen.hidden = true;
+  iniciales.hidden = false;
+  if (quitar) quitar.hidden = true;
+}
+
+async function guardarFotoPerfil(url) {
+  const { error } = await supabase
+    .from("afiliados")
+    .update({ foto_perfil_url: url })
+    .eq("id", afiliadoId);
+
+  if (error) throw error;
+  afiliado.foto_perfil_url = url;
+  renderizarFotoPerfil(url);
 }
 
 function diasDesde(fecha) {
@@ -252,6 +285,10 @@ async function renderFicha(cud_documentos = []) {
 
   // Nombre completo
   document.getElementById("nombreCompleto").textContent = `${afiliado.nombre} ${afiliado.apellido}`;
+  document.getElementById("numeroAfiliadoTitulo").textContent = afiliado.numero_afiliado || "-";
+  const iniciales = `${afiliado.nombre?.trim()?.[0] || ""}${afiliado.apellido?.trim()?.[0] || ""}`.toLocaleUpperCase("es");
+  document.getElementById("avatarIniciales").textContent = iniciales || "AF";
+  renderizarFotoPerfil(afiliado.foto_perfil_url || null);
 
   document.getElementById("grupoFamiliarReal").textContent = afiliado.grupo_familiar_real || "-";
 
@@ -1453,17 +1490,19 @@ await cargarAfiliado();
 async function darDeBaja() {
 
   const { value: motivo, isConfirmed } = await Swal.fire({
-    title: "¿Dar de baja afiliado?",
+    title: "Registrar baja del afiliado",
+    text: `Se cambiará el estado de ${afiliado.nombre} ${afiliado.apellido} a dado de baja.`,
     icon: "warning",
     input: "textarea",
-    inputLabel: "Motivo de baja (opcional)",
-    inputPlaceholder: "Ej: fallecimiento, falta de pago, etc.",
-    inputAttributes: {
-      maxlength: 300
-    },
+    inputLabel: "Motivo de la baja (opcional)",
+    inputPlaceholder: "Describí brevemente el motivo…",
+    inputAttributes: { maxlength: 300, rows: 4, "aria-label": "Motivo de la baja" },
     showCancelButton: true,
-    confirmButtonText: "Dar de baja",
-    cancelButtonText: "Cancelar"
+    confirmButtonText: "Confirmar baja",
+    cancelButtonText: "Volver",
+    reverseButtons: true,
+    focusCancel: true,
+    customClass: { confirmButton: "swal2-danger-confirm" }
   });
 
   if (!isConfirmed) return;
@@ -1472,21 +1511,38 @@ async function darDeBaja() {
     .from("afiliados")
     .update({
       activo: false,
-      motivo_baja: motivo || null
+      motivo_baja: motivo?.trim() || null
     })
     .eq("id", afiliadoId);
 
   if (error) {
-    Swal.fire("Error", "No se pudo dar de baja", "error");
+    Swal.fire({ icon: "error", title: "No se pudo registrar la baja", text: "Revisá la conexión e intentá nuevamente." });
     return;
   }
 
+  await Swal.fire({ icon: "success", title: "Baja registrada", text: "El estado del afiliado fue actualizado." });
   await cargarAfiliado();
 }
 
 async function reactivarAfiliado() {
-  await supabase.from("afiliados").update({ activo: true }).eq("id", afiliadoId);
-  cargarAfiliado();
+  const confirmacion = await Swal.fire({
+    icon: "question",
+    title: "¿Reactivar afiliado?",
+    text: "El registro volverá a figurar como activo en el padrón.",
+    showCancelButton: true,
+    confirmButtonText: "Reactivar",
+    cancelButtonText: "Cancelar",
+    reverseButtons: true
+  });
+  if (!confirmacion.isConfirmed) return;
+
+  const { error } = await supabase.from("afiliados").update({ activo: true }).eq("id", afiliadoId);
+  if (error) {
+    await Swal.fire({ icon: "error", title: "No se pudo reactivar", text: "Intentá nuevamente." });
+    return;
+  }
+  await Swal.fire({ icon: "success", title: "Afiliado reactivado", text: "El registro volvió a quedar activo." });
+  await cargarAfiliado();
 }
 
 /* =====================
@@ -1526,7 +1582,11 @@ const { data: familiares, error } = await query;
   const tbody = document.querySelector("#tablaGrupoFamiliar tbody");
   tbody.innerHTML = "";
 
-  if (!familiares || familiares.length === 0) return;
+  if (!familiares || familiares.length === 0) {
+    const contador = document.getElementById("contadorGrupoFamiliar");
+    if (contador) contador.textContent = "Sin integrantes vinculados";
+    return;
+  }
 
   familiares.forEach(f => {
     const tr = document.createElement("tr");
@@ -1537,22 +1597,40 @@ const { data: familiares, error } = await query;
       tr.style.fontWeight = "600";
     }
 
-    tr.innerHTML = `
-      <td>${f.nombre} ${f.apellido}</td>
-      <td>${f.dni}</td>
-      <td>${f.numero_afiliado}</td>
-      <td>${f.parentesco_id?.nombre || "-"}</td>
-      <td>${f.grupo_familiar_codigo || "-"}</td>
-      <td>${f.grupo_familiar_real || "-"}</td>
-      <td>${f.activo ? "Activo" : "Dado de baja"}</td>
-    `;
+    const valores = [
+      `${f.nombre || ""} ${f.apellido || ""}`.trim() || "-",
+      f.dni || "-",
+      f.numero_afiliado || "-",
+      f.parentesco_id?.nombre || "-",
+      f.grupo_familiar_codigo || "-",
+      f.grupo_familiar_real || "-",
+      f.activo ? "Activo" : "Dado de baja"
+    ];
+    valores.forEach(valor => {
+      const td = document.createElement("td");
+      td.textContent = valor;
+      tr.appendChild(td);
+    });
+    tr.classList.toggle("fila-actual", f.id === afiliado.id);
+    tr.classList.toggle("fila-baja", !f.activo);
+    tr.tabIndex = 0;
+    tr.setAttribute("role", "link");
+    tr.setAttribute("aria-label", `Abrir ficha de ${valores[0]}`);
 
     tr.onclick = () => {
-      window.location.href = `/pages/afiliado.html?id=${f.id}`;
+      window.location.href = `/pages/afiliado.html?id=${encodeURIComponent(f.id)}`;
+    };
+    tr.onkeydown = event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        tr.click();
+      }
     };
 
     tbody.appendChild(tr);
   });
+  const contador = document.getElementById("contadorGrupoFamiliar");
+  if (contador) contador.textContent = `${familiares.length} integrantes`;
 }
 
 /* =====================
@@ -1597,7 +1675,10 @@ async function eliminarAfiliado() {
     icon: "warning",
     showCancelButton: true,
     confirmButtonText: "Eliminar",
-    cancelButtonText: "Cancelar"
+    cancelButtonText: "Cancelar",
+    reverseButtons: true,
+    focusCancel: true,
+    customClass: { confirmButton: "swal2-danger-confirm" }
   });
 
   if (!res.isConfirmed) return;
@@ -1616,6 +1697,84 @@ async function eliminarAfiliado() {
 }
 
 document.getElementById("btnEliminar").addEventListener("click", eliminarAfiliado);
+
+const fotoPerfilInput = document.getElementById("fotoPerfilInput");
+document.getElementById("btnCambiarFoto").addEventListener("click", () => fotoPerfilInput.click());
+fotoPerfilInput.addEventListener("change", async () => {
+  const archivo = fotoPerfilInput.files?.[0];
+  if (!archivo) return;
+  if (!["image/jpeg", "image/png", "image/webp"].includes(archivo.type)) {
+    await Swal.fire({ icon: "warning", title: "Formato no compatible", text: "Elegí una imagen JPG, PNG o WebP." });
+    fotoPerfilInput.value = "";
+    return;
+  }
+  const btnFoto = document.getElementById("btnCambiarFoto");
+  btnFoto.disabled = true;
+  const requiereCompresion = archivo.size > 5 * 1024 * 1024;
+  Swal.fire({
+    title: requiereCompresion ? "Optimizando imagen" : "Subiendo imagen",
+    text: requiereCompresion
+      ? "La imagen se comprimirá automáticamente para que pese 5 MB o menos."
+      : "Estamos actualizando la foto de perfil.",
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    didOpen: () => Swal.showLoading()
+  });
+  try {
+    const url = await subirImagenPerfilCloudinary(archivo, `${getCarpetaBase()}/perfil`);
+    await guardarFotoPerfil(url);
+    Swal.close();
+    await Swal.fire({ icon: "success", title: "Imagen actualizada", text: "La foto de perfil quedó guardada en la ficha." });
+  } catch (error) {
+    console.error("Error guardando la foto de perfil:", error);
+    Swal.close();
+    const faltaColumna = ["PGRST204", "42703"].includes(error.code) || error.message?.includes("foto_perfil_url");
+    await Swal.fire({
+      icon: "error",
+      title: "No se pudo guardar la imagen",
+      text: faltaColumna
+        ? "Primero hay que aplicar la migración de base de datos incluida en supabase/migrations."
+        : "Revisá la conexión y volvé a intentarlo."
+    });
+  } finally {
+    btnFoto.disabled = false;
+    fotoPerfilInput.value = "";
+  }
+});
+
+document.getElementById("btnQuitarFoto").addEventListener("click", async () => {
+  const confirmacion = await Swal.fire({
+    icon: "question",
+    title: "¿Quitar imagen de perfil?",
+    text: "La ficha volverá a mostrar las iniciales del afiliado.",
+    showCancelButton: true,
+    confirmButtonText: "Quitar imagen",
+    cancelButtonText: "Cancelar",
+    reverseButtons: true,
+    customClass: { confirmButton: "swal2-danger-confirm" }
+  });
+  if (!confirmacion.isConfirmed) return;
+  try {
+    await guardarFotoPerfil(null);
+    await Swal.fire({ icon: "success", title: "Imagen quitada", text: "Se restauraron las iniciales del afiliado." });
+  } catch (error) {
+    console.error("Error quitando la foto de perfil:", error);
+    await Swal.fire({ icon: "error", title: "No se pudo quitar la imagen", text: "Intentá nuevamente." });
+  }
+});
+
+document.getElementById("filtroGrupoFamiliar")?.addEventListener("input", event => {
+  const filtro = event.target.value.trim().toLocaleLowerCase("es");
+  const filas = [...document.querySelectorAll("#tablaGrupoFamiliar tbody tr")];
+  let visibles = 0;
+  filas.forEach(fila => {
+    const coincide = fila.textContent.toLocaleLowerCase("es").includes(filtro);
+    fila.hidden = !coincide;
+    if (coincide) visibles++;
+  });
+  const contador = document.getElementById("contadorGrupoFamiliar");
+  if (contador) contador.textContent = filtro ? `${visibles} de ${filas.length} integrantes` : `${filas.length} integrantes`;
+});
 
 /* =====================
    INICIO

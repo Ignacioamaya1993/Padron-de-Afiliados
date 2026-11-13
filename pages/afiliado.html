@@ -4,175 +4,121 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="../assets/images/Solo_logo.png">
-
-  <title>Ficha de Afiliado</title>
-
-  <!-- CSS -->
+  <title>Ficha de afiliado</title>
   <link rel="stylesheet" href="../styles/common.css" />
   <link rel="stylesheet" href="../styles/afiliado.css" />
-
-  <!-- SweetAlert -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body>
-
-  <!-- HEADER COMÚN -->
-  <header>
-    <div id="header-container"></div>
-  </header>
+<body class="page-afiliado">
+  <header><div id="header-container"></div></header>
 
   <main class="ficha-afiliado">
+    <nav class="ficha-breadcrumb" aria-label="Ruta de navegación">
+      <button id="btnVolver" type="button" class="volver-btn">← Volver al padrón</button>
+      <span aria-hidden="true">/</span><span>Ficha de afiliado</span>
+    </nav>
 
-    <div class="ficha-header">
-      <button id="btnVolver" class="volver-btn">⬅️ Volver al buscador</button>
-      <h2 id="nombreCompleto">-</h2>
-      <button id="btnFichaMedica" class="btn-primary">📋 Ficha Médica</button>
+    <section class="ficha-hero" aria-labelledby="nombreCompleto">
+      <div class="ficha-avatar-control">
+        <button id="btnCambiarFoto" type="button" class="ficha-avatar" aria-label="Cambiar imagen de perfil" title="Cambiar imagen de perfil">
+          <span id="avatarIniciales" aria-hidden="true">AF</span>
+          <img id="avatarImagen" alt="Imagen de perfil del afiliado" hidden>
+          <span class="avatar-cambiar" aria-hidden="true">＋</span>
+        </button>
+        <span class="avatar-hint">Cambiar foto</span>
+        <input id="fotoPerfilInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+        <button id="btnQuitarFoto" type="button" class="btn-quitar-foto" hidden>Quitar foto</button>
+      </div>
+      <div class="ficha-identidad">
+        <span class="ficha-eyebrow">Padrón de afiliados</span>
+        <h1 id="nombreCompleto">Cargando afiliado…</h1>
+        <div class="ficha-meta"><span>N° de afiliado <strong id="numeroAfiliadoTitulo">-</strong></span><span id="estadoAfiliado" class="estado-afiliado">-</span></div>
+      </div>
+      <div class="ficha-hero-actions"><button id="btnFichaMedica" type="button" class="btn-primary">▤ Ficha médica</button></div>
+    </section>
+
+    <div id="alertaSoloSindicato" class="alerta-sindicato" style="display:none;" role="status">
+      <strong>Afiliación al Sindicato</strong><span>Este afiliado no posee cobertura de Obra Social.</span>
     </div>
 
-    <div id="alertaSoloSindicato" class="alerta-sindicato" style="display:none;">
-        <strong>⚠️ Solo Sindicato</strong><br>
-        Este afiliado pertenece únicamente al Sindicato y no posee cobertura de Obra Social.
+    <div class="ficha-layout">
+      <div class="ficha-columna-principal">
+        <section class="ficha-panel" aria-labelledby="tituloPersonales">
+          <div class="panel-heading"><div><span class="ficha-eyebrow">Identificación y contacto</span><h2 id="tituloPersonales">Datos personales</h2></div></div>
+          <div class="ficha-grid ficha-grid-personales">
+            <div><strong>DNI</strong><span id="dni">-</span></div>
+            <div><strong>CUIL</strong><span id="cuil">-</span></div>
+            <div><strong>Fecha de nacimiento</strong><span id="fechaNacimiento">-</span></div>
+            <div><strong>Edad</strong><span id="edadVista">-</span></div>
+            <div><strong>Teléfono</strong><span id="telefono">-</span></div>
+            <div><strong>Correo electrónico</strong><span id="mail">-</span></div>
+            <div><strong>CBU / CVU / Alias</strong><span id="cbuCvu">-</span></div>
+            <div><strong>Sexo</strong><span id="sexo">-</span></div>
+            <div><strong>Localidad</strong><span id="localidad">-</span></div>
+            <div><strong>Grupo sanguíneo</strong><span id="grupoSanguineo">-</span></div>
+          </div>
+        </section>
+
+        <section class="ficha-panel" aria-labelledby="tituloAfiliacion">
+          <div class="panel-heading"><div><span class="ficha-eyebrow">Cobertura y vínculo</span><h2 id="tituloAfiliacion">Afiliación</h2></div></div>
+          <div class="ficha-grid">
+            <div><strong>N° de afiliado</strong><span id="numeroAfiliado">-</span></div>
+            <div><strong>Parentesco</strong><span id="parentesco">-</span></div>
+            <div><strong>Grupo familiar</strong><span id="grupoFamiliar">-</span></div>
+            <div><strong>Grupo familiar real</strong><span id="grupoFamiliarReal">-</span></div>
+            <div><strong>Plan</strong><span id="plan">-</span></div>
+            <div><strong>Categoría</strong><span id="categoria">-</span></div>
+            <div id="afiliadoObraSocialField" style="display:none;"><strong>Obra Social</strong><span id="afiliadoObraSocialTexto">-</span></div>
+            <div id="fechaUltimoPagoField" style="display:none;"><strong>Último pago de cuota social</strong><span id="fechaUltimoPago">-</span><span id="alertaDeudor" class="estado-alerta" style="display:none;">Deudor de cuota social</span></div>
+            <div id="planMaternoDesdeField" style="display:none;"><strong>Plan materno desde</strong><span id="planMaternoDesde">-</span></div>
+            <div id="planMaternoHastaField" style="display:none;"><strong>Plan materno hasta</strong><span id="planMaternoHasta">-</span></div>
+            <div id="motivoBajaField" style="display:none;"><strong>Motivo de baja</strong><span id="motivoBaja">-</span></div>
+          </div>
+        </section>
+
+        <section class="ficha-panel" aria-labelledby="tituloDocumentacion">
+          <div class="panel-heading"><div><span class="ficha-eyebrow">Información complementaria</span><h2 id="tituloDocumentacion">Documentación y cuidados</h2></div></div>
+          <div class="ficha-grid">
+            <div><strong>Discapacidad</strong><span id="discapacidad">No</span></div>
+            <div id="nivelDiscapacidadField" style="display:none;"><strong>Nivel de discapacidad</strong><span id="nivelDiscapacidad">-</span></div>
+            <div id="cudEmisionField" style="display:none;"><strong>Emisión del CUD</strong><span id="cudEmision">-</span></div>
+            <div id="cudVencimientoField" style="display:none;"><strong>Vencimiento del CUD</strong><span id="cudVencimiento">-</span><span id="alertaCud" class="estado-alerta" style="display:none;"></span></div>
+            <div id="cudSinVencimientoField" style="display:none;"><strong>CUD sin vencimiento</strong><span id="cudSinVencimiento">-</span></div>
+            <div id="estudiosField" style="display:none;"><strong>Estudios</strong><span id="estudios">-</span></div>
+            <div id="adjuntoEstudiosField" style="display:none;"><strong>Constancia de alumno regular</strong><span id="adjuntoEstudiosContenido"></span></div>
+            <div id="adjuntoDiscapacidadField" style="display:none;"><strong>Constancias de discapacidad (CUD)</strong><div id="adjuntoDiscapacidadContenido" class="adjuntos-lista"></div></div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="ficha-sidebar" aria-label="Acciones de la ficha">
+        <section class="ficha-panel ficha-acciones-panel">
+          <span class="ficha-eyebrow">Gestión del registro</span><h2>Acciones</h2>
+          <div class="acciones-ficha">
+            <button id="btnEditar" type="button" class="accion-principal">Editar datos</button>
+            <button id="btnGuardar" type="button" style="display:none;">Guardar cambios</button>
+            <button id="btnCancelar" type="button" style="display:none;">Cancelar edición</button>
+            <button id="btnReactivar" type="button" style="display:none;">Reactivar afiliado</button>
+            <button id="btnBaja" type="button" class="danger">Dar de baja</button>
+            <button id="btnEliminar" type="button" class="danger-outline">Eliminar definitivamente</button>
+          </div>
+          <p class="acciones-ayuda">Los cambios de datos se aplican al guardar. La eliminación definitiva no se puede deshacer.</p>
+        </section>
+      </aside>
     </div>
-
-    <div class="ficha-grid">
-
-      <div><strong>DNI</strong><span id="dni">-</span></div>
-      <div><strong>CUIL</strong><span id="cuil">-</span></div>
-      <div><strong>Fecha de nacimiento</strong><span id="fechaNacimiento">-</span></div>
-      <div><strong>Edad</strong><span id="edadVista">-</span></div>
-      <div><strong>Teléfono</strong><span id="telefono">-</span></div>
-      <div><strong>Correo electrónico</strong><span id="mail">-</span></div>
-      <div><strong>N° Afiliado</strong><span id="numeroAfiliado">-</span></div>
-      <div><strong>Grupo familiar</strong><span id="grupoFamiliar"></span></div>
-      <div><strong>Grupo familiar real</strong><span id="grupoFamiliarReal">-</span></div>
-      <div><strong>Parentesco</strong><span id="parentesco">-</span></div>
-
-      <div>
-        <strong>CBU / CVU / Alias</strong>
-        <span id="cbuCvu">-</span>
-      </div>
-
-      <div><strong>Sexo</strong><span id="sexo">-</span></div>
-      <div><strong>Grupo Sanguíneo</strong><span id="grupoSanguineo">-</span></div>
-      <div><strong>Plan</strong><span id="plan">-</span></div>
-      <div><strong>Categoria</strong><span id="categoria">-</span></div>
-
-      <div id="planMaternoDesdeField" style="display:none;">
-        <strong>Plan materno desde</strong><br>
-        <span id="planMaternoDesde">-</span>
-      </div>
-
-      <div id="planMaternoHastaField" style="display:none;">
-        <strong>Plan materno hasta</strong><br>
-        <span id="planMaternoHasta">-</span>
-      </div>
-
-      <div id="fechaUltimoPagoField" style="display:none;">
-        <strong>Fecha último pago cuota social</strong><br>
-        <span id="fechaUltimoPago">-</span>
-        <div id="alertaDeudor" style="color:#dc2626; font-weight:600; display:none;">
-          ⚠️ Deudor cuota social
-        </div>
-      </div>
-
-      <div><strong>Localidad</strong><span id="localidad">-</span></div>
-      <div><strong>Discapacidad</strong><span id="discapacidad">No</span></div>
-
-      <div id="nivelDiscapacidadField" style="display:none;">
-        <strong>Nivel de discapacidad</strong>
-        <span id="nivelDiscapacidad">-</span>
-      </div>
-
-      <div id="cudEmisionField" style="display:none;">
-        <strong>CUD emisión</strong><br>
-        <span id="cudEmision">-</span>
-      </div>
-
-      <div id="cudVencimientoField" style="display:none;">
-        <strong>CUD vencimiento</strong><br>
-        <span id="cudVencimiento">-</span>
-
-        <div id="alertaCud" style="display:none; color:#dc2626; font-weight:600;">
-          ⚠️ El CUD está próximo a vencer
-        </div>
-      </div>
-
-      <div id="cudSinVencimientoField" style="display:none;">
-        <strong>CUD sin vencimiento</strong>
-        <span id="cudSinVencimiento">-</span>
-      </div>
-
-      <div><strong>Estado</strong><span id="estadoAfiliado">-</span></div>
-
-    <div id="motivoBajaField" style="display:none;">
-      <strong>Motivo de baja</strong>
-      <span id="motivoBaja">-</span>
-    </div>
-
-      <div id="estudiosField" style="display:none;">
-        <strong>Estudios</strong><br>
-        <span id="estudios">-</span>
-      </div>
-
-      <div id="adjuntoEstudiosField" style="display:none;">
-        <label>Constancia Alumno Regular</label>
-        <span id="adjuntoEstudiosContenido"></span>
-      </div>
-
-      <div id="adjuntoDiscapacidadField" style="display:none;">
-        <label>Constancia Discapacidad (CUD)</label><br>
-        <div id="adjuntoDiscapacidadContenido" class="adjuntos-lista"></div>
-      </div>
-      
-<div id="afiliadoObraSocialField" style="display:none;">
-    <strong>Afiliado a la Obra Social</strong>
-    <span id="afiliadoObraSocialTexto" style="display:block;">-</span>
-</div>
-
-    </div>
-
-    <div class="acciones-ficha">
-      <button id="btnEditar">✏️ Editar</button>
-      <button id="btnGuardar" style="display:none;">💾 Guardar</button>
-      <button id="btnCancelar" style="display:none;">Cancelar</button>
-      <button id="btnBaja" class="danger">🔴 Dar de baja</button>
-      <button id="btnReactivar" style="display:none;">🟢 Reactivar afiliado</button>
-      <button id="btnEliminar" class="danger-outline">🗑️ Eliminar definitivo</button>
-    </div>
-
   </main>
 
-  <section class="grupo-familiar">
-    <h3>Grupo familiar</h3>
-    <table id="tablaGrupoFamiliar">
-      <thead>
-        <tr>
-          <th>Nombre y apellido</th>
-          <th>DNI</th>
-          <th>N° Afiliado</th>
-          <th>Parentesco</th>
-          <th>Grupo familiar</th>
-          <th>Grupo familiar real</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
+  <section class="grupo-familiar" aria-labelledby="tituloGrupoFamiliar">
+    <div class="grupo-heading"><div><span class="ficha-eyebrow">Personas vinculadas</span><h2 id="tituloGrupoFamiliar">Grupo familiar</h2></div><label class="filtro-familia-label" for="filtroGrupoFamiliar">Buscar integrante</label><input id="filtroGrupoFamiliar" type="search" placeholder="Nombre, DNI o parentesco" autocomplete="off"><span id="contadorGrupoFamiliar" class="contador-familia" aria-live="polite"></span></div>
+    <div class="tabla-familia-scroll"><table id="tablaGrupoFamiliar">
+      <thead><tr><th>Nombre y apellido</th><th>DNI</th><th>N° afiliado</th><th>Parentesco</th><th>Grupo familiar</th><th>Grupo familiar real</th><th>Estado</th></tr></thead>
       <tbody></tbody>
-    </table>
+    </table></div>
   </section>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script type="module" src="../scripts/afiliado.js"></script>
-
-  <!-- FOOTER -->
-<div id="footer"></div>
-
-<script>
-fetch("footer.html")
-  .then(res => res.text())
-  .then(data => {
-    document.getElementById("footer").innerHTML = data;
-  });
-</script>
-
+  <div id="footer"></div>
+  <script>fetch("footer.html").then(res => res.text()).then(data => { document.getElementById("footer").innerHTML = data; });</script>
 </body>
 </html>

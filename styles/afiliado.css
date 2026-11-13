@@ -1,681 +1,106 @@
-/* RESET BÁSICO */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+.page-afiliado { min-height: 100vh; background: #f3f6fa; color: #243447; }
+.ficha-afiliado, .grupo-familiar { width: min(1440px, calc(100% - 3rem)); margin-inline: auto; }
+.ficha-afiliado { padding-top: 1.35rem; }
+.ficha-breadcrumb { display: flex; align-items: center; gap: .7rem; margin: 0 0 1rem; color: #8292a3; font-size: .82rem; }
+#btnVolver { min-height: 36px; padding: .4rem .7rem; border: 1px solid #d6e0ea; border-radius: 8px; background: #fff; color: #365b80; font-size: .83rem; font-weight: 650; cursor: pointer; }
+#btnVolver:hover { background: #edf3fa; }
+.ficha-hero { display: flex; align-items: center; gap: 1rem; padding: 1.4rem clamp(1.1rem, 2.4vw, 2rem); border: 1px solid #dfe7f0; border-radius: 16px; background: #fff; box-shadow: 0 5px 18px rgba(16,42,67,.05); }
+.ficha-avatar-control { position: relative; display: flex; flex: 0 0 120px; flex-direction: column; align-items: center; gap: .35rem; }
+.ficha-avatar { position: relative; display: grid; place-items: center; flex: 0 0 112px; width: 112px; height: 112px; overflow: hidden; padding: 0; border: 2px solid #d5e2ef; border-radius: 50%; background: linear-gradient(145deg, #edf4fc, #dbe9f8); color: #245f9e; font-size: 1.55rem; font-weight: 800; letter-spacing: .04em; cursor: pointer; }
+.ficha-avatar:hover { border-color: #7fa5cf; box-shadow: 0 0 0 3px rgba(36,95,189,.1); }
+.ficha-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.ficha-avatar img[hidden], .ficha-avatar span[hidden], #btnQuitarFoto[hidden] { display: none !important; }
+.avatar-cambiar { position: absolute; right: 4px; bottom: 4px; display: grid; place-items: center; width: 27px; height: 27px; border: 2px solid #fff; border-radius: 50%; background: #245fbd; color: #fff; font-size: 1.05rem; line-height: 1; }
+.avatar-hint { color: #718397; font-size: .68rem; font-weight: 600; white-space: nowrap; }
+.btn-quitar-foto { padding: 0; border: 0; background: transparent; color: #718397; font-size: .65rem; cursor: pointer; }
+.btn-quitar-foto:hover { color: #a63e37; text-decoration: underline; }
+.ficha-identidad { flex: 1; min-width: 0; }
+.ficha-eyebrow { display: block; color: #6b8095; font-size: .68rem; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
+.ficha-identidad h1 { margin: .1rem 0 .35rem; color: #102a43; font-size: clamp(1.35rem, 2.4vw, 1.8rem); font-weight: 720; letter-spacing: -.03em; line-height: 1.2; overflow-wrap: anywhere; }
+.ficha-meta { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; color: #60758a; font-size: .82rem; }
+.ficha-meta strong { color: #334e68; }
+.estado-afiliado { display: inline-flex; align-items: center; min-height: 24px; padding: .12rem .6rem; border: 1px solid #bee4cf; border-radius: 999px; background: #effaf3; color: #247044 !important; font-size: .74rem; font-weight: 700 !important; }
+.estado-afiliado.estado-inactivo { border-color: #efc7c4; background: #fff2f0; color: #a63e37 !important; }
+.ficha-hero-actions { flex: 0 0 auto; }
+.btn-primary, .ficha-hero-actions button { min-height: 42px; padding: .6rem .95rem; border: 1px solid #1e4f91; border-radius: 9px; background: #245fbd; color: white; font-size: .88rem; font-weight: 650; cursor: pointer; }
+.btn-primary:hover, .ficha-hero-actions button:hover { background: #1e4f91; }
+.alerta-sindicato { display: flex; flex-wrap: wrap; gap: .35rem .7rem; margin-top: 1rem; padding: .8rem 1rem; border: 1px solid #f0d38e; border-radius: 11px; background: #fff9eb; color: #765719; font-size: .88rem; }
+.alerta-sindicato strong { font-weight: 750; }
+.ficha-layout { display: grid; grid-template-columns: minmax(0, 1fr) 285px; gap: 1rem; align-items: start; margin-top: 1rem; }
+.ficha-columna-principal { display: grid; gap: 1rem; min-width: 0; }
+.ficha-panel, .grupo-familiar { border: 1px solid #dfe7f0; border-radius: 14px; background: #fff; box-shadow: 0 5px 18px rgba(16,42,67,.045); }
+.ficha-panel { padding: clamp(1rem, 1.8vw, 1.45rem); }
+.panel-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: .9rem; padding-bottom: .7rem; border-bottom: 1px solid #edf1f5; }
+.panel-heading h2, .ficha-acciones-panel h2, .grupo-heading h2 { margin-top: .12rem; color: #173f70; font-size: 1.06rem; font-weight: 720; letter-spacing: -.01em; }
+.ficha-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); gap: .55rem; }
+.ficha-grid > div { min-width: 0; padding: .65rem .75rem; border: 1px solid #e5ebf1; border-radius: 9px; background: #f9fbfd; }
+.ficha-grid strong { display: block; margin-bottom: .16rem; color: #718397; font-size: .65rem; font-weight: 750; letter-spacing: .065em; text-transform: uppercase; }
+.ficha-grid span, .ficha-grid input, .ficha-grid select { max-width: 100%; color: #243b53; font-size: .86rem; font-weight: 550; overflow-wrap: anywhere; }
+.ficha-grid input, .ficha-grid select { width: 100%; min-height: 38px; padding: .48rem .6rem; border: 1px solid #bdcddd; border-radius: 8px; background: white; }
+.ficha-grid input:focus, .ficha-grid select:focus { outline: none; border-color: #4d83c8; box-shadow: 0 0 0 3px rgba(36,95,189,.14); }
+.ficha-grid .checkbox-field { display: flex; align-items: center; gap: .5rem; }
+.ficha-grid .checkbox-field label { font-size: .86rem; }
+.ficha-grid .checkbox-field input[type="checkbox"] { width: 16px; min-height: 16px; accent-color: #245fbd; }
+.ficha-sidebar { position: sticky; top: 1rem; }
+.ficha-acciones-panel h2 { margin: .15rem 0 1rem; }
+.acciones-ficha { display: grid; gap: .55rem; }
+.acciones-ficha button { min-height: 40px; padding: .55rem .75rem; border: 1px solid #d0dbe6; border-radius: 8px; background: #fff; color: #315879; font-size: .84rem; font-weight: 650; text-align: left; cursor: pointer; transition: background .16s ease, border-color .16s ease; }
+.acciones-ficha button:hover { border-color: #a9bfd6; background: #f2f6fb; }
+.acciones-ficha #btnEditar, .acciones-ficha #btnGuardar { border-color: #1e4f91; background: #245fbd; color: #fff; }
+.acciones-ficha #btnEditar:hover, .acciones-ficha #btnGuardar:hover { background: #1e4f91; }
+.acciones-ficha .danger { margin-top: .35rem; border-color: #efcfcc; background: #fff7f6; color: #a63e37; }
+.acciones-ficha .danger:hover { background: #fdecea; }
+.acciones-ficha .danger-outline { border-color: transparent; color: #a63e37; }
+.acciones-ayuda { margin-top: .85rem; color: #718397; font-size: .74rem; line-height: 1.5; }
+.estado-alerta { color: #a63e37 !important; font-size: .78rem !important; font-weight: 700 !important; }
+#adjuntoEstudiosField, #adjuntoDiscapacidadField { grid-column: 1 / -1; }
+#adjuntoEstudiosContenido, #adjuntoDiscapacidadContenido { display: flex; flex-direction: column; gap: .35rem; }
+#adjuntoEstudiosContenido a, #adjuntoDiscapacidadContenido a { color: #245fbd; font-size: .83rem; text-decoration: none; }
+#adjuntoEstudiosContenido a:hover, #adjuntoDiscapacidadContenido a:hover { text-decoration: underline; }
+#adjuntoEstudiosField input[type="file"], #adjuntoDiscapacidadField input[type="file"] { width: 100%; padding: .5rem; border: 1px dashed #b8c9dc; border-radius: 8px; background: #f9fbfd; }
+#btnAgregarCud, .btn-agregar-cud { min-height: 36px; margin-top: .4rem; padding: .45rem .7rem; border: 1px solid #b9cbe0; border-radius: 8px; background: #edf3fa; color: #173f70; font-size: .8rem; font-weight: 650; cursor: pointer; }
+.grupo-familiar { margin-top: 1rem; margin-bottom: 1.5rem; padding: clamp(1rem, 1.8vw, 1.45rem); }
+.grupo-heading { display: grid; grid-template-columns: minmax(200px, 1fr) minmax(180px, 280px) auto; align-items: end; gap: .55rem .85rem; margin-bottom: .8rem; }
+.grupo-heading > div { grid-row: span 2; align-self: center; }
+.filtro-familia-label { color: #60758a; font-size: .74rem; font-weight: 650; }
+#filtroGrupoFamiliar { grid-column: 2; width: 100%; min-height: 38px; padding: .5rem .7rem; border: 1px solid #cbd6e2; border-radius: 8px; color: #243447; font-size: .84rem; }
+#filtroGrupoFamiliar:focus { outline: none; border-color: #4d83c8; box-shadow: 0 0 0 3px rgba(36,95,189,.14); }
+.contador-familia { grid-column: 3; grid-row: 2; padding-bottom: .5rem; color: #718397; font-size: .75rem; white-space: nowrap; }
+.tabla-familia-scroll { overflow-x: auto; border: 1px solid #e5ebf1; border-radius: 9px; }
+#tablaGrupoFamiliar { width: 100%; min-width: 760px; border-collapse: collapse; font-size: .81rem; }
+#tablaGrupoFamiliar th, #tablaGrupoFamiliar td { padding: .65rem .75rem; border-bottom: 1px solid #e8edf2; text-align: left; white-space: nowrap; }
+#tablaGrupoFamiliar th { background: #f4f7fa; color: #64788c; font-size: .66rem; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
+#tablaGrupoFamiliar td { color: #334e68; }
+#tablaGrupoFamiliar tbody tr { cursor: pointer; transition: background-color .15s ease; }
+#tablaGrupoFamiliar tbody tr:hover, #tablaGrupoFamiliar tbody tr:focus { outline: none; background: #edf4fc; }
+#tablaGrupoFamiliar tbody tr.fila-actual { background: #edf4fc; font-weight: 650; }
+#tablaGrupoFamiliar tbody tr.fila-baja { opacity: .65; }
+
+@media (max-width: 960px) {
+  .ficha-layout { grid-template-columns: minmax(0, 1fr); }
+  .ficha-sidebar { position: static; }
+  .acciones-ficha { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .acciones-ayuda { max-width: 620px; }
 }
-
-body {
-  background: #f5f7fa;
-  color: #222;
-  min-height: 100vh;
-}
-
-/* Botón volver debajo del cerrar sesión */
-#btnVolver {
-  position: absolute;   
-  top: 105px;              
-  right: 20px;            
-  background-color: #f3f4f6;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  z-index: 1000;
-  transition: background-color 0.2s;
-}
-
-#btnVolver:hover {
-  background-color: #e5e7eb;
-}
-
-#adjuntoEstudiosField {
-  grid-column: 1 / -4; /* ocupa todo el ancho del form */
-}
-
-#adjuntoEstudiosField label {
-  display: block;
-  margin-bottom: 0.3rem;
-  font-size: 0.85rem;
-  color: #f59e0b; /* mismo color que estudios */
-}
-
-#adjuntoEstudiosField input[type="file"] {
-  border: 1px solid #f59e0b;
-  border-radius: 6px;
-  background: #fff7ed;
-  padding: 0.4rem;
-  cursor: pointer;
-}
-
-#adjuntoDiscapacidadField{
-  grid-column: 1 / -4; /* ocupa todo el ancho del form */
-}
-
-#adjuntoDiscapacidadField label {
-  display: block;
-  margin-bottom: 0.3rem;
-  font-size: 0.85rem;
-  color: #f59e0b; /* mismo color que estudios */
-}
-
-#adjuntoDiscapacidadField input[type="file"] {
-  border: 1px solid #f59e0b;
-  border-radius: 6px;
-  background: #fff7ed;
-  padding: 0.4rem;
-  cursor: pointer;
-}
-
-/* =====================
-   FICHA AFILIADO
-===================== */
-
-.ficha-afiliado {
-background: #ffffff;
-    padding: 0.9rem;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
-    max-width: 1100px;
-    width: 100%;
-    margin: 55px auto 0;
-    margin-top: 70px;
-}
-
-/* Contenedor del nombre y botón de ficha médica */
-.ficha-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.2rem;
-}
-
-.ficha-header h2 {
-  font-size: 1.6rem;
-  color: #0f172a;
-}
-
-.btn-primary {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 0.45rem 0.9rem;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all .2s ease;
-}
-
-.btn-primary:hover {
-  background: #2563eb;
-}
-
-/* =====================
-   GRID DE DATOS
-===================== */
-
-.ficha-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.6rem;
-}
-
-.ficha-grid > div {
-  background: #f8fafc;
-  padding: 0.5rem 0.7rem;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.ficha-grid strong {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  color: #475569;
-}
-
-.ficha-grid span,
-.ficha-grid input,
-.ficha-grid select {
-  font-size: 0.88rem;
-  color: #0f172a;
-}
-
-/* =====================
-   MODO EDICIÓN
-===================== */
-
-.ficha-grid input,
-.ficha-grid select {
-  padding: 0.45rem 0.6rem;
-  border-radius: 6px;
-  border: 1px solid #cbd5f5;
-  background: #ffffff;
-}
-
-.ficha-grid input:focus,
-.ficha-grid select:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37,99,235,.15);
-}
-
-/* =====================
-   ACCIONES
-===================== */
-
-.acciones-ficha {
-  margin-top: 1.5rem;
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-/* Botón base */
-.acciones-ficha button {
-  padding: 0.5rem 0.9rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  border: none;
-  cursor: pointer;
-  transition: all .2s ease;
-}
-
-/* Editar */
-#btnEditar {
-  background: #2563eb;
-  color: white;
-}
-
-#btnEditar:hover {
-  background: #1d4ed8;
-}
-
-/* Guardar */
-#btnGuardar {
-  background: #16a34a;
-  color: white;
-}
-
-#btnGuardar:hover {
-  background: #15803d;
-}
-
-/* Cancelar */
-#btnCancelar {
-  background: #e5e7eb;
-  color: #0f172a;
-}
-
-#btnCancelar:hover {
-  background: #d1d5db;
-}
-
-/* Baja */
-.danger {
-  background: #dc2626;
-  color: white;
-}
-
-.danger:hover {
-  background: #b91c1c;
-}
-
-/* Eliminar */
-.danger-outline {
-  background: transparent;
-  color: #dc2626;
-  border: 1px solid #dc2626;
-}
-
-.danger-outline:hover {
-  background: #dc2626;
-  color: white;
-}
-
-/* =====================
-   GRUPO FAMILIAR
-===================== */
-
-.grupo-familiar {
-  margin-top: 2rem;
-  background: #ffffff;
-  padding: 1.2rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0,0,0,.06);
-  max-width: 1100px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 10px;
-}
-
-.grupo-familiar h3 {
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  color: #0f172a;
-}
-
-/* Tabla */
-#tablaGrupoFamiliar {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-  margin-bottom: 29px;
-}
-
-#tablaGrupoFamiliar thead {
-  background: #f1f5f9;
-}
-
-#tablaGrupoFamiliar th,
-#tablaGrupoFamiliar td {
-  padding: 0.6rem 0.8rem;
-  border-bottom: 1px solid #e5e7eb;
-  text-align: left;
-}
-
-#tablaGrupoFamiliar th {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  color: #475569;
-}
-
-#tablaGrupoFamiliar tbody tr:hover {
-  background: #f8fafc;
-  cursor: pointer;
-}
-
-/* Resaltar afiliado actual */
-.fila-actual {
-  background: #eff6ff;
-  font-weight: 600;
-}
-
-/* Afiliado dado de baja */
-.fila-baja {
-  opacity: 0.6;
-}
-
-
-.ficha-grid .checkbox-field {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.ficha-grid .checkbox-field input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  min-height: auto;
-  margin: 0;
-  padding: 0;
-  accent-color: #2563eb;
-  cursor: pointer;
-}
-
-.ficha-grid .checkbox-field label {
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-/* =====================
-   CUD – DOCUMENTOS
-===================== */
-
-/* =====================
-   ADJUNTO CUD – IGUAL A CONSTANCIA ALUMNO REGULAR
-===================== */
-
-#adjuntoDiscapacidadField {
-  grid-column: 1 / -4;
-  background: #f8fafc;
-  padding: 0.5rem 0.7rem;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-/* Título igual a los demás campos */
-#adjuntoDiscapacidadField strong {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  color: #475569;
-}
-
-/* Contenedor links */
-#adjuntoDiscapacidadContenido {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-/* Links de adjuntos */
-#adjuntoDiscapacidadContenido a {
-  font-size: 0.88rem;
-  color: #1d4ed8;
-  text-decoration: none;
-}
-
-#adjuntoDiscapacidadContenido a:hover {
-  text-decoration: underline;
-}
-
-/* Input file igual al resto */
-#adjuntoDiscapacidadField input[type="file"] {
-    border: 1px solid #f59e0b;
-    border-radius: 6px;
-    background: #fff7ed;
-    padding: 0.4rem;
-    cursor: pointer;
-}
-
-/* Botón agregar CUD igual estilo acción secundaria */
-#btnAgregarCud {
-  align-self: flex-start;
-  background: #e5e7eb;
-  color: #0f172a;
-  border: none;
-  border-radius: 6px;
-  padding: 0.35rem 0.7rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: background .2s ease;
-}
-
-#btnAgregarCud:hover {
-  background: #d1d5db;
-}
-
-/* =====================
-   CUD FECHAS
-===================== */
-
-#cudFechasField {
-  grid-column: span 2; /* ocupa 2 columnas como plan materno */
-}
-
-#cudFechasField label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  color: #475569;
-  margin-bottom: 0.1rem;
-}
-
-.cud-fechas-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-  margin-top: 0.3rem;
-}
-
-.cud-fechas-grid span {
-  font-size: 0.9rem;
-}
-
-/* =========================
-   CONTENEDOR ITEM CUD
-========================= */
-.cud-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  margin-bottom: 4px;
-  padding: 4px 6px;
-
-  background-color: #f9fafb;
-  border-radius: 6px;
-}
-
-/* =========================
-   BOTÓN ELIMINAR CUD (X)
-========================= */
-.btn-eliminar-cud {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 22px;
-  height: 22px;
-
-  margin-left: 6px;
-
-  font-size: 14px;
-  font-weight: bold;
-
-  color: #991b1b;
-  background-color: #fee2e2;
-
-  border: 1px solid #fca5a5;
-  border-radius: 50%;
-
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-eliminar-cud:hover {
-  background-color: #fecaca;
-  color: #7f1d1d;
-}
-
-.btn-eliminar-cud:active {
-  transform: scale(0.9);
-}
-
-/* =========================
-   BOTÓN AGREGAR CUD (+)
-========================= */
-.btn-agregar-cud {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-
-  margin-top: 6px;
-  padding: 6px 10px;
-
-  font-size: 0.9rem;
-  font-weight: 600;
-
-  color: #065f46;
-  background-color: #ecfdf5;
-
-  border: 1px solid #34d399;
-  border-radius: 6px;
-
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-agregar-cud:hover {
-  background-color: #d1fae5;
-  border-color: #10b981;
-}
-
-.btn-agregar-cud:active {
-  transform: scale(0.97);
-}
-
-/* =========================
-   TABLET ≤ 900px
-========================= */
-@media (max-width: 900px) {
-
-  .ficha-afiliado {
-    padding: 1rem;
-    margin-top: 0.5rem;
-  }
-
-  .ficha-grid {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  }
-
-  .grupo-familiar {
-    padding: 1rem;
-  }
-}
-
-/* =========================
-   MOBILE ≤ 700px
-========================= */
 @media (max-width: 700px) {
-
-    #cudFechasField {
-    grid-column: 1 / -1;
-  }
-
-  .cud-fechas-grid {
-    grid-template-columns: 1fr;
-  }
-
-    #adjuntoDiscapacidadField {
-    padding: 0.6rem;
-  }
-
-  #adjuntoDiscapacidadContenido a {
-    font-size: 0.8rem;
-  }
-
-  #btnAgregarCud {
-    width: 100%;
-    text-align: center;
-  }
-
-    .ficha-afiliado {
-    padding: 1rem;
-    margin-top: 0.5rem;
-  }
-
-    /* Apilar campos plan materno en tablets/móviles */
-  #planMaternoDesdeField,
-  #planMaternoHastaField {
-    width: 100%;
-  }
-
-  .grupo-familiar {
-    overflow-x: auto; /* permite scroll horizontal */
-  }
-
-  #tablaGrupoFamiliar {
-    min-width: 700px; /* mínimo ancho para que no se comprima demasiado */
-    display: table;
-  }
-
-  #tablaGrupoFamiliar th,
-  #tablaGrupoFamiliar td {
-    white-space: nowrap; /* evita que se corten los textos */
-  }
-
-  /* Botón volver deja de flotar */
-  #btnVolver {
-    position: static;
-    width: 50%;
-    height: 40px;
-    margin-left: auto;
-    justify-content: center;
-    margin-bottom: 0.6rem;
-    font-size: 0.85rem;
-    padding: 6px 10px;
-  }
-
-  /* Header ficha en columna */
-  .ficha-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .ficha-header h2 {
-    font-size: 1.35rem;
-  }
-
-  .ficha-header button {
-    width: 100%;
-  }
-
-  /* Grid de datos en una columna */
-  .ficha-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .ficha-grid strong {
-    font-size: 0.65rem;
-  }
-
-  .ficha-grid span,
-  .ficha-grid input,
-  .ficha-grid select {
-    font-size: 0.85rem;
-  }
-
-  /* Acciones apiladas */
-  .acciones-ficha {
-    flex-direction: column;
-  }
-
-  .acciones-ficha button {
-    width: 100%;
-  }
-
-  /* Tabla grupo familiar más compacta */
-  #tablaGrupoFamiliar {
-    font-size: 0.8rem;
-  }
-
-  #tablaGrupoFamiliar th,
-  #tablaGrupoFamiliar td {
-    padding: 0.45rem 0.5rem;
-  }
-
-    .ficha-grid .checkbox-field {
-    gap: 0.4rem;
-  }
-
-  .ficha-grid .checkbox-field label {
-    font-size: 0.85rem;
-  }
+  .ficha-afiliado, .grupo-familiar { width: calc(100% - 1rem); }
+  .ficha-afiliado { padding-top: .65rem; }
+  .ficha-breadcrumb { margin-bottom: .65rem; }
+  .ficha-hero { flex-wrap: wrap; gap: .75rem; padding: 1rem; }
+  .ficha-avatar-control { flex-basis: 96px; }
+  .ficha-avatar { flex-basis: 88px; width: 88px; height: 88px; }
+  .ficha-identidad { flex-basis: calc(100% - 110px); }
+  .ficha-hero-actions { width: 100%; }
+  .ficha-hero-actions button { width: 100%; }
+  .ficha-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grupo-heading { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+  .grupo-heading > div { grid-column: 1 / -1; grid-row: auto; }
+  .filtro-familia-label { grid-column: 1 / -1; }
+  #filtroGrupoFamiliar { grid-column: 1; }
+  .contador-familia { grid-column: 2; grid-row: auto; padding: 0; }
 }
-
-/* =========================
-   MOBILE CHICO ≤ 500px
-========================= */
-@media (max-width: 500px) {
-
-  .ficha-grid > div {
-    padding: 0.45rem 0.55rem;
-  }
-
-  .acciones-ficha button {
-    font-size: 0.85rem;
-    padding: 0.45rem;
-  }
-
-  #tablaGrupoFamiliar th {
-    font-size: 0.65rem;
-  }
-
-  #tablaGrupoFamiliar td {
-    font-size: 0.75rem;
-  }
-
-    .ficha-grid .checkbox-field {
-    gap: 0.4rem;
-  }
-
-  .ficha-grid .checkbox-field label {
-    font-size: 0.85rem;
-  }
+@media (max-width: 420px) {
+  .ficha-grid { grid-template-columns: minmax(0, 1fr); }
+  .acciones-ficha { grid-template-columns: minmax(0, 1fr); }
+  .ficha-panel { padding: .9rem; }
 }

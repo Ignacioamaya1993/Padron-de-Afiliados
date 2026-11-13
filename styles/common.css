@@ -1082,3 +1082,32 @@ body {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Diálogos SweetAlert2: tratamiento común de confirmaciones, avisos y formularios. */
+.swal2-container { padding: 1rem !important; backdrop-filter: blur(3px); }
+.swal2-popup { width: min(32rem, calc(100vw - 2rem)) !important; padding: 1.55rem !important; border: 1px solid #e0e7ef !important; border-radius: 16px !important; background: #fff !important; box-shadow: 0 22px 65px rgba(16,42,67,.22) !important; color: #243447 !important; }
+.swal2-title { margin: .45rem 0 .35rem !important; color: #102a43 !important; font-size: 1.25rem !important; font-weight: 730 !important; letter-spacing: -.02em !important; }
+.swal2-html-container { margin: .35rem 0 .7rem !important; color: #60758a !important; font-size: .9rem !important; line-height: 1.55 !important; }
+.swal2-icon { margin: .15rem auto .7rem !important; transform: scale(.84); }
+.swal2-actions { gap: .55rem !important; margin-top: 1.2rem !important; }
+.swal2-styled { min-height: 40px !important; margin: 0 !important; padding: .6rem 1rem !important; border-radius: 9px !important; font-size: .84rem !important; font-weight: 680 !important; box-shadow: none !important; }
+.swal2-styled.swal2-confirm { border: 1px solid #1e4f91 !important; background: #245fbd !important; color: #fff !important; }
+.swal2-styled.swal2-confirm:hover { background: #1e4f91 !important; }
+.swal2-styled.swal2-danger-confirm { border-color: #a63e37 !important; background: #b84942 !important; color: #fff !important; }
+.swal2-styled.swal2-danger-confirm:hover { background: #963a34 !important; }
+.swal2-styled.swal2-cancel { border: 1px solid #d5dfe9 !important; background: #fff !important; color: #365b80 !important; }
+.swal2-styled.swal2-cancel:hover { background: #f1f5f9 !important; }
+.swal2-input, .swal2-textarea, .swal2-select { width: 100% !important; margin: .45rem 0 0 !important; padding: .7rem .8rem !important; border: 1px solid #cbd6e2 !important; border-radius: 9px !important; background: #fff !important; color: #243447 !important; font-size: .88rem !important; box-shadow: none !important; }
+.swal2-textarea { min-height: 108px !important; resize: vertical !important; }
+.swal2-input-label { margin: .75rem 0 .25rem !important; color: #405a72 !important; font-size: .79rem !important; font-weight: 650 !important; }
+.swal2-input:focus, .swal2-textarea:focus, .swal2-select:focus { border-color: #4d83c8 !important; box-shadow: 0 0 0 3px rgba(36,95,189,.14) !important; }
+.swal2-validation-message { border-radius: 8px !important; background: #fff1ef !important; color: #a63e37 !important; font-size: .8rem !important; }
+.swal2-close { color: #718397 !important; }
+.swal2-close:hover { color: #243447 !important; }
+.swal2-popup.swal2-toast { width: auto !important; padding: .75rem 1rem !important; border-radius: 12px !important; }
+.swal2-popup.swal2-toast .swal2-html-container { margin: .15rem .5rem !important; }
+@media (max-width: 520px) {
+  .swal2-popup { padding: 1.2rem !important; }
+  .swal2-actions { width: 100%; flex-direction: column-reverse; }
+  .swal2-styled { width: 100%; }
+}

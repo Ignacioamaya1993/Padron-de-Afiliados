@@ -110,3 +110,70 @@ export async function subirArchivoCloudinary(file, carpeta=""){
   return data.secure_url;
 
 }
+
+// Las fotos de perfil se suben como imágenes para conservar miniaturas y
+// transformaciones de Cloudinary; los adjuntos documentales siguen usando raw.
+export async function subirImagenPerfilCloudinary(file, carpeta="") {
+  if (!file || !file.type.startsWith("image/")) {
+    throw new Error("Seleccioná una imagen válida.");
+  }
+
+  const limiteBytes = 5 * 1024 * 1024;
+  let imagen = file;
+
+  if (file.size > limiteBytes) {
+    const bitmap = await createImageBitmap(file);
+    const canvas = document.createElement("canvas");
+    const contexto = canvas.getContext("2d");
+    if (!contexto) throw new Error("No se pudo procesar la imagen en este navegador.");
+
+    let escala = Math.min(1, 2400 / Math.max(bitmap.width, bitmap.height));
+    let calidad = 0.9;
+    let blob = null;
+
+    // Primero baja la calidad y luego las dimensiones, conservando la proporción.
+    for (let intento = 0; intento < 18; intento++) {
+      canvas.width = Math.max(1, Math.round(bitmap.width * escala));
+      canvas.height = Math.max(1, Math.round(bitmap.height * escala));
+      contexto.fillStyle = "#fff";
+      contexto.fillRect(0, 0, canvas.width, canvas.height);
+      contexto.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+      blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", calidad));
+      if (!blob) break;
+      if (blob.size <= limiteBytes) break;
+
+      if (calidad > 0.5) calidad = Math.max(0.5, calidad - 0.1);
+      else {
+        escala *= 0.78;
+        calidad = 0.82;
+      }
+    }
+
+    bitmap.close();
+    if (!blob || blob.size > limiteBytes) {
+      throw new Error("No se pudo comprimir la imagen por debajo de 5 MB.");
+    }
+
+    const nombreBase = file.name.replace(/\.[^.]+$/, "") || "foto-perfil";
+    imagen = new File([blob], `${nombreBase}.jpg`, { type: "image/jpeg" });
+  }
+
+  const formData = new FormData();
+  formData.append("file", imagen);
+  formData.append("upload_preset", "lyfolavarria");
+  if (carpeta) formData.append("folder", carpeta);
+
+  const res = await fetch("https://api.cloudinary.com/v1_1/daegaptwk/image/upload", {
+    method: "POST",
+    body: formData
+  });
+
+  if (!res.ok) {
+    console.error("Error Cloudinary:", await res.text());
+    throw new Error("No se pudo subir la imagen.");
+  }
+
+  const data = await res.json();
+  return data.secure_url;
+}
