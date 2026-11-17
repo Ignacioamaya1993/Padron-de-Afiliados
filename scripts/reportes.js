@@ -223,6 +223,7 @@ function claseColumna(clave) {
 function obtenerDatosFiltrados() {
   const consulta = normalizarTexto(buscarReporteInput?.value || "");
   if (!consulta) return datosReporteActual;
+  const consultaNumeroAfiliado = consulta.replace(/\D/g, "");
 
   const columnasBuscables = new Set([
     "nombre",
@@ -242,6 +243,10 @@ function obtenerDatosFiltrados() {
       const valorNormalizado = normalizarTexto(valor);
       if (["nombre", "nombre completo"].includes(claveNormalizada)) {
         return terminos.every(termino => valorNormalizado.includes(termino));
+      }
+      if (["n afiliado", "numero afiliado", "numero de afiliado"].includes(claveNormalizada)) {
+        const numeroAfiliado = String(valor ?? "").replace(/\D/g, "");
+        return consultaNumeroAfiliado.length > 0 && numeroAfiliado.includes(consultaNumeroAfiliado);
       }
       return valorNormalizado.includes(consulta);
     })

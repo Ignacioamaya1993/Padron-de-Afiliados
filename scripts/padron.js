@@ -440,8 +440,32 @@ let query = supabase
 
 // 🔹 IMPORTANTE: AND entre palabras
 palabras.forEach(p => {
+  const digitosAfiliado = p.replace(/\D/g, "");
+  const alternativas = [
+    `nombre_completo.ilike.%${p}%`,
+    `dni.ilike.%${p}%`,
+    `numero_afiliado.ilike.%${p}%`
+  ];
+
+  // Acepta búsquedas numéricas sin separadores, respetando el formato
+  // 19-00639-4/00. No usar comodines entre cada dígito: eso puede traer
+  // afiliados cuyo número solo coincide parcialmente.
+  if (/^\d+$/.test(p) && digitosAfiliado.length >= 2 && digitosAfiliado.length <= 10) {
+    const separadores = new Map([[2, "-"], [7, "-"], [8, "/"]]);
+    for (let inicio = 0; inicio + digitosAfiliado.length <= 10; inicio++) {
+      let patron = "";
+      for (let indice = 0; indice < digitosAfiliado.length; indice++) {
+        if (indice > 0) {
+          patron += separadores.get(inicio + indice) ?? "";
+        }
+        patron += digitosAfiliado[indice];
+      }
+      alternativas.push(`numero_afiliado.ilike.%${patron}%`);
+    }
+  }
+
   query = query.or(
-    `nombre_completo.ilike.%${p}%,dni.ilike.%${p}%,numero_afiliado.ilike.%${p}%`
+    alternativas.join(",")
   );
 });
 
