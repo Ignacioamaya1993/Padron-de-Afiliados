@@ -1,3 +1,4 @@
+import { bundleCartillaSupabase } from './cartilla-bundle.mjs';
 import {
     cpSync,
     mkdirSync,
@@ -69,5 +70,9 @@ for (const entry of readdirSync(imageDir, {
         copy(`cartilla/img/${entry.name}`);
     }
 }
+
+await bundleCartillaSupabase(
+    join(dist, 'cartilla/js/vendor/supabase-client.js')
+);
 
 console.log('BUILD OK: dist generated successfully');

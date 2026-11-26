@@ -1,9 +1,9 @@
 import { ENV } from './env.js';
+import { supabase } from './supabase.js';
 import { REVIEW_FIELDS, FIELD_LABELS, validateReport, caseKey, findLiveRecord, beforeRecord, proposedValues, buildChanges, rememberedFields, caseRemembered, hasReviewDifferences } from './review-model.js';
 
 const $ = id => document.getElementById(id);
 const storageKey = `cartilla-review-v1:${new URL(ENV.SUPABASE_URL).hostname}`;
-let token = null;
 let professionals = [];
 let categories = [];
 let reviewDecisions = [];
@@ -11,6 +11,8 @@ let report = null;
 let activeIndex = null;
 let pendingSave = null;
 let busy = false;
+let sessionGeneration = 0;
+let closingSession = null;
 let decisions = {};
 try { decisions = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch { /* Browsing still works without storage. */ }
 if (!decisions || typeof decisions !== 'object' || Array.isArray(decisions)) decisions = {};
@@ -32,20 +34,101 @@ function button(text, action, className) {
     const node = element('button', text, className); node.type = 'button'; node.addEventListener('click', action); return node;
 }
 function sessionEnded() {
-    token = null; professionals = []; categories = []; reviewDecisions = []; pendingSave = null;
+    sessionGeneration++;
+    professionals = []; categories = []; reviewDecisions = []; pendingSave = null;
     $('workspace').hidden = true; $('loginPanel').hidden = false; $('logout').hidden = true;
     if ($('confirmDialog').open) $('confirmDialog').close();
 }
+async function closeAuthSession() {
+    if (closingSession) return closingSession;
+
+    const submit = $('loginForm').querySelector('button[type="submit"]');
+    const wasDisabled = submit.disabled;
+
+    submit.disabled = true;
+    sessionEnded();
+
+    closingSession = (async () => {
+        const { error } = await supabase.auth.signOut({
+            scope: 'local'
+        });
+
+        if (error) {
+            throw new Error(
+                'Se cerró el acceso local, pero no se pudo confirmar la revocación remota.'
+            );
+        }
+    })();
+
+    try {
+        await closingSession;
+    } finally {
+        closingSession = null;
+        submit.disabled = wasDisabled;
+    }
+}
+
+function assertCurrentSession(generation) {
+    if (generation !== sessionGeneration || closingSession) {
+        throw new Error('La sesión cambió. La respuesta anterior fue descartada.');
+    }
+}
+
 async function api(options = {}) {
-    const response = await fetch('/api/cartilla/admin', { ...options, cache: 'no-store',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', ...options.headers }, signal: AbortSignal.timeout(60000) });
+    const generation = sessionGeneration;
+    assertCurrentSession(generation);
+    const { data: auth, error: authError } =
+        await supabase.auth.getSession();
+
+    assertCurrentSession(generation);
+
+    if (authError) {
+        throw new Error('No se pudo verificar la sesión. Reintentá más tarde.');
+    }
+
+    if (!auth.session?.access_token) {
+        sessionEnded();
+        throw new Error('Iniciá sesión para continuar.');
+    }
+
+    const response = await fetch('/api/cartilla/admin', {
+        ...options,
+        cache: 'no-store',
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
+            Authorization: `Bearer ${auth.session.access_token}`
+        },
+        signal: AbortSignal.timeout(60000)
+    });
+
     const data = await response.json().catch(() => ({}));
-    if (response.status === 401) sessionEnded();
-    if (!response.ok) throw new Error(data.error || 'No se pudo completar la operación.');
+
+    assertCurrentSession(generation);
+
+    const authorizationDenied =
+        response.status === 401 ||
+        (response.status === 403 && (
+            (options.method || 'GET') === 'GET' ||
+            data.error === 'Este usuario no tiene permiso para administrar la cartilla.'
+        ));
+
+    if (authorizationDenied) {
+        await closeAuthSession();
+    }
+
+    if (!response.ok) {
+        throw new Error(data.error || 'No se pudo completar la operación.');
+    }
+
     return data;
 }
+
 async function reload() {
+    const generation = sessionGeneration;
     const data = await api();
+
+    assertCurrentSession(generation);
     professionals = data.professionals; categories = data.categories.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
     reviewDecisions = data.reviewDecisions || [];
     $('workspace').hidden = false; $('loginPanel').hidden = true; $('logout').hidden = false;
@@ -54,24 +137,50 @@ async function reload() {
 }
 $('loginForm').addEventListener('submit', async event => {
     event.preventDefault();
-    const submit = event.submitter || $('loginForm').querySelector('button[type="submit"]'); submit.disabled = true;
+
+    const submit = event.submitter ||
+        $('loginForm').querySelector('button[type="submit"]');
+
+    if (submit.disabled || closingSession) return;
+    submit.disabled = true;
+
     try {
         message('Verificando acceso…');
-        const response = await fetch(new URL('/auth/v1/token?grant_type=password', ENV.SUPABASE_URL), {
-            method: 'POST', headers: { apikey: ENV.SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: $('email').value.trim(), password: $('password').value }), signal: AbortSignal.timeout(20000)
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: $('email').value.trim(),
+            password: $('password').value
         });
-        const auth = await response.json();
-        if (!response.ok || !auth.access_token) throw new Error('No se pudo iniciar sesión. Revisá el correo y la contraseña.');
-        token = auth.access_token;
+
+        if (error || !data.session) {
+            throw new Error('No se pudo iniciar sesión. Revisá el correo y la contraseña.');
+        }
+
         await reload();
-    } catch (error) { token = null; message(error.message, true); }
-    finally { $('password').value = ''; submit.disabled = false; }
+    } catch (error) {
+        message(error.message, true);
+    } finally {
+        $('password').value = '';
+        submit.disabled = false;
+    }
 });
+
 $('logout').addEventListener('click', async () => {
-    const previous = token; sessionEnded(); message('Sesión cerrada.');
-    try { await fetch(new URL('/auth/v1/logout?scope=local', ENV.SUPABASE_URL), { method: 'POST', headers: { apikey: ENV.SUPABASE_ANON_KEY, Authorization: `Bearer ${previous}` }, signal: AbortSignal.timeout(10000) }); } catch { /* Token has been discarded locally. */ }
+    if (busy) return;
+
+    const logoutButton = $('logout');
+    logoutButton.disabled = true;
+
+    try {
+        await closeAuthSession();
+        message('Sesión cerrada.');
+    } catch (error) {
+        message(error.message, true);
+    } finally {
+        logoutButton.disabled = false;
+    }
 });
+
 $('reload').addEventListener('click', async () => {
     if (busy) return;
     $('reload').disabled = true;
@@ -297,4 +406,30 @@ $('syncLegacy').addEventListener('click', () => decisionOperation(async () => {
     message(`${synced} decisiones anteriores guardadas en Supabase.${skipped ? ` ${skipped} casos necesitan un informe actualizado antes de sincronizarse.` : ''}`);
 }));
 window.addEventListener('beforeunload', event => { if (busy) { event.preventDefault(); event.returnValue = ''; } });
-document.documentElement.dataset.adminReady = 'true';
+async function initializeAuth() {
+    const submit = $('loginForm').querySelector('button[type="submit"]');
+    submit.disabled = true;
+
+    try {
+        const { data, error } = await supabase.auth.getSession();
+
+        if (error) {
+            throw new Error('No se pudo recuperar la sesión.');
+        }
+
+        if (data.session) {
+            message('Recuperando sesión…');
+            await reload();
+        } else {
+            sessionEnded();
+        }
+    } catch (error) {
+        sessionEnded();
+        message(error.message, true);
+    } finally {
+        submit.disabled = false;
+        document.documentElement.dataset.adminReady = 'true';
+    }
+}
+
+void initializeAuth();

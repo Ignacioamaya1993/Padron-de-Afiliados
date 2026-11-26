@@ -10,5 +10,11 @@
     "test:browser": "npm --prefix cartilla run test:browser",
     "build": "node build/build.mjs",
     "test:padron": "node --test tests/padron-login.test.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.119.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

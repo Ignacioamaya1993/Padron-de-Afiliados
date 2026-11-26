@@ -27,7 +27,7 @@
                 <label class="file-label" for="reportFile">Archivo de revisión<input id="reportFile" type="file" accept=".json,application/json"></label>
                 <p id="reportInfo"></p>
                 <div class="actions"><button id="reload" type="button">Actualizar datos de la base</button><button id="downloadHistory" type="button">Descargar historial de esta revisión</button><button id="syncLegacy" type="button" hidden>Guardar decisiones anteriores en Supabase</button></div>
-                <p class="muted">Los campos conservados se recuerdan en Supabase y se comparten entre dispositivos. Los borradores quedan en este navegador. La sesión se cierra al recargar la página.</p>
+                <p class="muted">Los campos conservados se recuerdan en Supabase y se comparten entre dispositivos. Los borradores quedan en este navegador. La sesión se conserva al recargar esta pestaña. Cerrá sesión al finalizar.</p>
             </section>
             <div id="reviewArea" hidden>
                 <section class="panel filters"><div><label for="caseSearch">Buscar un profesional</label><input id="caseSearch" type="search" placeholder="Apellido o nombre"></div><div><label for="caseFilter">Mostrar casos</label><select id="caseFilter"><option value="pending">Pendientes</option><option value="all">Todos</option><option value="saved">Actualizados</option><option value="kept">Conservados</option></select></div><p id="progress" role="status"></p></section>
