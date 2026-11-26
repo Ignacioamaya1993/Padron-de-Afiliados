@@ -1,11 +1,7 @@
 
 import { supabase } from "./supabase.js";
-import { ENV } from "./env.js";
 
 const SESSION_KEY = "sesionUnicaId";
-const NAVEGACION_KEY = "navegacionInternaPadron";
-const AUTH_STORAGE_KEY = `sb-${new URL(ENV.SUPABASE_URL).hostname.split(".")[0]}-auth-token`;
-let accessTokenActual = null;
 
 function obtenerSessionId() {
   let id = sessionStorage.getItem(SESSION_KEY);
@@ -56,7 +52,7 @@ export async function reservarSesion() {
     await supabase.auth.getSession();
 
   if (sessionError || !session) return false;
-  accessTokenActual = session.access_token;
+
 
   const { data, error } = await supabase.rpc("reservar_sesion", {
     p_session_id: obtenerSessionId()
@@ -75,7 +71,7 @@ export async function renovarSesion() {
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) return false;
-  accessTokenActual = session.access_token;
+
 
   const { data, error } = await supabase.rpc("renovar_sesion", {
     p_session_id: obtenerSessionId()
@@ -87,56 +83,6 @@ export async function renovarSesion() {
   }
 
   return data === true;
-}
-
-// Liberar la sesión única al cerrar la pestaña. El keepalive permite que las
-// solicitudes continúen mientras el navegador descarga el documento. La marca
-// de navegación interna evita cerrar sesión al abrir otra pantalla del sistema.
-export function configurarCierrePorPestana() {
-  sessionStorage.removeItem(NAVEGACION_KEY);
-
-  document.addEventListener("click", event => {
-    const target = event.target instanceof Element ? event.target : null;
-    if (!target) return;
-    const destino = target.closest('a[href]');
-    const navegacionInterna = destino && destino.target !== "_blank" &&
-      new URL(destino.href, window.location.href).origin === window.location.origin;
-    if (navegacionInterna || target.closest('[role="link"], #btnVolver, #btnFichaMedica, #reportesBtn')) {
-      sessionStorage.setItem(NAVEGACION_KEY, String(Date.now()));
-    }
-  }, true);
-
-  window.addEventListener("pagehide", event => {
-    if (event.persisted) return;
-    const marcaNavegacion = Number(sessionStorage.getItem(NAVEGACION_KEY) || 0);
-    if (Date.now() - marcaNavegacion < 5000) return;
-
-    const sessionId = sessionStorage.getItem(SESSION_KEY);
-    const token = accessTokenActual;
-    if (!sessionId || !token) return;
-
-    const headers = {
-      "Content-Type": "application/json",
-      apikey: ENV.SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${token}`
-    };
-    const request = (path, body) => fetch(`${ENV.SUPABASE_URL}${path}`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
-      keepalive: true
-    }).catch(error => console.warn("No se pudo cerrar la sesión al salir:", error));
-
-    request("/rest/v1/rpc/cerrar_historial_sesion", {
-      p_session_id: sessionId,
-      p_motivo: "pestana_cerrada"
-    });
-    request("/rest/v1/rpc/liberar_sesion", { p_session_id: sessionId });
-    request("/auth/v1/logout?scope=local", {});
-
-    // El cierre de pestaña debe requerir credenciales en una apertura posterior.
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-  });
 }
 
 // REGISTRAR INICIO EN EL HISTORIAL

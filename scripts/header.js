@@ -7,8 +7,7 @@ import {
   reservarSesion,
   renovarSesion,
   actualizarActividadHistorial,
-  cerrarHistorialSesion,
-  configurarCierrePorPestana
+  cerrarHistorialSesion
 } from "./auth.js";
 
 import { generarNotificaciones } from "./notificaciones.js";
@@ -471,7 +470,6 @@ export async function cargarHeader() {
 // =====================
 
 function inicializarHeader() {
-  configurarCierrePorPestana();
   const statusSpan = document.getElementById("status");
   const logoutBtn = document.getElementById("logoutBtn");
   const reportesBtn = document.getElementById("reportesBtn");
