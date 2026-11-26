@@ -68,7 +68,7 @@ async function verificarSesionExistente() {
       return;
     }
 
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: "local" });
 
     errorEl.textContent =
       "Este usuario ya tiene una sesión iniciada en otro dispositivo. " +

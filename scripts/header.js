@@ -169,12 +169,12 @@ async function cerrarSesionPorInactividad(
 
   try {
     // logout() libera la sesión activa y cierra Supabase Auth.
-    await logout("manual");
+    await logout("inactividad");
   } catch (error) {
     console.error("Error cerrando sesión por inactividad:", error);
 
     try {
-      await supabase.auth.signOut();
+      await supabase.auth.signOut({ scope: "local" });
     } finally {
       window.location.href = "/pages/login.html";
     }
@@ -251,7 +251,7 @@ async function cerrarSesionPorConflicto(mensaje) {
 }
 
 try {
-  await supabase.auth.signOut();
+  await supabase.auth.signOut({ scope: "local" });
 } catch (error) {
   console.error("Error cerrando la sesión:", error);
 } finally {
