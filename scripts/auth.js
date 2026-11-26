@@ -132,7 +132,7 @@ export function configurarCierrePorPestana() {
       p_motivo: "pestana_cerrada"
     });
     request("/rest/v1/rpc/liberar_sesion", { p_session_id: sessionId });
-    request("/auth/v1/logout", {});
+    request("/auth/v1/logout?scope=local", {});
 
     // El cierre de pestaña debe requerir credenciales en una apertura posterior.
     localStorage.removeItem(AUTH_STORAGE_KEY);
@@ -225,7 +225,7 @@ export async function login(email, password) {
       console.error("Error liberando la sesión:", errorLiberacion);
     }
 
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: "local" });
     throw e;
   }
 }
@@ -247,7 +247,7 @@ export async function logout(motivo = "manual") {
       }
     }
   } finally {
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: "local" });
     window.location.href = "/pages/login.html";
   }
 }
