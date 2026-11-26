@@ -1,0 +1,15 @@
+.git
+.vercel
+.env
+.env.*
+**/.env
+**/.env.*
+**/node_modules
+**/.qa
+**/.qa/**
+**/reports
+**/reports/**
+dist
+dist/**
+*.tmp
+*.log
