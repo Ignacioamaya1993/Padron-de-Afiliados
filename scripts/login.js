@@ -28,10 +28,6 @@ if (mensajeSesion) {
 // VALIDACIONES Y ERRORES
 // --------------------------------------------------
 
-function emailValido(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
 function marcarError(input, mensaje) {
   input.classList.add("input-error");
   input.setAttribute("aria-invalid", "true");
@@ -109,30 +105,8 @@ async function ejecutarLogin() {
   loginBtn.disabled = true;
   loginBtn.setAttribute("aria-busy", "true");
 
-  try {
-    let emailReal = identificador;
-
-    // Si no ingresó un email, buscar el email asociado al usuario.
-    if (!emailValido(identificador)) {
-      const {
-        data: usuario,
-        error
-      } = await supabase
-        .from("usuarios_login")
-        .select("email")
-        .ilike("username", identificador)
-        .limit(1)
-        .single();
-
-      if (error || !usuario) {
-        marcarError(emailInput, "Usuario no encontrado");
-        return;
-      }
-
-      emailReal = usuario.email;
-    }
-
-    await login(emailReal, password);
+try {
+    await login(identificador, password);
 
     // El login redirige al padrón cuando la sesión es válida.
     window.location.href = "/pages/padron.html";

@@ -193,23 +193,98 @@ export async function cerrarHistorialSesion(motivo = "otro") {
   return data === true;
 }
 
-// LOGIN
-export async function login(email, password) {
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
 
-  if (error) throw error;
+export async function login(identificador, password) {
+  let response;
 
   try {
+    response = await fetch("/api/padron/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        identifier: identificador,
+        password
+      }),
+      credentials: "same-origin",
+      cache: "no-store",
+      redirect: "error",
+      signal: AbortSignal.timeout(35000)
+    });
+  } catch {
+    throw new Error(
+      "No se pudo conectar con el servicio de inicio de sesión. Intentá nuevamente."
+    );
+  }
+
+  let data;
+
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error(
+      "No se pudo iniciar sesión. Intentá nuevamente."
+    );
+  }
+
+  if (!response.ok) {
+    const mensajes = {
+      INVALID_CREDENTIALS:
+        "Usuario o contraseña incorrectos.",
+      INVALID_REQUEST:
+        "Solicitud de inicio de sesión inválida.",
+      RATE_LIMITED:
+        "Demasiados intentos. Esperá unos minutos e intentá nuevamente.",
+      SERVICE_UNAVAILABLE:
+        "No se pudo iniciar sesión. Intentá nuevamente."
+    };
+
+    const error = new Error(
+      mensajes[data?.code] ||
+      "No se pudo iniciar sesión. Intentá nuevamente."
+    );
+
+    error.code = data?.code;
+
+    throw error;
+  }
+
+  if (
+    typeof data?.access_token !== "string" ||
+    !data.access_token ||
+    typeof data?.refresh_token !== "string" ||
+    !data.refresh_token
+  ) {
+    throw new Error(
+      "No se pudo establecer una sesión válida."
+    );
+  }
+
+  try {
+    const {
+      data: sessionData,
+      error: sessionError
+    } = await supabase.auth.setSession({
+      access_token: data.access_token,
+      refresh_token: data.refresh_token
+    });
+
+    if (sessionError || !sessionData?.session) {
+      throw new Error(
+        "No se pudo establecer una sesión válida."
+      );
+    }
+
     const permitida = await reservarSesion();
 
     if (!permitida) {
       const errorSesion = new Error(
         "Este usuario ya tiene una sesión iniciada en otro dispositivo."
       );
+
       errorSesion.code = "SESION_ACTIVA";
+
       throw errorSesion;
     }
 
@@ -221,11 +296,14 @@ export async function login(email, password) {
       await supabase.rpc("liberar_sesion", {
         p_session_id: obtenerSessionId()
       });
-    } catch (errorLiberacion) {
-      console.error("Error liberando la sesión:", errorLiberacion);
+    } catch {
+      console.error("No se pudo liberar la sesión.");
     }
 
-    await supabase.auth.signOut({ scope: "local" });
+    await supabase.auth.signOut({
+      scope: "local"
+    });
+
     throw e;
   }
 }

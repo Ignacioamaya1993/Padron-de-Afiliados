@@ -6,8 +6,9 @@
     "node": "22.x"
   },
   "scripts": {
-    "test": "npm --prefix cartilla test",
+    "test": "npm run test:padron && npm --prefix cartilla test",
     "test:browser": "npm --prefix cartilla run test:browser",
-    "build": "node build/build.mjs"
+    "build": "node build/build.mjs",
+    "test:padron": "node --test tests/padron-login.test.mjs"
   }
 }
