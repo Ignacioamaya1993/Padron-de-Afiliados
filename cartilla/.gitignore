@@ -1,0 +1,9 @@
+# Informes para revisión local o artifacts de Actions; no publicar en el front.
+reports/
+data/*.tmp
+.qa/
+node_modules/
+.env
+.env.*
+!.env.example
+.vercel/

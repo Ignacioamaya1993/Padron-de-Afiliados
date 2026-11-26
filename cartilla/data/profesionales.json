@@ -1,0 +1,3746 @@
+{
+  "version": 1,
+  "generatedAt": "2026-11-26T14:37:15.550Z",
+  "professionals": [
+    {
+      "name": "AGUERRE FRANCISCO",
+      "address": "CHACABUCO Nº 2277",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "ALAMO JOSE ALEJANDRO",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CIRUGIA CARDIOVASCULAR"
+      }
+    },
+    {
+      "name": "ALAMO JOSE ALEJANDRO",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "445100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "ALBIN MONICA CRISTINA",
+      "address": "VTE. LOPEZ 2479",
+      "city": "OLAVARRIA ",
+      "phone": "2284305949",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "REUMATOLOGIA"
+      }
+    },
+    {
+      "name": "ALCORTA AGUSTIN",
+      "address": "GRAL PAZ Nº 2524 - (3º PISO)",
+      "city": "OLAVARRIA ",
+      "phone": "417568",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "ALVAREZ NATALIA ELIZABETH",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "2284245808",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUMONOLOGIA E INMUNOLOGIA"
+      }
+    },
+    {
+      "name": "AMANZI ELVIRA",
+      "address": "MORENO Nº 2647",
+      "city": "OLAVARRIA ",
+      "phone": "422013",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "AMENDOLA VERONICA",
+      "address": "CNEL. SUAREZ 3158",
+      "city": "OLAVARRIA ",
+      "phone": "2284501609",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "ANTELO MARIA VICTORIA",
+      "address": "ESPAÑA Nº 2727",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "ARAMBURU JORGE LUIS",
+      "address": "GRAL. PAZ 2446",
+      "city": "OLAVARRIA ",
+      "phone": "420855",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "ARAMBURU RAMIRO",
+      "address": "GRAL. PAZ 2446",
+      "city": "OLAVARRIA ",
+      "phone": "420855",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "ARAMBURU RAMIRO",
+      "address": "GRAL. PAZ 2446",
+      "city": "OLAVARRIA ",
+      "phone": "420855",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "ARRAMON MARIANELA",
+      "address": "DORREGO 2957",
+      "city": "OLAVARRIA ",
+      "phone": "416050",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "AVILA ROMINA ANABEL",
+      "address": "25 DE MAYO Nº 2506",
+      "city": "OLAVARRIA ",
+      "phone": "2284211001",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "BALADO ROBERTO JORGE",
+      "address": "SAN MARTIN 3109",
+      "city": "OLAVARRIA ",
+      "phone": "414442",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA"
+      }
+    },
+    {
+      "name": "BALADO ROBERTO JORGE",
+      "address": "SAN MARTIN 3109",
+      "city": "OLAVARRIA ",
+      "phone": "414442",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "TERAPIA INTENSIVA"
+      }
+    },
+    {
+      "name": "BALSAMO CARLOS ORFEL",
+      "address": "AV. TRABAJADORES 3118",
+      "city": "OLAVARRIA ",
+      "phone": "2284382526",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "UROLOGIA"
+      }
+    },
+    {
+      "name": "BARCELONNA GUSTAVO JAVIER",
+      "address": "CNEL. SUAREZ 3045",
+      "city": "OLAVARRIA ",
+      "phone": "417166",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "BARCELONNA GUSTAVO JAVIER",
+      "address": "CNEL. SUAREZ 3045",
+      "city": "OLAVARRIA ",
+      "phone": "417166",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEONATOLOGIA / PERINATOLOGIA"
+      }
+    },
+    {
+      "name": "BARCELONNA MARIA GUILLERMINA",
+      "address": "SAN MARTIN 3109",
+      "city": "OLAVARRIA ",
+      "phone": "414442",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA"
+      }
+    },
+    {
+      "name": "BARCELONNA MARIA GUILLERMINA",
+      "address": "SAN MARTIN 3109",
+      "city": "OLAVARRIA ",
+      "phone": "444440",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "BARILI ARMANDO DANIEL",
+      "address": "AV. SARMIENTO 2857",
+      "city": "OLAVARRIA ",
+      "phone": "2284692665",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CIRUGIA DEL TORAX"
+      }
+    },
+    {
+      "name": "BARILI ARMANDO DANIEL",
+      "address": "AV. SARMIENTO 2857",
+      "city": "OLAVARRIA ",
+      "phone": "2284692665",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "BARILI ARMANDO DANIEL",
+      "address": "AV. SARMIENTO 2945",
+      "city": "OLAVARRIA ",
+      "phone": "2284692665",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "BARILI ARMANDO DANIEL",
+      "address": "AV. SARMIENTO 2945",
+      "city": "OLAVARRIA ",
+      "phone": "2284692665",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CIRUGIA DEL TORAX"
+      }
+    },
+    {
+      "name": "BARILI ARMANDO DANIEL",
+      "address": "ESPAÑA 2707",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "BARILI ARMANDO DANIEL",
+      "address": "ESPAÑA 2707",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CIRUGIA DEL TORAX"
+      }
+    },
+    {
+      "name": "BARILI ARMANDO DANIEL",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "2284692665",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CIRUGIA DEL TORAX"
+      }
+    },
+    {
+      "name": "BARILI ARMANDO DANIEL",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "2284692665",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "BERNEY PAULA MARCELA",
+      "address": "VTE. LOPEZ 2061",
+      "city": "OLAVARRIA ",
+      "phone": "411240 / 416077",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "BIANCHI MARIA LAURA",
+      "address": "25 DE MAYO 3039",
+      "city": "OLAVARRIA ",
+      "phone": "424042 / 2284454693",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "RADIOTERAPIA ONCOLOGICA"
+      }
+    },
+    {
+      "name": "BIBILONI ANA MARIA",
+      "address": "VELEZ SARSFIELD 2619 DTO.5",
+      "city": "OLAVARRIA ",
+      "phone": "429810",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ANATOMIA PATOLOGICA"
+      }
+    },
+    {
+      "name": "BLANCO FERNANDEZ MARIA JUSTINA",
+      "address": "BELGRANO 2556",
+      "city": "OLAVARRIA ",
+      "phone": "2284520919",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DEPORTOLOGIA"
+      }
+    },
+    {
+      "name": "BLANCO FERNANDEZ MARIA JUSTINA",
+      "address": "RIVADAVIA 2556",
+      "city": "OLAVARRIA ",
+      "phone": "2284520919",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NUTRICION"
+      }
+    },
+    {
+      "name": "BLANDO CARLOS JORGE",
+      "address": "VELEZ SARFIED Nº 2512",
+      "city": "OLAVARRIA ",
+      "phone": "416050",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "BOLLINI ROBERTO ALEJANDRO",
+      "address": "GRAL. PAZ 2524 3 PISO",
+      "city": "OLAVARRIA ",
+      "phone": "417568",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "BOLOGNA JULIO CESAR",
+      "address": "HORNOS 3030",
+      "city": "OLAVARRIA ",
+      "phone": "422761",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEONATOLOGIA / PERINATOLOGIA"
+      }
+    },
+    {
+      "name": "BOLOGNA JULIO CESAR\n",
+      "address": "HORNOS 3030\n",
+      "city": "OLAVARRIA \n",
+      "phone": "442525",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "BONETTO OSCAR ESTEBAN",
+      "address": "GRAL PAZ 2554",
+      "city": "OLAVARRIA ",
+      "phone": "442400",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "BONIFACIO ROBERTO AMERICO",
+      "address": "AV. DEL VALLE 2619",
+      "city": "OLAVARRIA ",
+      "phone": "423776",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CIRUGIA VASCULAR PERIFERICA"
+      }
+    },
+    {
+      "name": "BONINI COSTA GISELE ANAHI",
+      "address": "DORREGO 2615",
+      "city": "OLAVARRIA ",
+      "phone": "2284620044",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "UROLOGIA"
+      }
+    },
+    {
+      "name": "BONOMO MARINA ALEJANDRA",
+      "address": "AV. DEL VALLE 3919",
+      "city": "OLAVARRIA ",
+      "phone": "2284380046",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA"
+      }
+    },
+    {
+      "name": "BORDONE ALEJANDRO GUSTAVO",
+      "address": "ESPAÑA 4549",
+      "city": "OLAVARRIA ",
+      "phone": "416002",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "UROLOGIA"
+      }
+    },
+    {
+      "name": "BORZI MARIA CELESTE",
+      "address": "MORENO 2647",
+      "city": "OLAVARRIA ",
+      "phone": "422013",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OTORRINOLARINGOLOGIA"
+      }
+    },
+    {
+      "name": "BOUCIGUEZ MILAGROS CAROLINA",
+      "address": "BROWN 3894",
+      "city": "OLAVARRIA ",
+      "phone": "411874 / 228436363",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "BRICKA JUAN ALBERTO",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429306",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "BRICKA JUAN ALBERTO",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "BRISCIOLI OSCAR ALBERTO",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "415997 / 2284520598",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "BRISIOLI OSCAR ALBERTO",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "415997 / 2284520598",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "BUGOSEN SERGIO FABIAN",
+      "address": "GRAL. PAZ 2524 4 PISO",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "BURHLE CARLOS ALBERTO",
+      "address": "RIVADAVIA 3657",
+      "city": "OLAVARRIA ",
+      "phone": "424703",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "BUTIN SANDRA CINTIA",
+      "address": "SAN MARTIN 3356",
+      "city": "OLAVARRIA ",
+      "phone": "2284663606",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "BUZEKI MARIA VIRGINIA",
+      "address": "CHACABUCO Nº 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "CABALLERO STELLA MARIS",
+      "address": "HORNOS 2871",
+      "city": "OLAVARRIA ",
+      "phone": "444925",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "CACERES CARLOS ALBERTO",
+      "address": "Av. SARMIENTO Nº 2864",
+      "city": "OLAVARRIA ",
+      "phone": "2284598370",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "CAPRIATA MARIA ALEJANDRA",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440923",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEONATOLOGIA / PERINATOLOGIA"
+      }
+    },
+    {
+      "name": "CAPUTO GERMAN AUGUSTO",
+      "address": "VTE. LOPEZ 2479",
+      "city": "OLAVARRIA ",
+      "phone": "421001 / 2284647552",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "CARDOSO LAURA HAYDEE",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440923",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "HEMOTERAPIA"
+      }
+    },
+    {
+      "name": "CARRION MARIO",
+      "address": "GRAL. PAZ 1908",
+      "city": "OLAVARRIA ",
+      "phone": "410285",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "CASCO ANA CLAUDIA",
+      "address": "CHACABUCO Nº 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "CASTAÑO YANINA MARICEL",
+      "address": "ALSINA 3137",
+      "city": "OLAVARRIA ",
+      "phone": "410511",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NUTRICION"
+      }
+    },
+    {
+      "name": "CASTRO MARIA ERCILIA",
+      "address": "HORNOS 2871",
+      "city": "OLAVARRIA ",
+      "phone": "444925 / 2284530742",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "CATTANEO MARIA CAROLINA",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUMONOLOGIA E INMUNOLOGIA"
+      }
+    },
+    {
+      "name": "CATTANEO MARIA CAROLINA",
+      "address": "LAVALLE 3056",
+      "city": "OLAVARRIA ",
+      "phone": "420973",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUMONOLOGIA E INMUNOLOGIA"
+      }
+    },
+    {
+      "name": "CAZABET VIVIAN DIANA",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "CERDAN MARCELO NERI",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "CERDAN MARCELO NERI",
+      "address": "GRAL. PAZ 2540",
+      "city": "OLAVARRIA ",
+      "phone": "442402",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "CHERTCOFF MARTIN",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440101",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUMONOLOGIA E INMUNOLOGIA"
+      }
+    },
+    {
+      "name": "CHILLON SCHEFER MELISA SABRINA",
+      "address": "DEAN FUNES 2218",
+      "city": "OLAVARRIA ",
+      "phone": "425698",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "CHILLON SCHEFER MELISA SABRINA",
+      "address": "DEAN FUNES 2218",
+      "city": "OLAVARRIA ",
+      "phone": "425698",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEFROLOGIA"
+      }
+    },
+    {
+      "name": "CHILLON SCHEFER MELISA SABRINA",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "CHILLON SCHEFER MELISA SABRINA",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEFROLOGIA"
+      }
+    },
+    {
+      "name": "CHIRAMBERRO CARLOS ALBERTO",
+      "address": "CNEL. SUAREZ 3158 ",
+      "city": "OLAVARRIA ",
+      "phone": "426100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DERMATOLOGIA"
+      }
+    },
+    {
+      "name": "CHIRAMBERRO SILVINA DANIELA",
+      "address": "A. BARROS 2776",
+      "city": "OLAVARRIA ",
+      "phone": "496691",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DERMATOLOGIA"
+      }
+    },
+    {
+      "name": "COCCE DANIEL",
+      "address": "AV. SARMIENTO 2864",
+      "city": "OLAVARRIA ",
+      "phone": "2284598370",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUMONOLOGIA E INMUNOLOGIA"
+      }
+    },
+    {
+      "name": "COCCE DANIEL",
+      "address": "SAN MARTIN 3109",
+      "city": "OLAVARRIA ",
+      "phone": "414442",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUMONOLOGIA E INMUNOLOGIA"
+      }
+    },
+    {
+      "name": "COLOM ALFREDO ENRIQUE",
+      "address": "AV. DEL VALLE 3127",
+      "city": "OLAVARRIA ",
+      "phone": "437600",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CIRUGIA VASCULAR PERIFERICA"
+      }
+    },
+    {
+      "name": "CORENGIA MARIANA",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "417568 / 2284552144",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "CORENGIA MARIANA",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "417568 / 2284552144",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "COROBA MELISA YAMILA",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440923",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "CORONEL VERONICA ANABELLA",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "417568",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "CORONEL VERONICA ANABELLA",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "417568",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "HEMATOLOGIA PEDIATRICA"
+      }
+    },
+    {
+      "name": "CORREA FRANCO EZEQUIEL",
+      "address": "AV. URQUIZA 3718",
+      "city": "OLAVARRIA ",
+      "phone": "413600",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "COSSOS JORGENSEN JUAN NICOLAS",
+      "address": "ESPAÑA 2572",
+      "city": "OLAVARRIA ",
+      "phone": "442656 / 2284550163",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "CRUZ ROBERTO JOSE",
+      "address": "ESPAÑA 4549",
+      "city": "OLAVARRIA ",
+      "phone": "416002",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ONCOLOGIA"
+      }
+    },
+    {
+      "name": "CUBERO TOMAS",
+      "address": "LAVALLE 3734",
+      "city": "OLAVARRIA ",
+      "phone": "416077",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "CUELI JOSE IGNACIO",
+      "address": "AV. SARMIENTO 2868",
+      "city": "OLAVARRIA ",
+      "phone": "2284598370",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "CUELI JOSE IGNACIO",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "CUELI JOSE IGNACIO",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "2284598370",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "D'ARCANGELO DORA INES",
+      "address": "ESPAÑA 4549",
+      "city": "OLAVARRIA ",
+      "phone": "416002",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ONCOLOGIA"
+      }
+    },
+    {
+      "name": "DE LA TORRE  SILVIA LILIANA",
+      "address": "DEAN FUNES 2218",
+      "city": "OLAVARRIA ",
+      "phone": "425698",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "DE ROSSI MARIA EUGENIA",
+      "address": "MORENO 2647 ",
+      "city": "OLAVARRIA ",
+      "phone": "422013",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "DELLA MAGGIORA ROSANA",
+      "address": "GRAL. PAZ 2524 3 PISO",
+      "city": "OLAVARRIA ",
+      "phone": "417568",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "DETTANO MARIA VERONICA",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "433845",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "DI PANE MARIA CECILIA",
+      "address": "AV. DEL VALLE 3919",
+      "city": "OLAVARRIA ",
+      "phone": "488100 / 2284380057",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "DI PANE MARIA CELESTE",
+      "address": "AV. DEL VALLE 3919",
+      "city": "OLAVARRIA ",
+      "phone": "488100 / 2284380057",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "DIAZ DAIANA GISELA",
+      "address": "GRAL. PAZ 2524 ",
+      "city": "OLAVARRIA ",
+      "phone": "417568",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA OBSTETRICA Y GINECOLOGIA"
+      }
+    },
+    {
+      "name": "DIAZ OLGA YOLANDA",
+      "address": "BOLIVAR 2463",
+      "city": "OLAVARRIA ",
+      "phone": "435298",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "DICUONZO MIGUEL ANGEL",
+      "address": "GRIMALDI 3333",
+      "city": "OLAVARRIA ",
+      "phone": "410890",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "DICUONZO MIGUEL ANGEL",
+      "address": "GRIMALDI 3333",
+      "city": "OLAVARRIA ",
+      "phone": "410890",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEONATOLOGIA / PERINATOLOGIA"
+      }
+    },
+    {
+      "name": "DILASCIO MAURICIO DANIEL",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "415698",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA PEDIATRICA"
+      }
+    },
+    {
+      "name": "DILASCIO VALERIA EUGENIA",
+      "address": "LAVALLE 3734",
+      "city": "OLAVARRIA ",
+      "phone": "416077",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "DONADI MONICA SUSANA",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "413846",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "DONADIO SEBASTIAN ALBERTO",
+      "address": "VTE. LOPEZ 2479",
+      "city": "OLAVARRIA ",
+      "phone": "412000",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "DORAO FERNANDO JOSE",
+      "address": "ESPAÑA 2256",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "DUBNY DANA BETSABE",
+      "address": "A. BARROS 2776",
+      "city": "OLAVARRIA ",
+      "phone": "2284521792 / 2284522190",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "DUFAU MARIA IGNACIA",
+      "address": "AV. DEL VALLE 2619",
+      "city": "OLAVARRIA ",
+      "phone": "423776",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CIRUGIA VASCULAR PERIFERICA"
+      }
+    },
+    {
+      "name": "DUFAU MARIA IGNACIA",
+      "address": "AV. DEL VALLE 2619",
+      "city": "OLAVARRIA ",
+      "phone": "423776",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CIRUGIA VASCULAR PERIFERICA"
+      }
+    },
+    {
+      "name": "DURANTE NORBERTO DANIEL",
+      "address": "AV. PRINGLES 2454",
+      "city": "OLAVARRIA ",
+      "phone": "410497 / 2284214592",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "ENRIQUEZ MELISA MANUELA",
+      "address": "DORREGO 2494",
+      "city": "OLAVARRIA ",
+      "phone": "444020",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "ESCOBAR ANDREA ETELVINA",
+      "address": "BELGRANO 2556",
+      "city": "OLAVARRIA ",
+      "phone": "2284520919",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA"
+      }
+    },
+    {
+      "name": "ESTEVEZ GERMAN GABRIEL",
+      "address": "LAVALLE 3496",
+      "city": "OLAVARRIA ",
+      "phone": "411919",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "FAILLA FRANCISCO RAMIRO",
+      "address": "GRAL. PAZ  2524",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "FAILLA FRANCISCO RAMIRO",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CIRUGIA GASTROENTER."
+      }
+    },
+    {
+      "name": "FALABELLA ANA CARLA",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "FALABELLA ANA CARLA",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "FERNANDEZ ANA CAROLINA",
+      "address": "AV. DEL VALLE 3919",
+      "city": "OLAVARRIA ",
+      "phone": "488100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "FERNANDEZ ANA CAROLINA",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "444440",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "FERNANDEZ ANA KARINA",
+      "address": "AV. SARMIENTO 2945",
+      "city": "OLAVARRIA ",
+      "phone": "2284715300",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "FERNANDEZ BIBILONI MARIA CAROLINA",
+      "address": "AV. COLON 2645",
+      "city": "OLAVARRIA ",
+      "phone": "446308 / 2284722425",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DERMATOLOGIA"
+      }
+    },
+    {
+      "name": "FERNANDEZ MARTINEZ FLORENCIA EMILIA",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "FERNANDEZ MARTINEZ TOMAS ",
+      "address": "GRAL. PAZ 2553",
+      "city": "OLAVARRIA ",
+      "phone": "442400",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "FERNANDEZ SERGIO JAVIER",
+      "address": "GRAL. PAZ 2540",
+      "city": "OLAVARRIA ",
+      "phone": "442401",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "FERNANDEZ SERGIO JAVIER",
+      "address": "SGTO. CABRAL 2959",
+      "city": "OLAVARRIA ",
+      "phone": "480000",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "FORTUNATO FLORENCIA",
+      "address": "ESPAÑA 2700",
+      "city": "OLAVARRIA ",
+      "phone": "440923",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "FORTUNATO JULIANA",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "FRE ELIDA",
+      "address": "LAMADRID 4032",
+      "city": "OLAVARRIA ",
+      "phone": "428286",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA OBSTETRICA Y GINECOLOGIA"
+      }
+    },
+    {
+      "name": "GAINZA GUADALUPE",
+      "address": "MORENO 3970",
+      "city": "OLAVARRIA ",
+      "phone": "419616",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "GALARZA MARIA",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEFROLOGIA"
+      }
+    },
+    {
+      "name": "GALARZA MARIA",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "GALARZA MARIA",
+      "address": "SAN MARTIN 3109",
+      "city": "OLAVARRIA ",
+      "phone": "414442",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "GALARZA MARIA",
+      "address": "SAN MARTIN 3109",
+      "city": "OLAVARRIA ",
+      "phone": "414442",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEFROLOGIA"
+      }
+    },
+    {
+      "name": "GALARZA MARIO JORGE",
+      "address": "HORNOS 2973",
+      "city": "OLAVARRIA ",
+      "phone": "414995",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEFROLOGIA"
+      }
+    },
+    {
+      "name": "GALARZA MARIO JORGE",
+      "address": "HORNOS 2973",
+      "city": "OLAVARRIA ",
+      "phone": "414995 / 2284471388",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "GALLASTEGUI GABRIELA CLAUDIA",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "GALLASTEGUI GABRIELA CLAUDIA",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "GALLO DAIANA GISELLE",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "GAMONDI OLIVER ALFONSO",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "GARCIA BUSTILLOS MARY CARMEN",
+      "address": "ALSINA 3320",
+      "city": "OLAVARRIA ",
+      "phone": "2284623215",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "GARCIA RUBEN DARIO",
+      "address": "LAS HERAS 2674",
+      "city": "OLAVARRIA ",
+      "phone": "410772 / 2284522926",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "GARCIA SOLANGE ELIZABETH",
+      "address": "DEAN FUNES 2218",
+      "city": "OLAVARRIA ",
+      "phone": "425698",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "GASTENEGUY STEPHANIE",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "415225",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "GIACOMASO SILVIA MYRTHA",
+      "address": "GRAL. PAZ 2573",
+      "city": "OLAVARRIA ",
+      "phone": "417568",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "GIANELLI HORACIO PEDRO",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "GIANGRECO MARIANO",
+      "address": "AV. TRABAJADORES 3083",
+      "city": "OLAVARRIA ",
+      "phone": "422800",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "GIANGRECO MARIANO",
+      "address": "AV. TRABAJADORES 3083",
+      "city": "OLAVARRIA ",
+      "phone": "422800",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "GILES CAMPO EVANGELINA LORENA",
+      "address": "SAN MARTIN 3175",
+      "city": "OLAVARRIA ",
+      "phone": "412994",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "GIORGIO LUIS ADRIAN",
+      "address": "AV. DEL VALLE 3941",
+      "city": "OLAVARRIA ",
+      "phone": "416557 / 2284712711",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA"
+      }
+    },
+    {
+      "name": "GIOVINO NORA CRISTINA",
+      "address": "AV. SARMIENTO 2945",
+      "city": "OLAVARRIA ",
+      "phone": "2284579515",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ALERGOLOGIA"
+      }
+    },
+    {
+      "name": "GIOVINO NORA CRISTINA",
+      "address": "AV. SARMIENTO 2945",
+      "city": "OLAVARRIA ",
+      "phone": "2284579515",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "INMUNOLOGIA"
+      }
+    },
+    {
+      "name": "GOLINELLI FLORENCIA",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440923",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEONATOLOGIA / PERINATOLOGIA"
+      }
+    },
+    {
+      "name": "GOMEZ ALFREDO ROMULO",
+      "address": "AV. COLON 4270",
+      "city": "OLAVARRIA ",
+      "phone": "425811",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "GOMEZ ALFREDO ROMULO",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "442401",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "GOMEZ MELISA KARINA",
+      "address": "DORREGO 2615",
+      "city": "OLAVARRIA ",
+      "phone": "2284620044",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "GOMEZ SANDRA CLAUDIA",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "425658",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "GOMEZ SANDRA CLAUDIA",
+      "address": "GRAL. PAZ 2540",
+      "city": "OLAVARRIA ",
+      "phone": "442401",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "GONZALEZ GUSTAVO LUIS",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "GONZALEZ GUSTAVO LUIS",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "GOROSITO FATIMA BEATRIZ",
+      "address": "AV. TRABAJADORES 3204",
+      "city": "OLAVARRIA ",
+      "phone": "422104",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "GOROSTIDI MATIAS FERNANDO",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "GRAND MARINA",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "INFECTOLOGIA"
+      }
+    },
+    {
+      "name": "GREEN PATRICIA",
+      "address": "DORREGO 3090",
+      "city": "OLAVARRIA ",
+      "phone": "431091",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DERMATOLOGIA"
+      }
+    },
+    {
+      "name": "GRIFFITH ROBERTO CARLOS",
+      "address": "RIVADAVIA 2554",
+      "city": "OLAVARRIA ",
+      "phone": "2284655575",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NUTRICION"
+      }
+    },
+    {
+      "name": "GUANUCO EMILIANA PILAR",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ENDOCRINOLOGIA"
+      }
+    },
+    {
+      "name": "GUANUCO SILVINA BEATRIZ",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "441169",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "GUIDOBONO GIANINA SOLEDAD",
+      "address": "AV. URQUIZA 3718",
+      "city": "OLAVARRIA ",
+      "phone": "413600 / 2284384874",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "GUIDOBONO GIANINA SOLEDAD",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "422030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "GUILES SEBASTIAN ADOLFO",
+      "address": "AV. TRABAJADORES 3335",
+      "city": "OLAVARRIA ",
+      "phone": "1154057191",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OTORRINOLARINGOLOGIA"
+      }
+    },
+    {
+      "name": "GUNDEL VIRGINIA",
+      "address": "AV. TRABAJADORES 3085",
+      "city": "OLAVARRIA ",
+      "phone": "440923",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "GUTMAN CARLOS JAVIER",
+      "address": "AV. URQUIZA 3718",
+      "city": "OLAVARRIA ",
+      "phone": "413600 / 2284384874",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "HERNANDEZ JULIANA DANIELA",
+      "address": "GRAL. PAZ 2540",
+      "city": "OLAVARRIA ",
+      "phone": "442402",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "HERRERA SOFIA",
+      "address": "AV. SARMIENTO 1730",
+      "city": "OLAVARRIA ",
+      "phone": "422013",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "HUARTE CAROLINA",
+      "address": "ALSINA 3137",
+      "city": "OLAVARRIA ",
+      "phone": "410511",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NUTRICION"
+      }
+    },
+    {
+      "name": "ILARDO JORGE ALEJANDRO",
+      "address": "AV. DEL VALLE 3127",
+      "city": "OLAVARRIA ",
+      "phone": "417600",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "ILARDO JORGE ALEJANDRO",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "IRAPORDA GONZALO",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440767",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "IRAPORDA VIRGINIA MARIEL",
+      "address": "AV. TRABAJADORES 3083",
+      "city": "OLAVARRIA ",
+      "phone": "422800",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "IRIARTE MARIA BELEN",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "2284556755",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "IRIARTE MARIA BELEN",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "2284556755",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "JAIME EDGARDO LUIS",
+      "address": "ALSINA 3398",
+      "city": "OLAVARRIA ",
+      "phone": "480000 / 2284300509",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "JAIME EDGARDO LUIS",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "445100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "JAUREGUI ANIBAL FACUNDO",
+      "address": "AV. DEL VALLE 3919",
+      "city": "OLAVARRIA ",
+      "phone": "488100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "JAUREGUIZAR JAVIER ESTEBAN",
+      "address": "LAVALLE 2509",
+      "city": "OLAVARRIA ",
+      "phone": "410046 / 2284607746",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ANATOMIA PATOLOGICA"
+      }
+    },
+    {
+      "name": "JUMENEZ LAUTARO RUBEN",
+      "address": "AV. SARMIENTO 2864",
+      "city": "OLAVARRIA ",
+      "phone": "2284598370",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "JUMENEZ LAUTARO RUBEN",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "445100 / 2284598370",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "KRENZ RICARDO RAUL",
+      "address": "ALSINA 3137",
+      "city": "OLAVARRIA ",
+      "phone": "410511",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "UROLOGIA"
+      }
+    },
+    {
+      "name": "LAPLACE NILVA ELIANA",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "445100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "LAPLACE YANINA ELIANA",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "LARRAÑAGA CRISTIAN RICARDO",
+      "address": "VTE. LOPEZ 3050",
+      "city": "OLAVARRIA ",
+      "phone": "412213",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "LARSEN MARIA FLORENCIA",
+      "address": "MORENO 2954",
+      "city": "OLAVARRIA ",
+      "phone": "419616",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "LARSEN MARIA FLORENCIA",
+      "address": "MORENO 3970",
+      "city": "OLAVARRIA ",
+      "phone": "419616",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "LASTAPE CONSTANZA",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "417568",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA OBSTETRICA Y GINECOLOGIA"
+      }
+    },
+    {
+      "name": "LAUHIRAT ALDO NESTOR",
+      "address": "PELEGRINO 3741",
+      "city": "OLAVARRIA ",
+      "phone": "429708",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "LEANI GERMAN",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "413846",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "LEANI MARCELO JAVIER",
+      "address": "LAVALLE 3042",
+      "city": "OLAVARRIA ",
+      "phone": "422846",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "LESCANO FABIAN OMAR",
+      "address": "AV. DEL VALLE 3919",
+      "city": "OLAVARRIA ",
+      "phone": "488100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "LESCANO FABIAN OMAR",
+      "address": "AV. DEL VALLE 3919",
+      "city": "OLAVARRIA ",
+      "phone": "488100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "LESCANO JORGE ARIEL",
+      "address": "AV. DEL VALLE 3919",
+      "city": "OLAVARRIA ",
+      "phone": "488100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "LESCANO JORGE ARIEL",
+      "address": "AV. DEL VALLE 3919",
+      "city": "OLAVARRIA ",
+      "phone": "488100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "LESIUK LUIS EDUARDO",
+      "address": "BOLIVAR 2460",
+      "city": "OLAVARRIA ",
+      "phone": "422668",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "LESTELLE MARIANA SILVIA",
+      "address": "ESPAÑA 4549",
+      "city": "OLAVARRIA ",
+      "phone": "416002",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "LINARES MIRTA",
+      "address": "LAVALLE 3154",
+      "city": "OLAVARRIA ",
+      "phone": "426323",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ENDOCRINOLOGIA"
+      }
+    },
+    {
+      "name": "LIZASO OMAR ERNESTO",
+      "address": "MORENO 2661",
+      "city": "OLAVARRIA ",
+      "phone": "422013",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "LOCATELLI ALESSANDRO NORBERTO",
+      "address": "DORREGO 2494",
+      "city": "OLAVARRIA ",
+      "phone": "444020",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "LOCATELLI ALESSANDRO NORBERTO",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "415225",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "LOMBARDO SEBASTIAN",
+      "address": "AV. SARMIENTO 2864",
+      "city": "OLAVARRIA ",
+      "phone": "2284598370",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "LOOS MILAGROS",
+      "address": "AV. SARMIENTO 2864",
+      "city": "OLAVARRIA ",
+      "phone": "2284598370",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DERMATOLOGIA"
+      }
+    },
+    {
+      "name": "LOPEZ LABROUSSE MAITE ISABEL",
+      "address": "VTE. LOPEZ 3050",
+      "city": "OLAVARRIA ",
+      "phone": "412213",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA OBSTETRICA Y GINECOLOGIA"
+      }
+    },
+    {
+      "name": "LOPEZ LABROUSSE MAITE ISABEL",
+      "address": "VTE. LOPEZ 3050",
+      "city": "OLAVARRIA ",
+      "phone": "422213",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "LOPEZ PAULA SABRINA",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "445100 / 2284667392",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "TERAPIA INTENSIVA"
+      }
+    },
+    {
+      "name": "LUJAN MELISA BELEN",
+      "address": "DORREGO 2494",
+      "city": "OLAVARRIA ",
+      "phone": "444020 / 2284696229",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "LUNA LEONARDO OMAR",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "422846",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "LUNA LEONARDO OMAR",
+      "address": "GRAL. PAZ 3149",
+      "city": "OLAVARRIA ",
+      "phone": "2284528658",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "MACKEPRANG MARIA LUZ",
+      "address": "HORNOS 2871",
+      "city": "OLAVARRIA ",
+      "phone": "444925",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "MANDAGARAN MARIA GUADALUPE",
+      "address": "SEDE AOMA",
+      "city": "LOMA NEGRA",
+      "phone": "493042",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "MANGANO RAUL HECTOR",
+      "address": "LAMADRID 3414",
+      "city": "OLAVARRIA ",
+      "phone": "431120",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "INFECTOLOGIA"
+      }
+    },
+    {
+      "name": "MANGANO RAUL HECTOR",
+      "address": "LAMADRID 3414",
+      "city": "OLAVARRIA ",
+      "phone": "431120",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MARCONE ANTONIO GUILLERMO",
+      "address": "9 DE JULIO 2222",
+      "city": "OLAVARRIA ",
+      "phone": "423605 / 2284597283",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA"
+      }
+    },
+    {
+      "name": "MARELLI ANA PAULA",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429306",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "MARELLI ANA PAULA",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "445100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "MARENGO MARIA FLORENCIA",
+      "address": "A. BARROS 2776",
+      "city": "OLAVARRIA ",
+      "phone": "2284496691",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "REUMATOLOGIA"
+      }
+    },
+    {
+      "name": "MARENGO MARIA FLORENCIA",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "442401",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "REUMATOLOGIA"
+      }
+    },
+    {
+      "name": "MARIANO FELIPE DANIEL",
+      "address": "ESPAÑA 2682",
+      "city": "OLAVARRIA ",
+      "phone": "414757 / 1122794294",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "MARINI ELIANA",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MARONI CARLOS GERMAN",
+      "address": "ALSINA 3398",
+      "city": "OLAVARRIA ",
+      "phone": "480000",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "MARONI CARLOS GERMAN",
+      "address": "ALSINA 3398",
+      "city": "OLAVARRIA ",
+      "phone": "480000",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "TERAPIA INTENSIVA"
+      }
+    },
+    {
+      "name": "MARRONE  ANA MARIA",
+      "address": "VELEZ SARSFIELD 2619 DTO.5",
+      "city": "OLAVARRIA ",
+      "phone": "429810",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ANATOMIA PATOLOGICA"
+      }
+    },
+    {
+      "name": "MARTEL EDGARDO JESUS",
+      "address": "AV. URQUIZA 3718",
+      "city": "OLAVARRIA ",
+      "phone": "413600",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MARTEL EDGARDO JESUS",
+      "address": "GRAL. PAZ 2540",
+      "city": "OLAVARRIA ",
+      "phone": "442400",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MARTINCHUCK GISELA EDITH",
+      "address": "GRAL. PAZ 2524 3",
+      "city": "OLAVARRIA ",
+      "phone": "417568 / 2284552144",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUMONOLOGIA PEDIATRICA"
+      }
+    },
+    {
+      "name": "MARTINEZ DE CATTANEO BEATRIZ",
+      "address": "LAVALLE 3056",
+      "city": "OLAVARRIA ",
+      "phone": "420973",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUMONOLOGIA E INMUNOLOGIA"
+      }
+    },
+    {
+      "name": "MARTINEZ SAENZ MARIA GUILLERMINA",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "MARTINEZ SAENZ MARIA GUILLERMINA",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "MASSOLO SOFIA",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "2284513474",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MASSON KARINA MARIELA",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440101",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MATTAINI PABLO GERMAN",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "MATTAINI PABLO GERMAN",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "442030 / 2284667685",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MATTAINI PABLO GERMAN",
+      "address": "SAN MARTIN 3107",
+      "city": "OLAVARRIA ",
+      "phone": "414442",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MAURO RAUL EDUARDO",
+      "address": "ROQUE SAENZ PEÑA 2822",
+      "city": "OLAVARRIA ",
+      "phone": "420672",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ALERGOLOGIA"
+      }
+    },
+    {
+      "name": "MENON JESICA NAIR",
+      "address": "MAIPU 4021",
+      "city": "OLAVARRIA ",
+      "phone": "419392",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "MENON MARIO GABRIEL",
+      "address": "AV. SARMIENTO 1730",
+      "city": "OLAVARRIA ",
+      "phone": "417979",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUROCIRUGIA"
+      }
+    },
+    {
+      "name": "MERLOS PUYO MARIANO ADOLFO",
+      "address": "ALSINA 3137",
+      "city": "OLAVARRIA ",
+      "phone": "410511",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "MERLOS PUYO MARIANO ADOLFO",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "MESA LUCRECIA",
+      "address": "SAN MARTIN 3109",
+      "city": "OLAVARRIA ",
+      "phone": "414442",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MIERI MATILDE",
+      "address": "A. BARROS 2776",
+      "city": "OLAVARRIA ",
+      "phone": "2284496691",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "HEMATOLOGIA"
+      }
+    },
+    {
+      "name": "MINGO ANA MARIA",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "435225",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "MIRABELLA MARIO  ",
+      "address": "AV. TRABAJADORES 3083",
+      "city": "OLAVARRIA ",
+      "phone": "422800",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "MIRETSKY MAGDALENA",
+      "address": "ESPAÑA 2572",
+      "city": "OLAVARRIA ",
+      "phone": "429123 / 2284550163",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "MITRE MARIA LUCRECIA",
+      "address": "MAIPU 2226",
+      "city": "OLAVARRIA ",
+      "phone": "433100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "MITRE MARIA LUCRECIA",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "MOLINA PABLO ESTEBAN",
+      "address": "ALSINA 3137",
+      "city": "OLAVARRIA ",
+      "phone": "410511",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "UROLOGIA"
+      }
+    },
+    {
+      "name": "MOLLO YAMILA EDITH",
+      "address": "GRAL. PAZ 2540",
+      "city": "OLAVARRIA ",
+      "phone": "417568",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MONDINI SILVINA ROSANA",
+      "address": "MORENO 3970",
+      "city": "OLAVARRIA ",
+      "phone": "419616",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "INFECTOLOGIA"
+      }
+    },
+    {
+      "name": "MORALES PAULA",
+      "address": "AV. DEL VALLE 4234",
+      "city": "OLAVARRIA ",
+      "phone": "422116 / 2284374323",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MORALES PAULA",
+      "address": "GRAL. PAZ 2540",
+      "city": "OLAVARRIA ",
+      "phone": "442402",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MORETTI DARIO ALBERTO",
+      "address": "ALSINA 1873",
+      "city": "OLAVARRIA ",
+      "phone": "419648",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MORETTI DARIO ALBERTO",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "442401",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "MOSCARDI JORGE ARIEL",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "MOVA VALERIA ANDREA",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100 / 2284515199",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "NAGEL PABLO ALEJANDRO",
+      "address": "AV. SARMIENTO 2864",
+      "city": "OLAVARRIA ",
+      "phone": "2284598370",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "NAISTUD RAQUEL",
+      "address": "GRAL. PAZ 2540",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "NAVARRO MARTINEZ CARLOS MARIO",
+      "address": "ALSINA 3137",
+      "city": "OLAVARRIA ",
+      "phone": "410511",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "UROLOGIA"
+      }
+    },
+    {
+      "name": "NAVARRO MARTINEZ CARLOS MARIO",
+      "address": "MORENO 2647",
+      "city": "OLAVARRIA ",
+      "phone": "422013",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "UROLOGIA"
+      }
+    },
+    {
+      "name": "NEMOZ JUAN LUIS",
+      "address": "AV. COLON 2183",
+      "city": "OLAVARRIA ",
+      "phone": "2284671220 / 2284696650",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "NESCI REGERT FIORELA",
+      "address": "DORREGO 2494",
+      "city": "OLAVARRIA ",
+      "phone": "444020",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "NOSEDA HORACIO ALBERTO",
+      "address": "MORENO 3534",
+      "city": "OLAVARRIA ",
+      "phone": "428784 / 2284585732",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ANATOMIA PATOLOGICA"
+      }
+    },
+    {
+      "name": "NUÑEZ ISIDORO ROBERTO",
+      "address": "LAMADRID 4032",
+      "city": "OLAVARRIA ",
+      "phone": "428286",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "OLGUIN SANTIAGO",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440923",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "OLONDO GONZALO",
+      "address": "GRAL. PAZ 2524 4 PISO",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUROCIRUGIA"
+      }
+    },
+    {
+      "name": "ORTIZ GUILLERMINA NOELIA",
+      "address": "AV. TRABAJADORES 3335",
+      "city": "OLAVARRIA ",
+      "phone": "1159498933",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "OSA NOSEDA MARIA LUZ",
+      "address": "A. BARROS 2776",
+      "city": "OLAVARRIA ",
+      "phone": "2284716838",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "PADIN NANCY VIVIANA",
+      "address": "DORREGO 3090",
+      "city": "OLAVARRIA ",
+      "phone": "431091",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DERMATOLOGIA"
+      }
+    },
+    {
+      "name": "PALACIOS ALEXIS HELVIO",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "442031",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "PATERNO MARIA FLORENCIA",
+      "address": "A. BARROS 2776",
+      "city": "OLAVARRIA ",
+      "phone": "2284211001",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "PEREDA JAVIER BERNARDO",
+      "address": "LAVALLE 3356",
+      "city": "OLAVARRIA ",
+      "phone": "414434",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "PEREYRA DIAZ NICOLAS RENE",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "445100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "PEREYRA DIAZ NICOLAS RENE",
+      "address": "MORENO 3970",
+      "city": "OLAVARRIA ",
+      "phone": "419316",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "PEREZ JULIO CESAR",
+      "address": "AV. SARMIENTO 1730",
+      "city": "OLAVARRIA ",
+      "phone": "414424",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "PEREZ JULIO CESAR",
+      "address": "MORENO 2647 ",
+      "city": "OLAVARRIA ",
+      "phone": "422013",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "PEREZ SILVIA ",
+      "address": "ESPAÑA 4549",
+      "city": "OLAVARRIA ",
+      "phone": "416002",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "PEREZ SILVIA SUSANA",
+      "address": "ESPAÑA 4549",
+      "city": "OLAVARRIA ",
+      "phone": "416002",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "PEZZINO MARIA CELESTE ",
+      "address": "AV. TRABAJADORES 3083",
+      "city": "OLAVARRIA ",
+      "phone": "422800",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "PICCHI MARIA FERNANDA",
+      "address": "AV. TRABAJADORES 3083",
+      "city": "OLAVARRIA ",
+      "phone": "421100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DERMATOLOGIA"
+      }
+    },
+    {
+      "name": "PILZO AVENDANO MARIA DE LOS ANGELES",
+      "address": "AV. SARMIENTO 1730",
+      "city": "OLAVARRIA ",
+      "phone": "434424 / 2284530600",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "PILZO MARIA DE LOS ANGELES",
+      "address": "GRAL. PAZ 2540",
+      "city": "OLAVARRIA ",
+      "phone": "442402",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "PIPARO MARIA TERESA",
+      "address": "SGTO. CABRAL 1535",
+      "city": "OLAVARRIA ",
+      "phone": "456175",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "PRECCI PAZ FEDERICO GUSTAVO",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440923",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "PRECCI PAZ FEDERICO GUSTAVO",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429306",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "PRIETO CATALINA MICAELA",
+      "address": "MAIPU 4021",
+      "city": "OLAVARRIA ",
+      "phone": "419392",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "PUCHEU AYNARA",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "415225",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "PULEO SEBASTIAN",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440767",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "RAGO GUSTAVO EDUARDO",
+      "address": "CNEL. SUAREZ 3158",
+      "city": "OLAVARRIA ",
+      "phone": "418000",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "RAUTTO DIEGO RAUL",
+      "address": "ESPAÑA 4549",
+      "city": "OLAVARRIA ",
+      "phone": "416002 / 426122",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "RAVI PINTO WALTER",
+      "address": "AV. TRABAJADORES 3083",
+      "city": "OLAVARRIA ",
+      "phone": "422800",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "RECABARREN IVAN ISAAC",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "415997 / 2284225280",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "TERAPIA INTENSIVA"
+      }
+    },
+    {
+      "name": "RECIO GUILLERMINA LAURA",
+      "address": "AV. DEL VALLE 3941",
+      "city": "OLAVARRIA ",
+      "phone": "416557",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "REILLY AMALIA MATILDE",
+      "address": "ALSINA 3186",
+      "city": "OLAVARRIA ",
+      "phone": "422259",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "REINHART CARLOS MARCELO",
+      "address": "ESPAÑA 2572",
+      "city": "OLAVARRIA ",
+      "phone": "429123",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "RESSIA WALTER ENRIQUE",
+      "address": "ESPAÑA 3320",
+      "city": "OLAVARRIA ",
+      "phone": "414098",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GERIATRIA"
+      }
+    },
+    {
+      "name": "RIGO VIVIAN LYDIA",
+      "address": "ALSINA 3398",
+      "city": "OLAVARRIA ",
+      "phone": "480000",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "RODRIGUEZ ARUANO GUSTAVO",
+      "address": "ESPAÑA 4549",
+      "city": "OLAVARRIA ",
+      "phone": "416002",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "RODRIGUEZ ARUANO GUSTAVO",
+      "address": "ESPAÑA 4549",
+      "city": "OLAVARRIA ",
+      "phone": "416002",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "RODRIGUEZ MARIA JULIANA",
+      "address": "GRAL. PAZ 2524 3 PISO",
+      "city": "OLAVARRIA ",
+      "phone": "417568",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "RODRIGUEZ SETZES JORGE RICARDO",
+      "address": "GRAL. PAZ 2524 3 PISO",
+      "city": "OLAVARRIA ",
+      "phone": "417568 / 2284552144",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "ROMERO ANA PAULA",
+      "address": "AV. DEL VALLE 3941",
+      "city": "OLAVARRIA ",
+      "phone": "416557",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "ROMERO DANIELA ESTER",
+      "address": "GRAL. PAZ 2540",
+      "city": "OLAVARRIA ",
+      "phone": "422401",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "ROMERO DANIELA ESTER",
+      "address": "RIVADAVIA 3881",
+      "city": "OLAVARRIA ",
+      "phone": "414500",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "ROSENDE SILVINA SOLEDAD",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429306",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "HEMOTERAPIA"
+      }
+    },
+    {
+      "name": "ROSENDE SILVINA SOLEDAD",
+      "address": "CHACABUCO 2277",
+      "city": "OLAVARRIA ",
+      "phone": "429603",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "HEMATOLOGIA"
+      }
+    },
+    {
+      "name": "ROSSI JOSE BERNARDO",
+      "address": "ALSINA 3137",
+      "city": "OLAVARRIA ",
+      "phone": "410511",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ONCOLOGIA"
+      }
+    },
+    {
+      "name": "ROSSI ORTEGA MARIA LUISA",
+      "address": "AV. SARMIENTO 2945",
+      "city": "OLAVARRIA ",
+      "phone": "2284715300",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "RUBADO MARTIN EDUARDO",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "RUBADO MARTIN EDUARDO",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "RUIZ SERGIO ARIEL",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "445100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "SACHAR ESTEBAN ANDRES",
+      "address": "ALSINA 3320",
+      "city": "OLAVARRIA ",
+      "phone": "2284623215",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "SACIDO VERONICA GABRIELA",
+      "address": "AV. SARMIENTO 1730",
+      "city": "OLAVARRIA ",
+      "phone": "414424",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "SACIDO VERONICA GABRIELA",
+      "address": "AV. SARMIENTO 1730",
+      "city": "OLAVARRIA ",
+      "phone": "414424",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "SALIAS GUSTAVO MARCELO",
+      "address": "HORNOS 3183",
+      "city": "OLAVARRIA ",
+      "phone": "2284576546",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUROLOGIA"
+      }
+    },
+    {
+      "name": "SALIAS MARIA AGUSTINA",
+      "address": "AV. COLON 2645",
+      "city": "OLAVARRIA ",
+      "phone": "446308 / 2284722425",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "SALOIÑA CAROLINA",
+      "address": "GRAL. PAZ 3149",
+      "city": "OLAVARRIA ",
+      "phone": "411992",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "SALUZZI DIEGO CLAUDIO",
+      "address": "AV. SARMIENTO 2287",
+      "city": "OLAVARRIA ",
+      "phone": "427139",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "SARDI NATALIA",
+      "address": "IRIGOYEN ESQ. 25 DE MAYO",
+      "city": "OLAVARRIA ",
+      "phone": "2284637026",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "SARDI NATALIA ",
+      "address": "IRIGOYEN ESQ. 25 DE MAYO",
+      "city": "OLAVARRIA ",
+      "phone": "2284637026",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "SARDI NATALIA GISELE",
+      "address": "AV. SARMIENTO 1730",
+      "city": "OLAVARRIA ",
+      "phone": "414424",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "SEAMBELAR GASTON",
+      "address": "AV. SARMIENTO 1730",
+      "city": "OLAVARRIA ",
+      "phone": "414424",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "SEIJO LUIS ANGEL",
+      "address": "GRAL. PAZ 2545",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA"
+      }
+    },
+    {
+      "name": "SENTENAC PAULA",
+      "address": "A. BARROS 2776",
+      "city": "OLAVARRIA ",
+      "phone": "496691",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "SERRANO  SANTIAGO ORESTES",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "433846",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "SMITH LAURA JOSEFINA",
+      "address": "VTE. LOPEZ 3680",
+      "city": "OLAVARRIA ",
+      "phone": "417600",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "SOSA GABRIEL HERNAN",
+      "address": "ESPAÑA 2176",
+      "city": "OLAVARRIA ",
+      "phone": "410120",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "STRATTA ANDRES",
+      "address": "SAN MARTIN 3109",
+      "city": "OLAVARRIA ",
+      "phone": "414442",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "STRATTA ANDRES",
+      "address": "SAN MARTIN 3109",
+      "city": "OLAVARRIA ",
+      "phone": "414442",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "STRIEBECK MIRANDA ELENA",
+      "address": "LAMADRID 3246",
+      "city": "OLAVARRIA ",
+      "phone": "413598 / 2284269529",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUMONOLOGIA PEDIATRICA"
+      }
+    },
+    {
+      "name": "STRIEBECK MIRANDA ELENA",
+      "address": "LAMADRID 3446",
+      "city": "OLAVARRIA ",
+      "phone": "413598 / 2284269529",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "TACCHELLA MARCELA BEATRIZ",
+      "address": "BOLIVAR 2460",
+      "city": "OLAVARRIA ",
+      "phone": "422668",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OFTALMOLOGIA"
+      }
+    },
+    {
+      "name": "TALIAVACHI SILVINA MARIEL",
+      "address": "LAMADRID 2535",
+      "city": "OLAVARRIA ",
+      "phone": "2284622483",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "TANCREDI VALENTINA",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440923",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA"
+      }
+    },
+    {
+      "name": "TANCREDI VALENTINA",
+      "address": "AV. URQUIZA 3718",
+      "city": "OLAVARRIA ",
+      "phone": "2284384874",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA"
+      }
+    },
+    {
+      "name": "TELLEZ GONZALEZ MARIA PAULA",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440923",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "TELLEZ GONZALEZ MARIA PAULA",
+      "address": "MORENO 2958",
+      "city": "OLAVARRIA ",
+      "phone": "419616",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "TRAVAN LAURA VERONICA",
+      "address": "ALSINA 3137",
+      "city": "OLAVARRIA ",
+      "phone": "410511",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "TUTINO CARMELO JOSE",
+      "address": "CNEL. SUAREZ 3158",
+      "city": "OLAVARRIA ",
+      "phone": "414045",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "VALENZA MARIA MERCEDES",
+      "address": "VELEZ SARSFIELD 3279",
+      "city": "OLAVARRIA ",
+      "phone": "430294",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA OBSTETRICA Y GINECOLOGIA"
+      }
+    },
+    {
+      "name": "VAZQUEZ RAMIRO ALEJO",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "442401 / 2284300792",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "VELAZQUEZ MARCELA ROSANA",
+      "address": "AV. SARMIENTO 1730",
+      "city": "OLAVARRIA ",
+      "phone": "417979",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "REUMATOLOGIA"
+      }
+    },
+    {
+      "name": "VERA BARROS OSCAR NICOLAS",
+      "address": "GRAL. PAZ 2539",
+      "city": "OLAVARRIA ",
+      "phone": "2284308105",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "VERA BARROS OSCAR NICOLAS",
+      "address": "GRAL. PAZ 2539",
+      "city": "OLAVARRIA ",
+      "phone": "2284308105",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "VERON FLAVIA ",
+      "address": "HORNOS 2871",
+      "city": "OLAVARRIA ",
+      "phone": "444925",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "VERON FLAVIA LORENA",
+      "address": "LAVALLE 3042",
+      "city": "OLAVARRIA ",
+      "phone": "422846",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "VIDELA SILVIA",
+      "address": "AV. SARMIENTO 2945",
+      "city": "OLAVARRIA ",
+      "phone": "2284715300",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "VIDELA SILVIA",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "445100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "VILLAR MARIA GABRIELA",
+      "address": "ALSINA 3696",
+      "city": "OLAVARRIA ",
+      "phone": "410061",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "VILLAR MARIA GABRIELA",
+      "address": "MORENO 2600",
+      "city": "OLAVARRIA ",
+      "phone": "422013",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "VIÑUALES MARIA JOSEFINA",
+      "address": "ESPAÑA 2759",
+      "city": "OLAVARRIA ",
+      "phone": "435225",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DIAG.POR IMAGEN Y RADIODIAGNOSTICO"
+      }
+    },
+    {
+      "name": "VITALE ALEJANDRO ARTURO",
+      "address": "DORREGO 2957",
+      "city": "OLAVARRIA ",
+      "phone": "416050",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "VITALE LUISINA",
+      "address": "DORREGO 2957",
+      "city": "OLAVARRIA ",
+      "phone": "416050",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GASTROENTEROLOGIA"
+      }
+    },
+    {
+      "name": "VIVACQUA MELISA",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "VIVACQUA MELISA",
+      "address": "MAIPU 2726",
+      "city": "OLAVARRIA ",
+      "phone": "413100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "WAGNER GRACIELA ROSA",
+      "address": "AV. SARMIENTO 2864",
+      "city": "OLAVARRIA ",
+      "phone": "2284598370",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUMONOLOGIA E INMUNOLOGIA"
+      }
+    },
+    {
+      "name": "WAGNER STEINBACH ANA ELISA",
+      "address": "AV. COLELLA 1275",
+      "city": "HINOJO",
+      "phone": "491093",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA PEDIATRICA"
+      }
+    },
+    {
+      "name": "WAIMANN ALFREDO ROGELIO",
+      "address": "9 DE JULIO 2356",
+      "city": "OLAVARRIA ",
+      "phone": "422113",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA MEDICA"
+      }
+    },
+    {
+      "name": "WAIMANN JESICA SOLEDAD",
+      "address": "A. BARROS 2776",
+      "city": "OLAVARRIA ",
+      "phone": "2284496691",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "DERMATOLOGIA"
+      }
+    },
+    {
+      "name": "WRIGHT CARLOS HUGO",
+      "address": "VTE. LOPEZ 3050 1 PISO",
+      "city": "OLAVARRIA ",
+      "phone": "440020 /  2284638616",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "GINECOLOGIA"
+      }
+    },
+    {
+      "name": "WRIGHT CARLOS HUGO",
+      "address": "VTE. LOPEZ 3050 1 PISO",
+      "city": "OLAVARRIA ",
+      "phone": "440020 / 2284638616",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "OBSTETRICIA"
+      }
+    },
+    {
+      "name": "ZAFFARONI CARLOS ALBERTO",
+      "address": "GRAL. PAZ 2524",
+      "city": "OLAVARRIA ",
+      "phone": "415997",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "NEUROCIRUGIA"
+      }
+    },
+    {
+      "name": "ZANELLI HECTOR GUSTAVO",
+      "address": "A. BARROS 3139",
+      "city": "OLAVARRIA ",
+      "phone": "443476 / 2284594661",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ANATOMIA PATOLOGICA"
+      }
+    },
+    {
+      "name": "ZARATE CRISTIAN DAMIAN",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "416002",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CLINICA QUIRURGICA"
+      }
+    },
+    {
+      "name": "ZEBERIO NORA ELIZABET",
+      "address": "25 DE MAYO 3437",
+      "city": "OLAVARRIA ",
+      "phone": "442668",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA"
+      }
+    },
+    {
+      "name": "ZEBERIO NORA ELIZABET",
+      "address": "AV. TRABAJADORES 3385 (CEMEDA)",
+      "city": "OLAVARRIA ",
+      "phone": "440923",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "CARDIOLOGIA"
+      }
+    },
+    {
+      "name": "ZULIANI MAXIMILIANO SEBASTIAN",
+      "address": "AV. URQUIZA 3718",
+      "city": "OLAVARRIA ",
+      "phone": "413600 / 2284384874",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "ORTOPEDIA Y TRAUMATOLOGIA"
+      }
+    },
+    {
+      "name": "ZURITA FACUNDO",
+      "address": "ESPAÑA 2727",
+      "city": "OLAVARRIA ",
+      "phone": "442030",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA GENERAL"
+      }
+    },
+    {
+      "name": "ZURITA FACUNDO MARTIN",
+      "address": "AV. DEL VALLE 3919",
+      "city": "OLAVARRIA ",
+      "phone": "488100",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "ZYLA JUAN MANUEL",
+      "address": "ALSINA 3398",
+      "city": "OLAVARRIA ",
+      "phone": "480000",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    },
+    {
+      "name": "ZYLA JUAN MANUEL",
+      "address": "AV. COLON Y ALSINA",
+      "city": "OLAVARRIA ",
+      "phone": "480000",
+      "certificado_medico_digital": false,
+      "categorias": {
+        "nombre": "MEDICINA FAMILIAR"
+      }
+    }
+  ]
+}

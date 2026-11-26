@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartilla Médica Luz y Fuerza Olavarría</title>
+    <link rel="icon" type="image/png" href="img/Solo_logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="img/osfatlyf.png" alt="Logo osfatlyf" class="logo2">
+            <h1>Cartilla Médica Luz y Fuerza Olavarría</h1>
+            <img src="img/logo-lyf.png" alt="Logo Luz y Fuerza" class="logo">
+        </div>
+        <div class="controls-wrapper">
+            <div class="controls">
+                <label for="recordsPerPage">Mostrar</label>
+                <select id="recordsPerPage">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <label for="specialtyFilter">Especialidad</label>
+                <select id="specialtyFilter">
+                    <option value="all">Todas</option>
+                </select>
+                
+                <button
+                    type="button"
+                    id="digitalCertificateFilter"
+                    class="filter-pill"
+                    aria-pressed="false"
+                >
+                    <span class="pill-icon">✓</span>
+                    Certificado Médico Digital
+                </button>
+
+                <label for="search">Buscar:</label>
+                <input type="text" id="search" placeholder="Nombre del profesional">
+            </div>
+
+            <div class="updated-info">
+                <span id="dataStatus" role="status" aria-live="polite">Cargando cartilla...</span><span>Seleccioná un nombre para ver su ficha completa.</span>
+            </div>
+        </div>
+        <div class="table-wrapper"><table aria-label="Profesionales de la cartilla médica">
+            <thead>
+                <tr>
+                    <th scope="col">ESPECIALIDAD</th>
+                    <th scope="col">APELLIDO Y NOMBRE</th>
+                    <th scope="col">DIRECCIÓN</th>
+                    <th scope="col">LOCALIDAD</th>
+                    <th scope="col">TELÉFONO</th>
+                <!--<th scope="col">UBICACIÓN</th> -->
+                </tr>
+            </thead>
+            <tbody id="professionalList"><tr><td colspan="5" class="empty-state">Cargando profesionales...</td></tr></tbody>
+        </table></div>
+        <div id="pagination">
+            <button id="prevPage" disabled>Anterior</button>
+            <span id="pageInfo" role="status" aria-live="polite"></span>
+            <button id="nextPage" disabled>Siguiente</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-text">
+            Sindicato Luz y Fuerza Olavarria - Maipu 2150 - Tel: 423213 / 430825
+        </div>
+        <div class="footer-icons">
+            <a href="https://www.facebook.com/luzyfuerzaolavarria" target="_blank" rel="noopener noreferrer">
+                <img src="img/facebook-icon.png" alt="Facebook">
+            </a>
+            <a href="https://www.instagram.com/luzyfuerzaolavarria" target="_blank" rel="noopener noreferrer">
+                <img src="img/instagram-icon.png" alt="Instagram">
+            </a>
+        </div>
+        <div class="footer-credit">
+            <span>Developed by <strong>Ignacio Amaya</strong></span>
+            <img src="img/logoia.png" alt="Logo de Ignacio Amaya" width="64" height="42" loading="lazy">
+        </div>
+    </footer>
+
+    <script type="module" src="./js/script.js"></script>
+
+</body>
+</html>

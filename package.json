@@ -1,0 +1,13 @@
+{
+  "name": "padron-cartilla",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "test": "npm --prefix cartilla test",
+    "test:browser": "npm --prefix cartilla run test:browser",
+    "build": "node build/build.mjs"
+  }
+}

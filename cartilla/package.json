@@ -1,0 +1,12 @@
+{
+  "name": "cartilla-medica",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "test": "node --test scripts/directory-comparison.test.mjs tests/*.test.mjs",
+    "test:browser": "node tests/browser-smoke.mjs"
+  }
+}

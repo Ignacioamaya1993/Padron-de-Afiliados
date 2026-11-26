@@ -1,0 +1,1 @@
+export { default } from '../../cartilla/api/admin.js';
