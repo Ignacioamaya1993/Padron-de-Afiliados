@@ -109,6 +109,8 @@ body.admin-page {
 .catalog-heading p { margin: 0; color: var(--admin-muted); font-size: 13px; line-height: 1.5; }
 .catalog-count { padding: 6px 10px; border: 1px solid #d3e4e9; border-radius: 999px; background: #f1f8fa; color: #205d71; white-space: nowrap; font-size: 12px; font-weight: 650; }
 .catalog-create, .catalog-table-wrap { border: 1px solid var(--admin-line); border-radius: 9px; background: var(--admin-white); }
+.admin-readonly-note { margin-bottom: 16px; padding: 14px 16px; border: 1px solid #cbdfe6; border-left: 4px solid var(--admin-blue); border-radius: 7px; background: #f0f7f9; color: #29475a; font-size: 13px; line-height: 1.55; }
+.catalog-value { display: inline-block; min-width: 54px; color: var(--admin-ink); font-weight: 650; }
 .catalog-create { margin-bottom: 16px; padding: 19px 20px; }
 .catalog-create h3 { margin: 0 0 13px; color: var(--admin-ink); font-size: 15px; font-weight: 650; }
 .catalog-create form { display: flex; align-items: center; gap: 12px; }

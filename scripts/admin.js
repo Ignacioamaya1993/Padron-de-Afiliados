@@ -6,7 +6,7 @@ const catalogs = [
   { key: "categorias", label: "Categorías", active: true },
   { key: "parentescos", label: "Parentescos", titular: true },
   { key: "localidades", label: "Localidades" },
-  { key: "grupo_sanguineo", label: "Grupos sanguíneos" },
+  { key: "grupo_sanguineo", label: "Grupos sanguíneos", maxNameLength: 3, readOnly: true, note: "Este catálogo tiene ocho opciones fijas, todas ya cargadas: A+, A−, AB+, AB−, B+, B−, O+ y O−. La base limita cada opción a 3 caracteres." },
   { key: "tipo_medicamentos", label: "Tipos de medicamentos", note: "Los tipos nuevos se incorporan como opciones generales. Los tipos especiales actuales conservan sus reglas de carga y vencimiento." },
   { key: "tipo_material_ortopedico", label: "Tipos de materiales ortopédicos" },
   { key: "tipo_practicasxreintegro", label: "Tipos de prácticas por reintegro" },
@@ -84,17 +84,20 @@ async function api(action, table, values = {}, id = null) {
 function drawCatalog() {
   const item = selected;
   const extraColumn = item.active || item.titular;
+  const actionColumn = !item.readOnly;
   const rowsMarkup = rows.map(row => `
     <tr data-id="${escapeText(row.id)}">
-      <td><input type="text" class="row-name" value="${escapeText(row.nombre)}" maxlength="120" aria-label="Nombre: ${escapeText(row.nombre)}"></td>
+      <td>${item.readOnly ? `<span class="catalog-value">${escapeText(row.nombre)}</span>` : `<input type="text" class="row-name" value="${escapeText(row.nombre)}" maxlength="${item.maxNameLength || 120}" aria-label="Nombre: ${escapeText(row.nombre)}">`}</td>
       ${extraColumn ? `<td><label class="admin-check"><input class="row-extra" type="checkbox" ${row[item.active ? "activo" : "es_titular"] ? "checked" : ""}>${item.active ? "Activo" : "Titular"}</label></td>` : ""}
-      <td><div class="catalog-actions"><button class="admin-small-button save-row" type="button" aria-label="Guardar ${escapeText(row.nombre)}">Guardar</button><button class="admin-small-button danger delete-row" type="button" aria-label="Eliminar ${escapeText(row.nombre)}">Eliminar</button></div></td>
+      ${actionColumn ? `<td><div class="catalog-actions"><button class="admin-small-button save-row" type="button" aria-label="Guardar ${escapeText(row.nombre)}">Guardar</button><button class="admin-small-button danger delete-row" type="button" aria-label="Eliminar ${escapeText(row.nombre)}">Eliminar</button></div></td>` : ""}
     </tr>`).join("");
   panel.innerHTML = `
     <div class="catalog-heading"><div><p class="admin-eyebrow">CATÁLOGO</p><h2>${escapeText(item.label)}</h2><p>Los cambios se reflejan en los formularios conectados a este catálogo.</p></div><span class="catalog-count">${rows.length} ${rows.length === 1 ? "registro" : "registros"}</span></div>
-    <section class="catalog-create"><h3>Agregar opción</h3><form id="createForm"><label class="visually-hidden" for="newCatalogValue">Nombre de la opción</label><input id="newCatalogValue" name="nombre" type="text" maxlength="120" placeholder="Nombre de la opción" required>${item.active ? `<label class="admin-check"><input name="activo" type="checkbox" checked>Activo</label>` : ""}${item.titular ? `<label class="admin-check"><input name="es_titular" type="checkbox">Titular</label>` : ""}<button class="admin-primary" type="submit">Agregar</button></form></section>
-    <div class="catalog-table-wrap"><table class="catalog-table"><thead><tr><th scope="col">Nombre</th>${extraColumn ? `<th scope="col">${item.active ? "Estado" : "Titular"}</th>` : ""}<th scope="col"><span class="visually-hidden">Acciones</span></th></tr></thead><tbody>${rowsMarkup || `<tr><td colspan="${extraColumn ? 3 : 2}">Todavía no hay opciones.</td></tr>`}</tbody></table></div>
-    ${item.note ? `<p class="admin-note">${escapeText(item.note)}</p>` : `<p class="admin-note">Si una opción ya está usada por afiliados o fichas, la base de datos impedirá eliminarla para conservar las relaciones existentes.</p>`}`;
+    ${item.readOnly ? `<div class="admin-readonly-note" role="note">${escapeText(item.note)}</div>` : `<section class="catalog-create"><h3>Agregar opción</h3><form id="createForm"><label class="visually-hidden" for="newCatalogValue">Nombre de la opción</label><input id="newCatalogValue" name="nombre" type="text" maxlength="${item.maxNameLength || 120}" placeholder="${item.maxNameLength ? `Hasta ${item.maxNameLength} caracteres` : "Nombre de la opción"}" required>${item.active ? `<label class="admin-check"><input name="activo" type="checkbox" checked>Activo</label>` : ""}${item.titular ? `<label class="admin-check"><input name="es_titular" type="checkbox">Titular</label>` : ""}<button class="admin-primary" type="submit">Agregar</button></form></section>`}
+    <div class="catalog-table-wrap"><table class="catalog-table"><thead><tr><th scope="col">Nombre</th>${extraColumn ? `<th scope="col">${item.active ? "Estado" : "Titular"}</th>` : ""}${actionColumn ? `<th scope="col"><span class="visually-hidden">Acciones</span></th>` : ""}</tr></thead><tbody>${rowsMarkup || `<tr><td colspan="${(extraColumn ? 1 : 0) + (actionColumn ? 2 : 1)}">Todavía no hay opciones.</td></tr>`}</tbody></table></div>
+    ${!item.readOnly ? (item.note ? `<p class="admin-note">${escapeText(item.note)}</p>` : `<p class="admin-note">Si una opción ya está usada por afiliados o fichas, la base de datos impedirá eliminarla para conservar las relaciones existentes.</p>`) : ""}`;
+
+  if (item.readOnly) return;
 
   panel.querySelector("#createForm").addEventListener("submit", async event => {
     event.preventDefault();

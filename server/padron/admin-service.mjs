@@ -7,7 +7,13 @@ export const CATALOGS = {
   categorias: { label: "Categorías", fields: ["nombre", "activo"], idType: "uuid" },
   parentescos: { label: "Parentescos", fields: ["nombre", "es_titular"], idType: "uuid" },
   localidades: { label: "Localidades", fields: ["nombre"], idType: "uuid" },
-  grupo_sanguineo: { label: "Grupos sanguíneos", fields: ["nombre"], idType: "uuid" },
+  grupo_sanguineo: {
+    label: "Grupos sanguíneos",
+    fields: ["nombre"],
+    idType: "uuid",
+    maxNameLength: 3,
+    readOnly: true
+  },
   tipo_medicamentos: { label: "Tipos de medicamentos", fields: ["nombre"] },
   tipo_material_ortopedico: { label: "Tipos de materiales ortopédicos", fields: ["nombre"] },
   tipo_practicasxreintegro: { label: "Tipos de prácticas por reintegro", fields: ["nombre"] },
@@ -94,6 +100,7 @@ export function createAdminService({ env = process.env, transport = fetch } = {}
       });
       if (databaseCode === "23505") throw new AdminError(409, "DUPLICATE_NAME");
       if (databaseCode === "23503") throw new AdminError(409, "IN_USE");
+      if (databaseCode === "22001") throw new AdminError(400, "INVALID_NAME_LENGTH");
       if (["22P02", "23502", "23514"].includes(databaseCode)) {
         throw new AdminError(400, "INVALID_VALUES");
       }
@@ -112,6 +119,7 @@ export function createAdminService({ env = process.env, transport = fetch } = {}
     if (action === "list") {
       return databaseRequest(`${table}?select=*&order=nombre.asc`);
     }
+    if (catalog.readOnly) throw new AdminError(409, "READ_ONLY_CATALOG");
 
     if (!["create", "update", "delete"].includes(action)) {
       throw new AdminError(400, "INVALID_ACTION");
@@ -138,7 +146,10 @@ export function createAdminService({ env = process.env, transport = fetch } = {}
     for (const field of fields) {
       if (field === "nombre") {
         const value = typeof values.nombre === "string" ? values.nombre.trim() : "";
-        if (!value || value.length > 120) throw new AdminError(400, "INVALID_NAME");
+        if (!value) throw new AdminError(400, "INVALID_NAME");
+        if (value.length > (catalog.maxNameLength || 120)) {
+          throw new AdminError(400, "INVALID_NAME_LENGTH");
+        }
         payload.nombre = value;
       } else if (field in values) {
         if (typeof values[field] !== "boolean") throw new AdminError(400, "INVALID_VALUES");
