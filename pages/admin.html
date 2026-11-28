@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#102a43">
+  <title>Administración · Padrón de Afiliados</title>
+  <link rel="icon" type="image/png" href="../assets/images/Solo_logo.png">
+  <link rel="stylesheet" href="../styles/common.css">
+  <link rel="stylesheet" href="../styles/admin.css">
+</head>
+<body class="admin-page">
+  <header class="admin-topbar">
+    <a class="admin-brand" href="/pages/padron.html">
+      <img src="../assets/images/Solo_logo.png" alt="">
+      <span><strong>Administración</strong><small>Padrón de Afiliados</small></span>
+    </a>
+    <div class="admin-account"><span id="adminEmail">Verificando acceso…</span><button id="adminLogout" type="button">Cerrar sesión</button></div>
+  </header>
+
+  <main class="admin-layout">
+    <aside class="admin-sidebar">
+      <p class="admin-eyebrow">CONFIGURACIÓN</p>
+      <h1>Datos del sistema</h1>
+      <p>Administrá las opciones que aparecen en los formularios del padrón y las fichas médicas.</p>
+      <label class="admin-search-label" for="catalogSearch">Buscar catálogo</label>
+      <input id="catalogSearch" type="search" placeholder="Ej. medicamentos">
+      <nav id="catalogNav" aria-label="Catálogos"></nav>
+    </aside>
+
+    <section class="admin-content" aria-live="polite">
+      <div id="adminNotice" class="admin-notice" role="status" hidden></div>
+      <div id="catalogPanel" class="catalog-panel">
+        <div class="admin-empty"><span class="admin-empty-mark">✦</span><h2>Elegí un catálogo</h2><p>Seleccioná una opción del menú para ver y editar sus valores.</p></div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="../scripts/admin.js"></script>
+</body>
+</html>

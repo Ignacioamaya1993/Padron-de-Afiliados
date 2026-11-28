@@ -5,6 +5,7 @@ import {
   createLoginService,
   LoginError
 } from "../../server/padron/login-service.mjs";
+import { isAllowedRequestOrigin } from "../../server/padron/request-origin.mjs";
 
 const messages = {
   INVALID_REQUEST:
@@ -52,11 +53,7 @@ export function createHandler({
     const origin = req.headers.origin;
     const host = req.headers.host;
 
-    if (
-      typeof origin !== "string" ||
-      typeof host !== "string" ||
-      origin !== `https://${host}`
-    ) {
+    if (!isAllowedRequestOrigin(origin, host)) {
       return fail(403, "FORBIDDEN");
     }
 

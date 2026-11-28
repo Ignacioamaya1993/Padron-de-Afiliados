@@ -12,6 +12,7 @@ const togglePasswordIcon = document.getElementById("togglePasswordIcon");
 
 let showPassword = false;
 let procesandoLogin = false;
+let ventanaAdmin = null;
 
 // --------------------------------------------------
 // MENSAJES DE SESIÓN
@@ -60,7 +61,10 @@ async function verificarSesionExistente() {
     const permitida = await reservarSesion();
 
     if (permitida) {
-      window.location.href = "/pages/padron.html";
+      const { data: { user } } = await supabase.auth.getUser();
+      window.location.href = user?.email?.toLowerCase() === "ignacioamaya04@gmail.com"
+        ? "/pages/admin.html"
+        : "/pages/padron.html";
       return;
     }
 
@@ -108,10 +112,25 @@ async function ejecutarLogin() {
 try {
     await login(identificador, password);
 
-    // El login redirige al padrón cuando la sesión es válida.
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.email?.toLowerCase() === "ignacioamaya04@gmail.com") {
+      if (ventanaAdmin && !ventanaAdmin.closed) {
+        ventanaAdmin.location.replace("/pages/admin.html");
+      } else {
+        window.location.href = "/pages/admin.html";
+        return;
+      }
+    } else if (ventanaAdmin && !ventanaAdmin.closed) {
+      ventanaAdmin.close();
+      ventanaAdmin = null;
+    }
     window.location.href = "/pages/padron.html";
 
   } catch (e) {
+    if (ventanaAdmin && !ventanaAdmin.closed) {
+      ventanaAdmin.close();
+      ventanaAdmin = null;
+    }
     console.error("Error al iniciar sesión:", e);
 
     if (e.code === "SESION_ACTIVA") {
@@ -136,6 +155,10 @@ try {
 
 loginForm.addEventListener("submit", event => {
   event.preventDefault();
+  if (emailInput.value.trim() && passwordInput.value) {
+    ventanaAdmin = window.open("about:blank", "_blank");
+    if (ventanaAdmin) ventanaAdmin.opener = null;
+  }
   ejecutarLogin();
 });
 

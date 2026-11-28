@@ -7,3 +7,5 @@ node_modules/
 reports/
 *.tmp
 dist/
+.vercel
+.env*

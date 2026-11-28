@@ -5,9 +5,21 @@
     },
     "api/padron/login.mjs": {
       "maxDuration": 30
+    },
+    "api/padron/admin.mjs": {
+      "maxDuration": 30
     }
   },
   "headers": [
+    {
+      "source": "/pages/admin.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Referrer-Policy", "value": "same-origin" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    },
     {
       "source": "/cartilla/admin.html",
       "headers": [
