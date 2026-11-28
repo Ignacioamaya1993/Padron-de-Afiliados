@@ -32,6 +32,7 @@ function escapeText(value) {
 function showNotice(message, kind = "success") {
   notice.textContent = message;
   notice.className = `admin-notice ${kind}`;
+  notice.setAttribute("role", kind === "error" ? "alert" : "status");
   notice.hidden = false;
   clearTimeout(showNotice.timer);
   showNotice.timer = setTimeout(() => { notice.hidden = true; }, 5000);
@@ -43,10 +44,17 @@ function drawNav(filter = "") {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `catalog-nav-button${selected?.key === item.key ? " is-active" : ""}`;
+    if (selected?.key === item.key) button.setAttribute("aria-current", "page");
     button.innerHTML = `<span>${escapeText(item.label)}</span><small>›</small>`;
     button.addEventListener("click", () => loadCatalog(item));
     nav.append(button);
   });
+  if (!nav.childElementCount) {
+    const empty = document.createElement("p");
+    empty.className = "catalog-nav-empty";
+    empty.textContent = "No hay catálogos con ese nombre.";
+    nav.append(empty);
+  }
 }
 
 async function api(action, table, values = {}, id = null) {
@@ -66,7 +74,10 @@ async function api(action, table, values = {}, id = null) {
     if (session?.access_token) response = await send(session.access_token);
   }
   const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(result.message || "No se pudo completar el cambio.");
+  if (!response.ok) {
+    const diagnostic = result.databaseCode ? ` (código ${result.databaseCode})` : "";
+    throw new Error(`${result.message || "No se pudo completar el cambio."}${diagnostic}`);
+  }
   return result;
 }
 
@@ -75,14 +86,14 @@ function drawCatalog() {
   const extraColumn = item.active || item.titular;
   const rowsMarkup = rows.map(row => `
     <tr data-id="${escapeText(row.id)}">
-      <td><input type="text" class="row-name" value="${escapeText(row.nombre)}" maxlength="120" aria-label="Nombre"></td>
+      <td><input type="text" class="row-name" value="${escapeText(row.nombre)}" maxlength="120" aria-label="Nombre: ${escapeText(row.nombre)}"></td>
       ${extraColumn ? `<td><label class="admin-check"><input class="row-extra" type="checkbox" ${row[item.active ? "activo" : "es_titular"] ? "checked" : ""}>${item.active ? "Activo" : "Titular"}</label></td>` : ""}
-      <td><div class="catalog-actions"><button class="admin-small-button save-row" type="button">Guardar</button><button class="admin-small-button danger delete-row" type="button">Eliminar</button></div></td>
+      <td><div class="catalog-actions"><button class="admin-small-button save-row" type="button" aria-label="Guardar ${escapeText(row.nombre)}">Guardar</button><button class="admin-small-button danger delete-row" type="button" aria-label="Eliminar ${escapeText(row.nombre)}">Eliminar</button></div></td>
     </tr>`).join("");
   panel.innerHTML = `
     <div class="catalog-heading"><div><p class="admin-eyebrow">CATÁLOGO</p><h2>${escapeText(item.label)}</h2><p>Los cambios se reflejan en los formularios conectados a este catálogo.</p></div><span class="catalog-count">${rows.length} ${rows.length === 1 ? "registro" : "registros"}</span></div>
-    <section class="catalog-create"><h3>Agregar opción</h3><form id="createForm"><input name="nombre" type="text" maxlength="120" placeholder="Nombre de la opción" aria-label="Nombre de la opción" required>${item.active ? `<label class="admin-check"><input name="activo" type="checkbox" checked>Activo</label>` : ""}${item.titular ? `<label class="admin-check"><input name="es_titular" type="checkbox">Titular</label>` : ""}<button class="admin-primary" type="submit">Agregar</button></form></section>
-    <div class="catalog-table-wrap"><table class="catalog-table"><thead><tr><th>Nombre</th>${extraColumn ? `<th>${item.active ? "Estado" : "Titular"}</th>` : ""}<th></th></tr></thead><tbody>${rowsMarkup || `<tr><td colspan="3">Todavía no hay opciones.</td></tr>`}</tbody></table></div>
+    <section class="catalog-create"><h3>Agregar opción</h3><form id="createForm"><label class="visually-hidden" for="newCatalogValue">Nombre de la opción</label><input id="newCatalogValue" name="nombre" type="text" maxlength="120" placeholder="Nombre de la opción" required>${item.active ? `<label class="admin-check"><input name="activo" type="checkbox" checked>Activo</label>` : ""}${item.titular ? `<label class="admin-check"><input name="es_titular" type="checkbox">Titular</label>` : ""}<button class="admin-primary" type="submit">Agregar</button></form></section>
+    <div class="catalog-table-wrap"><table class="catalog-table"><thead><tr><th scope="col">Nombre</th>${extraColumn ? `<th scope="col">${item.active ? "Estado" : "Titular"}</th>` : ""}<th scope="col"><span class="visually-hidden">Acciones</span></th></tr></thead><tbody>${rowsMarkup || `<tr><td colspan="${extraColumn ? 3 : 2}">Todavía no hay opciones.</td></tr>`}</tbody></table></div>
     ${item.note ? `<p class="admin-note">${escapeText(item.note)}</p>` : `<p class="admin-note">Si una opción ya está usada por afiliados o fichas, la base de datos impedirá eliminarla para conservar las relaciones existentes.</p>`}`;
 
   panel.querySelector("#createForm").addEventListener("submit", async event => {
@@ -104,6 +115,14 @@ function drawCatalog() {
     button.disabled = true;
     try { await api("update", item.key, values, row.dataset.id); await loadCatalog(item); showNotice("Cambios guardados."); }
     catch (error) { showNotice(error.message, "error"); button.disabled = false; }
+  }));
+
+  panel.querySelectorAll(".row-name").forEach(input => input.addEventListener("input", () => {
+    const row = input.closest("tr");
+    const name = input.value.trim() || "opción";
+    input.setAttribute("aria-label", `Nombre: ${name}`);
+    row.querySelector(".save-row").setAttribute("aria-label", `Guardar ${name}`);
+    row.querySelector(".delete-row").setAttribute("aria-label", `Eliminar ${name}`);
   }));
 
   panel.querySelectorAll(".delete-row").forEach(button => button.addEventListener("click", async () => {

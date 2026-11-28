@@ -10,7 +10,9 @@ const messages = {
   INVALID_ID: "Registro inválido.",
   INVALID_VALUES: "Datos inválidos.",
   INVALID_NAME: "Ingresá un nombre de hasta 120 caracteres.",
+  DUPLICATE_NAME: "Ya existe una opción con ese nombre.",
   IN_USE: "Este registro está relacionado con otros datos y no se puede eliminar.",
+  DATABASE_PERMISSION: "Supabase rechazó el cambio por permisos. Revisá la clave del servidor.",
   DATABASE_ERROR: "No se pudo guardar el cambio. Revisá si el nombre ya existe."
 };
 
@@ -53,7 +55,11 @@ export function createHandler({ env = process.env, transport = fetch } = {}) {
       return res.status(200).json(result);
     } catch (error) {
       if (error instanceof AdminError) {
-        return res.status(error.status).json({ code: error.code, message: messages[error.code] || messages.DATABASE_ERROR });
+        return res.status(error.status).json({
+          code: error.code,
+          message: messages[error.code] || messages.DATABASE_ERROR,
+          ...(error.databaseCode ? { databaseCode: error.databaseCode } : {})
+        });
       }
       return res.status(503).json({ code: "SERVICE_UNAVAILABLE", message: messages.SERVICE_UNAVAILABLE });
     }

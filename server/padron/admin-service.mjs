@@ -3,11 +3,11 @@ const SUPABASE_URL = "https://vzqduywffrzhcrjtercs.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_SWACMtwkxQ58dhDSwFSofA_ZfEe6HIt";
 
 export const CATALOGS = {
-  planes: { label: "Planes", fields: ["nombre", "activo"], supportsActive: true },
-  categorias: { label: "Categorías", fields: ["nombre", "activo"], supportsActive: true },
-  parentescos: { label: "Parentescos", fields: ["nombre", "es_titular"], supportsTitular: true },
-  localidades: { label: "Localidades", fields: ["nombre"] },
-  grupo_sanguineo: { label: "Grupos sanguíneos", fields: ["nombre"] },
+  planes: { label: "Planes", fields: ["nombre", "activo"], idType: "uuid" },
+  categorias: { label: "Categorías", fields: ["nombre", "activo"], idType: "uuid" },
+  parentescos: { label: "Parentescos", fields: ["nombre", "es_titular"], idType: "uuid" },
+  localidades: { label: "Localidades", fields: ["nombre"], idType: "uuid" },
+  grupo_sanguineo: { label: "Grupos sanguíneos", fields: ["nombre"], idType: "uuid" },
   tipo_medicamentos: { label: "Tipos de medicamentos", fields: ["nombre"] },
   tipo_material_ortopedico: { label: "Tipos de materiales ortopédicos", fields: ["nombre"] },
   tipo_practicasxreintegro: { label: "Tipos de prácticas por reintegro", fields: ["nombre"] },
@@ -20,10 +20,11 @@ export const CATALOGS = {
 };
 
 export class AdminError extends Error {
-  constructor(status, code) {
+  constructor(status, code, metadata = {}) {
     super(code);
     this.status = status;
     this.code = code;
+    Object.assign(this, metadata);
   }
 }
 
@@ -86,8 +87,18 @@ export function createAdminService({ env = process.env, transport = fetch } = {}
 
     const data = await parseResponseBody(response);
     if (!response.ok) {
-      const status = response.status === 409 ? 409 : 400;
-      throw new AdminError(status, status === 409 ? "IN_USE" : "DATABASE_ERROR");
+      const databaseCode = typeof data?.code === "string" ? data.code : "";
+      console.error("Admin catalog database request failed", {
+        status: response.status,
+        code: databaseCode || "unknown"
+      });
+      if (databaseCode === "23505") throw new AdminError(409, "DUPLICATE_NAME");
+      if (databaseCode === "23503") throw new AdminError(409, "IN_USE");
+      if (["22P02", "23502", "23514"].includes(databaseCode)) {
+        throw new AdminError(400, "INVALID_VALUES");
+      }
+      if (databaseCode === "42501") throw new AdminError(503, "DATABASE_PERMISSION");
+      throw new AdminError(400, "DATABASE_ERROR", { databaseCode: databaseCode || null });
     }
     return data;
   }
@@ -105,8 +116,11 @@ export function createAdminService({ env = process.env, transport = fetch } = {}
     if (!["create", "update", "delete"].includes(action)) {
       throw new AdminError(400, "INVALID_ACTION");
     }
-    if (action !== "create" && (!Number.isSafeInteger(Number(id)) || Number(id) < 1)) {
-      throw new AdminError(400, "INVALID_ID");
+    if (action !== "create") {
+      const validId = catalog.idType === "uuid"
+        ? typeof id === "string" && /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(id)
+        : Number.isSafeInteger(Number(id)) && Number(id) > 0;
+      if (!validId) throw new AdminError(400, "INVALID_ID");
     }
 
     if (action === "delete") {
